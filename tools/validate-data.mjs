@@ -1,0 +1,391 @@
+#!/usr/bin/env node
+// Checks every file under public/data for the mistakes that JSON cannot catch
+// on its own: dangling ids, unreachable clues, deductions that can never be
+// formed, resolutions that can never be unlocked, and maps whose rows do not
+// line up with their legend.
+//
+//   npm run validate:data
+//
+// Content is loaded at runtime, so a typo here is a black screen at play time
+// rather than a compile error. This is the safety net for that.
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const DATA = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'public', 'data');
+
+const problems = [];
+const warnings = [];
+const fail = (message) => problems.push(message);
+const warn = (message) => warnings.push(message);
+
+const read = (relPath) => {
+  const full = path.join(DATA, relPath);
+  if (!fs.existsSync(full)) {
+    fail(`Missing file: data/${relPath}`);
+    return undefined;
+  }
+  try {
+    return JSON.parse(fs.readFileSync(full, 'utf8'));
+  } catch (error) {
+    fail(`Invalid JSON in data/${relPath}: ${error.message}`);
+    return undefined;
+  }
+};
+
+const index = read('index.json');
+if (!index) {
+  console.error('Cannot continue without data/index.json');
+  process.exit(1);
+}
+
+// ---------------------------------------------------------------------------
+// Load everything the index names
+// ---------------------------------------------------------------------------
+
+const pathways = index.pathways.map((name) => read(`pathways/${name}.json`)).filter(Boolean);
+const abilityFiles = index.abilities.map((name) => read(`abilities/${name}.json`)).filter(Boolean);
+const cases = index.cases.map((name) => read(`cases/${name}.json`)).filter(Boolean);
+const maps = index.maps.map((name) => read(`maps/${name}.json`)).filter(Boolean);
+const dialogueFiles = index.dialogue.map((name) => read(`dialogue/${name}.json`)).filter(Boolean);
+const items = read(`items/${index.items}.json`) ?? [];
+const characters = read(`characters/${index.characters}.json`) ?? [];
+
+const abilities = abilityFiles.flat();
+const dialogues = dialogueFiles.flat();
+
+const abilityIds = new Set(abilities.map((a) => a.id));
+const itemIds = new Set(items.map((i) => i.id));
+const characterIds = new Set(characters.map((c) => c.id));
+const caseIds = new Set(cases.map((c) => c.id));
+const mapIds = new Set(maps.map((m) => m.id));
+const dialogueIds = new Set(dialogues.map((d) => d.id));
+const allClueIds = new Set(cases.flatMap((c) => c.clues.map((clue) => clue.id)));
+const allDeductionIds = new Set(cases.flatMap((c) => c.deductions.map((d) => d.id)));
+
+// ---------------------------------------------------------------------------
+// Shared reference checks
+// ---------------------------------------------------------------------------
+
+function checkCondition(condition, where) {
+  if (!condition) return;
+  if (condition.ability && !abilityIds.has(condition.ability)) {
+    fail(`${where}: unknown ability "${condition.ability}"`);
+  }
+  if (condition.item && !itemIds.has(condition.item)) {
+    fail(`${where}: unknown item "${condition.item}"`);
+  }
+  if (condition.clue && !allClueIds.has(condition.clue)) {
+    fail(`${where}: unknown clue "${condition.clue}"`);
+  }
+  if (condition.deduction && !allDeductionIds.has(condition.deduction)) {
+    fail(`${where}: unknown deduction "${condition.deduction}"`);
+  }
+  if (condition.caseState && !caseIds.has(condition.caseState.caseId)) {
+    fail(`${where}: unknown case "${condition.caseState.caseId}"`);
+  }
+  if (condition.trustAtLeast && !characterIds.has(condition.trustAtLeast.member)) {
+    fail(`${where}: unknown character "${condition.trustAtLeast.member}"`);
+  }
+}
+
+function checkEffect(effect, where) {
+  if (!effect) return;
+  for (const id of effect.items ?? []) {
+    if (!itemIds.has(id)) fail(`${where}: grants unknown item "${id}"`);
+  }
+  for (const id of effect.removeItems ?? []) {
+    if (!itemIds.has(id)) fail(`${where}: removes unknown item "${id}"`);
+  }
+  for (const id of effect.clues ?? []) {
+    if (!allClueIds.has(id)) fail(`${where}: grants unknown clue "${id}"`);
+  }
+  for (const member of Object.keys(effect.trust ?? {})) {
+    if (!characterIds.has(member)) fail(`${where}: trust with unknown character "${member}"`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Pathways & abilities
+// ---------------------------------------------------------------------------
+
+for (const pathway of pathways) {
+  const seen = new Set();
+  for (const tier of pathway.sequences) {
+    if (seen.has(tier.sequence)) fail(`${pathway.id}: duplicate Sequence ${tier.sequence}`);
+    seen.add(tier.sequence);
+
+    for (const abilityId of tier.grantsAbilities) {
+      if (!abilityIds.has(abilityId)) {
+        fail(`${pathway.id} Sequence ${tier.sequence}: unknown ability "${abilityId}"`);
+      }
+    }
+
+    const advancement = tier.advancement;
+    if (!advancement) continue;
+    if (!seen.has(advancement.toSequence) && !pathway.sequences.some((s) => s.sequence === advancement.toSequence)) {
+      fail(`${pathway.id} Sequence ${tier.sequence}: advances to undefined Sequence ${advancement.toSequence}`);
+    }
+    for (const requirement of advancement.requirements) {
+      const where = `${pathway.id} Sequence ${tier.sequence} requirement "${requirement.label}"`;
+      if (requirement.type === 'item' && !itemIds.has(requirement.itemId)) {
+        fail(`${where}: unknown item "${requirement.itemId}"`);
+      }
+      if (requirement.type === 'case_completed' && !caseIds.has(requirement.caseId)) {
+        fail(`${where}: unknown case "${requirement.caseId}"`);
+      }
+      if (requirement.type === 'trust' && !characterIds.has(requirement.member)) {
+        fail(`${where}: unknown character "${requirement.member}"`);
+      }
+    }
+  }
+}
+
+for (const ability of abilities) {
+  if (!pathways.some((p) => p.id === ability.pathway)) {
+    fail(`Ability ${ability.id}: unknown pathway "${ability.pathway}"`);
+  }
+  const granted = pathways.some((p) =>
+    p.sequences.some((s) => s.grantsAbilities.includes(ability.id)),
+  );
+  if (!granted) warn(`Ability ${ability.id} is never granted by any Sequence.`);
+}
+
+// ---------------------------------------------------------------------------
+// Cases: every clue reachable, every deduction formable, every resolution live
+// ---------------------------------------------------------------------------
+
+/** Clue ids a player could actually obtain, gathered from maps and dialogue. */
+const obtainableClues = new Set();
+for (const map of maps) {
+  for (const hotspot of map.hotspots ?? []) {
+    for (const id of hotspot.clues ?? []) obtainableClues.add(id);
+    for (const list of Object.values(hotspot.abilityClues ?? {})) {
+      for (const id of list) obtainableClues.add(id);
+    }
+  }
+}
+for (const tree of dialogues) {
+  for (const node of Object.values(tree.nodes)) {
+    for (const id of node.effect?.clues ?? []) obtainableClues.add(id);
+    for (const choice of node.choices ?? []) {
+      for (const id of choice.effect?.clues ?? []) obtainableClues.add(id);
+    }
+  }
+}
+for (const caseData of cases) {
+  for (const deduction of caseData.deductions) {
+    for (const id of deduction.unlocksClues ?? []) obtainableClues.add(id);
+  }
+}
+
+for (const caseData of cases) {
+  const clueIds = new Set(caseData.clues.map((c) => c.id));
+  const deductionIds = new Set(caseData.deductions.map((d) => d.id));
+
+  for (const clue of caseData.clues) {
+    if (!obtainableClues.has(clue.id)) {
+      fail(`${caseData.id}: clue "${clue.id}" is defined but nothing grants it.`);
+    }
+  }
+
+  // A deduction whose clue set collides with another's can never be told apart,
+  // because the board matches an exact set.
+  const signatures = new Map();
+  for (const deduction of caseData.deductions) {
+    for (const clueId of deduction.requires) {
+      if (!clueIds.has(clueId)) {
+        fail(`${caseData.id} deduction "${deduction.id}": unknown clue "${clueId}"`);
+      }
+    }
+    if (deduction.requires.length < 2) {
+      fail(`${caseData.id} deduction "${deduction.id}": needs at least two clues.`);
+    }
+    const signature = [...new Set(deduction.requires)].sort().join('|');
+    if (signatures.has(signature)) {
+      fail(
+        `${caseData.id}: deductions "${deduction.id}" and "${signatures.get(signature)}" require the same clue set.`,
+      );
+    }
+    signatures.set(signature, deduction.id);
+    checkEffect(deduction.effect, `${caseData.id} deduction "${deduction.id}"`);
+  }
+
+  for (const objective of caseData.objectives) {
+    checkCondition(objective.completeWhen, `${caseData.id} objective "${objective.id}"`);
+  }
+
+  let hasAlwaysAvailable = false;
+  for (const resolution of caseData.resolutions) {
+    for (const id of resolution.requiresDeductions ?? []) {
+      if (!deductionIds.has(id)) {
+        fail(`${caseData.id} resolution "${resolution.id}": unknown deduction "${id}"`);
+      }
+    }
+    checkCondition(resolution.requires, `${caseData.id} resolution "${resolution.id}"`);
+    checkEffect(resolution.effect, `${caseData.id} resolution "${resolution.id}"`);
+    if ((resolution.requiresDeductions ?? []).length === 0 && !resolution.requires) {
+      hasAlwaysAvailable = true;
+    }
+  }
+  if (!hasAlwaysAvailable) {
+    warn(
+      `${caseData.id}: no resolution is unconditionally available — a stuck player cannot close the case.`,
+    );
+  }
+
+  for (const mapId of caseData.maps) {
+    if (!mapIds.has(mapId)) fail(`${caseData.id}: unknown map "${mapId}"`);
+  }
+  checkCondition(caseData.requires, `${caseData.id} requires`);
+}
+
+// ---------------------------------------------------------------------------
+// Maps
+// ---------------------------------------------------------------------------
+
+for (const map of maps) {
+  const width = map.rows[0]?.length ?? 0;
+  map.rows.forEach((row, y) => {
+    if (row.length !== width) {
+      fail(`Map ${map.id}: row ${y} is ${row.length} wide, expected ${width}.`);
+    }
+    for (const symbol of row) {
+      if (!map.legend[symbol]) {
+        fail(`Map ${map.id}: row ${y} uses "${symbol}", which is not in the legend.`);
+      }
+    }
+  });
+
+  const height = map.rows.length;
+  const walkable = (x, y) => {
+    if (x < 0 || y < 0 || x >= width || y >= height) return false;
+    const entry = map.legend[map.rows[y][x]];
+    return Boolean(entry) && entry.collide !== true;
+  };
+  const inBounds = (x, y) => x >= 0 && y >= 0 && x < width && y < height;
+  const hasWalkableNeighbour = (x, y) =>
+    walkable(x, y) || walkable(x + 1, y) || walkable(x - 1, y) || walkable(x, y + 1) || walkable(x, y - 1);
+
+  if (!walkable(map.spawn.x, map.spawn.y)) {
+    fail(`Map ${map.id}: spawn (${map.spawn.x},${map.spawn.y}) is not walkable.`);
+  }
+
+  const occupied = new Map();
+  const claim = (x, y, what) => {
+    const key = `${x},${y}`;
+    if (occupied.has(key)) {
+      fail(`Map ${map.id}: ${what} and ${occupied.get(key)} both sit on (${x},${y}); only one is reachable.`);
+    }
+    occupied.set(key, what);
+  };
+
+  for (const hotspot of map.hotspots ?? []) {
+    if (!inBounds(hotspot.x, hotspot.y)) {
+      fail(`Map ${map.id}: hotspot "${hotspot.id}" is outside the map.`);
+    } else if (!hasWalkableNeighbour(hotspot.x, hotspot.y)) {
+      fail(`Map ${map.id}: hotspot "${hotspot.id}" cannot be reached — no walkable tile beside it.`);
+    }
+    claim(hotspot.x, hotspot.y, `hotspot "${hotspot.id}"`);
+    for (const id of hotspot.clues ?? []) {
+      if (!allClueIds.has(id)) fail(`Map ${map.id} hotspot "${hotspot.id}": unknown clue "${id}"`);
+    }
+    for (const list of Object.values(hotspot.abilityClues ?? {})) {
+      for (const id of list) {
+        if (!allClueIds.has(id)) fail(`Map ${map.id} hotspot "${hotspot.id}": unknown clue "${id}"`);
+      }
+    }
+    checkEffect(hotspot.effect, `Map ${map.id} hotspot "${hotspot.id}"`);
+    checkCondition(hotspot.locked?.bypass, `Map ${map.id} hotspot "${hotspot.id}" bypass`);
+  }
+
+  for (const npc of map.npcs ?? []) {
+    if (!characterIds.has(npc.id)) fail(`Map ${map.id}: unknown character "${npc.id}"`);
+    if (!dialogueIds.has(npc.dialogue)) {
+      fail(`Map ${map.id} npc "${npc.id}": unknown dialogue tree "${npc.dialogue}"`);
+    }
+    if (!walkable(npc.x, npc.y)) {
+      fail(`Map ${map.id}: npc "${npc.id}" stands on a blocked tile (${npc.x},${npc.y}).`);
+    }
+    claim(npc.x, npc.y, `npc "${npc.id}"`);
+    checkCondition(npc.requires, `Map ${map.id} npc "${npc.id}"`);
+  }
+
+  for (const exit of map.exits ?? []) {
+    if (!mapIds.has(exit.toMap)) {
+      fail(`Map ${map.id}: exit "${exit.label}" leads to unknown map "${exit.toMap}"`);
+    }
+    claim(exit.x, exit.y, `exit "${exit.label}"`);
+    if (!hasWalkableNeighbour(exit.x, exit.y)) {
+      fail(`Map ${map.id}: exit "${exit.label}" cannot be reached.`);
+    }
+    const destination = maps.find((m) => m.id === exit.toMap);
+    if (destination) {
+      const destWidth = destination.rows[0]?.length ?? 0;
+      const row = destination.rows[exit.toY];
+      const entry = row ? destination.legend[row[exit.toX]] : undefined;
+      if (!row || exit.toX >= destWidth || !entry || entry.collide === true) {
+        fail(
+          `Map ${map.id}: exit "${exit.label}" drops the player on a blocked tile (${exit.toX},${exit.toY}) of ${exit.toMap}.`,
+        );
+      }
+    }
+    checkCondition(exit.requires, `Map ${map.id} exit "${exit.label}"`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Dialogue
+// ---------------------------------------------------------------------------
+
+for (const tree of dialogues) {
+  if (!characterIds.has(tree.speaker)) {
+    fail(`Dialogue ${tree.id}: unknown speaker "${tree.speaker}"`);
+  }
+  if (!tree.nodes[tree.start]) {
+    fail(`Dialogue ${tree.id}: start node "${tree.start}" does not exist.`);
+  }
+
+  const reached = new Set([tree.start]);
+  const queue = [tree.start];
+  while (queue.length) {
+    const nodeId = queue.shift();
+    const node = tree.nodes[nodeId];
+    if (!node) continue;
+    checkEffect(node.effect, `Dialogue ${tree.id}#${nodeId}`);
+    for (const choice of node.choices ?? []) {
+      if (!tree.nodes[choice.goto]) {
+        fail(`Dialogue ${tree.id}#${nodeId}: choice points at missing node "${choice.goto}"`);
+        continue;
+      }
+      checkCondition(choice.requires, `Dialogue ${tree.id}#${nodeId} choice`);
+      checkEffect(choice.effect, `Dialogue ${tree.id}#${nodeId} choice`);
+      if (choice.useAbility && !abilityIds.has(choice.useAbility)) {
+        fail(`Dialogue ${tree.id}#${nodeId}: unknown ability "${choice.useAbility}"`);
+      }
+      if (!reached.has(choice.goto)) {
+        reached.add(choice.goto);
+        queue.push(choice.goto);
+      }
+    }
+  }
+  for (const nodeId of Object.keys(tree.nodes)) {
+    if (!reached.has(nodeId)) warn(`Dialogue ${tree.id}: node "${nodeId}" is unreachable.`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+
+for (const message of warnings) console.warn(`  warn   ${message}`);
+for (const message of problems) console.error(`  ERROR  ${message}`);
+
+console.log(
+  `\n${cases.length} case(s), ${maps.length} map(s), ${dialogues.length} dialogue tree(s), ` +
+    `${abilities.length} abilities, ${items.length} items, ${characters.length} characters`,
+);
+
+if (problems.length) {
+  console.error(`\n${problems.length} problem(s) found.`);
+  process.exit(1);
+}
+console.log(`No problems found${warnings.length ? ` (${warnings.length} warning(s))` : ''}.`);

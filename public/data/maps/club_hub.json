@@ -1,0 +1,101 @@
+{
+  "id": "club_hub",
+  "name": "The Tarot Club — Parlour",
+  "ambient": "#4a3a6a",
+  "legend": {
+    "#": { "floor": 11, "collide": true },
+    ".": { "floor": 4 },
+    "*": { "floor": 6 },
+    "=": { "floor": 5 },
+    "B": { "floor": 4, "object": 18, "collide": true },
+    "A": { "floor": 11, "object": 26, "collide": true },
+    "O": { "floor": 11, "object": 31, "collide": true },
+    "T": { "floor": 5, "object": 16, "collide": true },
+    "C": { "floor": 4, "object": 21, "collide": true },
+    "F": { "floor": 11, "object": 22, "collide": true },
+    "E": { "floor": 4, "object": 23, "collide": true },
+    "d": { "floor": 4, "object": 25, "collide": true },
+    "o": { "floor": 14 }
+  },
+  "rows": [
+    "########################",
+    "#......................#",
+    "#..BBB.....A......O.BB.#",
+    "#......................#",
+    "#...*****.....=====....#",
+    "#...*****.....=T=T=....#",
+    "#...*****.....=====....#",
+    "#......................#",
+    "#.C..................F.#",
+    "#......................#",
+    "#.E..........d.........#",
+    "#......................#",
+    "#......................#",
+    "#......................#",
+    "#########oo#############"
+  ],
+  "spawn": { "x": 11, "y": 8 },
+  "hotspots": [
+    {
+      "id": "club_board",
+      "x": 11,
+      "y": 2,
+      "name": "The Board",
+      "description": "A green baize board, and on it the work the Club has taken in.",
+      "action": "case_board",
+      "icon": 11
+    },
+    {
+      "id": "club_requisition",
+      "x": 2,
+      "y": 8,
+      "name": "Requisition Table",
+      "description": "The Star's counter. Everything the Club owns passes across it, and is written down.",
+      "action": "shop",
+      "icon": 2
+    },
+    {
+      "id": "club_circle",
+      "x": 6,
+      "y": 5,
+      "name": "The Circle",
+      "description": "A rug worked with a design nobody will explain. The rite is performed here, or it is performed badly.",
+      "action": "ritual",
+      "icon": 13
+    },
+    {
+      "id": "club_desk",
+      "x": 13,
+      "y": 10,
+      "name": "The Reporting Desk",
+      "description": "Where an investigator writes up what they found, and decides how much of it to write.",
+      "action": "resolve",
+      "icon": 11
+    },
+    {
+      "id": "club_cot",
+      "x": 2,
+      "y": 10,
+      "name": "The Back Room Cot",
+      "description": "A narrow bed behind a curtain. Members sleep here when going home would be unwise.",
+      "action": "rest",
+      "icon": 10
+    },
+    {
+      "id": "club_clock",
+      "x": 18,
+      "y": 2,
+      "name": "Longcase Clock",
+      "description": "It runs four minutes fast and has done for as long as anyone remembers. The Club has voted twice not to correct it."
+    }
+  ],
+  "npcs": [
+    { "id": "hermit", "x": 11, "y": 4, "dialogue": "dlg_hermit" },
+    { "id": "star", "x": 3, "y": 8, "dialogue": "dlg_star" },
+    { "id": "tower", "x": 19, "y": 8, "dialogue": "dlg_tower" },
+    { "id": "moon", "x": 6, "y": 7, "dialogue": "dlg_moon" }
+  ],
+  "exits": [
+    { "x": 9, "y": 14, "toMap": "ashfen_row", "toX": 9, "toY": 2, "label": "Ashfen Row" }
+  ]
+}

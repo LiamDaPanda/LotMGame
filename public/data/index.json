@@ -1,0 +1,9 @@
+{
+  "pathways": ["seer"],
+  "abilities": ["seer"],
+  "cases": ["case-01-ninth-bell"],
+  "maps": ["club_hub", "ashfen_row", "pawnshop", "cellar"],
+  "dialogue": ["club", "case-01"],
+  "items": "items",
+  "characters": "cast"
+}

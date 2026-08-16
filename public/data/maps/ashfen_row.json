@@ -1,0 +1,70 @@
+{
+  "id": "ashfen_row",
+  "name": "Ashfen Row",
+  "ambient": "#2c3a52",
+  "legend": {
+    "#": { "floor": 8, "collide": true },
+    ":": { "floor": 1 },
+    "~": { "floor": 2 },
+    "D": { "floor": 13, "collide": true },
+    "W": { "floor": 12, "collide": true },
+    "L": { "floor": 1, "object": 24, "collide": true }
+  },
+  "rows": [
+    "##########################",
+    "#########D################",
+    "::::::::::::::::::::::::::",
+    "::::::::::::::::::::::::::",
+    "~~~~~~~~~~~~~~~~~~~~~~~~~~",
+    "::::::::::::::::::::::::::",
+    "::::L::::::::::::L::::::::",
+    "::::::::::::::::::::::::::",
+    "##########D#W#############",
+    "##########################"
+  ],
+  "spawn": { "x": 9, "y": 2 },
+  "hotspots": [
+    {
+      "id": "row_gutter",
+      "x": 13,
+      "y": 4,
+      "name": "The Gutter",
+      "description": "Ashfen Row runs downhill to the river and everything the Row is finished with goes with it. Tonight: a broken pipe stem, a playbill, and rain that has been falling since the twelfth."
+    },
+    {
+      "id": "shop_window",
+      "x": 12,
+      "y": 8,
+      "name": "Halloway's Window",
+      "description": "The pawnshop's front window, shuttered from within. From the street you can see the nail heads through the gap in the boards.",
+      "clues": ["clue_nailed_shutters"]
+    },
+    {
+      "id": "row_notice",
+      "x": 20,
+      "y": 8,
+      "name": "Parish Notice",
+      "description": "A constabulary bill, pasted crooked: EZRA HALLOWAY, of this parish, died the fifteenth instant. Any person with information &c. Somebody has written a rude word across it and somebody else has half scrubbed it off."
+    }
+  ],
+  "npcs": [
+    {
+      "id": "dockhand",
+      "x": 16,
+      "y": 3,
+      "dialogue": "dlg_dockhand"
+    }
+  ],
+  "exits": [
+    { "x": 9, "y": 1, "toMap": "club_hub", "toX": 9, "toY": 13, "label": "The Club" },
+    {
+      "x": 10,
+      "y": 8,
+      "toMap": "pawnshop",
+      "toX": 9,
+      "toY": 11,
+      "label": "Halloway's",
+      "requires": { "caseState": { "caseId": "case-01-ninth-bell", "state": "active" } }
+    }
+  ]
+}

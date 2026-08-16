@@ -1,0 +1,98 @@
+[
+  {
+    "id": "player",
+    "name": "You",
+    "title": "The Querent",
+    "spriteRow": 0,
+    "clubMember": true,
+    "bio": "Newest of the Club, and the only member with a shingle on a door."
+  },
+  {
+    "id": "hermit",
+    "name": "Ambrose Quill",
+    "title": "The Hermit",
+    "spriteRow": 1,
+    "clubMember": true,
+    "bio": "Keeps the Club's records and hands out its work. Speaks slowly on purpose, so you will hear the part he leaves out."
+  },
+  {
+    "id": "star",
+    "name": "Wren Falkirk",
+    "title": "The Star",
+    "spriteRow": 2,
+    "clubMember": true,
+    "bio": "Quartermaster. Everything the Club owns passes through her ledger, and she remembers every line of it."
+  },
+  {
+    "id": "tower",
+    "name": "Bryce Halloran",
+    "title": "The Tower",
+    "spriteRow": 3,
+    "clubMember": true,
+    "bio": "Constabulary, once. Watches the doors and tells you which factions have noticed you this week."
+  },
+  {
+    "id": "moon",
+    "name": "Ilma Voss",
+    "title": "The Moon",
+    "spriteRow": 4,
+    "clubMember": true,
+    "bio": "Advanced twice in a year and will not discuss the second time. Knows more about digestion than anyone alive should have needed to learn."
+  },
+  {
+    "id": "constable",
+    "name": "Constable Rell",
+    "title": "Ashfen Row beat",
+    "spriteRow": 5,
+    "clubMember": false,
+    "bio": "Twenty years on the same six streets. Not stupid — incurious, which is cheaper."
+  },
+  {
+    "id": "widow",
+    "name": "Ilsabet Crane",
+    "title": "The complainant",
+    "spriteRow": 6,
+    "clubMember": false,
+    "bio": "The dead man's sister-in-law. Paid the Club's fee out of a jar she had been saving for a headstone."
+  },
+  {
+    "id": "apprentice",
+    "name": "Cass Whitlow",
+    "title": "Halloway's apprentice",
+    "spriteRow": 7,
+    "clubMember": false,
+    "bio": "Nineteen, quick with figures, and has not slept."
+  },
+  {
+    "id": "landlady",
+    "name": "Mrs. Peale",
+    "title": "Your landlady",
+    "spriteRow": 8,
+    "clubMember": false,
+    "bio": "Collects on the day, not the day after."
+  },
+  {
+    "id": "rival",
+    "name": "Mr. Vane",
+    "title": "Collector",
+    "spriteRow": 9,
+    "clubMember": false,
+    "bio": "Buys sealed things. Nobody has established what he does with them."
+  },
+  {
+    "id": "pawnbroker",
+    "name": "Ezra Halloway",
+    "title": "Deceased",
+    "spriteRow": 10,
+    "clubMember": false,
+    "bio": "Pawnbroker of Ashfen Row for thirty-one years. Took in one thing he should not have."
+  },
+  {
+    "id": "dockhand",
+    "name": "Sil Mowbray",
+    "title": "Ash ferry hand",
+    "spriteRow": 11,
+    "clubMember": false,
+    "bio": "Knows the river's timetable and everyone who has ever missed it. Sells both."
+  }
+]

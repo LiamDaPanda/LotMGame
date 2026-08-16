@@ -1,0 +1,24 @@
+{
+  "name": "lotm-fangame",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A 2D gaslamp mystery fangame inspired by Lord of the Mysteries. Fan project, non-commercial.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "art": "node tools/generate-art.mjs",
+    "validate:data": "node tools/validate-data.mjs",
+    "playtest": "node tools/playtest.mjs http://127.0.0.1:5173/LotMGame/"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  },
+  "dependencies": {
+    "phaser": "^3.86.0"
+  }
+}

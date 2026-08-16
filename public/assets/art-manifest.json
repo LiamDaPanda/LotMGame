@@ -1,0 +1,58 @@
+{
+  "generatedBy": "tools/generate-art.mjs",
+  "style": "chibi-anime placeholder, flat colour + single rim shade",
+  "characters": {
+    "file": "sprites/characters.png",
+    "frameWidth": 32,
+    "frameHeight": 40,
+    "directions": [
+      "down",
+      "left",
+      "right",
+      "up"
+    ],
+    "stepsPerDirection": 3,
+    "order": [
+      "player",
+      "hermit",
+      "star",
+      "tower",
+      "moon",
+      "constable",
+      "widow",
+      "apprentice",
+      "landlady",
+      "rival",
+      "pawnbroker",
+      "dockhand"
+    ]
+  },
+  "portraits": {
+    "file": "sprites/portraits.png",
+    "size": 64,
+    "order": [
+      "player",
+      "hermit",
+      "star",
+      "tower",
+      "moon",
+      "constable",
+      "widow",
+      "apprentice",
+      "landlady",
+      "rival",
+      "pawnbroker",
+      "dockhand"
+    ]
+  },
+  "tileset": {
+    "file": "tiles/tileset.png",
+    "tileSize": 32,
+    "count": 32
+  },
+  "icons": {
+    "file": "ui/icons.png",
+    "size": 16,
+    "count": 16
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "id": "cellar",
+  "name": "The Coal Cellar",
+  "ambient": "#1a1c28",
+  "legend": {
+    "%": { "floor": 9, "collide": true },
+    ",": { "floor": 7 },
+    "K": { "floor": 7, "object": 19, "collide": true },
+    "b": { "floor": 7, "object": 20, "collide": true },
+    "o": { "floor": 14 }
+  },
+  "rows": [
+    "%%%%%%%%%%%%%%",
+    "%,,,,,,,,,,,,%",
+    "%,,KK,,,,,,b,%",
+    "%,,,,,,,,,,,,%",
+    "%,,,,,,,,,,,,%",
+    "%,,b,,,,,KK,,%",
+    "%,,,,,,,,,,,,%",
+    "%,,,,,o,,,,,,%",
+    "%%%%%%%%%%%%%%"
+  ],
+  "spawn": { "x": 6, "y": 6 },
+  "hotspots": [
+    {
+      "id": "coal_chute",
+      "x": 11,
+      "y": 0,
+      "name": "The Coal Chute",
+      "description": "A hatch onto the yard, wide enough for a man who did not mind the state of his coat. It is bolted. From this side.",
+      "clues": ["clue_cellar_bolt"],
+      "icon": 15
+    },
+    {
+      "id": "hiding_place",
+      "x": 9,
+      "y": 5,
+      "name": "Behind the Crates",
+      "description": "A gap between the crates and the wall, just wide enough to sit in. The coal dust on the flagstones here has been disturbed and then carefully smoothed over.",
+      "abilityClues": { "reveal_clue": ["clue_second_presence"] }
+    },
+    {
+      "id": "coal_heap",
+      "x": 3,
+      "y": 2,
+      "name": "The Coal Heap",
+      "description": "Half a ton of Ashfen's finest, which is to say the sort that burns wet. Nothing is buried in it. You check anyway, and your cuffs will not forgive you."
+    }
+  ],
+  "exits": [
+    { "x": 6, "y": 7, "toMap": "pawnshop", "toX": 5, "toY": 9, "label": "Up to the shop" }
+  ]
+}
