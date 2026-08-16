@@ -1,6 +1,8 @@
-// Minimal dependency-free PNG encoder + a tiny software rasterizer.
-// Used by tools/generate-art.mjs so the project's placeholder art can be
-// regenerated from source instead of being committed as opaque binaries.
+// Minimal dependency-free PNG codec + a tiny software rasterizer.
+// Used by tools/generate-art.mjs (which draws art from scratch) and
+// tools/import-tiles.mjs (which repacks a downloaded spritesheet), so the
+// project's art can always be rebuilt from source rather than trusted blindly.
+import fs from 'node:fs';
 import zlib from 'node:zlib';
 
 const CRC_TABLE = (() => {
@@ -55,6 +57,100 @@ export function encodePng(width, height, rgba) {
     chunk('IDAT', zlib.deflateSync(raw, { level: 9 })),
     chunk('IEND', Buffer.alloc(0)),
   ]);
+}
+
+/**
+ * Decode an 8-bit RGB/RGBA PNG into { width, height, data }.
+ *
+ * Only what this project's source art actually uses: colour types 2 and 6,
+ * bit depth 8, non-interlaced. Anything else throws rather than silently
+ * producing garbage pixels.
+ */
+export function decodePng(buffer) {
+  if (buffer.readUInt32BE(0) !== 0x89504e47) throw new Error('Not a PNG');
+
+  let offset = 8;
+  let width = 0;
+  let height = 0;
+  let channels = 0;
+  const idat = [];
+
+  while (offset < buffer.length) {
+    const length = buffer.readUInt32BE(offset);
+    const type = buffer.toString('ascii', offset + 4, offset + 8);
+    const data = buffer.subarray(offset + 8, offset + 8 + length);
+    if (type === 'IHDR') {
+      width = data.readUInt32BE(0);
+      height = data.readUInt32BE(4);
+      const depth = data[8];
+      const colorType = data[9];
+      if (depth !== 8) throw new Error(`Unsupported bit depth ${depth}`);
+      if (colorType !== 2 && colorType !== 6) throw new Error(`Unsupported colour type ${colorType}`);
+      if (data[12] !== 0) throw new Error('Interlaced PNGs are not supported');
+      channels = colorType === 6 ? 4 : 3;
+    } else if (type === 'IDAT') {
+      idat.push(data);
+    } else if (type === 'IEND') {
+      break;
+    }
+    offset += 12 + length;
+  }
+
+  const raw = zlib.inflateSync(Buffer.concat(idat));
+  const stride = width * channels;
+  const lines = new Uint8Array(stride * height);
+  let previous = new Uint8Array(stride);
+
+  for (let y = 0; y < height; y++) {
+    const filter = raw[y * (stride + 1)];
+    const line = raw.subarray(y * (stride + 1) + 1, y * (stride + 1) + 1 + stride);
+    const current = new Uint8Array(stride);
+    for (let i = 0; i < stride; i++) {
+      const a = i >= channels ? current[i - channels] : 0;
+      const b = previous[i];
+      const c = i >= channels ? previous[i - channels] : 0;
+      let value = line[i];
+      switch (filter) {
+        case 1:
+          value += a;
+          break;
+        case 2:
+          value += b;
+          break;
+        case 3:
+          value += (a + b) >> 1;
+          break;
+        case 4: {
+          // Paeth
+          const pa = Math.abs(b - c);
+          const pb = Math.abs(a - c);
+          const pc = Math.abs(a + b - 2 * c);
+          value += pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
+          break;
+        }
+        default:
+          break;
+      }
+      current[i] = value & 0xff;
+    }
+    lines.set(current, y * stride);
+    previous = current;
+  }
+
+  // Normalise to RGBA so callers never branch on channel count.
+  if (channels === 4) return { width, height, data: lines };
+  const rgbaData = new Uint8Array(width * height * 4);
+  for (let i = 0, j = 0; i < lines.length; i += 3, j += 4) {
+    rgbaData[j] = lines[i];
+    rgbaData[j + 1] = lines[i + 1];
+    rgbaData[j + 2] = lines[i + 2];
+    rgbaData[j + 3] = 255;
+  }
+  return { width, height, data: rgbaData };
+}
+
+export function readPng(filePath) {
+  return decodePng(fs.readFileSync(filePath));
 }
 
 /** Parse '#rrggbb' or '#rrggbbaa' into [r,g,b,a]. */

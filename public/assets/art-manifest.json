@@ -48,7 +48,7 @@
   "tileset": {
     "file": "tiles/tileset.png",
     "tileSize": 32,
-    "count": 32
+    "source": "Kenney Roguelike/RPG pack (CC0), repacked by tools/import-tiles.mjs"
   },
   "icons": {
     "file": "ui/icons.png",
