@@ -87,6 +87,194 @@
     ]
   },
   {
+    "id": "formula_telepathist",
+    "name": "Telepathist Formula",
+    "kind": "ritual",
+    "description": "Four ingredients and a method for opening a mind that is not yours, copied in the Hermit's hand, with a marginal note advising against it.",
+    "pricePence": 1440,
+    "icon": 11,
+    "vendors": [
+      "club"
+    ],
+    "requires": {
+      "caseState": {
+        "caseId": "case-01-ninth-bell",
+        "state": "resolved"
+      }
+    }
+  },
+  {
+    "id": "potion_telepathist",
+    "name": "Telepathist Potion",
+    "kind": "potion",
+    "description": "Brewed to the formula by the Club's own hand. It is quieter in the bottle than it will be in you.",
+    "pricePence": 2880,
+    "icon": 8,
+    "requires": {
+      "item": "formula_telepathist"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_psychiatrist",
+    "name": "Psychiatrist Formula",
+    "kind": "ritual",
+    "description": "A method, a dosage, and three pages on what to do when the patient is you.",
+    "pricePence": 4320,
+    "icon": 11,
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_psychiatrist",
+    "name": "Psychiatrist Potion",
+    "kind": "potion",
+    "description": "Brewed by the Club. The Hermit recommends taking it somewhere you can be talked down from.",
+    "pricePence": 8640,
+    "icon": 8,
+    "requires": {
+      "item": "formula_psychiatrist"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_hypnotist",
+    "name": "Hypnotist Formula",
+    "kind": "ritual",
+    "description": "The Club keeps this one in a locked drawer and the Hermit signs it out to himself before he signs it out to you.",
+    "pricePence": 12960,
+    "icon": 11,
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_hypnotist",
+    "name": "Hypnotist Potion",
+    "kind": "potion",
+    "description": "Brewed by the Club, and handed over with a look.",
+    "pricePence": 21600,
+    "icon": 8,
+    "requires": {
+      "item": "formula_hypnotist"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_coffin_bearer",
+    "name": "Coffin Bearer Formula",
+    "kind": "ritual",
+    "description": "Four ingredients and a method, in the Hermit's hand, with the weights given in stones rather than ounces. He says that is deliberate.",
+    "pricePence": 1440,
+    "icon": 11,
+    "vendors": [
+      "club"
+    ],
+    "requires": {
+      "caseState": {
+        "caseId": "case-01-ninth-bell",
+        "state": "resolved"
+      }
+    }
+  },
+  {
+    "id": "potion_coffin_bearer",
+    "name": "Coffin Bearer Potion",
+    "kind": "potion",
+    "description": "Brewed to the formula by the Club's own hand. It is heavier than the bottle should be.",
+    "pricePence": 2880,
+    "icon": 8,
+    "requires": {
+      "item": "formula_coffin_bearer"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_gravekeeper",
+    "name": "Gravekeeper Formula",
+    "kind": "ritual",
+    "description": "A method that specifies the ground it must be brewed on, and is not joking.",
+    "pricePence": 4320,
+    "icon": 11,
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_gravekeeper",
+    "name": "Gravekeeper Potion",
+    "kind": "potion",
+    "description": "Brewed by the Club, on ground the Hermit declines to name.",
+    "pricePence": 8640,
+    "icon": 8,
+    "requires": {
+      "item": "formula_gravekeeper"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_undertaker",
+    "name": "Undertaker Formula",
+    "kind": "ritual",
+    "description": "Written out on mourning stationery, which the Hermit insists is not a joke either.",
+    "pricePence": 12960,
+    "icon": 11,
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_undertaker",
+    "name": "Undertaker Potion",
+    "kind": "potion",
+    "description": "Brewed by the Club. It is exactly at room temperature and stays there.",
+    "pricePence": 21600,
+    "icon": 8,
+    "requires": {
+      "item": "formula_undertaker"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "grey_formula_telepathist",
+    "name": "Telepathist Formula (copied)",
+    "kind": "ritual",
+    "description": "The same method in a stranger's hand, on paper that has been folded too many times. Cheaper. Counts for the rite, and the Hermit will know.",
+    "pricePence": 900,
+    "icon": 11,
+    "vendors": [
+      "market"
+    ],
+    "heat": 4,
+    "patter": "'Same words,' he says. 'Different penmanship. You're paying for the words.'"
+  },
+  {
+    "id": "grey_formula_coffin_bearer",
+    "name": "Coffin Bearer Formula (copied)",
+    "kind": "ritual",
+    "description": "A trade method, copied by somebody in the trade, with one weight corrected in a second hand. Cheaper. Counts for the rite, and the Hermit will know.",
+    "pricePence": 900,
+    "icon": 11,
+    "vendors": [
+      "market"
+    ],
+    "heat": 4,
+    "patter": "'Undertaker's boy sold it me,' he says, which is either a provenance or a warning."
+  },
+  {
     "id": "warding_chalk",
     "name": "Warding Chalk",
     "kind": "ritual",
@@ -154,7 +342,7 @@
     "id": "cheap_reagents",
     "name": "Doubtful Reagents",
     "kind": "ritual",
-    "description": "Enough to brew one potion, at about the purity the label does not claim. The Club would not sign for these.",
+    "description": "Enough to brew one potion, at about the purity the label does not claim. Whatever formula you are working from, these will fill it. The Club would not sign for them.",
     "pricePence": 1200,
     "sellPence": 300,
     "icon": 8,
@@ -167,19 +355,10 @@
       "label": "Brew it yourself",
       "description": "You spend a night over a borrowed burner with the formula propped against the sugar tin. What comes out is the right colour and very slightly wrong, and it will do.",
       "requires": {
-        "anyOf": [
-          {
-            "item": "formula_clown"
-          },
-          {
-            "item": "grey_formula_clown"
-          }
-        ]
+        "holdsNextFormula": true
       },
       "effect": {
-        "items": [
-          "potion_clown"
-        ],
+        "brewNextPotion": true,
         "days": 1,
         "sanity": -4
       }

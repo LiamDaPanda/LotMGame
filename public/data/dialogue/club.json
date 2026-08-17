@@ -42,7 +42,7 @@
           {
             "text": "Read his fortune, unasked.",
             "goto": "act_seer",
-            "useAbility": "divination",
+            "useAbilityEffect": "reveal_clue",
             "effect": { "digestion": 12, "trust": { "hermit": 4 } }
           },
           { "text": "Back.", "goto": "start" }

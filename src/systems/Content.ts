@@ -83,6 +83,11 @@ export class Content {
     return found;
   }
 
+  /** Every pathway, in the order index.json lists them. */
+  pathwayList(): PathwayData[] {
+    return [...this.pathways.values()];
+  }
+
   /** The tier data for a given rank on a pathway. */
   sequence(pathwayId: string, sequence: number): SequenceData | undefined {
     return this.pathway(pathwayId).sequences.find((s) => s.sequence === sequence);

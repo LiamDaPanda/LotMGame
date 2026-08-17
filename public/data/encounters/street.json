@@ -22,7 +22,7 @@
       },
       {
         "text": "Become somebody not worth remembering.",
-        "useAbility": "unmarked",
+        "useAbilityEffect": "disguise",
         "success": {
           "text": "You shed whatever it is that makes a face worth writing down. He looks straight through you at the pie stall behind, and after a moment goes back to his paper, faintly annoyed at nothing.",
           "effect": { "concealment": 8 }
@@ -30,7 +30,7 @@
       },
       {
         "text": "Ask the street how interested it is in you.",
-        "useAbility": "take_the_temperature",
+        "useAbilityEffect": "sense_danger",
         "success": {
           "text": "The answer arrives cold and specific: he is one of three, the other two are behind you, and none of them has been told your name yet. Knowing it does not help. Knowing it is still better.",
           "effect": { "flags": ["made_church_tail"], "sanity": -2 }
@@ -76,7 +76,7 @@
       },
       {
         "text": "Send every eye in the alley the wrong way.",
-        "useAbility": "misdirection",
+        "useAbilityEffect": "escape",
         "success": {
           "text": "All three of them turn to look at a noise behind them that never happened. You are around the corner before the first one thinks to wonder why he turned.",
           "effect": { "sanity": -1 }
@@ -138,7 +138,7 @@
     "options": [
       {
         "text": "Read them properly, and tell her what is actually there.",
-        "useAbility": "read_the_cards",
+        "useAbilityEffect": "practice_role",
         "success": {
           "text": "You lay them out on an upturned crate and tell her the truth, which is that you cannot see the ship, and that the not-seeing is not the same as a wreck. She takes it better than a lie would have gone. She pays you the penny anyway.\n\nSomething settles in you while you do it. This is the part. You were playing at it before.",
           "effect": { "pence": 1, "sanity": 2 }
@@ -218,7 +218,7 @@
       },
       {
         "text": "Steady yourself and keep walking.",
-        "useAbility": "steady_the_thread",
+        "useAbilityEffect": "restore_sanity",
         "success": {
           "text": "You take hold of the loose end of yourself and wind it in, and keep your eyes on the cobbles, and after a hundred yards it is just a street again.",
           "effect": { "sanity": 3 }

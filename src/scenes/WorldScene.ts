@@ -3,7 +3,18 @@ import { Session } from '@/systems/Session';
 import { bus } from '@/systems/EventBus';
 import { Actor } from '@/world/Actor';
 import { TileGrid, type Point } from '@/world/TileGrid';
-import { COLORS, CSS, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS, TILE_SIZE } from '@/ui/theme';
+import {
+  COLORS,
+  CSS,
+  FONT_UI,
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  ICONS,
+  TILE_SIZE,
+  hudFooterHeight,
+  hudHeight,
+  isPortrait,
+} from '@/ui/theme';
 import type { HotspotData, MapData, MapExitData, MapNpcData } from '@/types/schema';
 
 interface WorldSceneData {
@@ -173,10 +184,26 @@ export class WorldScene extends Phaser.Scene {
 
   private setupCamera(): void {
     const camera = this.cameras.main;
-    camera.setBounds(0, 0, this.grid.width * TILE_SIZE, this.grid.height * TILE_SIZE);
+
     // Integer zoom keeps 32px art crisp under pixelArt/roundPixels, and the
     // tighter frame suits rooms you are meant to search.
-    camera.setZoom(2);
+    //
+    // Portrait drops to 1:1. Rooms here are 14-26 tiles across but only 9-15
+    // deep, and a 432px-wide board at 2x shows under seven tiles of that width
+    // — you would be navigating a street through a keyhole. At 1x the whole
+    // room fits instead, which is what a tap-to-move map wants.
+    const zoom = isPortrait() ? 1 : 2;
+    camera.setZoom(zoom);
+
+    // Rooms smaller than the view get padded bounds so they sit in the middle
+    // of the screen. Phaser's own clamping pins a too-small room to the top-left
+    // instead, which in portrait leaves a third of the screen empty below it.
+    const mapWidth = this.grid.width * TILE_SIZE;
+    const mapHeight = this.grid.height * TILE_SIZE;
+    const padX = Math.max(0, (GAME_WIDTH / zoom - mapWidth) / 2);
+    const padY = Math.max(0, (GAME_HEIGHT / zoom - mapHeight) / 2);
+    camera.setBounds(-padX, -padY, mapWidth + padX * 2, mapHeight + padY * 2);
+
     camera.startFollow(this.player.sprite, true, 0.12, 0.12);
     camera.fadeIn(350, 0, 0, 0);
   }
@@ -353,8 +380,12 @@ export class WorldScene extends Phaser.Scene {
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       if (this.busy) return;
-      // Ignore taps that land on the HUD strip along the top.
-      if (pointer.y < 54) return;
+      // Ignore taps that land on the HUD: the strip along the top, and in
+      // portrait the button bar along the bottom. The HUD is a separate scene
+      // drawn above this one, so its own buttons consume their taps — but the
+      // bars around them are just painted panels, and a miss there should not
+      // send the player walking.
+      if (pointer.y < hudHeight() || pointer.y > GAME_HEIGHT - hudFooterHeight()) return;
       const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
       this.handleTap({
         x: Math.floor(world.x / TILE_SIZE),

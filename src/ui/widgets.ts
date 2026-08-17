@@ -13,6 +13,31 @@ import { COLORS, CSS, FONT_UI, TEXT } from '@/ui/theme';
 /** Movement in pixels beyond which a pointer gesture counts as a drag, not a tap. */
 const DRAG_SLOP = 8;
 
+/**
+ * Give a Container a hit area that matches the box its children are drawn in.
+ *
+ * Containers draw their children from their own origin — child (0,0) sits at
+ * the container's position — but Phaser hit-tests them as if they were
+ * centre-origin sprites: `InputManager.pointWithinHitArea` adds
+ * `displayOriginX/Y` to the local point before testing, and a Container's
+ * displayOrigin is hard-wired to half its size. So a hit area declared at
+ * (0,0,w,h) actually responds to a box shifted half a button up and to the
+ * left of the visible plate — which leaves only its top-left quadrant live and
+ * makes a thumb aimed at the label miss entirely. Offsetting the rectangle by
+ * the same displayOrigin cancels that out.
+ */
+export function setContainerHitArea(
+  container: Phaser.GameObjects.Container,
+  width: number,
+  height: number,
+): void {
+  container.setSize(width, height);
+  container.setInteractive(
+    new Phaser.Geom.Rectangle(width / 2, height / 2, width, height),
+    Phaser.Geom.Rectangle.Contains,
+  );
+}
+
 export interface PanelOptions {
   fill?: number;
   fillAlpha?: number;
@@ -133,13 +158,7 @@ export class Button extends Phaser.GameObjects.Container {
       this.add(this.subtitle);
     }
 
-    this.setSize(width, height);
-    // A container's local space puts its children at (0,0)-(w,h), so the hit
-    // area must too — not the centre-origin rectangle a sprite would use.
-    this.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, width, height),
-      Phaser.Geom.Rectangle.Contains,
-    );
+    setContainerHitArea(this, width, height);
 
     this.on('pointerover', () => this.redraw(true));
     this.on('pointerout', () => {

@@ -2,7 +2,18 @@ import Phaser from 'phaser';
 import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
 import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS } from '@/ui/theme';
+import {
+  COLORS,
+  CSS,
+  FONT_BODY,
+  FONT_UI,
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  ICONS,
+  isPortrait,
+  minTapHeight,
+  panelInset,
+} from '@/ui/theme';
 import type { AbilityData, AbilityEffectKind, HotspotData } from '@/types/schema';
 
 interface ExamineSceneData {
@@ -41,10 +52,10 @@ export class ExamineScene extends Phaser.Scene {
       .setOrigin(0, 0)
       .setInteractive();
 
-    const panelX = 140;
-    const panelY = 70;
-    const panelW = GAME_WIDTH - 280;
-    const panelH = GAME_HEIGHT - 150;
+    const panelX = panelInset();
+    const panelY = isPortrait() ? 96 : 70;
+    const panelW = GAME_WIDTH - panelInset() * 2;
+    const panelH = GAME_HEIGHT - panelY - (isPortrait() ? 90 : 80);
     drawPanel(this, panelX, panelY, panelW, panelH);
 
     sectionHeader(this, panelX + 24, panelY + 18, panelW - 48, this.hotspot.name);
@@ -63,10 +74,14 @@ export class ExamineScene extends Phaser.Scene {
       gap: 8,
     });
 
-    new Button(this, GAME_WIDTH / 2 - 70, panelY + panelH - 52, 'Step back', () => this.close(), {
-      width: 140,
-      height: 38,
-    });
+    new Button(
+      this,
+      GAME_WIDTH / 2 - 90,
+      panelY + panelH - minTapHeight() - 12,
+      'Step back',
+      () => this.close(),
+      { width: 180, height: minTapHeight() },
+    );
 
     this.input.keyboard?.on('keydown-ESC', () => this.close());
 
@@ -123,7 +138,7 @@ export class ExamineScene extends Phaser.Scene {
     this.body.setText(locked ? `${this.hotspot.description}\n\n${this.hotspot.locked?.reason}` : this.hotspot.description);
 
     const rows: Phaser.GameObjects.Container[] = [];
-    const rowWidth = GAME_WIDTH - 280 - 48;
+    const rowWidth = GAME_WIDTH - panelInset() * 2 - 48;
 
     // What a plain look turned up.
     const known = (this.hotspot.clues ?? []).filter((id) => state.hasClue(id));

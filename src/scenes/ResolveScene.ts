@@ -3,7 +3,17 @@ import { Session } from '@/systems/Session';
 import { SaveManager } from '@/systems/SaveManager';
 import { describeTender, format } from '@/systems/Money';
 import { Button, ScrollList, Typewriter, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import {
+  COLORS,
+  CSS,
+  FONT_BODY,
+  FONT_UI,
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  isPortrait,
+  minTapHeight,
+  panelInset,
+} from '@/ui/theme';
 import type { ResolutionGrade } from '@/types/schema';
 
 const GRADE_LABEL: Record<ResolutionGrade, string> = {
@@ -46,10 +56,10 @@ export class ResolveScene extends Phaser.Scene {
       return;
     }
 
-    const x = 90;
-    const y = 40;
-    const w = GAME_WIDTH - 180;
-    const h = GAME_HEIGHT - 80;
+    const x = panelInset();
+    const y = isPortrait() ? 96 : 40;
+    const w = GAME_WIDTH - panelInset() * 2;
+    const h = GAME_HEIGHT - y - (isPortrait() ? 90 : 40);
     drawPanel(this, x, y, w, h);
     sectionHeader(this, x + 24, y + 18, w - 48, caseData.title, `Present your findings · ${caseData.client}`);
 
@@ -84,7 +94,11 @@ export class ResolveScene extends Phaser.Scene {
     this.list.setRows(rows);
     this.list.refreshMask();
 
-    new Button(this, x + 24, y + h - 54, 'Not yet', () => this.close(), { width: 160, height: 38, fontSize: 13 });
+    new Button(this, x + 24, y + h - minTapHeight() - 12, 'Not yet', () => this.close(), {
+      width: 160,
+      height: minTapHeight(),
+      fontSize: 13,
+    });
     this.input.keyboard?.on('keydown-ESC', () => this.close());
   }
 
@@ -104,10 +118,10 @@ export class ResolveScene extends Phaser.Scene {
     this.list = undefined;
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.94).setOrigin(0, 0).setInteractive();
 
-    const x = 140;
-    const y = 70;
-    const w = GAME_WIDTH - 280;
-    const h = GAME_HEIGHT - 150;
+    const x = panelInset();
+    const y = isPortrait() ? 96 : 70;
+    const w = GAME_WIDTH - panelInset() * 2;
+    const h = GAME_HEIGHT - y - (isPortrait() ? 90 : 80);
     drawPanel(this, x, y, w, h);
 
     this.add
@@ -144,9 +158,9 @@ export class ResolveScene extends Phaser.Scene {
 
     this.input.once('pointerdown', () => typewriter.finish());
 
-    new Button(this, x + w / 2 - 90, y + h - 58, 'Back to the Club', () => this.finish(), {
+    new Button(this, x + w / 2 - 90, y + h - minTapHeight() - 14, 'Back to the Club', () => this.finish(), {
       width: 180,
-      height: 40,
+      height: minTapHeight(),
       tone: 'good',
     });
   }

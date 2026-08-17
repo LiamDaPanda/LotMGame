@@ -4,7 +4,7 @@ import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
 import { MAX_SKILL, SKILLS, TRAINING_DAYS, trainingCost } from '@/systems/Skills';
 import { Button, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, panelInset } from '@/ui/theme';
 import { SKILL_IDS, type SkillId } from '@/types/schema';
 
 /**
@@ -20,16 +20,22 @@ export class TrainingScene extends Phaser.Scene {
   private purseText!: Phaser.GameObjects.Text;
   private flavour!: Phaser.GameObjects.Text;
 
-  private readonly x = 120;
-  private readonly y = 46;
-  private readonly w = GAME_WIDTH - 240;
-  private readonly h = GAME_HEIGHT - 92;
+
+  private x = 0;
+  private y = 0;
+  private w = 0;
+  private h = 0;
 
   constructor() {
     super('Training');
   }
 
   create(): void {
+    // Read the layout here, not in a field: scene instances outlive a rotation.
+    this.x = panelInset();
+    this.y = 56;
+    this.w = GAME_WIDTH - panelInset() * 2;
+    this.h = GAME_HEIGHT - 102;
     this.session = Session.get(this);
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.88).setOrigin(0, 0).setInteractive();
     drawPanel(this, this.x, this.y, this.w, this.h);

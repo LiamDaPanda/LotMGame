@@ -4,7 +4,7 @@ import { format } from '@/systems/Money';
 import { METHOD_LABEL } from '@/systems/InquirySystem';
 import { SKILLS } from '@/systems/Skills';
 import { Button, ScrollList, Typewriter, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS } from '@/ui/theme';
+import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS, panelInset } from '@/ui/theme';
 
 const METHOD_ICON = {
   ask_around: ICONS.trust,
@@ -26,16 +26,22 @@ export class InquiryScene extends Phaser.Scene {
   private resultText!: Phaser.GameObjects.Text;
   private typewriter!: Typewriter;
 
-  private readonly x = 110;
-  private readonly y = 46;
-  private readonly w = GAME_WIDTH - 220;
-  private readonly h = GAME_HEIGHT - 92;
+
+  private x = 0;
+  private y = 0;
+  private w = 0;
+  private h = 0;
 
   constructor() {
     super('Inquiry');
   }
 
   create(): void {
+    // Read the layout here, not in a field: scene instances outlive a rotation.
+    this.x = panelInset();
+    this.y = 56;
+    this.w = GAME_WIDTH - panelInset() * 2;
+    this.h = GAME_HEIGHT - 102;
     this.session = Session.get(this);
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.88).setOrigin(0, 0).setInteractive();
     drawPanel(this, this.x, this.y, this.w, this.h);

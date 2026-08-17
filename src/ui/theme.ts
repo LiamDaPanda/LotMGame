@@ -1,8 +1,78 @@
 /** Shared look-and-feel. Gaslamp: soot, brass, lamplight, and a bruise of violet for the occult. */
 
-export const GAME_WIDTH = 960;
-export const GAME_HEIGHT = 540;
+/**
+ * The logical canvas size. Not a constant: it is chosen at boot from the
+ * viewport's aspect and re-chosen when the device rotates, so a phone held
+ * upright gets a tall board rather than a 219px letterboxed strip.
+ *
+ * These are live ES module bindings — importers see updates. Anything that
+ * reads them must do so inside `create()`, never in a class field initializer,
+ * because scene instances outlive a rotation.
+ */
+export let GAME_WIDTH = 960;
+export let GAME_HEIGHT = 540;
 export const TILE_SIZE = 32;
+
+/**
+ * Logical sizes per orientation.
+ *
+ * The portrait board is 1:2 rather than a rotated 16:9 because phones are
+ * narrow: a 2:3 board on an iPhone 13 (390x844) fits by width and letterboxes
+ * away a third of the screen, and everything it does draw is scaled down to
+ * 0.68 — which turns a 44px button into a 30pt one, under Apple's 44pt
+ * minimum. 1:2 lands within a few percent of every iPhone's aspect, so the
+ * board very nearly fills the screen and a logical pixel is very nearly a
+ * point.
+ */
+export const LANDSCAPE = { width: 960, height: 540 } as const;
+export const PORTRAIT = { width: 432, height: 864 } as const;
+
+/** Pick the logical size that matches a viewport, and publish it. */
+export function setLayoutFor(viewportWidth: number, viewportHeight: number): {
+  width: number;
+  height: number;
+} {
+  const size = viewportHeight > viewportWidth ? PORTRAIT : LANDSCAPE;
+  GAME_WIDTH = size.width;
+  GAME_HEIGHT = size.height;
+  return size;
+}
+
+export function isPortrait(): boolean {
+  return GAME_HEIGHT > GAME_WIDTH;
+}
+
+/**
+ * Panel inset from the screen edge. Portrait has far less width to spare, so
+ * modal panels hug the edges rather than floating in the middle.
+ */
+export function panelInset(): number {
+  return isPortrait() ? 12 : 110;
+}
+
+/** Height of the status strip. Portrait stacks it into two rows. */
+export function hudHeight(): number {
+  return isPortrait() ? 80 : 48;
+}
+
+/**
+ * Height of the bottom button bar. Portrait only: a phone held one-handed puts
+ * the top of the screen out of a thumb's reach, so the two always-on buttons
+ * live down here instead of in the status strip. In landscape they fit in the
+ * strip and there is no footer.
+ */
+export function hudFooterHeight(): number {
+  return isPortrait() ? 68 : 0;
+}
+
+/**
+ * Minimum comfortable tap target. Apple's guideline is 44pt, and the portrait
+ * board is sized so a logical pixel is close to a point — but it still scales
+ * down a little on shorter phones, so leave headroom above 44.
+ */
+export function minTapHeight(): number {
+  return isPortrait() ? 52 : 38;
+}
 
 export const COLORS = {
   ink: 0x14100d,

@@ -3,7 +3,19 @@ import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
 import { Button, Meter, drawPanel } from '@/ui/widgets';
-import { COLORS, CSS, FONT_UI, GAME_WIDTH, ICONS, METER_COLORS } from '@/ui/theme';
+import {
+  COLORS,
+  CSS,
+  FONT_UI,
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  ICONS,
+  METER_COLORS,
+  hudFooterHeight,
+  hudHeight,
+  isPortrait,
+  minTapHeight,
+} from '@/ui/theme';
 
 /**
  * The always-on status strip. Runs as its own scene above the world so it
@@ -35,10 +47,19 @@ export class HudScene extends Phaser.Scene {
     this.session = Session.get(this);
     const state = this.session.state;
 
-    drawPanel(this, 0, 0, GAME_WIDTH, 48, { radius: 0, borderWidth: 0, fill: COLORS.soot, fillAlpha: 0.92 });
+    // Portrait has no room for one row of everything, so the strip stacks:
+    // identity and buttons on top, meters and purse beneath.
+    const tall = isPortrait();
+    const barH = hudHeight();
+    drawPanel(this, 0, 0, GAME_WIDTH, barH, { radius: 0, borderWidth: 0, fill: COLORS.soot, fillAlpha: 0.92 });
     const rule = this.add.graphics();
     rule.lineStyle(1, COLORS.brassDim, 0.6);
-    rule.lineBetween(0, 48, GAME_WIDTH, 48);
+    rule.lineBetween(0, barH, GAME_WIDTH, barH);
+
+    const meterY = tall ? 46 : 12;
+    const meterBar = tall ? 54 : 72;
+    const meterGap = tall ? (GAME_WIDTH - 24) / 4 : 120;
+    const meterX = tall ? 12 : 168;
 
     this.rankText = this.add.text(14, 8, '', {
       fontFamily: 'Georgia, serif',
@@ -50,35 +71,58 @@ export class HudScene extends Phaser.Scene {
     // The strip is a fixed budget: rank block, four meters, purse, two buttons.
     // Adding anything here means taking width from something else.
     this.meters = {
-      sanity: new Meter(this, 168, 12, 'SANITY', METER_COLORS.sanity, ICONS.sanity, 72),
-      spirituality: new Meter(this, 288, 12, 'SPIRIT', METER_COLORS.spirituality, ICONS.spirituality, 72),
-      concealment: new Meter(this, 408, 12, 'CONCEAL', METER_COLORS.concealment, ICONS.concealment, 72),
-      digestion: new Meter(this, 528, 12, 'DIGEST', METER_COLORS.digestion, ICONS.sequence, 72),
+      sanity: new Meter(this, meterX, meterY, 'SANITY', METER_COLORS.sanity, ICONS.sanity, meterBar),
+      spirituality: new Meter(this, meterX + meterGap, meterY, 'SPIRIT', METER_COLORS.spirituality, ICONS.spirituality, meterBar),
+      concealment: new Meter(this, meterX + meterGap * 2, meterY, 'CONCEAL', METER_COLORS.concealment, ICONS.concealment, meterBar),
+      digestion: new Meter(this, meterX + meterGap * 3, meterY, 'DIGEST', METER_COLORS.digestion, ICONS.sequence, meterBar),
     };
 
-    this.add.image(654, 24, 'icons', ICONS.pound).setScale(1.2);
+    const purseX = tall ? GAME_WIDTH - 112 : 654;
+    const purseY = tall ? 18 : 24;
+    this.add.image(purseX, purseY, 'icons', ICONS.pound).setScale(1.2);
     this.purse = this.add
-      .text(666, 24, '', { fontFamily: FONT_UI, fontSize: '14px', color: CSS.parchment })
+      .text(purseX + 12, purseY, '', { fontFamily: FONT_UI, fontSize: '14px', color: CSS.parchment })
       .setOrigin(0, 0.5);
 
-    new Button(this, GAME_WIDTH - 178, 8, 'Powers  (Q)', () => this.openOverlay('AbilityMenu'), {
-      width: 84,
-      height: 32,
-      fontSize: 12,
+    // In portrait the two always-on buttons move to a bar along the bottom —
+    // the only part of a phone screen a thumb reaches without regripping — and
+    // get the full width to split between them.
+    const footer = hudFooterHeight();
+    if (tall) {
+      drawPanel(this, 0, GAME_HEIGHT - footer, GAME_WIDTH, footer, {
+        radius: 0,
+        borderWidth: 0,
+        fill: COLORS.soot,
+        fillAlpha: 0.92,
+      });
+      const footerRule = this.add.graphics();
+      footerRule.lineStyle(1, COLORS.brassDim, 0.6);
+      footerRule.lineBetween(0, GAME_HEIGHT - footer, GAME_WIDTH, GAME_HEIGHT - footer);
+    }
+
+    const btnW = tall ? (GAME_WIDTH - 36) / 2 : 84;
+    const btnH = tall ? minTapHeight() : 32;
+    const btnY = tall ? GAME_HEIGHT - footer + (footer - btnH) / 2 : 8;
+    const powersX = tall ? 12 : GAME_WIDTH - btnW * 2 - 14;
+    const journalX = tall ? GAME_WIDTH - btnW - 12 : GAME_WIDTH - btnW - 8;
+    new Button(this, powersX, btnY, 'Powers', () => this.openOverlay('AbilityMenu'), {
+      width: btnW,
+      height: btnH,
+      fontSize: tall ? 15 : 12,
     });
-    new Button(this, GAME_WIDTH - 88, 8, 'Journal  (J)', () => this.openOverlay('Journal'), {
-      width: 84,
-      height: 32,
-      fontSize: 12,
+    new Button(this, journalX, btnY, 'Journal', () => this.openOverlay('Journal'), {
+      width: btnW,
+      height: btnH,
+      fontSize: tall ? 15 : 12,
     });
 
     this.noticeText = this.add
-      .text(GAME_WIDTH / 2, 62, '', {
+      .text(GAME_WIDTH / 2, barH + 14, '', {
         fontFamily: FONT_UI,
         fontSize: '13px',
         color: CSS.parchment,
         align: 'center',
-        wordWrap: { width: 560 },
+        wordWrap: { width: GAME_WIDTH - 60 },
       })
       .setOrigin(0.5, 0)
       .setAlpha(0);
@@ -130,7 +174,7 @@ export class HudScene extends Phaser.Scene {
   }
 
   private pulse(color: number): void {
-    const flash = this.add.rectangle(GAME_WIDTH / 2, 24, GAME_WIDTH, 48, color, 0.18);
+    const flash = this.add.rectangle(GAME_WIDTH / 2, hudHeight() / 2, GAME_WIDTH, hudHeight(), color, 0.18);
     this.tweens.add({ targets: flash, alpha: 0, duration: 450, onComplete: () => flash.destroy() });
   }
 
@@ -139,8 +183,9 @@ export class HudScene extends Phaser.Scene {
     this.noticeTimer?.remove();
     this.noticeText.setText(text).setColor(colors[tone]).setAlpha(1);
     this.tweens.killTweensOf(this.noticeText);
-    this.noticeText.y = 56;
-    this.tweens.add({ targets: this.noticeText, y: 62, duration: 220, ease: 'Quad.easeOut' });
+    const restY = hudHeight() + 14;
+    this.noticeText.y = restY - 6;
+    this.tweens.add({ targets: this.noticeText, y: restY, duration: 220, ease: 'Quad.easeOut' });
     this.noticeTimer = this.time.delayedCall(2600, () => {
       this.tweens.add({ targets: this.noticeText, alpha: 0, duration: 500 });
     });

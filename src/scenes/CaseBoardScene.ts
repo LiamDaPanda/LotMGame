@@ -3,7 +3,17 @@ import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
 import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import {
+  COLORS,
+  CSS,
+  FONT_BODY,
+  FONT_UI,
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  isPortrait,
+  minTapHeight,
+  panelInset,
+} from '@/ui/theme';
 
 /**
  * The Club's board of work. Cases are offered here and only one may be open at
@@ -23,16 +33,20 @@ export class CaseBoardScene extends Phaser.Scene {
 
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.86).setOrigin(0, 0).setInteractive();
 
-    const x = 110;
-    const y = 50;
-    const w = GAME_WIDTH - 220;
-    const h = GAME_HEIGHT - 100;
+    const x = panelInset();
+    const y = isPortrait() ? 96 : 50;
+    const w = GAME_WIDTH - panelInset() * 2;
+    const h = GAME_HEIGHT - y - (isPortrait() ? 90 : 50);
     drawPanel(this, x, y, w, h);
     sectionHeader(this, x + 24, y + 18, w - 48, 'The Board', 'Work the Club has taken in. One at a time.');
 
     this.render(x, y, w, h);
 
-    new Button(this, x + 24, y + h - 54, 'Close', () => this.close(), { width: 150, height: 38, fontSize: 13 });
+    new Button(this, x + 24, y + h - minTapHeight() - 12, 'Close', () => this.close(), {
+      width: 150,
+      height: minTapHeight(),
+      fontSize: 13,
+    });
     this.input.keyboard?.on('keydown-ESC', () => this.close());
   }
 

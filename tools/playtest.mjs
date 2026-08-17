@@ -115,7 +115,11 @@ const loaded = await withGame((game) => {
 });
 check(
   'content loaded from JSON',
-  loaded.cases === 1 && loaded.maps === 5 && loaded.abilities === 15 && loaded.encounters === 6,
+  loaded.cases === 1 &&
+    loaded.maps === 5 &&
+    loaded.pathways === 3 &&
+    loaded.abilities === 43 &&
+    loaded.encounters === 6,
   JSON.stringify(loaded),
 );
 
@@ -763,14 +767,36 @@ check(
   JSON.stringify(substitution),
 );
 
-// Brewing from doubtful reagents produces the potion the rite wants.
+// Brewing from doubtful reagents produces the potion the rite wants — and
+// "the rite" means the player's own next rung, whichever pathway they walk.
 const brewed = await withGame((game) => {
   const s = game.scene.getScenes(true)[0].registry.get('session');
-  s.state.addItem('cheap_reagents');
-  const result = s.state.useItem('cheap_reagents');
-  return { result, has: s.state.hasItem('potion_clown') };
+  const actual = s.state.sequence;
+  try {
+    // Sequence 9 is the rung the fence-copied Clown formula belongs to.
+    s.state.sequence = 9;
+    s.state.addItem('cheap_reagents');
+    const result = s.state.useItem('cheap_reagents');
+    return { result, has: s.state.hasItem('potion_clown') };
+  } finally {
+    s.state.sequence = actual;
+  }
 });
 check('reagents plus a formula brew the potion', brewed.result.ok && brewed.has, JSON.stringify(brewed));
+
+// The same reagents refuse to brew when nothing on hand fits the next rung.
+const brewedWrongRung = await withGame((game) => {
+  const s = game.scene.getScenes(true)[0].registry.get('session');
+  s.state.addItem('cheap_reagents');
+  // At the actual rung the player holds a Clown-era formula and needs a later
+  // one, so the same item must decline rather than brew the wrong potion.
+  return { result: s.state.useItem('cheap_reagents') };
+});
+check(
+  'reagents refuse a formula from the wrong rung',
+  brewedWrongRung.result.ok === false,
+  JSON.stringify(brewedWrongRung),
+);
 
 // Now the previously dead-ended rung: Sequence 8 -> 7.
 const ladder = await withGame((game) => {

@@ -59,6 +59,18 @@ const dialogues = dialogueFiles.flat();
 const encounters = encounterFiles.flat();
 
 const abilityIds = new Set(abilities.map((a) => a.id));
+/** Mirrors AbilityEffectKind in src/types/schema.ts. */
+const EFFECT_KINDS = new Set([
+  'reveal_clue',
+  'reveal_truth',
+  'unlock_access',
+  'social_pressure',
+  'disguise',
+  'escape',
+  'sense_danger',
+  'restore_sanity',
+  'practice_role',
+]);
 const itemIds = new Set(items.map((i) => i.id));
 const characterIds = new Set(characters.map((c) => c.id));
 const caseIds = new Set(cases.map((c) => c.id));
@@ -205,6 +217,72 @@ for (const pathway of pathways) {
       if (requirement.type === 'trust' && !characterIds.has(requirement.member)) {
         fail(`${where}: unknown character "${requirement.member}"`);
       }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Every pathway must be able to play the content
+// ---------------------------------------------------------------------------
+//
+// Content names capabilities (`abilityClues`, `useAbilityEffect`), never
+// abilities, so that a case works whichever pathway is reading it. That only
+// holds if each pathway actually supplies every capability the content asks
+// for — otherwise picking the wrong pathway at the main menu silently makes a
+// case unsolvable.
+const requiredEffectKinds = new Set();
+(function collectEffectKinds(node) {
+  if (Array.isArray(node)) {
+    for (const child of node) collectEffectKinds(child);
+  } else if (node && typeof node === 'object') {
+    for (const [key, value] of Object.entries(node)) {
+      if (key === 'abilityClues' && value && typeof value === 'object') {
+        for (const kind of Object.keys(value)) requiredEffectKinds.add(kind);
+      } else if (key === 'useAbilityEffect' && typeof value === 'string') {
+        requiredEffectKinds.add(value);
+      } else collectEffectKinds(value);
+    }
+  }
+})([cases, maps, dialogues, encounters]);
+
+// ExamineScene reaches for these directly, whatever the case data says.
+requiredEffectKinds.add('unlock_access');
+// The ladder's digestion requirement can only be met by performing the role.
+requiredEffectKinds.add('practice_role');
+
+for (const pathway of pathways) {
+  const supplied = new Map();
+  for (const tier of pathway.sequences) {
+    for (const abilityId of tier.grantsAbilities) {
+      const ability = abilities.find((a) => a.id === abilityId);
+      if (!ability || ability.passive) continue;
+      const kind = ability.effect?.kind;
+      if (kind && !supplied.has(kind)) supplied.set(kind, tier.sequence);
+    }
+  }
+  for (const kind of requiredEffectKinds) {
+    if (!supplied.has(kind)) {
+      fail(`Pathway ${pathway.id}: no ability with effect "${kind}", which the content requires.`);
+    }
+  }
+}
+
+// The starting rung has to be self-sufficient enough to close the first case:
+// a player who picks a pathway and never advances still needs to find clues,
+// steady themselves, and digest the role they are wearing.
+const STARTING_KINDS = ['reveal_clue', 'restore_sanity', 'practice_role'];
+for (const pathway of pathways) {
+  const entry = Math.max(...pathway.sequences.map((tier) => tier.sequence));
+  const tier = pathway.sequences.find((candidate) => candidate.sequence === entry);
+  const kinds = new Set(
+    (tier?.grantsAbilities ?? [])
+      .map((id) => abilities.find((a) => a.id === id))
+      .filter((ability) => ability && !ability.passive)
+      .map((ability) => ability.effect?.kind),
+  );
+  for (const kind of STARTING_KINDS) {
+    if (!kinds.has(kind)) {
+      fail(`Pathway ${pathway.id}: Sequence ${entry} grants no "${kind}" ability, so a fresh run cannot use it.`);
     }
   }
 }
@@ -390,11 +468,14 @@ for (const encounter of encounters) {
     if (option.useAbility && !abilityIds.has(option.useAbility)) {
       fail(`${where}: unknown ability "${option.useAbility}"`);
     }
+    if (option.useAbilityEffect && !EFFECT_KINDS.has(option.useAbilityEffect)) {
+      fail(`${where}: unknown ability effect "${option.useAbilityEffect}"`);
+    }
     if (!option.success) fail(`${where} option "${option.text}": missing a success outcome`);
     if (option.check && !option.failure) {
       warn(`${where} option "${option.text}": can fail but defines no failure outcome.`);
     }
-    if (!option.requires && !option.useAbility && option.costPence === undefined) {
+    if (!option.requires && !option.useAbility && !option.useAbilityEffect && option.costPence === undefined) {
       hasUnconditional = true;
     }
   }
@@ -525,6 +606,9 @@ for (const tree of dialogues) {
       checkEffect(choice.effect, `Dialogue ${tree.id}#${nodeId} choice`);
       if (choice.useAbility && !abilityIds.has(choice.useAbility)) {
         fail(`Dialogue ${tree.id}#${nodeId}: unknown ability "${choice.useAbility}"`);
+      }
+      if (choice.useAbilityEffect && !EFFECT_KINDS.has(choice.useAbilityEffect)) {
+        fail(`Dialogue ${tree.id}#${nodeId}: unknown ability effect "${choice.useAbilityEffect}"`);
       }
       if (!reached.has(choice.goto)) {
         reached.add(choice.goto);

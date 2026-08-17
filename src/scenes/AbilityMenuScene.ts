@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { Session } from '@/systems/Session';
 import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS } from '@/ui/theme';
+import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS, panelInset } from '@/ui/theme';
 import type { AbilityContext, AbilityData } from '@/types/schema';
 
 interface AbilityMenuData {
@@ -26,16 +26,22 @@ export class AbilityMenuScene extends Phaser.Scene {
   private context: AbilityContext = 'hub';
   private witnessed = false;
 
-  private readonly x = 120;
-  private readonly y = 46;
-  private readonly w = GAME_WIDTH - 240;
-  private readonly h = GAME_HEIGHT - 92;
+
+  private x = 0;
+  private y = 0;
+  private w = 0;
+  private h = 0;
 
   constructor() {
     super('AbilityMenu');
   }
 
   create(data: AbilityMenuData): void {
+    // Read the layout here, not in a field: scene instances outlive a rotation.
+    this.x = panelInset();
+    this.y = 56;
+    this.w = GAME_WIDTH - panelInset() * 2;
+    this.h = GAME_HEIGHT - 102;
     this.session = Session.get(this);
     this.context = data?.context ?? 'hub';
     this.witnessed = data?.witnessed ?? false;

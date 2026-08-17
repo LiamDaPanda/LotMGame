@@ -42,6 +42,12 @@ export interface Condition {
   anyOf?: Condition[];
   /** Player must know this ability (and be able to pay for it). */
   ability?: string;
+  /**
+   * Player holds a formula their next rank will accept — whichever pathway
+   * they walk, and counting grey-market copies. Lets one black-market listing
+   * serve every pathway instead of one listing per pathway per rung.
+   */
+  holdsNextFormula?: boolean;
   /** Player must have discovered this clue. */
   clue?: string;
   /** Player must have formed this deduction. */
@@ -85,6 +91,12 @@ export interface Effect {
   items?: string[];
   /** Item ids to remove. */
   removeItems?: string[];
+  /**
+   * Grants the potion the player's next rank calls for, whatever it is. The
+   * counterpart to `Condition.holdsNextFormula`: brewing is the same act on
+   * every pathway, and only the label on the bottle changes.
+   */
+  brewNextPotion?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -260,6 +272,14 @@ export interface DialogueChoice {
   hideIfLocked?: boolean;
   /** Ability spent when this choice is taken (pays spirit/sanity/exposure). */
   useAbility?: string;
+  /**
+   * Ability spent, named by what it does rather than which one it is. Resolves
+   * against whatever the player's own pathway offers for that effect, so a
+   * scene can offer "lean on them" without knowing whether the player leans
+   * with a Magician's stage presence or a Telepathist's borrowed certainty.
+   * Prefer this over `useAbility` for anything a second pathway might reach.
+   */
+  useAbilityEffect?: AbilityEffectKind;
   /** Money spent when this choice is taken, in pence. */
   costPence?: number;
   /** Applied when the choice is taken. */
@@ -407,6 +427,8 @@ export interface EncounterOption {
   hideIfLocked?: boolean;
   /** Ability spent to take this option; pays its own spirit/sanity/exposure. */
   useAbility?: string;
+  /** As `DialogueChoice.useAbilityEffect`: pathway-agnostic ability gating. */
+  useAbilityEffect?: AbilityEffectKind;
   costPence?: number;
   /** Without a check, the option always succeeds. */
   check?: SkillCheck;

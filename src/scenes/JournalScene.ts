@@ -2,18 +2,33 @@ import Phaser from 'phaser';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
 import { MAX_SKILL, SKILLS } from '@/systems/Skills';
-import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS } from '@/ui/theme';
+import { Button, ScrollList, drawPanel, sectionHeader, setContainerHitArea } from '@/ui/widgets';
+import {
+  COLORS,
+  CSS,
+  FONT_BODY,
+  FONT_UI,
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  ICONS,
+  hudFooterHeight,
+  hudHeight,
+  isPortrait,
+  minTapHeight,
+} from '@/ui/theme';
 import { SKILL_IDS, type ClueData } from '@/types/schema';
 
 type Tab = 'case' | 'board' | 'powers' | 'effects' | 'club';
 
-const TABS: { id: Tab; label: string; icon: number }[] = [
-  { id: 'case', label: 'Case', icon: ICONS.document },
-  { id: 'board', label: 'Deductions', icon: ICONS.clue },
-  { id: 'powers', label: 'Powers', icon: ICONS.spirituality },
-  { id: 'effects', label: 'Effects', icon: ICONS.key },
-  { id: 'club', label: 'The Club', icon: ICONS.card },
+/** Gap between the portrait tab row's buttons. */
+const TAB_GAP = 5;
+
+const TABS: { id: Tab; label: string; short: string; icon: number }[] = [
+  { id: 'case', label: 'Case', short: 'Case', icon: ICONS.document },
+  { id: 'board', label: 'Deductions', short: 'Board', icon: ICONS.clue },
+  { id: 'powers', label: 'Powers', short: 'Powers', icon: ICONS.spirituality },
+  { id: 'effects', label: 'Effects', short: 'Kit', icon: ICONS.key },
+  { id: 'club', label: 'The Club', short: 'Club', icon: ICONS.card },
 ];
 
 /**
@@ -35,17 +50,36 @@ export class JournalScene extends Phaser.Scene {
   private connectButton?: Button;
   private statusText!: Phaser.GameObjects.Text;
 
-  private readonly panelX = 40;
-  private readonly panelY = 30;
-  private readonly panelW = GAME_WIDTH - 80;
-  private readonly panelH = GAME_HEIGHT - 60;
-  private readonly bodyX = 210;
+  private panelX = 0;
+  private panelY = 0;
+  private panelW = 0;
+  private panelH = 0;
+  private bodyX = 0;
+  private tabW = 0;
 
   constructor() {
     super('Journal');
   }
 
   create(): void {
+    // Layout is read here, not in a field: instances outlive a rotation.
+    const tall = isPortrait();
+    this.panelX = tall ? 10 : 40;
+    // Clear of the HUD strip: the HUD is its own scene drawn above this one,
+    // so a panel that starts higher just gets its header covered.
+    this.panelY = tall ? hudHeight() + 10 : 30;
+    this.panelW = GAME_WIDTH - this.panelX * 2;
+    // Portrait leaves room for the HUD's bottom button bar rather than sliding
+    // the panel underneath it.
+    this.panelH = tall
+      ? GAME_HEIGHT - this.panelY - hudFooterHeight() - 12
+      : GAME_HEIGHT - this.panelY * 2;
+    // A phone is too narrow for a column of tabs beside the text — at 118px of
+    // tabs the body is left with 220px, and every description wraps past the
+    // row heights laid out for it. So portrait runs the tabs along the top and
+    // gives the body the panel's whole width.
+    this.tabW = tall ? (this.panelW - 48 - 4 * TAB_GAP) / TABS.length : 152;
+    this.bodyX = tall ? 24 : this.tabW + 58;
     this.session = Session.get(this);
 
     this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.85).setOrigin(0, 0).setInteractive();
@@ -64,30 +98,36 @@ export class JournalScene extends Phaser.Scene {
     TABS.forEach((tab, index) => {
       const button = new Button(
         this,
-        this.panelX + 24,
-        this.panelY + 84 + index * 44,
-        tab.label,
+        tall ? this.panelX + 24 + index * (this.tabW + TAB_GAP) : this.panelX + 24,
+        tall ? this.panelY + 76 : this.panelY + 84 + index * 44,
+        tall ? tab.short : tab.label,
         () => this.setTab(tab.id),
-        { width: 152, height: 38, align: 'left', fontSize: 14, iconFrame: tab.icon },
+        {
+          width: this.tabW,
+          height: tall ? 50 : 38,
+          align: tall ? 'center' : 'left',
+          fontSize: tall ? 12 : 14,
+          iconFrame: tall ? undefined : tab.icon,
+        },
       );
       this.tabButtons.set(tab.id, button);
     });
 
     new Button(
       this,
-      this.panelX + 24,
-      this.panelY + this.panelH - 56,
+      tall ? this.panelX + this.panelW - 174 : this.panelX + 24,
+      this.panelY + this.panelH - (tall ? minTapHeight() + 14 : 56),
       'Close  (Esc)',
       () => this.close(),
-      { width: 152, height: 38, fontSize: 13 },
+      { width: 150, height: tall ? minTapHeight() : 38, fontSize: 13 },
     );
 
     this.statusText = this.add
-      .text(this.panelX + this.bodyX, this.panelY + this.panelH - 40, '', {
+      .text(this.panelX + this.bodyX, this.panelY + this.panelH - (tall ? minTapHeight() + 6 : 40), '', {
         fontFamily: FONT_UI,
         fontSize: '12px',
         color: CSS.muted,
-        wordWrap: { width: this.panelW - this.bodyX - 40 },
+        wordWrap: { width: tall ? this.panelW - 200 : this.panelW - this.bodyX - 40 },
       })
       .setOrigin(0, 0);
 
@@ -114,11 +154,12 @@ export class JournalScene extends Phaser.Scene {
   }
 
   private bodyBounds() {
+    const tall = isPortrait();
     return {
       x: this.panelX + this.bodyX,
-      y: this.panelY + 84,
-      width: this.panelW - this.bodyX - 40,
-      height: this.panelH - 150,
+      y: this.panelY + (tall ? 140 : 84),
+      width: tall ? this.panelW - 48 : this.panelW - this.bodyX - 40,
+      height: this.panelH - (tall ? 216 : 150),
     };
   }
 
@@ -360,10 +401,7 @@ export class JournalScene extends Phaser.Scene {
       }),
     );
 
-    container.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, width, height),
-      Phaser.Geom.Rectangle.Contains,
-    );
+    setContainerHitArea(container, width, height);
     let downAt = { x: 0, y: 0 };
     container.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       downAt = { x: pointer.x, y: pointer.y };
@@ -382,23 +420,33 @@ export class JournalScene extends Phaser.Scene {
 
   private conclusionRow(title: string, text: string, width: number): Phaser.GameObjects.Container {
     const container = this.add.container(0, 0);
-    const height = 56;
-    container.setSize(width, height);
     const bg = this.add.graphics();
+    container.add(bg);
+
+    const titleText = this.add.text(12, 8, title, {
+      fontFamily: FONT_UI,
+      fontSize: '13px',
+      color: CSS.good,
+      wordWrap: { width: width - 24 },
+    });
+    const bodyText = this.add.text(12, 8 + titleText.height + 4, text, {
+      fontFamily: FONT_BODY,
+      fontSize: '12px',
+      color: CSS.muted,
+      wordWrap: { width: width - 24 },
+    });
+    container.add(titleText);
+    container.add(bodyText);
+
+    // Measured, not assumed: a narrow portrait panel wraps these descriptions
+    // onto three lines where a wide one takes two, and a fixed row height
+    // silently overlaps the row below it.
+    const height = Math.max(56, bodyText.y + bodyText.height + 10);
+    container.setSize(width, height);
     bg.fillStyle(COLORS.panelLight, 0.5);
     bg.fillRoundedRect(0, 0, width, height, 4);
     bg.lineStyle(1, COLORS.good, 0.5);
     bg.strokeRoundedRect(0, 0, width, height, 4);
-    container.add(bg);
-    container.add(this.add.text(12, 8, title, { fontFamily: FONT_UI, fontSize: '13px', color: CSS.good }));
-    container.add(
-      this.add.text(12, 26, text, {
-        fontFamily: FONT_BODY,
-        fontSize: '12px',
-        color: CSS.muted,
-        wordWrap: { width: width - 24 },
-      }),
-    );
     return container;
   }
 

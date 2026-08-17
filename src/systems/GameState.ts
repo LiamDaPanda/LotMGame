@@ -109,6 +109,20 @@ export class GameState {
     this.spirituality = this.spiritualityMax;
   }
 
+  /**
+   * Choose the pathway this run walks. Only meaningful before play starts —
+   * the ladder, the abilities and the stat ceilings all hang off it — so the
+   * main menu calls it and nothing else does.
+   */
+  setPathway(pathwayId: string): void {
+    const pathway = this.content.pathway(pathwayId);
+    this.pathwayId = pathway.id;
+    // Entry rung is the lowest-ranked tier the pathway defines.
+    this.sequence = Math.max(...pathway.sequences.map((tier) => tier.sequence));
+    this.sanity = this.sanityMax;
+    this.spirituality = this.spiritualityMax;
+  }
+
   // -------------------------------------------------------------------------
   // Derived values
   // -------------------------------------------------------------------------
@@ -395,8 +409,33 @@ export class GameState {
   // -------------------------------------------------------------------------
 
   /** Evaluate a data-defined gate. Every present field must pass. */
+  /**
+   * Item ids the next rung's advancement asks for, split by what they are. A
+   * requirement may list substitutes (`itemAnyOf`), and a grey-market copy of a
+   * formula is still a formula, so every candidate counts.
+   */
+  private nextRankItems(kind: 'ritual' | 'potion'): string[] {
+    const advancement = this.sequenceData?.advancement;
+    if (!advancement) return [];
+    const ids: string[] = [];
+    for (const requirement of advancement.requirements) {
+      if (requirement.type !== 'item') continue;
+      const candidates = requirement.itemAnyOf ?? (requirement.itemId ? [requirement.itemId] : []);
+      for (const id of candidates) {
+        if (this.content.item(id)?.kind === kind) ids.push(id);
+      }
+    }
+    return ids;
+  }
+
+  /** Does the player hold a formula their next rank would accept? */
+  holdsNextFormula(): boolean {
+    return this.nextRankItems('ritual').some((id) => this.hasItem(id));
+  }
+
   check(condition?: Condition): boolean {
     if (!condition) return true;
+    if (condition.holdsNextFormula && !this.holdsNextFormula()) return false;
     // `anyOf` is the one disjunction; everything else on the object still ANDs.
     if (condition.anyOf && !condition.anyOf.some((option) => this.check(option))) return false;
     if (condition.ability && !this.knowsAbility(condition.ability)) return false;
@@ -425,6 +464,9 @@ export class GameState {
     if (condition.ability && !this.knowsAbility(condition.ability)) {
       const ability = this.content.ability(condition.ability);
       return `Requires ${ability?.name ?? condition.ability}`;
+    }
+    if (condition.holdsNextFormula && !this.holdsNextFormula()) {
+      return 'You have no formula for the next rung';
     }
     if (condition.clue && !this.hasClue(condition.clue)) return 'You have nothing to put to them';
     if (condition.deduction && !this.hasDeduction(condition.deduction)) return 'You have not worked it out yet';
@@ -462,6 +504,12 @@ export class GameState {
     if (effect.clearFlags) for (const flag of effect.clearFlags) this.clearFlag(flag);
     if (effect.clues) for (const clue of effect.clues) this.addClue(clue);
     if (effect.items) for (const item of effect.items) this.addItem(item);
+    if (effect.brewNextPotion) {
+      // Only the first: a rung asks for one potion, and a batch of doubtful
+      // reagents makes one bottle.
+      const potion = this.nextRankItems('potion')[0];
+      if (potion) this.addItem(potion);
+    }
     if (effect.removeItems) for (const item of effect.removeItems) this.removeItem(item);
     if (effect.skills) {
       for (const [skill, delta] of Object.entries(effect.skills)) {

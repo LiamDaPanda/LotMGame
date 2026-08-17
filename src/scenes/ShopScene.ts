@@ -4,7 +4,7 @@ import { Session } from '@/systems/Session';
 import { describeTender, format } from '@/systems/Money';
 import { marketDiscount } from '@/systems/Skills';
 import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, panelInset } from '@/ui/theme';
 import type { ItemData, VendorId } from '@/types/schema';
 
 type Mode = 'buy' | 'sell';
@@ -50,16 +50,22 @@ export class ShopScene extends Phaser.Scene {
   private flavourText!: Phaser.GameObjects.Text;
   private modeButtons: Button[] = [];
 
-  private readonly x = 110;
-  private readonly y = 50;
-  private readonly w = GAME_WIDTH - 220;
-  private readonly h = GAME_HEIGHT - 100;
+
+  private x = 0;
+  private y = 0;
+  private w = 0;
+  private h = 0;
 
   constructor() {
     super('Shop');
   }
 
   create(data: ShopSceneData): void {
+    // Read the layout here, not in a field: scene instances outlive a rotation.
+    this.x = panelInset();
+    this.y = 56;
+    this.w = GAME_WIDTH - panelInset() * 2;
+    this.h = GAME_HEIGHT - 102;
     this.session = Session.get(this);
     this.vendor = data?.vendor ?? 'club';
     const vendor = VENDOR[this.vendor];

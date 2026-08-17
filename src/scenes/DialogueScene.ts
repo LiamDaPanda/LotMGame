@@ -1,7 +1,16 @@
 import Phaser from 'phaser';
 import { Session } from '@/systems/Session';
 import { Button, Typewriter, drawPanel } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import {
+  COLORS,
+  CSS,
+  FONT_BODY,
+  FONT_UI,
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  isPortrait,
+  minTapHeight,
+} from '@/ui/theme';
 import type { PresentedNode } from '@/systems/DialogueSystem';
 
 interface DialogueSceneData {
@@ -18,6 +27,8 @@ interface DialogueSceneData {
  */
 export class DialogueScene extends Phaser.Scene {
   private session!: Session;
+  /** Top of the speech panel. Choices stack upward from here. */
+  private panelY = 0;
   private portrait!: Phaser.GameObjects.Image;
   private nameText!: Phaser.GameObjects.Text;
   private bodyText!: Phaser.GameObjects.Text;
@@ -39,31 +50,42 @@ export class DialogueScene extends Phaser.Scene {
       .setInteractive()
       .on('pointerdown', () => this.onTapBackdrop());
 
-    const panelY = GAME_HEIGHT - 230;
-    drawPanel(this, 20, panelY, GAME_WIDTH - 40, 210);
+    // A narrow screen cannot afford a portrait beside the text, so portrait
+    // mode puts the speaker's face and name on their own line and gives the
+    // line itself the full width of the panel.
+    const tall = isPortrait();
+    const inset = tall ? 12 : 20;
+    const panelW = GAME_WIDTH - inset * 2;
+    const panelH = tall ? 300 : 210;
+    this.panelY = GAME_HEIGHT - panelH - 20;
+    const panelY = this.panelY;
+    drawPanel(this, inset, panelY, panelW, panelH);
 
-    this.portrait = this.add.image(84, panelY + 74, 'portraits', 0).setScale(1.6);
-    this.nameText = this.add.text(150, panelY + 18, '', {
+    this.portrait = this.add
+      .image(tall ? inset + 52 : 84, panelY + (tall ? 56 : 74), 'portraits', 0)
+      .setScale(tall ? 1.5 : 1.6);
+    this.nameText = this.add.text(tall ? inset + 106 : 150, panelY + (tall ? 34 : 18), '', {
       fontFamily: FONT_BODY,
-      fontSize: '19px',
+      fontSize: tall ? '17px' : '19px',
       color: CSS.brass,
     });
-    this.bodyText = this.add.text(150, panelY + 48, '', {
+    this.bodyText = this.add.text(tall ? inset + 20 : 150, panelY + (tall ? 116 : 48), '', {
       fontFamily: FONT_BODY,
       fontSize: '15px',
       color: CSS.parchment,
       lineSpacing: 6,
-      wordWrap: { width: GAME_WIDTH - 210 },
+      wordWrap: { width: tall ? panelW - 40 : GAME_WIDTH - 210 },
     });
     this.typewriter = new Typewriter(this, this.bodyText, 2, 14);
 
+    const hintY = panelY + panelH - 26;
     this.continueHint = this.add
-      .text(GAME_WIDTH - 44, panelY + 182, '▾', { fontFamily: FONT_UI, fontSize: '16px', color: CSS.brass })
+      .text(GAME_WIDTH - inset - 24, hintY, '▾', { fontFamily: FONT_UI, fontSize: '16px', color: CSS.brass })
       .setOrigin(0.5)
       .setAlpha(0);
     this.tweens.add({
       targets: this.continueHint,
-      y: panelY + 187,
+      y: hintY + 5,
       duration: 700,
       yoyo: true,
       repeat: -1,
@@ -106,16 +128,18 @@ export class DialogueScene extends Phaser.Scene {
 
     // Choices sit above the text panel, tallest stack first so the newest
     // option is always nearest the thumb.
-    const width = GAME_WIDTH - 200;
-    const height = 40;
+    const tall = isPortrait();
+    const inset = tall ? 12 : 100;
+    const width = GAME_WIDTH - inset * 2;
+    const height = tall ? minTapHeight() : 40;
     const gap = 6;
     const total = node.choices.length * (height + gap);
-    let y = GAME_HEIGHT - 240 - total;
+    let y = this.panelY - 10 - total;
 
     for (const choice of node.choices) {
       const button = new Button(
         this,
-        100,
+        inset,
         y,
         choice.text,
         () => this.choose(choice.index),

@@ -1,9 +1,13 @@
 {
   "pathways": [
-    "seer"
+    "seer",
+    "spectator",
+    "corpse_collector"
   ],
   "abilities": [
-    "seer"
+    "seer",
+    "spectator",
+    "corpse_collector"
   ],
   "cases": [
     "case-01-ninth-bell"

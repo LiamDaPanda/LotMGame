@@ -35,7 +35,7 @@
           {
             "text": "Suggest, gently, that he wants to hand them over.",
             "goto": "keys_pressed",
-            "useAbility": "stage_presence",
+            "useAbilityEffect": "social_pressure",
             "effect": { "items": ["shop_keys"] }
           },
           { "text": "Let it go.", "goto": "start" }
@@ -105,7 +105,7 @@
           {
             "text": "Read what he is not saying.",
             "goto": "read",
-            "useAbility": "mocking_barb"
+            "useAbilityEffect": "reveal_truth"
           },
           { "text": "That's all for now.", "goto": "bye" }
         ]
