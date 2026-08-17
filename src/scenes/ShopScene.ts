@@ -1,10 +1,15 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
 import { describeTender, format } from '@/systems/Money';
 import { marketDiscount } from '@/systems/Skills';
-import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, panelInset } from '@/ui/theme';
+import { Button, ScrollList, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  COLORS,
+  CSS,
+  menuRect,
+} from '@/ui/theme';
 import type { ItemData, VendorId } from '@/types/schema';
 
 type Mode = 'buy' | 'sell';
@@ -46,8 +51,8 @@ export class ShopScene extends Phaser.Scene {
   private list?: ScrollList;
   private mode: Mode = 'buy';
   private vendor: VendorId = 'club';
-  private purseText!: Phaser.GameObjects.Text;
-  private flavourText!: Phaser.GameObjects.Text;
+  private purseText!: PixelText;
+  private flavourText!: PixelText;
   private modeButtons: Button[] = [];
 
 
@@ -62,15 +67,16 @@ export class ShopScene extends Phaser.Scene {
 
   create(data: ShopSceneData): void {
     // Read the layout here, not in a field: scene instances outlive a rotation.
-    this.x = panelInset();
-    this.y = 56;
-    this.w = GAME_WIDTH - panelInset() * 2;
-    this.h = GAME_HEIGHT - 102;
+    const pane = menuRect();
+    this.x = pane.x + 10;
+    this.y = pane.y + 10;
+    this.w = pane.width - 20;
+    this.h = pane.height - 20;
     this.session = Session.get(this);
     this.vendor = data?.vendor ?? 'club';
     const vendor = VENDOR[this.vendor];
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.86).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.86);
     drawPanel(this, this.x, this.y, this.w, this.h, {
       border: this.vendor === 'market' ? COLORS.blood : COLORS.brassDim,
     });
@@ -85,8 +91,7 @@ export class ShopScene extends Phaser.Scene {
         : vendor.blurb,
     );
 
-    this.purseText = this.add.text(this.x + this.w - 220, this.y + 24, '', {
-      fontFamily: FONT_UI,
+    this.purseText = pixelText(this, this.x + this.w - 220, this.y + 24, '', {
       fontSize: '14px',
       color: CSS.brass,
     });
@@ -104,8 +109,7 @@ export class ShopScene extends Phaser.Scene {
       }),
     ];
 
-    this.flavourText = this.add.text(this.x + 24, this.y + this.h - 84, '', {
-      fontFamily: FONT_BODY,
+    this.flavourText = pixelText(this, this.x + 24, this.y + this.h - 84, '', {
       fontSize: '12px',
       color: CSS.muted,
       wordWrap: { width: this.w - 220 },
@@ -246,7 +250,7 @@ export class ShopScene extends Phaser.Scene {
   private emptyRow(text: string): Phaser.GameObjects.Container {
     const container = this.add.container(0, 0);
     container.setSize(this.w - 48, 36);
-    container.add(this.add.text(0, 8, text, { fontFamily: FONT_BODY, fontSize: '13px', color: CSS.muted }));
+    container.add(pixelText(this, 0, 8, text, { fontSize: '13px', color: CSS.muted }));
     return container;
   }
 

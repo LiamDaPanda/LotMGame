@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
+import { pixelText } from '@/ui/pixelFont';
 import { Content } from '@/systems/Content';
 import { Session } from '@/systems/Session';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import { COLORS, CSS, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
 import type { ContentIndex } from '@/types/schema';
 
 /** Frame geometry — must match tools/generate-art.mjs. */
@@ -92,17 +93,13 @@ export class PreloadScene extends Phaser.Scene {
     const cx = GAME_WIDTH / 2;
     const cy = GAME_HEIGHT / 2;
 
-    this.add
-      .text(cx, cy - 60, 'THE TAROT CLUB', {
-        fontFamily: FONT_BODY,
+    pixelText(this, cx, cy - 60, 'THE TAROT CLUB', {
         fontSize: '32px',
         color: CSS.brass,
       })
       .setOrigin(0.5);
 
-    const status = this.add
-      .text(cx, cy + 34, 'Lighting the lamps…', {
-        fontFamily: FONT_UI,
+    const status = pixelText(this, cx, cy + 34, 'Lighting the lamps…', {
         fontSize: '12px',
         color: CSS.muted,
       })

@@ -1,10 +1,14 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
 import { MAX_SKILL, SKILLS, TRAINING_DAYS, trainingCost } from '@/systems/Skills';
-import { Button, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, panelInset } from '@/ui/theme';
+import { Button, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  CSS,
+  menuRect,
+} from '@/ui/theme';
 import { SKILL_IDS, type SkillId } from '@/types/schema';
 
 /**
@@ -17,8 +21,8 @@ import { SKILL_IDS, type SkillId } from '@/types/schema';
 export class TrainingScene extends Phaser.Scene {
   private session!: Session;
   private rows: Button[] = [];
-  private purseText!: Phaser.GameObjects.Text;
-  private flavour!: Phaser.GameObjects.Text;
+  private purseText!: PixelText;
+  private flavour!: PixelText;
 
 
   private x = 0;
@@ -32,12 +36,13 @@ export class TrainingScene extends Phaser.Scene {
 
   create(): void {
     // Read the layout here, not in a field: scene instances outlive a rotation.
-    this.x = panelInset();
-    this.y = 56;
-    this.w = GAME_WIDTH - panelInset() * 2;
-    this.h = GAME_HEIGHT - 102;
+    const pane = menuRect();
+    this.x = pane.x + 10;
+    this.y = pane.y + 10;
+    this.w = pane.width - 20;
+    this.h = pane.height - 20;
     this.session = Session.get(this);
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.88).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.88);
     drawPanel(this, this.x, this.y, this.w, this.h);
 
     sectionHeader(
@@ -49,16 +54,13 @@ export class TrainingScene extends Phaser.Scene {
       'The Club keeps people who know things and are willing to be paid to say so.',
     );
 
-    this.purseText = this.add
-      .text(this.x + this.w - 24, this.y + 26, '', {
-        fontFamily: FONT_UI,
+    this.purseText = pixelText(this, this.x + this.w - 24, this.y + 26, '', {
         fontSize: '13px',
         color: CSS.brass,
       })
       .setOrigin(1, 0);
 
-    this.flavour = this.add.text(this.x + 24, this.y + this.h - 78, '', {
-      fontFamily: FONT_BODY,
+    this.flavour = pixelText(this, this.x + 24, this.y + this.h - 78, '', {
       fontSize: '13px',
       color: CSS.muted,
       wordWrap: { width: this.w - 200 },

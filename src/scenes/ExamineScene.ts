@@ -1,12 +1,11 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
-import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
+import { Button, ScrollList, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
 import {
   COLORS,
   CSS,
-  FONT_BODY,
-  FONT_UI,
   GAME_HEIGHT,
   GAME_WIDTH,
   ICONS,
@@ -36,7 +35,7 @@ export class ExamineScene extends Phaser.Scene {
   private hotspot!: HotspotData;
   private witnessed = false;
   private list!: ScrollList;
-  private body!: Phaser.GameObjects.Text;
+  private body!: PixelText;
 
   constructor() {
     super('Examine');
@@ -47,10 +46,7 @@ export class ExamineScene extends Phaser.Scene {
     this.hotspot = data.hotspot;
     this.witnessed = data.witnessed;
 
-    this.add
-      .rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.72)
-      .setOrigin(0, 0)
-      .setInteractive();
+    panelStage(this, 0.72);
 
     const panelX = panelInset();
     const panelY = isPortrait() ? 96 : 70;
@@ -60,11 +56,9 @@ export class ExamineScene extends Phaser.Scene {
 
     sectionHeader(this, panelX + 24, panelY + 18, panelW - 48, this.hotspot.name);
 
-    this.body = this.add.text(panelX + 24, panelY + 62, '', {
-      fontFamily: FONT_BODY,
+    this.body = pixelText(this, panelX + 24, panelY + 62, '', {
       fontSize: '15px',
       color: CSS.parchment,
-      lineSpacing: 5,
       wordWrap: { width: panelW - 48 },
     });
 
@@ -190,15 +184,13 @@ export class ExamineScene extends Phaser.Scene {
 
     container.add(this.add.image(18, height / 2, 'icons', ICONS.clue).setScale(1.2));
     container.add(
-      this.add.text(36, 9, found?.clue.title ?? clueId, {
-        fontFamily: FONT_UI,
+      pixelText(this, 36, 9, found?.clue.title ?? clueId, {
         fontSize: '13px',
         color: CSS.good,
       }),
     );
     container.add(
-      this.add.text(36, 28, found?.clue.text ?? '', {
-        fontFamily: FONT_BODY,
+      pixelText(this, 36, 28, found?.clue.text ?? '', {
         fontSize: '12px',
         color: CSS.muted,
         wordWrap: { width: width - 52 },
@@ -211,7 +203,7 @@ export class ExamineScene extends Phaser.Scene {
     const container = this.add.container(0, 0);
     container.setSize(width, 30);
     container.add(
-      this.add.text(0, 6, text, { fontFamily: FONT_BODY, fontSize: '13px', color: CSS.muted }),
+      pixelText(this, 0, 6, text, { fontSize: '13px', color: CSS.muted }),
     );
     return container;
   }

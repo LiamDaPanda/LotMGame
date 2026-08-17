@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { bus } from '@/systems/EventBus';
 import { Actor } from '@/world/Actor';
@@ -6,14 +7,11 @@ import { TileGrid, type Point } from '@/world/TileGrid';
 import {
   COLORS,
   CSS,
-  FONT_UI,
-  GAME_HEIGHT,
   GAME_WIDTH,
   ICONS,
   TILE_SIZE,
-  hudFooterHeight,
-  hudHeight,
   isPortrait,
+  mapRect,
 } from '@/ui/theme';
 import type { HotspotData, MapData, MapExitData, MapNpcData } from '@/types/schema';
 
@@ -170,20 +168,26 @@ export class WorldScene extends Phaser.Scene {
 
     // Vignette only at the very edge of the viewport, so the middle of the room
     // keeps its contrast.
+    const view = mapRect();
     const vignette = this.add.graphics().setScrollFactor(0).setDepth(6000);
     const steps = 5;
     for (let i = 0; i < steps; i++) {
       const band = 7 * (steps - i);
       vignette.fillStyle(COLORS.ink, 0.05);
-      vignette.fillRect(0, 0, GAME_WIDTH, band);
-      vignette.fillRect(0, GAME_HEIGHT - band, GAME_WIDTH, band);
-      vignette.fillRect(0, 0, band, GAME_HEIGHT);
-      vignette.fillRect(GAME_WIDTH - band, 0, band, GAME_HEIGHT);
+      vignette.fillRect(0, 0, view.width, band);
+      vignette.fillRect(0, view.height - band, view.width, band);
+      vignette.fillRect(0, 0, band, view.height);
+      vignette.fillRect(view.width - band, 0, band, view.height);
     }
   }
 
   private setupCamera(): void {
     const camera = this.cameras.main;
+    // The world only owns the top pane. Giving the camera that viewport means
+    // Phaser also stops delivering taps outside it, so a thumb on the menu
+    // below can never accidentally walk the player somewhere.
+    const view = mapRect();
+    camera.setViewport(view.x, view.y, view.width, view.height);
 
     // Integer zoom keeps 32px art crisp under pixelArt/roundPixels, and the
     // tighter frame suits rooms you are meant to search.
@@ -200,8 +204,8 @@ export class WorldScene extends Phaser.Scene {
     // instead, which in portrait leaves a third of the screen empty below it.
     const mapWidth = this.grid.width * TILE_SIZE;
     const mapHeight = this.grid.height * TILE_SIZE;
-    const padX = Math.max(0, (GAME_WIDTH / zoom - mapWidth) / 2);
-    const padY = Math.max(0, (GAME_HEIGHT / zoom - mapHeight) / 2);
+    const padX = Math.max(0, (view.width / zoom - mapWidth) / 2);
+    const padY = Math.max(0, (view.height / zoom - mapHeight) / 2);
     camera.setBounds(-padX, -padY, mapWidth + padX * 2, mapHeight + padY * 2);
 
     camera.startFollow(this.player.sprite, true, 0.12, 0.12);
@@ -291,12 +295,11 @@ export class WorldScene extends Phaser.Scene {
       // Standing people are obstacles, so paths route around them.
       this.grid.setBlocked(npc.x, npc.y, true);
 
-      const label = this.add
-        .text(
+      const label = pixelText(this, 
           npc.x * TILE_SIZE + TILE_SIZE / 2,
           npc.y * TILE_SIZE - 18,
           character?.name ?? npc.id,
-          { fontFamily: FONT_UI, fontSize: '10px', color: CSS.brass },
+          { fontSize: '10px', color: CSS.brass },
         )
         .setOrigin(0.5)
         .setDepth(9000)
@@ -315,8 +318,7 @@ export class WorldScene extends Phaser.Scene {
       );
       marker.setDepth(exit.y * TILE_SIZE + 1);
       const arrow = this.add.triangle(0, -6, 0, -6, -6, 4, 6, 4, COLORS.brass, 0.75);
-      const label = this.add
-        .text(0, 8, exit.label, { fontFamily: FONT_UI, fontSize: '9px', color: CSS.brass })
+      const label = pixelText(this, 0, 8, exit.label, { fontSize: '9px', color: CSS.brass })
         .setOrigin(0.5);
       label.setShadow(0, 1, '#000000', 2);
       marker.add([arrow, label]);
@@ -332,9 +334,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private announceRoom(): void {
-    const banner = this.add
-      .text(GAME_WIDTH / 2, 64, this.map.name, {
-        fontFamily: 'Georgia, serif',
+    const banner = pixelText(this, GAME_WIDTH / 2, 64, this.map.name, {
         fontSize: '20px',
         color: CSS.brass,
       })
@@ -380,12 +380,11 @@ export class WorldScene extends Phaser.Scene {
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       if (this.busy) return;
-      // Ignore taps that land on the HUD: the strip along the top, and in
-      // portrait the button bar along the bottom. The HUD is a separate scene
-      // drawn above this one, so its own buttons consume their taps — but the
-      // bars around them are just painted panels, and a miss there should not
-      // send the player walking.
-      if (pointer.y < hudHeight() || pointer.y > GAME_HEIGHT - hudFooterHeight()) return;
+      // The camera's viewport already keeps taps outside the map pane away from
+      // this scene, but a pointer that started inside and drifted out still
+      // arrives here, so check anyway.
+      const view = mapRect();
+      if (pointer.y < view.y || pointer.y > view.y + view.height) return;
       const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
       this.handleTap({
         x: Math.floor(world.x / TILE_SIZE),

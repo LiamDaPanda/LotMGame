@@ -1,8 +1,15 @@
 import Phaser from 'phaser';
+import { pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { SaveManager } from '@/systems/SaveManager';
-import { Button, ScrollList, Typewriter, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, panelInset } from '@/ui/theme';
+import { Button, ScrollList, Typewriter, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  COLORS,
+  CSS,
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  menuRect,
+} from '@/ui/theme';
 
 /**
  * Advancement.
@@ -29,12 +36,13 @@ export class RitualScene extends Phaser.Scene {
 
   create(): void {
     // Read the layout here, not in a field: scene instances outlive a rotation.
-    this.x = panelInset();
-    this.y = 56;
-    this.w = GAME_WIDTH - panelInset() * 2;
-    this.h = GAME_HEIGHT - 102;
+    const pane = menuRect();
+    this.x = pane.x + 10;
+    this.y = pane.y + 10;
+    this.w = pane.width - 20;
+    this.h = pane.height - 20;
     this.session = Session.get(this);
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.9).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.9);
     this.render();
     this.input.keyboard?.on('keydown-ESC', () => this.close());
   }
@@ -43,7 +51,7 @@ export class RitualScene extends Phaser.Scene {
     this.children.removeAll(true);
     this.list = undefined;
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.9).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.9);
     drawPanel(this, this.x, this.y, this.w, this.h);
 
     const state = this.session.state;
@@ -59,8 +67,7 @@ export class RitualScene extends Phaser.Scene {
     );
 
     if (!advancement) {
-      this.add.text(this.x + 24, this.y + 90, 'There is no further rung written on this ladder.', {
-        fontFamily: FONT_BODY,
+      pixelText(this, this.x + 24, this.y + 90, 'There is no further rung written on this ladder.', {
         fontSize: '15px',
         color: CSS.muted,
       });
@@ -71,8 +78,7 @@ export class RitualScene extends Phaser.Scene {
       return;
     }
 
-    this.add.text(this.x + 24, this.y + 76, `Toward Sequence ${advancement.toSequence} — ${advancement.toTitle}`, {
-      fontFamily: FONT_BODY,
+    pixelText(this, this.x + 24, this.y + 76, `Toward Sequence ${advancement.toSequence} — ${advancement.toTitle}`, {
       fontSize: '18px',
       color: CSS.brass,
     });
@@ -154,16 +160,14 @@ export class RitualScene extends Phaser.Scene {
     bg.fillRoundedRect(0, 0, width, 34, 4);
     container.add(bg);
     container.add(
-      this.add.text(12, 9, text, {
-        fontFamily: FONT_UI,
+      pixelText(this, 12, 9, text, {
         fontSize: '13px',
         color: met ? CSS.good : CSS.muted,
       }),
     );
     if (detail) {
       container.add(
-        this.add
-          .text(width - 12, 9, detail, { fontFamily: FONT_UI, fontSize: '12px', color: CSS.muted })
+        pixelText(this, width - 12, 9, detail, { fontSize: '12px', color: CSS.muted })
           .setOrigin(1, 0),
       );
     }
@@ -190,12 +194,10 @@ export class RitualScene extends Phaser.Scene {
     this.children.removeAll(true);
     this.list = undefined;
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 1).setOrigin(0, 0).setInteractive();
+    panelStage(this, 1);
     this.cameras.main.flash(600, 40, 30, 60);
 
-    const title = this.add
-      .text(GAME_WIDTH / 2, 74, `Sequence ${result.toSequence} — ${result.toTitle}`, {
-        fontFamily: FONT_BODY,
+    const title = pixelText(this, GAME_WIDTH / 2, 74, `Sequence ${result.toSequence} — ${result.toTitle}`, {
         fontSize: '30px',
         color: forced ? CSS.bad : CSS.brass,
       })
@@ -203,11 +205,9 @@ export class RitualScene extends Phaser.Scene {
       .setAlpha(0);
     this.tweens.add({ targets: title, alpha: 1, duration: 900 });
 
-    const body = this.add.text(140, 130, '', {
-      fontFamily: FONT_BODY,
+    const body = pixelText(this, 140, 130, '', {
       fontSize: '15px',
       color: CSS.parchment,
-      lineSpacing: 8,
       wordWrap: { width: GAME_WIDTH - 280 },
     });
 

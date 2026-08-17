@@ -1,7 +1,12 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
-import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS, panelInset } from '@/ui/theme';
+import { Button, ScrollList, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  CSS,
+  ICONS,
+  menuRect,
+} from '@/ui/theme';
 import type { AbilityContext, AbilityData } from '@/types/schema';
 
 interface AbilityMenuData {
@@ -22,7 +27,7 @@ interface AbilityMenuData {
 export class AbilityMenuScene extends Phaser.Scene {
   private session!: Session;
   private list?: ScrollList;
-  private resultText!: Phaser.GameObjects.Text;
+  private resultText!: PixelText;
   private context: AbilityContext = 'hub';
   private witnessed = false;
 
@@ -38,15 +43,16 @@ export class AbilityMenuScene extends Phaser.Scene {
 
   create(data: AbilityMenuData): void {
     // Read the layout here, not in a field: scene instances outlive a rotation.
-    this.x = panelInset();
-    this.y = 56;
-    this.w = GAME_WIDTH - panelInset() * 2;
-    this.h = GAME_HEIGHT - 102;
+    const pane = menuRect();
+    this.x = pane.x + 10;
+    this.y = pane.y + 10;
+    this.w = pane.width - 20;
+    this.h = pane.height - 20;
     this.session = Session.get(this);
     this.context = data?.context ?? 'hub';
     this.witnessed = data?.witnessed ?? false;
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.86).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.86);
     drawPanel(this, this.x, this.y, this.w, this.h);
 
     const state = this.session.state;
@@ -61,9 +67,7 @@ export class AbilityMenuScene extends Phaser.Scene {
       }`,
     );
 
-    this.resultText = this.add
-      .text(this.x + 24, this.y + this.h - 76, '', {
-        fontFamily: FONT_BODY,
+    this.resultText = pixelText(this, this.x + 24, this.y + this.h - 76, '', {
         fontSize: '13px',
         color: CSS.occult,
         wordWrap: { width: this.w - 200 },
@@ -100,7 +104,7 @@ export class AbilityMenuScene extends Phaser.Scene {
   private emptyRow(text: string): Phaser.GameObjects.Container {
     const container = this.add.container(0, 0);
     container.setSize(this.w - 48, 36);
-    container.add(this.add.text(0, 8, text, { fontFamily: FONT_BODY, fontSize: '13px', color: CSS.muted }));
+    container.add(pixelText(this, 0, 8, text, { fontSize: '13px', color: CSS.muted }));
     return container;
   }
 

@@ -12,7 +12,9 @@
     "art": "node tools/generate-art.mjs",
     "tiles": "node tools/import-tiles.mjs",
     "validate:data": "node tools/validate-data.mjs",
-    "playtest": "node tools/playtest.mjs http://127.0.0.1:5173/LotMGame/"
+    "playtest": "node tools/playtest.mjs http://127.0.0.1:5173/LotMGame/",
+    "font": "node tools/generate-font.mjs",
+    "touchtest": "node tools/touchtest.mjs"
   },
   "devDependencies": {
     "playwright": "^1.62.1",

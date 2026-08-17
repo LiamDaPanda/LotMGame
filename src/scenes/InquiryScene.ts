@@ -1,10 +1,15 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
 import { METHOD_LABEL } from '@/systems/InquirySystem';
 import { SKILLS } from '@/systems/Skills';
-import { Button, ScrollList, Typewriter, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS, panelInset } from '@/ui/theme';
+import { Button, ScrollList, Typewriter, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  CSS,
+  ICONS,
+  menuRect,
+} from '@/ui/theme';
 
 const METHOD_ICON = {
   ask_around: ICONS.trust,
@@ -23,7 +28,7 @@ const METHOD_ICON = {
 export class InquiryScene extends Phaser.Scene {
   private session!: Session;
   private list?: ScrollList;
-  private resultText!: Phaser.GameObjects.Text;
+  private resultText!: PixelText;
   private typewriter!: Typewriter;
 
 
@@ -38,12 +43,13 @@ export class InquiryScene extends Phaser.Scene {
 
   create(): void {
     // Read the layout here, not in a field: scene instances outlive a rotation.
-    this.x = panelInset();
-    this.y = 56;
-    this.w = GAME_WIDTH - panelInset() * 2;
-    this.h = GAME_HEIGHT - 102;
+    const pane = menuRect();
+    this.x = pane.x + 10;
+    this.y = pane.y + 10;
+    this.w = pane.width - 20;
+    this.h = pane.height - 20;
     this.session = Session.get(this);
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.88).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.88);
     drawPanel(this, this.x, this.y, this.w, this.h);
 
     const caseData = this.session.cases.activeCase();
@@ -58,11 +64,9 @@ export class InquiryScene extends Phaser.Scene {
         : 'No case is open.',
     );
 
-    this.resultText = this.add.text(this.x + 24, this.y + this.h - 96, '', {
-      fontFamily: FONT_BODY,
+    this.resultText = pixelText(this, this.x + 24, this.y + this.h - 96, '', {
       fontSize: '13px',
       color: CSS.parchment,
-      lineSpacing: 4,
       wordWrap: { width: this.w - 200 },
     });
     this.typewriter = new Typewriter(this, this.resultText, 3, 12);
@@ -116,8 +120,7 @@ export class InquiryScene extends Phaser.Scene {
       const container = this.add.container(0, 0);
       container.setSize(width, 40);
       container.add(
-        this.add.text(0, 8, 'Nothing to chase up. Take a case first.', {
-          fontFamily: FONT_BODY,
+        pixelText(this, 0, 8, 'Nothing to chase up. Take a case first.', {
           fontSize: '13px',
           color: CSS.muted,
         }),

@@ -87,7 +87,7 @@ const widgets = (key) =>
         const matrix = object.getWorldTransformMatrix();
         const hit = object.input.hitArea;
         return {
-          label: object.list.filter((child) => child.type === 'Text').map((child) => child.text)[0] ?? '',
+          label: object.list.filter((child) => child.type === 'BitmapText').map((child) => child.text)[0] ?? '',
           // Where the plate is drawn: children start at the container's origin.
           drawX: matrix.tx,
           drawY: matrix.ty,
@@ -139,6 +139,65 @@ const checkAlignment = async (sceneKey) => {
   }
 };
 
+/**
+ * Nothing may draw text outside the box it belongs to.
+ *
+ * The pixel font is fixed-width precisely so this is decidable, and a phone is
+ * where an overflowing line actually costs you the word. Panels declare their
+ * pane; text is checked against it.
+ */
+const checkTextFits = async (sceneKey, label) => {
+  const overflows = await page.evaluate((key) => {
+    const game = window.__game;
+    const scene = game.scene.getScene(key);
+    if (!scene || !scene.scene.isActive()) return [];
+    const board = { width: game.scale.gameSize.width, height: game.scale.gameSize.height };
+
+    const found = [];
+    // `clip` is the box the object is actually visible in. A scrolling list
+    // publishes its own, because content below the fold is meant to be cut off
+    // — that is not an overflow, and only the list's own box has to fit.
+    const walk = (object, clip) => {
+      if (object.type === 'Container') {
+        const own = object.getData?.('clipRect');
+        const next = own
+          ? {
+              left: Math.max(clip.left, own.x),
+              right: Math.min(clip.right, own.x + own.width),
+              // A scrolling list clips vertically on purpose — rows below the
+              // fold are reachable by dragging, not lost. Only its sideways
+              // bounds are a layout promise.
+              top: own.scrolls ? -Infinity : Math.max(clip.top, own.y),
+              bottom: own.scrolls ? Infinity : Math.min(clip.bottom, own.y + own.height),
+            }
+          : clip;
+        for (const child of object.list) walk(child, next);
+        return;
+      }
+      if (object.type !== 'BitmapText' || !object.text) return;
+      const bounds = object.getBounds();
+      // A tolerance of one board pixel: origins and rounding land on halves.
+      const over = [];
+      if (bounds.left < clip.left - 1) over.push(`left ${Math.round(bounds.left)} < ${clip.left}`);
+      if (bounds.right > clip.right + 1) over.push(`right ${Math.round(bounds.right)} > ${clip.right}`);
+      if (bounds.top < clip.top - 1) over.push(`top ${Math.round(bounds.top)} < ${clip.top}`);
+      if (bounds.bottom > clip.bottom + 1) over.push(`bottom ${Math.round(bounds.bottom)} > ${clip.bottom}`);
+      if (over.length) {
+        found.push({ text: object.text.split('\n')[0].slice(0, 40), over: over.join(', ') });
+      }
+    };
+    const board_ = { left: 0, top: 0, right: board.width, bottom: board.height };
+    for (const object of scene.children.list) walk(object, board_);
+    return found;
+  }, sceneKey);
+
+  check(
+    `${label}: all text inside the board`,
+    overflows.length === 0,
+    overflows.map((o) => `"${o.text}" (${o.over})`).join(' | '),
+  );
+};
+
 console.log(`iPhone-sized viewport 390x844 — board ${geometry.gw}x${geometry.gh}, canvas ${geometry.rw}x${geometry.rh} at y=${geometry.ry}`);
 
 console.log('\n1. The board turns upright');
@@ -151,6 +210,7 @@ check(
 
 console.log('\n2. Hit areas agree with what is drawn');
 await checkAlignment('MainMenu');
+await checkTextFits('MainMenu', 'Main menu');
 
 console.log('\n3. Touch reaches the menu');
 await tapStep('New Investigation starts the game', 'MainMenu', 'New Investigation', (list) =>
@@ -173,14 +233,32 @@ for (const button of hud) {
 await checkAlignment('Hud');
 
 console.log('\n5. Overlays open and close by touch');
-await tapStep('Journal opens', 'Hud', 'Journal', (list) => list.includes('Journal'));
+await tapStep('Notes opens', 'Hud', 'NOTES', (list) => list.includes('Journal'));
 await checkAlignment('Journal');
-await tapStep('Journal closes', 'Journal', 'Close', (list) => !list.includes('Journal'));
-await tapStep('Powers opens', 'Hud', 'Powers', (list) => list.includes('AbilityMenu'));
+await tapStep('Notes closes again', 'Hud', 'NOTES', (list) => !list.includes('Journal'));
+await tapStep('Powers opens', 'Hud', 'POWER', (list) => list.includes('AbilityMenu'));
 await checkAlignment('AbilityMenu');
-await tapStep('Powers closes', 'AbilityMenu', 'Close', (list) => !list.includes('AbilityMenu'));
+await tapStep('Powers closes again', 'Hud', 'POWER', (list) => !list.includes('AbilityMenu'));
 
-console.log('\n6. No runtime errors');
+console.log('\n6. Text stays inside its box');
+await checkTextFits('Hud', 'HUD');
+await tapWidget('Hud', 'NOTES');
+await page.waitForTimeout(400);
+await checkTextFits('Journal', 'Journal');
+await tapWidget('Hud', 'NOTES');
+await page.waitForTimeout(300);
+await tapWidget('Hud', 'CASE');
+await page.waitForTimeout(400);
+await checkTextFits('CaseBoard', 'Case board');
+await tapWidget('Hud', 'CASE');
+await page.waitForTimeout(300);
+await tapWidget('Hud', 'POWER');
+await page.waitForTimeout(400);
+await checkTextFits('AbilityMenu', 'Powers');
+await tapWidget('Hud', 'POWER');
+await page.waitForTimeout(300);
+
+console.log('\n7. No runtime errors');
 check('console clean', consoleErrors.length === 0, consoleErrors.join(' | '));
 
 await browser.close();

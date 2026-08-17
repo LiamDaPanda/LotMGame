@@ -1,13 +1,11 @@
 import Phaser from 'phaser';
+import { pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { SaveManager } from '@/systems/SaveManager';
 import { describeTender, format } from '@/systems/Money';
-import { Button, ScrollList, Typewriter, drawPanel, sectionHeader } from '@/ui/widgets';
+import { Button, ScrollList, Typewriter, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
 import {
-  COLORS,
   CSS,
-  FONT_BODY,
-  FONT_UI,
   GAME_HEIGHT,
   GAME_WIDTH,
   isPortrait,
@@ -48,7 +46,7 @@ export class ResolveScene extends Phaser.Scene {
 
   create(): void {
     this.session = Session.get(this);
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.88).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.88);
 
     const caseData = this.session.cases.activeCase();
     if (!caseData) {
@@ -116,7 +114,7 @@ export class ResolveScene extends Phaser.Scene {
   private showEpilogue(text: string, grade: ResolutionGrade, pence: number): void {
     this.children.removeAll(true);
     this.list = undefined;
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.94).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.94);
 
     const x = panelInset();
     const y = isPortrait() ? 96 : 70;
@@ -124,25 +122,20 @@ export class ResolveScene extends Phaser.Scene {
     const h = GAME_HEIGHT - y - (isPortrait() ? 90 : 80);
     drawPanel(this, x, y, w, h);
 
-    this.add
-      .text(x + w / 2, y + 34, GRADE_LABEL[grade], {
-        fontFamily: FONT_BODY,
+    pixelText(this, x + w / 2, y + 34, GRADE_LABEL[grade], {
         fontSize: '26px',
         color: GRADE_COLOR[grade],
       })
       .setOrigin(0.5);
 
-    const body = this.add.text(x + 32, y + 78, '', {
-      fontFamily: FONT_BODY,
+    const body = pixelText(this, x + 32, y + 78, '', {
       fontSize: '15px',
       color: CSS.parchment,
-      lineSpacing: 7,
       wordWrap: { width: w - 64 },
     });
     const typewriter = new Typewriter(this, body, 2, 12);
 
-    const payLine = this.add
-      .text(x + w / 2, y + h - 96, '', { fontFamily: FONT_UI, fontSize: '14px', color: CSS.brass })
+    const payLine = pixelText(this, x + w / 2, y + h - 96, '', { fontSize: '14px', color: CSS.brass })
       .setOrigin(0.5)
       .setAlpha(0);
 

@@ -25,7 +25,7 @@ export const TILE_SIZE = 32;
  * point.
  */
 export const LANDSCAPE = { width: 960, height: 540 } as const;
-export const PORTRAIT = { width: 432, height: 864 } as const;
+export const PORTRAIT = { width: 480, height: 960 } as const;
 
 /** Pick the logical size that matches a viewport, and publish it. */
 export function setLayoutFor(viewportWidth: number, viewportHeight: number): {
@@ -47,22 +47,84 @@ export function isPortrait(): boolean {
  * modal panels hug the edges rather than floating in the middle.
  */
 export function panelInset(): number {
-  return isPortrait() ? 12 : 110;
+  return isPortrait() ? 10 : 110;
 }
 
-/** Height of the status strip. Portrait stacks it into two rows. */
-export function hudHeight(): number {
-  return isPortrait() ? 80 : 48;
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
 
 /**
- * Height of the bottom button bar. Portrait only: a phone held one-handed puts
- * the top of the screen out of a thumb's reach, so the two always-on buttons
- * live down here instead of in the status strip. In landscape they fit in the
- * strip and there is no footer.
+ * The portrait screen is split like a handheld's two screens: the world on
+ * top, everything you touch underneath.
+ *
+ * A phone is held at the bottom, so the half a thumb reaches should be the
+ * half full of buttons — and a map that never has panels thrown over it stays
+ * readable while you are reading a panel. Landscape keeps the older
+ * full-screen-with-overlays arrangement, where there is width to spare.
+ *
+ *   0    status: rank, day, purse
+ *   56   map: the world camera's viewport
+ *   440  meters: sanity, spirit, concealment, digestion
+ *   480  menu: panels and overlays draw in here
+ *   896  tabs: the always-on buttons
+ *   960
  */
+const PANES = {
+  status: 56,
+  map: 384,
+  meters: 40,
+  tabs: 64,
+} as const;
+
+/** The status strip along the top. */
+export function statusRect(): Rect {
+  return { x: 0, y: 0, width: GAME_WIDTH, height: isPortrait() ? PANES.status : 48 };
+}
+
+/** Where the world camera draws. In landscape that is the whole board. */
+export function mapRect(): Rect {
+  if (!isPortrait()) return { x: 0, y: 0, width: GAME_WIDTH, height: GAME_HEIGHT };
+  return { x: 0, y: PANES.status, width: GAME_WIDTH, height: PANES.map };
+}
+
+/** The meter row, directly under the map. */
+export function metersRect(): Rect {
+  if (!isPortrait()) return { x: 168, y: 12, width: GAME_WIDTH - 300, height: 36 };
+  return { x: 0, y: PANES.status + PANES.map, width: GAME_WIDTH, height: PANES.meters };
+}
+
+/**
+ * Where panels live. Overlays draw inside this rather than over the whole
+ * board, which is what makes the split read as two screens rather than as a
+ * modal thrown over a map.
+ */
+export function menuRect(): Rect {
+  if (!isPortrait()) {
+    const inset = panelInset();
+    return { x: inset, y: 56, width: GAME_WIDTH - inset * 2, height: GAME_HEIGHT - 102 };
+  }
+  const top = PANES.status + PANES.map + PANES.meters;
+  return { x: 0, y: top, width: GAME_WIDTH, height: GAME_HEIGHT - top - PANES.tabs };
+}
+
+/** The always-on tab bar along the bottom. Portrait only. */
+export function tabBarRect(): Rect {
+  if (!isPortrait()) return { x: 0, y: GAME_HEIGHT, width: GAME_WIDTH, height: 0 };
+  return { x: 0, y: GAME_HEIGHT - PANES.tabs, width: GAME_WIDTH, height: PANES.tabs };
+}
+
+/** Height of the status strip. */
+export function hudHeight(): number {
+  return isPortrait() ? PANES.status + PANES.map + PANES.meters : 48;
+}
+
+/** Height of the bottom tab bar. */
 export function hudFooterHeight(): number {
-  return isPortrait() ? 68 : 0;
+  return tabBarRect().height;
 }
 
 /**
@@ -71,7 +133,7 @@ export function hudFooterHeight(): number {
  * down a little on shorter phones, so leave headroom above 44.
  */
 export function minTapHeight(): number {
-  return isPortrait() ? 52 : 38;
+  return isPortrait() ? 48 : 38;
 }
 
 export const COLORS = {

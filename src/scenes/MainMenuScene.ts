@@ -1,12 +1,11 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { SaveManager } from '@/systems/SaveManager';
 import { Button, drawPanel } from '@/ui/widgets';
 import {
   COLORS,
   CSS,
-  FONT_BODY,
-  FONT_UI,
   GAME_HEIGHT,
   GAME_WIDTH,
   isPortrait,
@@ -27,7 +26,7 @@ import type { PathwayData } from '@/types/schema';
 export class MainMenuScene extends Phaser.Scene {
   private chosen = 'seer';
   private pathwayButtons = new Map<string, Button>();
-  private blurb!: Phaser.GameObjects.Text;
+  private blurb!: PixelText;
 
   constructor() {
     super('MainMenu');
@@ -59,18 +58,14 @@ export class MainMenuScene extends Phaser.Scene {
       });
     }
 
-    this.add
-      .text(GAME_WIDTH / 2, tall ? 96 : 82, 'THE TAROT CLUB', {
-        fontFamily: FONT_BODY,
+    pixelText(this, GAME_WIDTH / 2, tall ? 96 : 82, 'THE TAROT CLUB', {
         fontSize: tall ? '36px' : '46px',
         color: CSS.brass,
       })
       .setOrigin(0.5)
       .setShadow(0, 3, '#000000', 8);
 
-    this.add
-      .text(GAME_WIDTH / 2, tall ? 130 : 122, 'a gaslamp investigation', {
-        fontFamily: FONT_UI,
+    pixelText(this, GAME_WIDTH / 2, tall ? 130 : 122, 'a gaslamp investigation', {
         fontSize: '13px',
         color: CSS.muted,
       })
@@ -84,14 +79,24 @@ export class MainMenuScene extends Phaser.Scene {
     const panelW = GAME_WIDTH - inset * 2;
     const panelY = tall ? 164 : 156;
     const buttonH = minTapHeight();
-    // Reserve the bottom of the screen for Continue / New, then give the rest
-    // of the panel to the pathway picker.
-    const actionsY = GAME_HEIGHT - (tall ? buttonH * 2 + 78 : buttonH + 56);
-    const panelH = actionsY - panelY - 20;
+
+    // Lay the bottom out upwards from the footnote, whose height depends on how
+    // many lines it wraps to. Guessing a fixed offset here is how the buttons
+    // ended up printed across it.
+    const disclaimer = pixelText(
+      this,
+      GAME_WIDTH / 2,
+      GAME_HEIGHT - 10,
+      'A non-commercial fan project, inspired by Lord of the Mysteries. Not affiliated with the author or its publishers.',
+      { size: 'md', color: CSS.muted, align: 'center', wrap: GAME_WIDTH - 40 },
+    ).setOrigin(0.5, 1);
+
+    const actionsY =
+      GAME_HEIGHT - 10 - disclaimer.height - 16 - (tall ? buttonH * 2 + 10 : buttonH);
+    const panelH = actionsY - panelY - 16;
 
     drawPanel(this, panelX, panelY, panelW, panelH, { fillAlpha: 0.72 });
-    this.add.text(panelX + 20, panelY + 14, 'CHOOSE A PATHWAY', {
-      fontFamily: FONT_UI,
+    pixelText(this, panelX + 20, panelY + 14, 'CHOOSE A PATHWAY', {
       fontSize: '11px',
       color: CSS.brass,
     });
@@ -112,11 +117,9 @@ export class MainMenuScene extends Phaser.Scene {
       this.pathwayButtons.set(pathway.id, button);
     });
 
-    this.blurb = this.add.text(panelX + 20, pickerY + buttonH + 14, '', {
-      fontFamily: FONT_BODY,
+    this.blurb = pixelText(this, panelX + 20, pickerY + buttonH + 14, '', {
       fontSize: tall ? '13px' : '14px',
       color: CSS.parchment,
-      lineSpacing: 5,
       wordWrap: { width: panelW - 40 },
     });
 
@@ -150,29 +153,15 @@ export class MainMenuScene extends Phaser.Scene {
       });
     }
 
-    this.add
-      .text(
-        GAME_WIDTH / 2,
-        GAME_HEIGHT - 18,
-        'A non-commercial fan project, inspired by Lord of the Mysteries. Not affiliated with the author or its publishers.',
-        {
-          fontFamily: FONT_UI,
-          fontSize: '10px',
-          color: CSS.muted,
-          align: 'center',
-          wordWrap: { width: GAME_WIDTH - 40 },
-        },
-      )
-      .setOrigin(0.5, 1);
 
     if (!SaveManager.available()) {
-      this.add
-        .text(GAME_WIDTH / 2, GAME_HEIGHT - 44, 'Storage is unavailable — progress will not be saved.', {
-          fontFamily: FONT_UI,
-          fontSize: '10px',
-          color: CSS.bad,
-        })
-        .setOrigin(0.5, 1);
+      pixelText(
+        this,
+        GAME_WIDTH / 2,
+        disclaimer.y - disclaimer.height - 6,
+        'Storage is unavailable - progress will not be saved.',
+        { size: 'md', color: CSS.bad, align: 'center', wrap: GAME_WIDTH - 40 },
+      ).setOrigin(0.5, 1);
     }
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.pathwayButtons.clear());

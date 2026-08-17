@@ -1,13 +1,12 @@
 import Phaser from 'phaser';
+import { pixelText } from '@/ui/pixelFont';
 import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
-import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
+import { Button, ScrollList, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
 import {
   COLORS,
   CSS,
-  FONT_BODY,
-  FONT_UI,
   GAME_HEIGHT,
   GAME_WIDTH,
   isPortrait,
@@ -31,7 +30,7 @@ export class CaseBoardScene extends Phaser.Scene {
     this.session = Session.get(this);
     this.session.cases.refreshAvailability();
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.86).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.86);
 
     const x = panelInset();
     const y = isPortrait() ? 96 : 50;
@@ -65,15 +64,13 @@ export class CaseBoardScene extends Phaser.Scene {
       bg.strokeRoundedRect(0, 0, w - 48, 70, 5);
       container.add(bg);
       container.add(
-        this.add.text(14, 12, `Open: ${active.title}`, {
-          fontFamily: FONT_UI,
+        pixelText(this, 14, 12, `Open: ${active.title}`, {
           fontSize: '14px',
           color: CSS.good,
         }),
       );
       container.add(
-        this.add.text(14, 34, 'Close it before the Club will hand you another.', {
-          fontFamily: FONT_BODY,
+        pixelText(this, 14, 34, 'Close it before the Club will hand you another.', {
           fontSize: '12px',
           color: CSS.muted,
           wordWrap: { width: w - 76 },
@@ -87,8 +84,7 @@ export class CaseBoardScene extends Phaser.Scene {
       const container = this.add.container(0, 0);
       container.setSize(w - 48, 40);
       container.add(
-        this.add.text(0, 8, 'The board is bare. Come back when the city has misbehaved.', {
-          fontFamily: FONT_BODY,
+        pixelText(this, 0, 8, 'The board is bare. Come back when the city has misbehaved.', {
           fontSize: '13px',
           color: CSS.muted,
         }),

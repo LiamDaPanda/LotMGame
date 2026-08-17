@@ -1,11 +1,10 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { Button, Typewriter, drawPanel } from '@/ui/widgets';
 import {
   COLORS,
   CSS,
-  FONT_BODY,
-  FONT_UI,
   GAME_HEIGHT,
   GAME_WIDTH,
   isPortrait,
@@ -30,12 +29,12 @@ export class DialogueScene extends Phaser.Scene {
   /** Top of the speech panel. Choices stack upward from here. */
   private panelY = 0;
   private portrait!: Phaser.GameObjects.Image;
-  private nameText!: Phaser.GameObjects.Text;
-  private bodyText!: Phaser.GameObjects.Text;
+  private nameText!: PixelText;
+  private bodyText!: PixelText;
   private typewriter!: Typewriter;
   private choiceButtons: Button[] = [];
   private node?: PresentedNode;
-  private continueHint!: Phaser.GameObjects.Text;
+  private continueHint!: PixelText;
 
   constructor() {
     super('Dialogue');
@@ -64,23 +63,19 @@ export class DialogueScene extends Phaser.Scene {
     this.portrait = this.add
       .image(tall ? inset + 52 : 84, panelY + (tall ? 56 : 74), 'portraits', 0)
       .setScale(tall ? 1.5 : 1.6);
-    this.nameText = this.add.text(tall ? inset + 106 : 150, panelY + (tall ? 34 : 18), '', {
-      fontFamily: FONT_BODY,
+    this.nameText = pixelText(this, tall ? inset + 106 : 150, panelY + (tall ? 34 : 18), '', {
       fontSize: tall ? '17px' : '19px',
       color: CSS.brass,
     });
-    this.bodyText = this.add.text(tall ? inset + 20 : 150, panelY + (tall ? 116 : 48), '', {
-      fontFamily: FONT_BODY,
+    this.bodyText = pixelText(this, tall ? inset + 20 : 150, panelY + (tall ? 116 : 48), '', {
       fontSize: '15px',
       color: CSS.parchment,
-      lineSpacing: 6,
       wordWrap: { width: tall ? panelW - 40 : GAME_WIDTH - 210 },
     });
     this.typewriter = new Typewriter(this, this.bodyText, 2, 14);
 
     const hintY = panelY + panelH - 26;
-    this.continueHint = this.add
-      .text(GAME_WIDTH - inset - 24, hintY, '▾', { fontFamily: FONT_UI, fontSize: '16px', color: CSS.brass })
+    this.continueHint = pixelText(this, GAME_WIDTH - inset - 24, hintY, '▾', { fontSize: '16px', color: CSS.brass })
       .setOrigin(0.5)
       .setAlpha(0);
     this.tweens.add({
