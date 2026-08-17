@@ -52,7 +52,9 @@ page.on('console', (message) => {
 });
 page.on('pageerror', (error) => consoleErrors.push(`pageerror: ${error.message}`));
 
-await page.goto(BASE, { waitUntil: 'networkidle' });
+// `domcontentloaded`, not `networkidle`: the real readiness signal is the game
+// booting, which is waited on below, and networkidle can hang behind a proxy.
+await page.goto(BASE, { waitUntil: 'domcontentloaded' });
 await page.waitForFunction(
   () => window.__game?.scene.getScenes(true).some((scene) => scene.scene.key === 'MainMenu'),
   null,
