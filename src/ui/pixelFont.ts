@@ -188,8 +188,10 @@ export interface PixelTextOptions {
   wrap?: number;
   align?: 'left' | 'center' | 'right';
   /**
-   * Shrink a step at a time until the text fits this height. Requires `wrap`.
-   * The point of the fixed-width font: this is decided before drawing.
+   * Hard height budget. Requires `wrap`. The text shrinks a step at a time to
+   * fit, and if it still will not, the overflowing lines are cut and an
+   * ellipsis added — so this is a guarantee, not a preference. The point of the
+   * fixed-width font: all of it is decided before anything is drawn.
    */
   maxHeight?: number;
 
@@ -265,7 +267,21 @@ export class PixelText extends Phaser.GameObjects.BitmapText {
       }
     }
     if (this.fontSize !== fontSizeFor(scale)) this.setFontSize(fontSizeFor(scale));
-    super.setText(wrapLines(this.raw, this.wrapWidth, scale).join('\n'));
+
+    let lines = wrapLines(this.raw, this.wrapWidth, scale);
+    if (this.maxHeight !== undefined) {
+      // Below 2x the font stops being legible, so when shrinking runs out the
+      // text is cut instead. A truncated line the player can read beats a full
+      // one printed across the border of the plate it sits on.
+      const room = Math.max(1, Math.floor(this.maxHeight / lineHeight(scale)));
+      if (lines.length > room) {
+        const limit = charsAcross(this.wrapWidth, scale);
+        lines = lines.slice(0, room);
+        const last = lines[room - 1] ?? '';
+        lines[room - 1] = `${last.slice(0, Math.max(0, limit - 1)).trimEnd()}…`;
+      }
+    }
+    super.setText(lines.join('\n'));
   }
 
   /** Accepts a CSS hex string or a number, matching the old Text API. */

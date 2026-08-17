@@ -77,8 +77,12 @@ export class HudScene extends Phaser.Scene {
     // ends exactly at the right margin instead of past it.
     const meterX = tall ? 8 : meters.x;
     const meterY = tall ? meters.y + 9 : 12;
-    const meterGap = tall ? (meters.width - 16) / 4 : 120;
-    const meterBar = tall ? meterGap - 16 - 48 - 8 : 72;
+    const meterGap = (meters.width - (tall ? 16 : 0)) / 4;
+    // Each meter is icon + optional tag + bar + value. The bar takes what is
+    // left once the fixed parts are paid for — a hard-coded gap is how they
+    // ended up drawn on top of each other in landscape.
+    const tagWidth = tall ? 0 : 3 * 12 + 6;
+    const meterBar = Math.max(24, meterGap - 16 - tagWidth - 48 - 8);
     const tag = (name: string) => (tall ? '' : name);
     this.meters = {
       sanity: new Meter(this, meterX, meterY, tag('SAN'), METER_COLORS.sanity, ICONS.sanity, meterBar),
@@ -147,7 +151,9 @@ export class HudScene extends Phaser.Scene {
 
   /** Landscape keeps the old two buttons tucked into the status strip. */
   private buildLandscapeButtons(): void {
-    const width = 84;
+    // Wide enough for "Journal" at 2x plus the plate's own padding; anything
+    // narrower wraps the label onto a second line it has no room for.
+    const width = 7 * 12 + 16;
     this.tabButtons.push(
       new Button(this, GAME_WIDTH - width * 2 - 14, 8, 'Powers', () => this.openOverlay('AbilityMenu'), {
         width,

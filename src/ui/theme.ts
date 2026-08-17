@@ -91,9 +91,17 @@ export function mapRect(): Rect {
   return { x: 0, y: PANES.status, width: GAME_WIDTH, height: PANES.map };
 }
 
-/** The meter row, directly under the map. */
+/**
+ * The meter row. Portrait gives it a band of its own under the map; landscape
+ * squeezes it into the status strip between the rank block on the left and the
+ * two buttons on the right, so it has to stop short of them.
+ */
 export function metersRect(): Rect {
-  if (!isPortrait()) return { x: 168, y: 12, width: GAME_WIDTH - 300, height: 36 };
+  if (!isPortrait()) {
+    const left = 168;
+    const buttons = 2 * (7 * 12 + 16) + 22;
+    return { x: left, y: 12, width: GAME_WIDTH - left - buttons, height: 36 };
+  }
   return { x: 0, y: PANES.status + PANES.map, width: GAME_WIDTH, height: PANES.meters };
 }
 

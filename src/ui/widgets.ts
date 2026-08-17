@@ -160,17 +160,24 @@ export class Button extends Phaser.GameObjects.Container {
     const labelX = align === 'center' ? padLeft + textWidth / 2 : padLeft;
     const originX = align === 'center' ? 0.5 : 0;
 
-    const subtitleHeight = subtitle ? textHeight(subtitle, textWidth, SCALES.md) + 4 : 0;
+    // Both lines are given a hard height budget adding up to the plate, so a
+    // label that wraps further than expected is cut rather than printed across
+    // the button's own border.
+    const budget = height - 8;
+    const oneLine = lineHeight(SCALES.md);
+    const wantedSubtitle = subtitle ? textHeight(subtitle, textWidth, SCALES.md) : 0;
+    const subtitleBudget = subtitle ? Math.min(wantedSubtitle, Math.max(oneLine, budget - oneLine)) : 0;
+
     this.label = pixelText(scene, labelX, 0, text, {
       size: fontSize >= 22 ? 'lg' : 'md',
       color: CSS.parchment,
       align,
       wrap: textWidth,
-      maxHeight: Math.max(lineHeight(SCALES.md), height - 8 - subtitleHeight),
+      maxHeight: Math.max(oneLine, budget - (subtitle ? subtitleBudget + 4 : 0)),
     }).setOrigin(originX, 0);
     this.add(this.label);
 
-    const block = this.label.height + subtitleHeight;
+    const block = this.label.height + (subtitle ? subtitleBudget + 4 : 0);
     this.label.y = Math.max(4, (height - block) / 2);
 
     if (subtitle) {
@@ -179,6 +186,7 @@ export class Button extends Phaser.GameObjects.Container {
         color: CSS.muted,
         align,
         wrap: textWidth,
+        maxHeight: subtitleBudget,
       }).setOrigin(originX, 0);
       this.add(this.subtitle);
     }

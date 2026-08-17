@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Portrait + touch regression test.
+// Touch regression test: portrait first, then landscape and back.
 //
 // The bug this exists to catch: Phaser hit-tests a Container as though it were
 // a centre-origin sprite (it adds `displayOriginX/Y` to the local point), while
@@ -13,10 +13,17 @@
 // separately asserts that every interactive container's hit area agrees with
 // its rendered bounds.
 //
+// It also checks that no text leaves the box it belongs to — the board, a
+// scrolling list's viewport, or a button's own plate. That last one is the case
+// that bites: a label wrapping onto a second line inside a 38px button is not
+// off the screen, it is printed across the button's border, and nothing about
+// the board's bounds notices.
+//
 //   npm run build && npm run preview &
 //   node tools/touchtest.mjs [baseUrl]
 import fs from 'node:fs';
 import { chromium } from 'playwright';
+import { collectOverflows, openPanel, panelFixtures, panelList } from './lib/text-fit.mjs';
 
 const BASE = process.argv[2] ?? 'http://127.0.0.1:4173/LotMGame/';
 
@@ -142,61 +149,14 @@ const checkAlignment = async (sceneKey) => {
 };
 
 /**
- * Nothing may draw text outside the box it belongs to.
- *
- * The pixel font is fixed-width precisely so this is decidable, and a phone is
- * where an overflowing line actually costs you the word. Panels declare their
- * pane; text is checked against it.
+ * Nothing may draw text outside the box it belongs to — see tools/lib/text-fit.
  */
 const checkTextFits = async (sceneKey, label) => {
-  const overflows = await page.evaluate((key) => {
-    const game = window.__game;
-    const scene = game.scene.getScene(key);
-    if (!scene || !scene.scene.isActive()) return [];
-    const board = { width: game.scale.gameSize.width, height: game.scale.gameSize.height };
-
-    const found = [];
-    // `clip` is the box the object is actually visible in. A scrolling list
-    // publishes its own, because content below the fold is meant to be cut off
-    // — that is not an overflow, and only the list's own box has to fit.
-    const walk = (object, clip) => {
-      if (object.type === 'Container') {
-        const own = object.getData?.('clipRect');
-        const next = own
-          ? {
-              left: Math.max(clip.left, own.x),
-              right: Math.min(clip.right, own.x + own.width),
-              // A scrolling list clips vertically on purpose — rows below the
-              // fold are reachable by dragging, not lost. Only its sideways
-              // bounds are a layout promise.
-              top: own.scrolls ? -Infinity : Math.max(clip.top, own.y),
-              bottom: own.scrolls ? Infinity : Math.min(clip.bottom, own.y + own.height),
-            }
-          : clip;
-        for (const child of object.list) walk(child, next);
-        return;
-      }
-      if (object.type !== 'BitmapText' || !object.text) return;
-      const bounds = object.getBounds();
-      // A tolerance of one board pixel: origins and rounding land on halves.
-      const over = [];
-      if (bounds.left < clip.left - 1) over.push(`left ${Math.round(bounds.left)} < ${clip.left}`);
-      if (bounds.right > clip.right + 1) over.push(`right ${Math.round(bounds.right)} > ${clip.right}`);
-      if (bounds.top < clip.top - 1) over.push(`top ${Math.round(bounds.top)} < ${clip.top}`);
-      if (bounds.bottom > clip.bottom + 1) over.push(`bottom ${Math.round(bounds.bottom)} > ${clip.bottom}`);
-      if (over.length) {
-        found.push({ text: object.text.split('\n')[0].slice(0, 40), over: over.join(', ') });
-      }
-    };
-    const board_ = { left: 0, top: 0, right: board.width, bottom: board.height };
-    for (const object of scene.children.list) walk(object, board_);
-    return found;
-  }, sceneKey);
-
+  const overflows = await page.evaluate(collectOverflows, sceneKey);
   check(
-    `${label}: all text inside the board`,
-    overflows.length === 0,
-    overflows.map((o) => `"${o.text}" (${o.over})`).join(' | '),
+    `${label}: all text inside its box`,
+    overflows !== null && overflows.length === 0,
+    overflows === null ? `${sceneKey} was not active` : overflows.join(' | '),
   );
 };
 
@@ -260,54 +220,10 @@ await checkTextFits('AbilityMenu', 'Powers');
 await tapWidget('Hud', 'POWER');
 await page.waitForTimeout(300);
 
-/**
- * Launch an overlay directly and check its text fits.
- *
- * Reaching some of these by play takes a whole case; the layouts still have to
- * hold, so they are opened straight from the scene manager with plausible data.
- */
-const openOverlay = (key, data) =>
-  page.evaluate(
-    ({ key, data }) => {
-      const game = window.__game;
-      for (const scene of game.scene.getScenes(true)) {
-        if (!['World', 'Hud'].includes(scene.scene.key)) scene.scene.stop();
-      }
-      const world = game.scene.getScene('World');
-      if (world.scene.isActive()) world.scene.pause();
-      world.scene.launch(key, data);
-    },
-    { key, data },
-  );
-
-/** Pick real content out of the loaded data, so the panels have real text. */
-const fixtures = await page.evaluate(() => {
-  const session = window.__game.registry.get('session');
-  const map = session.content.map('club_hub');
-  const anyMapWithHotspot = [...session.content.maps.values()].find((m) => m.hotspots?.length);
-  const tree = [...session.content.dialogue.keys()][0];
-  const encounter = [...session.content.encounters.keys()][0];
-  return {
-    treeId: tree,
-    hotspot: anyMapWithHotspot?.hotspots[0],
-    mapId: anyMapWithHotspot?.id,
-    encounterId: encounter,
-    npc: map.npcs?.[0]?.id,
-  };
-});
-
 console.log('\n7. Every panel keeps its text inside the pane');
-const panels = [
-  ['Dialogue', { treeId: fixtures.treeId, speaker: fixtures.npc }],
-  ['Examine', { hotspot: fixtures.hotspot, mapId: fixtures.mapId, witnessed: false }],
-  ['Shop', { vendor: 'club' }],
-  ['Encounter', { encounterId: fixtures.encounterId }],
-  ['Training', {}],
-  ['Inquiry', {}],
-  ['Ritual', {}],
-];
-for (const [key, data] of panels) {
-  await openOverlay(key, data);
+const fixtures = await page.evaluate(panelFixtures);
+for (const [key, data] of panelList(fixtures)) {
+  await page.evaluate(openPanel, { key, data });
   // Dialogue types its line out; give every panel time to settle.
   await page.waitForTimeout(1200);
   await checkTextFits(key, key);
@@ -320,7 +236,55 @@ await page.evaluate(() => {
   }
 });
 
-console.log('\n8. No runtime errors');
+console.log('\n8. Turning the phone sideways, and back');
+const boardSize = () =>
+  page.evaluate(() => [window.__game.scale.gameSize.width, window.__game.scale.gameSize.height]);
+const runState = () =>
+  page.evaluate(() => {
+    const state = window.__game.registry.get('session').state;
+    return { map: state.currentMap, day: state.day, pence: state.pence };
+  });
+
+const before = await runState();
+await page.setViewportSize({ width: 844, height: 390 });
+await page.waitForTimeout(900);
+const landscape = await boardSize();
+check('rotating gives a landscape board', landscape[0] > landscape[1], landscape.join('x'));
+
+// Landscape re-lays-out from the same code, and has its own boxes to fit.
+await checkTextFits('Hud', 'Landscape HUD');
+for (const [key, data] of panelList(fixtures)) {
+  await page.evaluate(openPanel, { key, data });
+  await page.waitForTimeout(900);
+  await checkTextFits(key, `Landscape ${key}`);
+}
+await page.evaluate(() => {
+  const game = window.__game;
+  for (const scene of game.scene.getScenes(true)) {
+    if (!['World', 'Hud'].includes(scene.scene.key)) scene.scene.stop();
+  }
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+
+await page.setViewportSize({ width: 390, height: 844 });
+await page.waitForTimeout(900);
+const returned = await boardSize();
+check('rotating back gives a portrait board', returned[1] > returned[0], returned.join('x'));
+
+// Every scene is rebuilt on rotation; the run itself lives on the registry and
+// must come through untouched.
+const after = await runState();
+check(
+  'the run survives two rotations',
+  after.map === before.map && after.day === before.day && after.pence === before.pence,
+  `${JSON.stringify(before)} -> ${JSON.stringify(after)}`,
+);
+await tapStep('a tab still works after rotating', 'Hud', 'NOTES', (list) => list.includes('Journal'));
+await tapWidget('Hud', 'NOTES');
+await page.waitForTimeout(300);
+
+console.log('\n9. No runtime errors');
 check('console clean', consoleErrors.length === 0, consoleErrors.join(' | '));
 
 await browser.close();
@@ -330,4 +294,4 @@ if (failures.length) {
   for (const failure of failures) console.log(`  - ${failure}`);
   process.exit(1);
 }
-console.log('\nAll portrait touch checks passed.');
+console.log('\nAll touch and layout checks passed.');
