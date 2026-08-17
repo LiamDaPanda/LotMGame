@@ -118,13 +118,13 @@ export class InquiryScene extends Phaser.Scene {
 
     if (rows.length === 0) {
       const container = this.add.container(0, 0);
-      container.setSize(width, 40);
-      container.add(
-        pixelText(this, 0, 8, 'Nothing to chase up. Take a case first.', {
-          fontSize: '13px',
-          color: CSS.muted,
-        }),
-      );
+      const label = pixelText(this, 0, 8, 'Nothing to chase up. Take a case first.', {
+        size: 'md',
+        color: CSS.muted,
+        wrap: width,
+      });
+      container.setSize(width, label.height + 16);
+      container.add(label);
       rows.push(container);
     }
 

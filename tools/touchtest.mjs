@@ -258,7 +258,67 @@ await checkTextFits('AbilityMenu', 'Powers');
 await tapWidget('Hud', 'POWER');
 await page.waitForTimeout(300);
 
-console.log('\n7. No runtime errors');
+/**
+ * Launch an overlay directly and check its text fits.
+ *
+ * Reaching some of these by play takes a whole case; the layouts still have to
+ * hold, so they are opened straight from the scene manager with plausible data.
+ */
+const openOverlay = (key, data) =>
+  page.evaluate(
+    ({ key, data }) => {
+      const game = window.__game;
+      for (const scene of game.scene.getScenes(true)) {
+        if (!['World', 'Hud'].includes(scene.scene.key)) scene.scene.stop();
+      }
+      const world = game.scene.getScene('World');
+      if (world.scene.isActive()) world.scene.pause();
+      world.scene.launch(key, data);
+    },
+    { key, data },
+  );
+
+/** Pick real content out of the loaded data, so the panels have real text. */
+const fixtures = await page.evaluate(() => {
+  const session = window.__game.registry.get('session');
+  const map = session.content.map('club_hub');
+  const anyMapWithHotspot = [...session.content.maps.values()].find((m) => m.hotspots?.length);
+  const tree = [...session.content.dialogue.keys()][0];
+  const encounter = [...session.content.encounters.keys()][0];
+  return {
+    treeId: tree,
+    hotspot: anyMapWithHotspot?.hotspots[0],
+    mapId: anyMapWithHotspot?.id,
+    encounterId: encounter,
+    npc: map.npcs?.[0]?.id,
+  };
+});
+
+console.log('\n7. Every panel keeps its text inside the pane');
+const panels = [
+  ['Dialogue', { treeId: fixtures.treeId, speaker: fixtures.npc }],
+  ['Examine', { hotspot: fixtures.hotspot, mapId: fixtures.mapId, witnessed: false }],
+  ['Shop', { vendor: 'club' }],
+  ['Encounter', { encounterId: fixtures.encounterId }],
+  ['Training', {}],
+  ['Inquiry', {}],
+  ['Ritual', {}],
+];
+for (const [key, data] of panels) {
+  await openOverlay(key, data);
+  // Dialogue types its line out; give every panel time to settle.
+  await page.waitForTimeout(1200);
+  await checkTextFits(key, key);
+  await checkAlignment(key);
+}
+await page.evaluate(() => {
+  const game = window.__game;
+  for (const scene of game.scene.getScenes(true)) {
+    if (!['World', 'Hud'].includes(scene.scene.key)) scene.scene.stop();
+  }
+});
+
+console.log('\n8. No runtime errors');
 check('console clean', consoleErrors.length === 0, consoleErrors.join(' | '));
 
 await browser.close();

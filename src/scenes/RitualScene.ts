@@ -154,23 +154,32 @@ export class RitualScene extends Phaser.Scene {
   private requirementRow(text: string, detail: string | undefined, met: boolean): Phaser.GameObjects.Container {
     const width = this.w - 48;
     const container = this.add.container(0, 0);
-    container.setSize(width, 34);
     const bg = this.add.graphics();
-    bg.fillStyle(COLORS.panelLight, met ? 0.5 : 0.25);
-    bg.fillRoundedRect(0, 0, width, 34, 4);
     container.add(bg);
-    container.add(
-      pixelText(this, 12, 9, text, {
-        fontSize: '13px',
-        color: met ? CSS.good : CSS.muted,
-      }),
-    );
+
+    // Requirement labels are a sentence long, so the row grows to hold them
+    // rather than letting them run out past the panel's edge.
+    const label = pixelText(this, 12, 8, text, {
+      size: 'md',
+      color: met ? CSS.good : CSS.muted,
+      wrap: width - 24,
+    });
+    container.add(label);
+    let height = label.height + 16;
+
     if (detail) {
-      container.add(
-        pixelText(this, width - 12, 9, detail, { fontSize: '12px', color: CSS.muted })
-          .setOrigin(1, 0),
-      );
+      const note = pixelText(this, 12, 8 + label.height + 2, detail, {
+        size: 'md',
+        color: CSS.muted,
+        wrap: width - 24,
+      });
+      container.add(note);
+      height = note.y + note.height + 8;
     }
+
+    container.setSize(width, height);
+    bg.fillStyle(COLORS.panelLight, met ? 0.5 : 0.25);
+    bg.fillRoundedRect(0, 0, width, height, 4);
     return container;
   }
 

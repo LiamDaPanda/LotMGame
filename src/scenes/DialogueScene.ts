@@ -2,14 +2,7 @@ import Phaser from 'phaser';
 import { PixelText, pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { Button, Typewriter, drawPanel } from '@/ui/widgets';
-import {
-  COLORS,
-  CSS,
-  GAME_HEIGHT,
-  GAME_WIDTH,
-  isPortrait,
-  minTapHeight,
-} from '@/ui/theme';
+import { COLORS, CSS, isPortrait, menuRect, minTapHeight } from '@/ui/theme';
 import type { PresentedNode } from '@/systems/DialogueSystem';
 
 interface DialogueSceneData {
@@ -43,8 +36,11 @@ export class DialogueScene extends Phaser.Scene {
   create(data: DialogueSceneData): void {
     this.session = Session.get(this);
 
+    // Tapping anywhere in the panel pane advances the line — the whole bottom
+    // screen is the "next" button, which is what a thumb expects.
+    const pane = menuRect();
     this.add
-      .rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.6)
+      .rectangle(pane.x, pane.y, pane.width, pane.height, COLORS.ink, 0.85)
       .setOrigin(0, 0)
       .setInteractive()
       .on('pointerdown', () => this.onTapBackdrop());
@@ -53,29 +49,32 @@ export class DialogueScene extends Phaser.Scene {
     // mode puts the speaker's face and name on their own line and gives the
     // line itself the full width of the panel.
     const tall = isPortrait();
-    const inset = tall ? 12 : 20;
-    const panelW = GAME_WIDTH - inset * 2;
-    const panelH = tall ? 300 : 210;
-    this.panelY = GAME_HEIGHT - panelH - 20;
+    const inset = pane.x + (tall ? 8 : 20);
+    const panelW = pane.width - (tall ? 16 : 40);
+    // The speech panel sits at the bottom of the pane; choices stack upward
+    // from its top edge, so it takes only what it needs.
+    const panelH = tall ? Math.round(pane.height * 0.62) : 210;
+    this.panelY = pane.y + pane.height - panelH - 8;
     const panelY = this.panelY;
     drawPanel(this, inset, panelY, panelW, panelH);
 
     this.portrait = this.add
-      .image(tall ? inset + 52 : 84, panelY + (tall ? 56 : 74), 'portraits', 0)
-      .setScale(tall ? 1.5 : 1.6);
-    this.nameText = pixelText(this, tall ? inset + 106 : 150, panelY + (tall ? 34 : 18), '', {
-      fontSize: tall ? '17px' : '19px',
+      .image(inset + 40, panelY + 40, 'portraits', 0)
+      .setScale(tall ? 1.1 : 1.6);
+    this.nameText = pixelText(this, inset + 86, panelY + 30, '', {
+      size: 'md',
       color: CSS.brass,
+      wrap: panelW - 96,
     });
-    this.bodyText = pixelText(this, tall ? inset + 20 : 150, panelY + (tall ? 116 : 48), '', {
-      fontSize: '15px',
+    this.bodyText = pixelText(this, inset + 14, panelY + 84, '', {
+      size: 'md',
       color: CSS.parchment,
-      wordWrap: { width: tall ? panelW - 40 : GAME_WIDTH - 210 },
+      wrap: panelW - 28,
     });
     this.typewriter = new Typewriter(this, this.bodyText, 2, 14);
 
-    const hintY = panelY + panelH - 26;
-    this.continueHint = pixelText(this, GAME_WIDTH - inset - 24, hintY, '▾', { fontSize: '16px', color: CSS.brass })
+    const hintY = panelY + panelH - 20;
+    this.continueHint = pixelText(this, inset + panelW - 20, hintY, '▾', { size: 'md', color: CSS.brass })
       .setOrigin(0.5)
       .setAlpha(0);
     this.tweens.add({
@@ -123,13 +122,21 @@ export class DialogueScene extends Phaser.Scene {
 
     // Choices sit above the text panel, tallest stack first so the newest
     // option is always nearest the thumb.
+    const pane = menuRect();
     const tall = isPortrait();
-    const inset = tall ? 12 : 100;
-    const width = GAME_WIDTH - inset * 2;
-    const height = tall ? minTapHeight() : 40;
-    const gap = 6;
+    const inset = pane.x + (tall ? 8 : 100);
+    const width = pane.width - (tall ? 16 : 200);
+    const gap = 5;
+    // Choices share whatever the speech panel left above it, so a node with six
+    // of them still fits rather than running off the top of the pane.
+    const room = this.panelY - 8 - pane.y - 4;
+    const height = Phaser.Math.Clamp(
+      Math.floor(room / node.choices.length) - gap,
+      28,
+      tall ? minTapHeight() : 40,
+    );
     const total = node.choices.length * (height + gap);
-    let y = this.panelY - 10 - total;
+    let y = this.panelY - 8 - total;
 
     for (const choice of node.choices) {
       const button = new Button(

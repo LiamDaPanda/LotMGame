@@ -201,10 +201,9 @@ export class ExamineScene extends Phaser.Scene {
 
   private noteRow(text: string, width: number): Phaser.GameObjects.Container {
     const container = this.add.container(0, 0);
-    container.setSize(width, 30);
-    container.add(
-      pixelText(this, 0, 6, text, { fontSize: '13px', color: CSS.muted }),
-    );
+    const label = pixelText(this, 0, 6, text, { size: 'md', color: CSS.muted, wrap: width });
+    container.setSize(width, label.height + 12);
+    container.add(label);
     return container;
   }
 

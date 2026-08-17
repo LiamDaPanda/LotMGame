@@ -7,7 +7,6 @@ import { TileGrid, type Point } from '@/world/TileGrid';
 import {
   COLORS,
   CSS,
-  GAME_WIDTH,
   ICONS,
   TILE_SIZE,
   isPortrait,
@@ -334,14 +333,22 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private announceRoom(): void {
-    const banner = pixelText(this, GAME_WIDTH / 2, 64, this.map.name, {
-        fontSize: '20px',
-        color: CSS.brass,
-      })
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(7000);
-    banner.setShadow(0, 2, '#000000', 4);
+    // Screen space, so it sits at the top of the map pane rather than moving
+    // with the room. It gets its own band: the names of everyone standing about
+    // are drawn in the same brass, and without one they read as a single line.
+    const view = mapRect();
+    const label = pixelText(this, view.width / 2, 14, this.map.name, {
+      size: 'md',
+      color: CSS.brass,
+      align: 'center',
+      wrap: view.width - 24,
+    }).setOrigin(0.5, 0);
+
+    const band = this.add
+      .rectangle(0, 6, view.width, label.height + 16, COLORS.ink, 0.72)
+      .setOrigin(0, 0);
+
+    const banner = this.add.container(0, 0, [band, label]).setScrollFactor(0).setDepth(7000);
     this.tweens.add({ targets: banner, alpha: 0, delay: 1800, duration: 700, onComplete: () => banner.destroy() });
   }
 
