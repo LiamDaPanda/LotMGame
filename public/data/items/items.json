@@ -6,7 +6,15 @@
     "description": "Four ingredients and a method, copied in the Hermit's hand. The Club sells these at cost and still makes a profit on what you must buy to fill them.",
     "pricePence": 1440,
     "icon": 11,
-    "requires": { "caseState": { "caseId": "case-01-ninth-bell", "state": "resolved" } }
+    "requires": {
+      "caseState": {
+        "caseId": "case-01-ninth-bell",
+        "state": "resolved"
+      }
+    },
+    "vendors": [
+      "club"
+    ]
   },
   {
     "id": "potion_clown",
@@ -15,7 +23,12 @@
     "description": "Brewed to the formula by the Club's own hand. Drinking it is the easy part.",
     "pricePence": 2880,
     "icon": 8,
-    "requires": { "item": "formula_clown" }
+    "requires": {
+      "item": "formula_clown"
+    },
+    "vendors": [
+      "club"
+    ]
   },
   {
     "id": "formula_magician",
@@ -24,7 +37,12 @@
     "description": "The next rung, written out. The Star will not sell it to a Sequence 9.",
     "pricePence": 4320,
     "icon": 11,
-    "requires": { "sequenceAtMost": 8 }
+    "requires": {
+      "sequenceAtMost": 8
+    },
+    "vendors": [
+      "club"
+    ]
   },
   {
     "id": "potion_magician",
@@ -33,7 +51,12 @@
     "description": "Heavier than it looks, and colder than the room.",
     "pricePence": 8640,
     "icon": 8,
-    "requires": { "item": "formula_magician" }
+    "requires": {
+      "item": "formula_magician"
+    },
+    "vendors": [
+      "club"
+    ]
   },
   {
     "id": "formula_faceless",
@@ -42,7 +65,12 @@
     "description": "Three of its four ingredients are ordinary. The fourth is a name, freely given.",
     "pricePence": 12960,
     "icon": 11,
-    "requires": { "sequenceAtMost": 7 }
+    "requires": {
+      "sequenceAtMost": 7
+    },
+    "vendors": [
+      "club"
+    ]
   },
   {
     "id": "potion_faceless",
@@ -51,7 +79,12 @@
     "description": "The Star hands it over without looking at you, which is not like her.",
     "pricePence": 21600,
     "icon": 8,
-    "requires": { "item": "formula_faceless" }
+    "requires": {
+      "item": "formula_faceless"
+    },
+    "vendors": [
+      "club"
+    ]
   },
   {
     "id": "warding_chalk",
@@ -60,7 +93,10 @@
     "description": "A stick of consecrated chalk. Draw the circle before you drink, every time, no matter how late it is.",
     "pricePence": 96,
     "sellPence": 24,
-    "icon": 10
+    "icon": 10,
+    "vendors": [
+      "club"
+    ]
   },
   {
     "id": "sealed_watch",
@@ -92,5 +128,71 @@
     "kind": "mundane",
     "description": "Constable Rell's ring of keys for the Halloway premises, lent for the afternoon and not one minute past it.",
     "icon": 9
+  },
+  {
+    "id": "grey_formula_clown",
+    "name": "Clown Formula (copied)",
+    "kind": "ritual",
+    "description": "The same four ingredients in a stranger's hand, on paper that has been folded too many times. Cheaper. Probably correct.",
+    "pricePence": 900,
+    "icon": 11,
+    "vendors": [
+      "market"
+    ],
+    "heat": 4,
+    "patter": "'Same words,' he says. 'Different penmanship. You're paying for the words.'"
+  },
+  {
+    "id": "cheap_reagents",
+    "name": "Doubtful Reagents",
+    "kind": "ritual",
+    "description": "Enough to brew one potion, at about the purity the label does not claim. The Club would not sign for these.",
+    "pricePence": 1200,
+    "sellPence": 300,
+    "icon": 8,
+    "vendors": [
+      "market"
+    ],
+    "heat": 5,
+    "patter": "He does not tell you where they came from and you decide not to develop a theory."
+  },
+  {
+    "id": "forged_warrant",
+    "name": "Forged Warrant",
+    "kind": "document",
+    "description": "A constabulary warrant with a real seal and an invented name. Good for one door, and only if nobody reads past the seal.",
+    "pricePence": 720,
+    "icon": 11,
+    "vendors": [
+      "market"
+    ],
+    "heat": 8,
+    "patter": "'The seal's genuine,' he says, which is not the same as the warrant being genuine, and he knows you noticed."
+  },
+  {
+    "id": "lockpicks",
+    "name": "Set of Picks",
+    "kind": "mundane",
+    "description": "Steel, worn smooth. Carrying them is itself an offence, which is why they are sold in an alley.",
+    "pricePence": 384,
+    "sellPence": 120,
+    "icon": 9,
+    "vendors": [
+      "market"
+    ],
+    "heat": 3
+  },
+  {
+    "id": "laudanum",
+    "name": "Bottle of Laudanum",
+    "kind": "mundane",
+    "description": "Steadies a spirit body that has been asked to do too much. Everybody in this city is on it and nobody discusses it.",
+    "pricePence": 168,
+    "icon": 8,
+    "vendors": [
+      "club",
+      "market"
+    ],
+    "heat": 1
   }
 ]

@@ -4,7 +4,7 @@
  * means game logic stays testable without booting a scene.
  */
 
-import type { CaseState, ResolutionGrade } from '@/types/schema';
+import type { CaseState, ResolutionGrade, SkillId } from '@/types/schema';
 
 export interface GameEvents {
   'stat:changed': { stat: 'sanity' | 'spirituality' | 'concealment' | 'digestion'; value: number; max: number; delta: number };
@@ -17,6 +17,8 @@ export interface GameEvents {
   'objective:completed': { caseId: string; objectiveId: string };
   'sequence:changed': { sequence: number; title: string };
   'trust:changed': { member: string; value: number; delta: number };
+  'skill:changed': { skill: SkillId; value: number; delta: number };
+  'encounter:started': { encounterId: string };
   'ability:used': { abilityId: string; success: boolean; reason?: string };
   /** Transient message for the HUD ticker. */
   notice: { text: string; tone?: 'info' | 'good' | 'bad' | 'occult' };

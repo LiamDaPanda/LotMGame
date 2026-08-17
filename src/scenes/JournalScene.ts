@@ -1,9 +1,10 @@
 import Phaser from 'phaser';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
+import { MAX_SKILL, SKILLS } from '@/systems/Skills';
 import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
 import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS } from '@/ui/theme';
-import type { ClueData } from '@/types/schema';
+import { SKILL_IDS, type ClueData } from '@/types/schema';
 
 type Tab = 'case' | 'board' | 'powers' | 'effects' | 'club';
 
@@ -427,6 +428,21 @@ export class JournalScene extends Phaser.Scene {
 
     const rows: Phaser.GameObjects.Container[] = [];
     rows.push(this.paragraphRow(state.sequenceData?.description ?? '', bounds.width));
+
+    // Skills live beside powers: both are "what you can do", and seeing the
+    // trained numbers next to the occult ones keeps training feeling relevant.
+    rows.push(this.headingRow('Trained skills', bounds.width));
+    for (const id of SKILL_IDS) {
+      const info = SKILLS[id];
+      const level = state.skill(id);
+      rows.push(
+        this.conclusionRow(
+          `${info.name}   ${'●'.repeat(level)}${'○'.repeat(MAX_SKILL - level)}   ${level}/${MAX_SKILL}`,
+          `${info.summary}\n${info.benefit}`,
+          bounds.width,
+        ),
+      );
+    }
 
     rows.push(this.headingRow('Powers', bounds.width));
     for (const ability of this.session.abilities.available()) {

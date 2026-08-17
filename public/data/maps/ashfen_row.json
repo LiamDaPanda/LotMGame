@@ -2,6 +2,7 @@
   "id": "ashfen_row",
   "name": "Ashfen Row",
   "ambient": "#2c3a52",
+  "encounterChance": 0.45,
   "legend": {
     "#": { "floor": 8, "collide": true },
     ":": { "floor": 1 },
@@ -41,7 +42,7 @@
     },
     {
       "id": "row_notice",
-      "x": 20,
+      "x": 22,
       "y": 8,
       "name": "Parish Notice",
       "description": "A constabulary bill, pasted crooked: EZRA HALLOWAY, of this parish, died the fifteenth instant. Any person with information &c. Somebody has written a rude word across it and somebody else has half scrubbed it off."
@@ -57,6 +58,15 @@
   ],
   "exits": [
     { "x": 9, "y": 1, "toMap": "club_hub", "toX": 9, "toY": 13, "label": "The Club" },
+    {
+      "x": 20,
+      "y": 8,
+      "toMap": "crookback_alley",
+      "toX": 3,
+      "toY": 7,
+      "label": "Crookback Alley",
+      "requires": { "flag": "knows_crookback" }
+    },
     {
       "x": 10,
       "y": 8,

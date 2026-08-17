@@ -48,11 +48,15 @@ const abilityFiles = index.abilities.map((name) => read(`abilities/${name}.json`
 const cases = index.cases.map((name) => read(`cases/${name}.json`)).filter(Boolean);
 const maps = index.maps.map((name) => read(`maps/${name}.json`)).filter(Boolean);
 const dialogueFiles = index.dialogue.map((name) => read(`dialogue/${name}.json`)).filter(Boolean);
+const encounterFiles = (index.encounters ?? [])
+  .map((name) => read(`encounters/${name}.json`))
+  .filter(Boolean);
 const items = read(`items/${index.items}.json`) ?? [];
 const characters = read(`characters/${index.characters}.json`) ?? [];
 
 const abilities = abilityFiles.flat();
 const dialogues = dialogueFiles.flat();
+const encounters = encounterFiles.flat();
 
 const abilityIds = new Set(abilities.map((a) => a.id));
 const itemIds = new Set(items.map((i) => i.id));
@@ -67,8 +71,23 @@ const allDeductionIds = new Set(cases.flatMap((c) => c.deductions.map((d) => d.i
 // Shared reference checks
 // ---------------------------------------------------------------------------
 
+const SKILLS = new Set(['observation', 'rhetoric', 'occultism', 'streetwise']);
+const METHODS = new Set(['ask_around', 'informant', 'stakeout', 'archives']);
+
+function checkSkillCheck(check, where) {
+  if (!check) return;
+  if (!SKILLS.has(check.skill)) fail(`${where}: unknown skill "${check.skill}"`);
+  if (typeof check.base !== 'number' || check.base < 0 || check.base > 1) {
+    fail(`${where}: base odds must be between 0 and 1`);
+  }
+}
+
 function checkCondition(condition, where) {
   if (!condition) return;
+  for (const option of condition.anyOf ?? []) checkCondition(option, `${where} (anyOf)`);
+  if (condition.skillAtLeast && !SKILLS.has(condition.skillAtLeast.skill)) {
+    fail(`${where}: unknown skill "${condition.skillAtLeast.skill}"`);
+  }
   if (condition.ability && !abilityIds.has(condition.ability)) {
     fail(`${where}: unknown ability "${condition.ability}"`);
   }
@@ -102,6 +121,9 @@ function checkEffect(effect, where) {
   }
   for (const member of Object.keys(effect.trust ?? {})) {
     if (!characterIds.has(member)) fail(`${where}: trust with unknown character "${member}"`);
+  }
+  for (const skill of Object.keys(effect.skills ?? {})) {
+    if (!SKILLS.has(skill)) fail(`${where}: unknown skill "${skill}"`);
   }
 }
 
@@ -177,6 +199,15 @@ for (const caseData of cases) {
   for (const deduction of caseData.deductions) {
     for (const id of deduction.unlocksClues ?? []) obtainableClues.add(id);
   }
+  for (const lead of caseData.leads ?? []) {
+    for (const id of lead.grants ?? []) obtainableClues.add(id);
+  }
+}
+for (const encounter of encounters) {
+  for (const option of encounter.options ?? []) {
+    for (const id of option.success?.effect?.clues ?? []) obtainableClues.add(id);
+    for (const id of option.failure?.effect?.clues ?? []) obtainableClues.add(id);
+  }
 }
 
 for (const caseData of cases) {
@@ -234,10 +265,67 @@ for (const caseData of cases) {
     );
   }
 
+  const leadIds = new Set();
+  for (const lead of caseData.leads ?? []) {
+    const where = `${caseData.id} lead "${lead.id}"`;
+    if (leadIds.has(lead.id)) fail(`${where}: duplicate lead id`);
+    leadIds.add(lead.id);
+    if (!METHODS.has(lead.method)) fail(`${where}: unknown method "${lead.method}"`);
+    for (const id of lead.grants ?? []) {
+      if (!clueIds.has(id)) fail(`${where}: grants clue "${id}" that is not part of this case`);
+    }
+    checkSkillCheck(lead.check, where);
+    checkCondition(lead.requires, where);
+    checkEffect(lead.successEffect, where);
+    checkEffect(lead.failureEffect, where);
+    // A lead that costs nothing and cannot fail is a free clue, not legwork.
+    if (!lead.costPence && !lead.days && !lead.check) {
+      warn(`${where}: costs nothing and cannot fail.`);
+    }
+  }
+
   for (const mapId of caseData.maps) {
     if (!mapIds.has(mapId)) fail(`${caseData.id}: unknown map "${mapId}"`);
   }
   checkCondition(caseData.requires, `${caseData.id} requires`);
+}
+
+// ---------------------------------------------------------------------------
+// Encounters
+// ---------------------------------------------------------------------------
+
+const encounterIds = new Set();
+for (const encounter of encounters) {
+  const where = `Encounter "${encounter.id}"`;
+  if (encounterIds.has(encounter.id)) fail(`${where}: duplicate id`);
+  encounterIds.add(encounter.id);
+  if (!(encounter.weight > 0)) fail(`${where}: weight must be positive`);
+  checkCondition(encounter.requires, where);
+  for (const mapId of encounter.maps ?? []) {
+    if (!mapIds.has(mapId)) fail(`${where}: unknown map "${mapId}"`);
+  }
+  if (!encounter.options?.length) fail(`${where}: has no options — the player would be stuck.`);
+
+  let hasUnconditional = false;
+  for (const option of encounter.options ?? []) {
+    checkCondition(option.requires, `${where} option "${option.text}"`);
+    checkSkillCheck(option.check, `${where} option "${option.text}"`);
+    checkEffect(option.success?.effect, `${where} option "${option.text}" success`);
+    checkEffect(option.failure?.effect, `${where} option "${option.text}" failure`);
+    if (option.useAbility && !abilityIds.has(option.useAbility)) {
+      fail(`${where}: unknown ability "${option.useAbility}"`);
+    }
+    if (!option.success) fail(`${where} option "${option.text}": missing a success outcome`);
+    if (option.check && !option.failure) {
+      warn(`${where} option "${option.text}": can fail but defines no failure outcome.`);
+    }
+    if (!option.requires && !option.useAbility && option.costPence === undefined) {
+      hasUnconditional = true;
+    }
+  }
+  if (!hasUnconditional) {
+    fail(`${where}: every option is gated — a player with nothing could not leave.`);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -379,8 +467,10 @@ for (const tree of dialogues) {
 for (const message of warnings) console.warn(`  warn   ${message}`);
 for (const message of problems) console.error(`  ERROR  ${message}`);
 
+const leadCount = cases.reduce((sum, c) => sum + (c.leads?.length ?? 0), 0);
 console.log(
   `\n${cases.length} case(s), ${maps.length} map(s), ${dialogues.length} dialogue tree(s), ` +
+    `${encounters.length} encounter(s), ${leadCount} lead(s), ` +
     `${abilities.length} abilities, ${items.length} items, ${characters.length} characters`,
 );
 

@@ -12,8 +12,34 @@
 // Shared condition / effect vocabulary
 // ---------------------------------------------------------------------------
 
+/**
+ * The four things an investigator gets better at. Skills are trained with money
+ * and time (never earned by grinding fights) and feed directly into the odds on
+ * every inquiry, encounter and haggle.
+ */
+export type SkillId = 'observation' | 'rhetoric' | 'occultism' | 'streetwise';
+
+export const SKILL_IDS: SkillId[] = ['observation', 'rhetoric', 'occultism', 'streetwise'];
+
+/**
+ * A probabilistic test. The odds are always shown to the player before they
+ * commit, because a hidden dice roll in an investigation game reads as the game
+ * cheating.
+ */
+export interface SkillCheck {
+  skill: SkillId;
+  /** Chance at skill 0, 0-1. */
+  base: number;
+  /** Added per point of skill. Defaults to 0.07. */
+  perPoint?: number;
+}
+
 /** A gate evaluated against current game state. All present fields must pass. */
 export interface Condition {
+  /** Minimum trained skill level. */
+  skillAtLeast?: { skill: SkillId; value: number };
+  /** Passes when ANY of these do — for locks with more than one honest key. */
+  anyOf?: Condition[];
   /** Player must know this ability (and be able to pay for it). */
   ability?: string;
   /** Player must have discovered this clue. */
@@ -43,6 +69,10 @@ export interface Effect {
   concealment?: number;
   digestion?: number;
   pence?: number;
+  /** Skill levels gained outright (training, or a lesson learned the hard way). */
+  skills?: Partial<Record<SkillId, number>>;
+  /** Days that pass. Rent falls due on schedule regardless of what you were doing. */
+  days?: number;
   /** Trust deltas keyed by club member id. */
   trust?: Record<string, number>;
   /** Flags to set. */
@@ -62,7 +92,7 @@ export interface Effect {
 // ---------------------------------------------------------------------------
 
 export type AbilityTag = 'investigation' | 'social' | 'danger' | 'utility';
-export type AbilityContext = 'investigation' | 'dialogue' | 'hub' | 'anywhere';
+export type AbilityContext = 'investigation' | 'dialogue' | 'hub' | 'encounter' | 'anywhere';
 
 export type AbilityEffectKind =
   | 'reveal_clue' // surfaces a hidden clue on the targeted hotspot
@@ -71,7 +101,9 @@ export type AbilityEffectKind =
   | 'social_pressure' // forces a truthful or fuller answer
   | 'disguise' // reduces suspicion, opens impersonation routes
   | 'escape' // leaves a dangerous scene without a fight
-  | 'sense_danger'; // marks nearby threats / trapped objects
+  | 'sense_danger' // marks nearby threats / trapped objects
+  | 'restore_sanity' // steadies you; the only self-directed power
+  | 'practice_role'; // the acting method, performed deliberately
 
 export interface AbilityData {
   id: string;
@@ -153,6 +185,12 @@ export interface PathwayData {
 
 export type ItemKind = 'mundane' | 'evidence' | 'ritual' | 'potion' | 'document';
 
+/**
+ * Who trades a thing. The Club's quartermaster keeps a ledger; the fence in
+ * Crookback Alley does not, which is the whole difference between them.
+ */
+export type VendorId = 'club' | 'market';
+
 export interface ItemData {
   id: string;
   name: string;
@@ -160,12 +198,18 @@ export interface ItemData {
   description: string;
   /** Shop price in pence. Omit for items that are never sold. */
   pricePence?: number;
-  /** What the club will pay for it, in pence. */
+  /** What the vendor will pay for it, in pence. */
   sellPence?: number;
   /** Icon index into public/assets/ui/icons.png. */
   icon: number;
-  /** Requisition gate at the club shop. */
+  /** Requisition gate at the shop. */
   requires?: Condition;
+  /** Which counters stock it. Defaults to the Club alone. */
+  vendors?: VendorId[];
+  /** Concealment lost per purchase — being seen buying this. */
+  heat?: number;
+  /** Line the vendor says when it changes hands. */
+  patter?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -274,6 +318,36 @@ export interface ResolutionData {
   epilogue: string;
 }
 
+/**
+ * A line of inquiry: legwork rather than searching a room.
+ *
+ * Leads are the third route to a clue, alongside examining hotspots and
+ * questioning people — you spend money, days and a skill check instead of
+ * spirituality. That is what makes training and money matter to the actual
+ * investigation rather than only to advancement.
+ */
+export interface LeadData {
+  id: string;
+  label: string;
+  /** Flavour describing the legwork. */
+  description: string;
+  /** How the legwork is done — picks the icon and the framing text. */
+  method: 'ask_around' | 'informant' | 'stakeout' | 'archives';
+  costPence?: number;
+  /** Days consumed. A stakeout costs a night whether or not it works. */
+  days?: number;
+  check?: SkillCheck;
+  requires?: Condition;
+  /** Clues granted on success. */
+  grants?: string[];
+  successText: string;
+  failureText: string;
+  successEffect?: Effect;
+  failureEffect?: Effect;
+  /** Once taken successfully, the lead is spent. */
+  once?: boolean;
+}
+
 export interface CaseData {
   id: string;
   title: string;
@@ -291,6 +365,54 @@ export interface CaseData {
   clues: ClueData[];
   deductions: DeductionData[];
   resolutions: ResolutionData[];
+  /** Legwork available while the case is open. */
+  leads?: LeadData[];
+}
+
+// ---------------------------------------------------------------------------
+// Random encounters
+// ---------------------------------------------------------------------------
+
+export type EncounterKind = 'threat' | 'opportunity' | 'occult' | 'street';
+
+export interface EncounterOutcome {
+  text: string;
+  effect?: Effect;
+  /** Ends the run of the encounter with the player fleeing the map. */
+  flee?: boolean;
+}
+
+export interface EncounterOption {
+  text: string;
+  requires?: Condition;
+  hideIfLocked?: boolean;
+  /** Ability spent to take this option; pays its own spirit/sanity/exposure. */
+  useAbility?: string;
+  costPence?: number;
+  /** Without a check, the option always succeeds. */
+  check?: SkillCheck;
+  success: EncounterOutcome;
+  failure?: EncounterOutcome;
+}
+
+export interface EncounterData {
+  id: string;
+  title: string;
+  kind: EncounterKind;
+  /** Relative likelihood among eligible encounters. */
+  weight: number;
+  /** Maps this can occur on; omit for anywhere. */
+  maps?: string[];
+  requires?: Condition;
+  /** Fire at most once per playthrough. */
+  once?: boolean;
+  /**
+   * Scale the weight by how exposed the player is. A Beyonder who has been
+   * throwing power around in public meets far more interested strangers.
+   */
+  suspicionWeighted?: boolean;
+  text: string;
+  options: EncounterOption[];
 }
 
 // ---------------------------------------------------------------------------
@@ -301,7 +423,15 @@ export interface CaseData {
  * Hub fixtures do something other than yield clues: they open a UI. A hotspot
  * with an `action` never shows the examine panel.
  */
-export type HotspotAction = 'case_board' | 'shop' | 'ritual' | 'rest' | 'resolve';
+export type HotspotAction =
+  | 'case_board'
+  | 'shop'
+  | 'black_market'
+  | 'ritual'
+  | 'rest'
+  | 'resolve'
+  | 'training'
+  | 'inquiry';
 
 export interface HotspotData {
   id: string;
@@ -362,6 +492,8 @@ export interface MapData {
   name: string;
   /** Ambient tint applied to the scene, e.g. "#1b2030". */
   ambient?: string;
+  /** Chance (0-1) that arriving here triggers an encounter. */
+  encounterChance?: number;
   legend: Record<string, MapLegendEntry>;
   /** ASCII rows keyed by the legend. All rows must be the same length. */
   rows: string[];
@@ -381,6 +513,7 @@ export interface ContentIndex {
   cases: string[];
   maps: string[];
   dialogue: string[];
+  encounters: string[];
   items: string;
   characters: string;
 }

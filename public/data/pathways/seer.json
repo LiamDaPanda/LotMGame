@@ -12,7 +12,12 @@
       "description": "You can ask the world a question and get an answer, provided the question is small and you do not mind the answer being crooked. It is not much. It is enough to notice what a careful man would have missed.",
       "spiritualityMax": 40,
       "sanityMax": 100,
-      "grantsAbilities": ["divination", "augurs_glance"],
+      "grantsAbilities": [
+        "divination",
+        "augurs_glance",
+        "steady_the_thread",
+        "read_the_cards"
+      ],
       "narrative": "You drank it in a rented room with the curtains drawn, and for a week afterwards every deck of cards you passed felt like it was watching you back.",
       "advancement": {
         "toSequence": 8,
@@ -23,8 +28,16 @@
             "caseId": "case-01-ninth-bell",
             "label": "Close a case for the Club"
           },
-          { "type": "item", "itemId": "formula_clown", "label": "Obtain the Clown formula" },
-          { "type": "item", "itemId": "potion_clown", "label": "Obtain the Clown potion" },
+          {
+            "type": "item",
+            "itemId": "formula_clown",
+            "label": "Obtain the Clown formula"
+          },
+          {
+            "type": "item",
+            "itemId": "potion_clown",
+            "label": "Obtain the Clown potion"
+          },
           {
             "type": "digestion",
             "value": 100,
@@ -48,17 +61,44 @@
       "description": "Hands quicker than the eye that follows them, and a knack for being looked away from. The Clown gets into rooms. Getting out is a separate skill, and one the pathway is happy to sell you later.",
       "spiritualityMax": 60,
       "sanityMax": 110,
-      "grantsAbilities": ["sleight_of_hand", "misdirection", "mocking_barb"],
+      "grantsAbilities": [
+        "sleight_of_hand",
+        "misdirection",
+        "mocking_barb",
+        "take_the_temperature",
+        "unmarked"
+      ],
       "narrative": "You laugh at something that is not funny and cannot stop for eleven seconds. Afterwards your hands know things they were not taught, and a locked drawer feels like a rude question.",
       "advancement": {
         "toSequence": 7,
         "toTitle": "Magician",
         "requirements": [
-          { "type": "flag", "flag": "act_clown_public", "label": "Draw a crowd's laughter, and mean none of it" },
-          { "type": "item", "itemId": "formula_magician", "label": "Obtain the Magician formula" },
-          { "type": "item", "itemId": "potion_magician", "label": "Obtain the Magician potion" },
-          { "type": "trust", "member": "hermit", "value": 45, "label": "The Hermit must vouch for you" },
-          { "type": "digestion", "value": 100, "label": "Digest the Clown potion" }
+          {
+            "type": "flag",
+            "flag": "act_clown_public",
+            "label": "Draw a crowd's laughter, and mean none of it"
+          },
+          {
+            "type": "item",
+            "itemId": "formula_magician",
+            "label": "Obtain the Magician formula"
+          },
+          {
+            "type": "item",
+            "itemId": "potion_magician",
+            "label": "Obtain the Magician potion"
+          },
+          {
+            "type": "trust",
+            "member": "hermit",
+            "value": 45,
+            "label": "The Hermit must vouch for you"
+          },
+          {
+            "type": "digestion",
+            "value": 100,
+            "label": "Digest the Clown potion"
+          }
         ],
         "ritualText": "The Hermit reads the formula aloud twice, the second time slower, watching your face for the place where you stop listening. You do not give him one.",
         "temptation": {
@@ -77,16 +117,36 @@
       "description": "Props out of nothing, presence out of posture. The Magician makes people believe a thing is true for exactly as long as the trick needs, which is a considerable power in a room with a magistrate in it.",
       "spiritualityMax": 85,
       "sanityMax": 120,
-      "grantsAbilities": ["paper_mask", "stage_presence", "conjurers_reach"],
+      "grantsAbilities": [
+        "paper_mask",
+        "stage_presence",
+        "conjurers_reach"
+      ],
       "narrative": "You produce a warrant from an empty coat and the constable reads it carefully, and it says what he expects it to say. You keep the coat. You do not look in the pocket again for a month.",
       "advancement": {
         "toSequence": 6,
         "toTitle": "Faceless",
         "requirements": [
-          { "type": "flag", "flag": "act_magician_public", "label": "Perform an impossible thing before witnesses" },
-          { "type": "item", "itemId": "formula_faceless", "label": "Obtain the Faceless formula" },
-          { "type": "item", "itemId": "potion_faceless", "label": "Obtain the Faceless potion" },
-          { "type": "digestion", "value": 100, "label": "Digest the Magician potion" }
+          {
+            "type": "flag",
+            "flag": "act_magician_public",
+            "label": "Perform an impossible thing before witnesses"
+          },
+          {
+            "type": "item",
+            "itemId": "formula_faceless",
+            "label": "Obtain the Faceless formula"
+          },
+          {
+            "type": "item",
+            "itemId": "potion_faceless",
+            "label": "Obtain the Faceless potion"
+          },
+          {
+            "type": "digestion",
+            "value": 100,
+            "label": "Digest the Magician potion"
+          }
         ],
         "ritualText": "There is no circle for this one. The Fool's instruction is a single line: be no one, thoroughly, for as long as it takes.",
         "temptation": {
@@ -105,7 +165,11 @@
       "description": "You can be someone else entirely — their face, their voice, the particular way they hold a cup. The Club's records note, without comment, that Sequence 6 Seers have the highest rate of forgetting which face was the original.",
       "spiritualityMax": 115,
       "sanityMax": 130,
-      "grantsAbilities": ["borrowed_face", "hollow_step", "read_the_room"],
+      "grantsAbilities": [
+        "borrowed_face",
+        "hollow_step",
+        "read_the_room"
+      ],
       "narrative": "You take off a face and there is a moment — a short one, you tell yourself — where you cannot remember what goes underneath."
     }
   ]

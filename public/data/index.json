@@ -1,9 +1,27 @@
 {
-  "pathways": ["seer"],
-  "abilities": ["seer"],
-  "cases": ["case-01-ninth-bell"],
-  "maps": ["club_hub", "ashfen_row", "pawnshop", "cellar"],
-  "dialogue": ["club", "case-01"],
+  "pathways": [
+    "seer"
+  ],
+  "abilities": [
+    "seer"
+  ],
+  "cases": [
+    "case-01-ninth-bell"
+  ],
+  "maps": [
+    "club_hub",
+    "ashfen_row",
+    "pawnshop",
+    "cellar",
+    "crookback_alley"
+  ],
+  "dialogue": [
+    "club",
+    "case-01"
+  ],
   "items": "items",
-  "characters": "cast"
+  "characters": "cast",
+  "encounters": [
+    "street"
+  ]
 }

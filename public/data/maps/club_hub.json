@@ -21,7 +21,7 @@
   "rows": [
     "########################",
     "#......................#",
-    "#..BBB.....A......O.BB.#",
+    "#..ABB.....A......O.BA.#",
     "#......................#",
     "#...*****.....=====....#",
     "#...**@**.....=T=T=....#",
@@ -81,6 +81,24 @@
       "description": "A narrow bed behind a curtain. Members sleep here when going home would be unwise.",
       "action": "rest",
       "icon": 10
+    },
+    {
+      "id": "club_lectern",
+      "x": 20,
+      "y": 2,
+      "name": "The Lectern",
+      "description": "Where members are taught things. The Club charges for tuition and makes no apology for it.",
+      "action": "training",
+      "icon": 11
+    },
+    {
+      "id": "club_inquiry_desk",
+      "x": 3,
+      "y": 2,
+      "name": "The Correspondence Desk",
+      "description": "Letters, timetables, a city directory, and the addresses of people who will tell you things for money.",
+      "action": "inquiry",
+      "icon": 6
     },
     {
       "id": "club_clock",

@@ -1,0 +1,181 @@
+import Phaser from 'phaser';
+import { Session } from '@/systems/Session';
+import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
+import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS } from '@/ui/theme';
+import type { AbilityContext, AbilityData } from '@/types/schema';
+
+interface AbilityMenuData {
+  /** Where the menu was opened from — gates which powers are offered. */
+  context: AbilityContext;
+  /** Somebody can see you do this. */
+  witnessed: boolean;
+}
+
+/**
+ * The powers menu — abilities used on purpose rather than when the game offers
+ * them.
+ *
+ * Anything self-directed (steady yourself, practise the role, blend in, read the
+ * street) fires straight from here. Anything that needs a target says so instead
+ * of being hidden, so the player learns where it *is* used.
+ */
+export class AbilityMenuScene extends Phaser.Scene {
+  private session!: Session;
+  private list?: ScrollList;
+  private resultText!: Phaser.GameObjects.Text;
+  private context: AbilityContext = 'hub';
+  private witnessed = false;
+
+  private readonly x = 120;
+  private readonly y = 46;
+  private readonly w = GAME_WIDTH - 240;
+  private readonly h = GAME_HEIGHT - 92;
+
+  constructor() {
+    super('AbilityMenu');
+  }
+
+  create(data: AbilityMenuData): void {
+    this.session = Session.get(this);
+    this.context = data?.context ?? 'hub';
+    this.witnessed = data?.witnessed ?? false;
+
+    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.86).setOrigin(0, 0).setInteractive();
+    drawPanel(this, this.x, this.y, this.w, this.h);
+
+    const state = this.session.state;
+    sectionHeader(
+      this,
+      this.x + 24,
+      this.y + 16,
+      this.w - 48,
+      'Powers',
+      `Sequence ${state.sequence} — ${state.sequenceTitle}   ·   ${
+        this.witnessed ? 'You are in company: full exposure' : 'Nobody is watching: reduced exposure'
+      }`,
+    );
+
+    this.resultText = this.add
+      .text(this.x + 24, this.y + this.h - 76, '', {
+        fontFamily: FONT_BODY,
+        fontSize: '13px',
+        color: CSS.occult,
+        wordWrap: { width: this.w - 200 },
+      })
+      .setOrigin(0, 0);
+
+    new Button(this, this.x + this.w - 174, this.y + this.h - 54, 'Close  (Q)', () => this.close(), {
+      width: 150,
+      height: 38,
+      fontSize: 13,
+    });
+
+    this.input.keyboard?.on('keydown-ESC', () => this.close());
+    this.input.keyboard?.on('keydown-Q', () => this.close());
+
+    this.render();
+  }
+
+  private render(): void {
+    this.list?.destroy();
+    const abilities = this.session.abilities.available(this.context);
+    const rows = abilities.map((ability) => this.abilityRow(ability));
+    if (rows.length === 0) rows.push(this.emptyRow('You have nothing you could reach for here.'));
+
+    this.list = new ScrollList(this, this.x + 24, this.y + 76, {
+      width: this.w - 48,
+      height: this.h - 160,
+      gap: 8,
+    });
+    this.list.setRows(rows);
+    this.list.refreshMask();
+  }
+
+  private emptyRow(text: string): Phaser.GameObjects.Container {
+    const container = this.add.container(0, 0);
+    container.setSize(this.w - 48, 36);
+    container.add(this.add.text(0, 8, text, { fontFamily: FONT_BODY, fontSize: '13px', color: CSS.muted }));
+    return container;
+  }
+
+  private abilityRow(ability: AbilityData): Phaser.GameObjects.Container {
+    const width = this.w - 48;
+    const height = 66;
+    const container = this.add.container(0, 0);
+    container.setSize(width, height);
+
+    const usable = this.session.abilities.invokable(ability);
+    const check = this.session.abilities.canUse(ability.id, {
+      context: this.context,
+      witnessed: this.witnessed,
+    });
+
+    const spirit = this.session.abilities.spiritCostOf(ability);
+    const concealment = this.session.abilities.concealmentCostOf(ability, this.witnessed);
+    const costs = [`${spirit} spirit`];
+    if (ability.sanityCost) costs.push(`${ability.sanityCost} sanity`);
+    if (concealment) costs.push(`${concealment} concealment`);
+
+    let subtitle: string;
+    let enabled: boolean;
+    if (ability.passive) {
+      subtitle = `${ability.summary}  ·  always in effect`;
+      enabled = false;
+    } else if (!usable) {
+      // Targeted powers are listed so the player learns where they apply.
+      subtitle = `${ability.summary}  ·  use it on something: ${this.targetHint(ability)}`;
+      enabled = false;
+    } else if (!check.ok) {
+      subtitle = `${ability.summary}  ·  ${check.reason}`;
+      enabled = false;
+    } else {
+      subtitle = `${ability.summary}  ·  ${costs.join(', ')}`;
+      enabled = true;
+    }
+
+    container.add(
+      new Button(this, 0, 0, `${ability.name}   —   Sequence ${ability.sequence}`, () => this.invoke(ability), {
+        width,
+        height,
+        align: 'left',
+        fontSize: 14,
+        tone: 'occult',
+        iconFrame: ability.passive ? ICONS.sequence : ICONS.spirituality,
+        enabled,
+        subtitle,
+      }),
+    );
+    return container;
+  }
+
+  private targetHint(ability: AbilityData): string {
+    switch (ability.effect.kind) {
+      case 'reveal_clue':
+        return 'examine a thing at the scene';
+      case 'unlock_access':
+        return 'examine something shut';
+      case 'reveal_truth':
+      case 'social_pressure':
+        return 'in conversation';
+      case 'escape':
+        return 'when something has you cornered';
+      default:
+        return 'not here';
+    }
+  }
+
+  private invoke(ability: AbilityData): void {
+    const result = this.session.abilities.invoke(ability.id, {
+      context: this.context,
+      witnessed: this.witnessed,
+    });
+    this.resultText.setText(result.text).setColor(result.ok ? CSS.occult : CSS.bad);
+    if (result.ok) this.cameras.main.flash(150, 50, 35, 80);
+    this.render();
+  }
+
+  private close(): void {
+    this.scene.stop();
+    if (this.scene.isPaused('World')) this.scene.resume('World');
+  }
+}

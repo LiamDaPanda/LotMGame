@@ -96,8 +96,8 @@
       "name": "Japanned Strongbox",
       "description": "Bolted to the underside of the counter, where a man keeps the day's takings and does not mention it.",
       "locked": {
-        "reason": "It is locked, and the key is not on the body. Constable Rell has the ring.",
-        "bypass": { "item": "shop_keys" }
+        "reason": "It is locked, and the key is not on the body. Constable Rell has the ring — or a set of picks would do it.",
+        "bypass": { "anyOf": [{ "item": "shop_keys" }, { "item": "lockpicks" }] }
       },
       "clues": ["clue_strongbox_intact"],
       "effect": { "items": ["mourning_ring"] },

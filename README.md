@@ -29,14 +29,32 @@ browser chrome, in landscape, with the notch and home indicator respected.
 ## What's in the vertical slice
 
 - **One case**, *The Ninth Bell* — a locked-room death on Ashfen Row, with 19
-  clues, 7 deductions and **five distinct endings** (clean, messy, partial,
-  blackmail, failed), each with different money, trust and story consequences.
-- **One pathway**, the Seer, written across four Sequence tiers (9 → 6) with 11
-  abilities split between investigation and danger uses.
-- **Four locations**: the Club parlour, Ashfen Row, Halloway's pawnshop, and the
-  coal cellar.
-- **Full loop**: accept a case → gather clues → connect them on the deduction
-  board → choose how to close it → spend the fee on the next rank-up.
+  clues, 7 deductions, 5 lines of inquiry and **five distinct endings** (clean,
+  messy, partial, blackmail, failed), each with different money, trust and story
+  consequences.
+- **One pathway**, the Seer, across four Sequence tiers (9 → 6) with 15
+  abilities — targeted ones used on things, and self-directed ones you fire from
+  the powers menu whenever you like.
+- **Five locations**: the Club parlour, Ashfen Row, Halloway's pawnshop, the
+  coal cellar, and Crookback Alley.
+- **Six random encounters** that fire on arrival — a Church watcher, three men
+  in an alley, a fence's invitation, a thin place in the world.
+- **Four trainable skills**, a black market, and legwork you pay for.
+- **Full loop**: accept a case → search, question and pay for information →
+  connect it on the deduction board → choose how to close it → spend the fee on
+  tuition and the next rank-up.
+
+### Four ways to learn something
+
+The investigation deliberately has more than one route, so being short of one
+resource never dead-ends you:
+
+| Route | Costs | Screen |
+|---|---|---|
+| Search a scene | spirituality, concealment | Examine panel |
+| Question a person | an ability, a clue, or a bribe | Dialogue |
+| Follow a lead | money, days, a skill check | Lines of Inquiry |
+| Buy your way in | money, concealment | Crookback Alley |
 
 ## The decisions, and why
 
@@ -76,6 +94,27 @@ and a third when the room is empty. The examine panel prints that price before
 you spend it, including whether you're being watched. Investigation is the
 primary verb because using power is what makes you findable.
 
+**Skills are bought, never ground.** Observation, Rhetoric, Occultism and
+Streetwise are trained at the Club for money and a day each. Every level has a
+stated, checkable effect — Occultism cuts spirituality costs 4% a point,
+Rhetoric cuts bribes by the same, Streetwise moves a fence's price — so the fee
+buys something you can watch happen rather than an abstract number.
+
+**Every roll shows its odds before you commit.** Leads and encounter options
+print the exact percentage and which skill drives it. A hidden dice roll in an
+investigation game reads as the game cheating, and watching that number move is
+the entire reward for training.
+
+**Encounters are weighted by how exposed you are.** Arriving somewhere can put a
+person in front of you, and the dangerous ones scale with burnt concealment. Use
+power in public often enough and the city starts noticing back — which turns the
+concealment meter from a number into something that happens to you.
+
+**The black market is a real trade-off, not a second shop.** The fence sells
+what the Club won't touch — picks, doubtful reagents, a forged warrant, a
+cut-price copied formula — pays over the odds for awkward goods, and charges
+concealment for every transaction. Streetwise moves both prices in your favour.
+
 **The temptation is always on screen.** Rank-up needs a case closed, a formula, a
 potion, and a *digested* previous potion. The shortcut — drink before the role
 has finished settling — is permanently visible in the rite screen with its cost
@@ -89,12 +128,14 @@ public/
   assets/          built art — tileset from Kenney (CC0), rest generated
   data/            all game content — edit these, no rebuild of logic needed
     index.json       the manifest of what to load
-    pathways/ abilities/ cases/ maps/ dialogue/ items/ characters/
+    pathways/ abilities/ cases/ maps/ dialogue/ encounters/ items/ characters/
 src/
-  systems/         GameState, Money, AbilitySystem, Progression, CaseSystem,
-                   DialogueSystem, Content, SaveManager, EventBus
+  systems/         GameState, Money, Skills, AbilitySystem, Progression,
+                   CaseSystem, DialogueSystem, EncounterSystem, InquirySystem,
+                   Content, SaveManager, EventBus
   scenes/          Boot, Preload, MainMenu, World, Hud, Dialogue, Examine,
-                   Journal, CaseBoard, Shop, Ritual, Resolve
+                   Journal, CaseBoard, Shop, Ritual, Resolve, AbilityMenu,
+                   Encounter, Training, Inquiry
   world/           TileGrid (ASCII → tiles + BFS pathfinding), Actor
   ui/              theme + Phaser widgets (Button, Meter, ScrollList, Typewriter)
 art-src/           vendored CC0 source art (Kenney), for reproducible repacks
@@ -200,6 +241,19 @@ are all data. Set `GameState.pathwayId` to start on it.
 **A new room**: `public/data/maps/<id>.json` — legend, ASCII rows, spawn,
 hotspots, npcs, exits. The validator checks that every hotspot is reachable,
 every exit lands on a walkable tile, and nothing shares a tile.
+
+## Adding an encounter or a lead
+
+**An encounter**: append to `public/data/encounters/street.json` (or add a file
+and name it in `index.json`). Give it a `weight`, the `maps` it can occur on,
+and options — each option may need an ability, cost money, or roll a
+`check: { skill, base, perPoint }`. Set `suspicionWeighted: true` to make it
+scale with exposure. The validator refuses an encounter where every option is
+gated, because a player with nothing must always be able to leave.
+
+**A lead**: add to the case's `leads` array — a `method`, a cost in money and/or
+days, a skill check, and the clues it grants. The validator warns if a lead
+costs nothing and cannot fail, since that is a free clue rather than legwork.
 
 ## Not yet built
 

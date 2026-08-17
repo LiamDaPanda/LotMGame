@@ -4,154 +4,319 @@
     "name": "Spirit-Thread Divination",
     "pathway": "seer",
     "sequence": 9,
-    "tags": ["investigation"],
+    "tags": [
+      "investigation"
+    ],
     "summary": "Hang a pendulum over a thing and ask it one small question.",
     "flavour": "The thread swings against its own weight, and the answer arrives before the question finishes.",
     "spiritCost": 8,
     "sanityCost": 2,
     "exposure": 6,
-    "usableIn": ["investigation", "dialogue"],
-    "effect": { "kind": "reveal_clue" }
+    "usableIn": [
+      "investigation",
+      "dialogue"
+    ],
+    "effect": {
+      "kind": "reveal_clue"
+    }
   },
   {
     "id": "augurs_glance",
     "name": "Augur's Glance",
     "pathway": "seer",
     "sequence": 9,
-    "tags": ["investigation", "utility"],
+    "tags": [
+      "investigation",
+      "utility"
+    ],
     "summary": "Things that would answer a divination catch at the corner of your eye.",
     "flavour": "Something in the room declines to be ordinary.",
     "spiritCost": 0,
     "sanityCost": 0,
     "exposure": 0,
-    "usableIn": ["anywhere"],
+    "usableIn": [
+      "anywhere"
+    ],
     "passive": true,
-    "effect": { "kind": "sense_danger" }
+    "effect": {
+      "kind": "sense_danger"
+    }
   },
   {
     "id": "sleight_of_hand",
     "name": "Sleight of Hand",
     "pathway": "seer",
     "sequence": 8,
-    "tags": ["investigation", "utility"],
+    "tags": [
+      "investigation",
+      "utility"
+    ],
     "summary": "Locks, latches and other people's pockets open for you.",
     "flavour": "Your fingers do something you did not instruct them to do, and the catch gives.",
     "spiritCost": 10,
     "sanityCost": 1,
     "exposure": 10,
-    "usableIn": ["investigation"],
-    "effect": { "kind": "unlock_access" }
+    "usableIn": [
+      "investigation"
+    ],
+    "effect": {
+      "kind": "unlock_access"
+    }
   },
   {
     "id": "misdirection",
     "name": "Misdirection",
     "pathway": "seer",
     "sequence": 8,
-    "tags": ["danger"],
+    "tags": [
+      "danger"
+    ],
     "summary": "Every eye in the room goes to the wrong place for as long as you need.",
     "flavour": "They all look left. You were never on the left.",
     "spiritCost": 14,
     "sanityCost": 3,
     "exposure": 8,
-    "usableIn": ["investigation", "dialogue"],
-    "effect": { "kind": "escape" }
+    "usableIn": [
+      "investigation",
+      "dialogue"
+    ],
+    "effect": {
+      "kind": "escape"
+    }
   },
   {
     "id": "mocking_barb",
     "name": "Mocking Barb",
     "pathway": "seer",
     "sequence": 8,
-    "tags": ["social"],
+    "tags": [
+      "social"
+    ],
     "summary": "A jibe pitched precisely at the thing they are hiding.",
     "flavour": "You say the one sentence they have been rehearsing against, and their rehearsal falls apart.",
     "spiritCost": 12,
     "sanityCost": 3,
     "exposure": 9,
-    "usableIn": ["dialogue"],
-    "effect": { "kind": "reveal_truth" }
+    "usableIn": [
+      "dialogue"
+    ],
+    "effect": {
+      "kind": "reveal_truth"
+    }
   },
   {
     "id": "paper_mask",
     "name": "Paper Mask",
     "pathway": "seer",
     "sequence": 7,
-    "tags": ["social", "utility"],
+    "tags": [
+      "social",
+      "utility"
+    ],
     "summary": "A borrowed bearing and an unremarkable face. Nobody recalls you clearly.",
     "flavour": "You adjust nothing, and become somebody who was always meant to be standing here.",
     "spiritCost": 16,
     "sanityCost": 4,
     "exposure": 4,
-    "usableIn": ["investigation", "dialogue", "hub"],
-    "effect": { "kind": "disguise" }
+    "usableIn": [
+      "investigation",
+      "dialogue",
+      "hub"
+    ],
+    "effect": {
+      "kind": "disguise"
+    }
   },
   {
     "id": "stage_presence",
     "name": "Stage Presence",
     "pathway": "seer",
     "sequence": 7,
-    "tags": ["social", "danger"],
+    "tags": [
+      "social",
+      "danger"
+    ],
     "summary": "You occupy the room. Answers come out fuller than intended.",
     "flavour": "The air arranges itself around you, and they find themselves explaining.",
     "spiritCost": 18,
     "sanityCost": 5,
     "exposure": 14,
-    "usableIn": ["dialogue", "investigation"],
-    "effect": { "kind": "social_pressure" }
+    "usableIn": [
+      "dialogue",
+      "investigation"
+    ],
+    "effect": {
+      "kind": "social_pressure"
+    }
   },
   {
     "id": "conjurers_reach",
     "name": "Conjurer's Reach",
     "pathway": "seer",
     "sequence": 7,
-    "tags": ["investigation", "utility"],
+    "tags": [
+      "investigation",
+      "utility"
+    ],
     "summary": "The prop you need is in your hand, and was always in your hand.",
     "flavour": "You produce the key. It is warm, as though it has been in your pocket for hours.",
     "spiritCost": 20,
     "sanityCost": 4,
     "exposure": 12,
-    "usableIn": ["investigation"],
-    "effect": { "kind": "unlock_access" }
+    "usableIn": [
+      "investigation"
+    ],
+    "effect": {
+      "kind": "unlock_access"
+    }
   },
   {
     "id": "borrowed_face",
     "name": "Borrowed Face",
     "pathway": "seer",
     "sequence": 6,
-    "tags": ["social", "investigation"],
+    "tags": [
+      "social",
+      "investigation"
+    ],
     "summary": "Become someone they already trust. Doors open for the face, not for you.",
     "flavour": "You put on their face, and their name comes with it, and for a moment you have to check which one you answer to.",
     "spiritCost": 26,
     "sanityCost": 8,
     "exposure": 6,
-    "usableIn": ["investigation", "dialogue", "hub"],
-    "effect": { "kind": "disguise" }
+    "usableIn": [
+      "investigation",
+      "dialogue",
+      "hub"
+    ],
+    "effect": {
+      "kind": "disguise"
+    }
   },
   {
     "id": "hollow_step",
     "name": "Hollow Step",
     "pathway": "seer",
     "sequence": 6,
-    "tags": ["danger"],
+    "tags": [
+      "danger"
+    ],
     "summary": "Walk out of a room that is trying very hard to keep you.",
     "flavour": "You are not there. The interval where you were there closes behind you.",
     "spiritCost": 24,
     "sanityCost": 6,
     "exposure": 5,
-    "usableIn": ["investigation", "dialogue"],
-    "effect": { "kind": "escape" }
+    "usableIn": [
+      "investigation",
+      "dialogue"
+    ],
+    "effect": {
+      "kind": "escape"
+    }
   },
   {
     "id": "read_the_room",
     "name": "Read the Room",
     "pathway": "seer",
     "sequence": 6,
-    "tags": ["social", "investigation"],
+    "tags": [
+      "social",
+      "investigation"
+    ],
     "summary": "Every lie in earshot announces itself.",
     "flavour": "Their words go on. Underneath them you can hear the shape of what is not being said.",
     "spiritCost": 22,
     "sanityCost": 6,
     "exposure": 7,
-    "usableIn": ["dialogue", "investigation"],
-    "effect": { "kind": "reveal_truth" }
+    "usableIn": [
+      "dialogue",
+      "investigation"
+    ],
+    "effect": {
+      "kind": "reveal_truth"
+    }
+  },
+  {
+    "id": "steady_the_thread",
+    "name": "Steady the Thread",
+    "pathway": "seer",
+    "sequence": 9,
+    "tags": [
+      "utility"
+    ],
+    "summary": "Take hold of your own spirit body and stop it shaking.",
+    "flavour": "You find the loose end of yourself and wind it back in.",
+    "spiritCost": 9,
+    "sanityCost": 0,
+    "exposure": 2,
+    "usableIn": [
+      "anywhere"
+    ],
+    "effect": {
+      "kind": "restore_sanity"
+    }
+  },
+  {
+    "id": "read_the_cards",
+    "name": "Read the Cards",
+    "pathway": "seer",
+    "sequence": 9,
+    "tags": [
+      "utility",
+      "social"
+    ],
+    "summary": "Perform the role in earnest — the acting method, done on purpose.",
+    "flavour": "You lay them out for a stranger and tell them something true, and mean every word of it.",
+    "spiritCost": 6,
+    "sanityCost": 0,
+    "exposure": 3,
+    "usableIn": [
+      "anywhere"
+    ],
+    "effect": {
+      "kind": "practice_role"
+    }
+  },
+  {
+    "id": "take_the_temperature",
+    "name": "Take the Temperature",
+    "pathway": "seer",
+    "sequence": 8,
+    "tags": [
+      "investigation",
+      "danger"
+    ],
+    "summary": "Ask the street how much of it is thinking about you.",
+    "flavour": "You listen past the traffic, and the city answers with a number you feel rather than hear.",
+    "spiritCost": 7,
+    "sanityCost": 1,
+    "exposure": 2,
+    "usableIn": [
+      "anywhere"
+    ],
+    "effect": {
+      "kind": "sense_danger"
+    }
+  },
+  {
+    "id": "unmarked",
+    "name": "Unmarked",
+    "pathway": "seer",
+    "sequence": 8,
+    "tags": [
+      "utility",
+      "danger"
+    ],
+    "summary": "Shed whatever it is that makes a face worth remembering.",
+    "flavour": "Somebody looks straight at you and forgets, halfway through, what they were looking at.",
+    "spiritCost": 13,
+    "sanityCost": 2,
+    "exposure": 0,
+    "usableIn": [
+      "anywhere"
+    ],
+    "effect": {
+      "kind": "disguise"
+    }
   }
 ]

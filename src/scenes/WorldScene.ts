@@ -80,6 +80,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.session.cases.refreshObjectives();
     this.announceRoom();
+    this.maybeEncounter();
 
     this.unsubscribe.push(
       bus.on('loss-of-control', ({ reason }) => this.playLossOfControl(reason)),
@@ -347,6 +348,7 @@ export class WorldScene extends Phaser.Scene {
       ]);
       keyboard.on('keydown-J', () => this.openJournal());
       keyboard.on('keydown-ESC', () => this.openJournal());
+      keyboard.on('keydown-Q', () => this.openAbilityMenu());
     }
 
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
@@ -451,7 +453,16 @@ export class WorldScene extends Phaser.Scene {
         this.openModal('CaseBoard');
         break;
       case 'shop':
-        this.openModal('Shop');
+        this.openModal('Shop', { vendor: 'club' });
+        break;
+      case 'black_market':
+        this.openModal('Shop', { vendor: 'market' });
+        break;
+      case 'training':
+        this.openModal('Training');
+        break;
+      case 'inquiry':
+        this.openModal('Inquiry');
         break;
       case 'ritual':
         this.openModal('Ritual');
@@ -483,10 +494,13 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
-  private openModal(key: string): void {
+  private openModal(key: string, data?: object): void {
+    // One overlay at a time. A delayed encounter must never land on top of a
+    // shop the player already opened.
+    if (this.busy) return;
     this.busy = true;
     this.scene.pause();
-    this.scene.launch(key);
+    this.scene.launch(key, data);
     this.scene.get(key).events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.busy = false;
       this.refreshHotspotMarkers();
@@ -540,6 +554,31 @@ export class WorldScene extends Phaser.Scene {
     this.cameras.main.fadeOut(280, 0, 0, 0);
     this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
       this.scene.restart({ mapId: exit.toMap, spawn: { x: exit.toX, y: exit.toY } });
+    });
+  }
+
+  /** The powers menu — abilities fired deliberately rather than when offered. */
+  private openAbilityMenu(): void {
+    if (this.busy) return;
+    this.openModal('AbilityMenu', {
+      context: this.map.id === 'club_hub' ? 'hub' : 'investigation',
+      witnessed: this.npcs.size > 0,
+    });
+  }
+
+  /**
+   * Roll for an encounter on arrival. Doing it after the room has drawn means
+   * the player sees where they are before somebody steps out of it.
+   */
+  private maybeEncounter(): void {
+    const chance = this.map.encounterChance ?? 0;
+    if (chance <= 0) return;
+    const encounter = this.session.encounters.roll(this.map.id, chance);
+    if (!encounter) return;
+    this.time.delayedCall(700, () => {
+      if (this.busy) return;
+      this.player.stop();
+      this.openModal('Encounter', { encounterId: encounter.id });
     });
   }
 

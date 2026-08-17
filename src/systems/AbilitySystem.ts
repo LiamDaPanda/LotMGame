@@ -9,6 +9,7 @@
 
 import { bus } from '@/systems/EventBus';
 import type { GameState } from '@/systems/GameState';
+import { occultDiscount } from '@/systems/Skills';
 import type { AbilityContext, AbilityData, AbilityEffectKind } from '@/types/schema';
 
 export interface AbilityCheck {
@@ -37,6 +38,14 @@ export interface AbilityUseResult {
 
 export class AbilitySystem {
   constructor(private state: GameState) {}
+
+  /**
+   * Spirituality actually charged, after Occultism. Training the theory makes
+   * the practice cheaper, which is the whole reason to train it.
+   */
+  spiritCostOf(ability: AbilityData): number {
+    return Math.max(1, Math.round(ability.spiritCost * occultDiscount(this.state.skill('occultism'))));
+  }
 
   /** Abilities the player knows, newest tier first, passives last. */
   available(context?: AbilityContext): AbilityData[] {
@@ -68,8 +77,9 @@ export class AbilitySystem {
     if (!ability.usableIn.includes(options.context) && !ability.usableIn.includes('anywhere')) {
       return { ok: false, reason: 'Not here' };
     }
-    if (this.state.spirituality < ability.spiritCost) {
-      return { ok: false, reason: `Not enough spirituality (${ability.spiritCost} needed)` };
+    const spiritCost = this.spiritCostOf(ability);
+    if (this.state.spirituality < spiritCost) {
+      return { ok: false, reason: `Not enough spirituality (${spiritCost} needed)` };
     }
     // Refuse the use that would end the run rather than letting it happen by
     // accident; a deliberate collapse should come from the story, not a misclick.
@@ -93,13 +103,14 @@ export class AbilitySystem {
 
     const ability = this.state.content.ability(abilityId) as AbilityData;
     const concealmentCost = this.concealmentCostOf(ability, options.witnessed ?? false);
+    const spiritCost = this.spiritCostOf(ability);
 
-    this.state.addSpirituality(-ability.spiritCost);
+    this.state.addSpirituality(-spiritCost);
     if (ability.sanityCost) this.state.addSanity(-ability.sanityCost);
     if (concealmentCost) this.state.addConcealment(-concealmentCost);
 
-    // Working a power is itself part of digesting it.
-    this.state.addDigestion(1);
+    // Working a power is itself part of digesting it; theory helps it settle.
+    this.state.addDigestion(1 + Math.floor(this.state.skill('occultism') / 4));
 
     bus.emit('ability:used', { abilityId, success: true });
     bus.emit('notice', { text: ability.flavour, tone: 'occult' });
@@ -107,10 +118,85 @@ export class AbilitySystem {
     return {
       ok: true,
       ability,
-      spiritSpent: ability.spiritCost,
+      spiritSpent: spiritCost,
       sanitySpent: ability.sanityCost,
       concealmentSpent: concealmentCost,
     };
+  }
+
+  /**
+   * Powers that act on the user rather than on a target, and so can be fired
+   * straight from the powers menu.
+   */
+  private static readonly SELF_DIRECTED: AbilityEffectKind[] = [
+    'restore_sanity',
+    'practice_role',
+    'disguise',
+    'sense_danger',
+  ];
+
+  /** Can this ability be triggered from the menu, rather than needing a target? */
+  invokable(ability: AbilityData): boolean {
+    return !ability.passive && AbilitySystem.SELF_DIRECTED.includes(ability.effect.kind);
+  }
+
+  /**
+   * Fire a self-directed power from the ability menu — the ones that act on you
+   * rather than on a thing you are pointing at.
+   *
+   * Returns a line describing what happened, or a refusal.
+   */
+  invoke(abilityId: string, options: AbilityUseOptions): { ok: boolean; text: string } {
+    const ability = this.state.content.ability(abilityId);
+    if (!ability) return { ok: false, text: 'No such power.' };
+
+    const kind = ability.effect.kind;
+    if (!this.invokable(ability)) {
+      return { ok: false, text: 'That needs something to point it at.' };
+    }
+
+    const result = this.use(abilityId, options);
+    if (!result.ok) return { ok: false, text: result.reason ?? 'It will not come.' };
+
+    switch (kind) {
+      case 'restore_sanity': {
+        const before = this.state.sanity;
+        this.state.addSanity(18);
+        return {
+          ok: true,
+          text: `The noise behind your eyes goes quiet. (+${this.state.sanity - before} sanity)`,
+        };
+      }
+      case 'practice_role': {
+        const before = this.state.digestion;
+        this.state.addDigestion(9 + this.state.skill('occultism'));
+        return {
+          ok: true,
+          text: `You play the part for an hour, and mean it. (digestion ${before} → ${this.state.digestion})`,
+        };
+      }
+      case 'disguise': {
+        const before = this.state.concealment;
+        this.state.addConcealment(14);
+        return {
+          ok: true,
+          text: `You become forgettable. (concealment ${before} → ${this.state.concealment})`,
+        };
+      }
+      default: {
+        // sense_danger, used actively: read the street's temperature.
+        const risk = this.state.suspicion;
+        const reading =
+          risk < 20
+            ? 'Nobody in this city is thinking about you. Enjoy it.'
+            : risk < 45
+              ? 'One or two threads lead back to you. Nothing pulled tight yet.'
+              : risk < 70
+                ? 'You are being looked for. Not urgently, but written down.'
+                : 'Something is close. Do not use anything else in the open tonight.';
+        return { ok: true, text: reading };
+      }
+    }
   }
 
   /**

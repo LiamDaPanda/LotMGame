@@ -47,20 +47,27 @@ export class HudScene extends Phaser.Scene {
     });
     this.dayText = this.add.text(14, 28, '', { fontFamily: FONT_UI, fontSize: '10px', color: CSS.muted });
 
+    // The strip is a fixed budget: rank block, four meters, purse, two buttons.
+    // Adding anything here means taking width from something else.
     this.meters = {
-      sanity: new Meter(this, 190, 12, 'SANITY', METER_COLORS.sanity, ICONS.sanity, 92),
-      spirituality: new Meter(this, 330, 12, 'SPIRIT', METER_COLORS.spirituality, ICONS.spirituality, 92),
-      concealment: new Meter(this, 470, 12, 'CONCEALMENT', METER_COLORS.concealment, ICONS.concealment, 92),
-      digestion: new Meter(this, 610, 12, 'DIGESTION', METER_COLORS.digestion, ICONS.sequence, 92),
+      sanity: new Meter(this, 168, 12, 'SANITY', METER_COLORS.sanity, ICONS.sanity, 72),
+      spirituality: new Meter(this, 288, 12, 'SPIRIT', METER_COLORS.spirituality, ICONS.spirituality, 72),
+      concealment: new Meter(this, 408, 12, 'CONCEAL', METER_COLORS.concealment, ICONS.concealment, 72),
+      digestion: new Meter(this, 528, 12, 'DIGEST', METER_COLORS.digestion, ICONS.sequence, 72),
     };
 
-    this.add.image(760, 24, 'icons', ICONS.pound).setScale(1.2);
+    this.add.image(654, 24, 'icons', ICONS.pound).setScale(1.2);
     this.purse = this.add
-      .text(772, 24, '', { fontFamily: FONT_UI, fontSize: '14px', color: CSS.parchment })
+      .text(666, 24, '', { fontFamily: FONT_UI, fontSize: '14px', color: CSS.parchment })
       .setOrigin(0, 0.5);
 
-    new Button(this, GAME_WIDTH - 108, 8, 'Journal  (J)', () => this.openJournal(), {
-      width: 96,
+    new Button(this, GAME_WIDTH - 178, 8, 'Powers  (Q)', () => this.openOverlay('AbilityMenu'), {
+      width: 84,
+      height: 32,
+      fontSize: 12,
+    });
+    new Button(this, GAME_WIDTH - 88, 8, 'Journal  (J)', () => this.openOverlay('Journal'), {
+      width: 84,
       height: 32,
       fontSize: 12,
     });
@@ -139,12 +146,15 @@ export class HudScene extends Phaser.Scene {
     });
   }
 
-  private openJournal(): void {
+  private openOverlay(key: string): void {
     // The world scene owns pausing; ask it rather than reaching across scenes.
     const world = this.scene.get('World');
-    if (world && this.scene.isActive('World')) {
-      world.scene.pause();
-      this.scene.launch('Journal');
+    if (!world || !this.scene.isActive('World')) return;
+    world.scene.pause();
+    if (key === 'AbilityMenu') {
+      this.scene.launch(key, { context: 'investigation', witnessed: false });
+    } else {
+      this.scene.launch(key);
     }
   }
 

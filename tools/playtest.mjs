@@ -88,6 +88,8 @@ const session = () =>
       items: [...s.state.inventory.keys()],
       flags: [...s.state.flags],
       activeCase: s.state.activeCaseId() ?? null,
+      skills: { ...s.state.skills },
+      spentLeads: [...s.state.spentLeads],
       caseStates: Object.fromEntries([...s.state.cases].map(([k, v]) => [k, v.state])),
     };
   });
@@ -106,12 +108,16 @@ const loaded = await withGame((game) => {
     cases: s.content.cases.size,
     maps: s.content.maps.size,
     dialogue: s.content.dialogue.size,
+    encounters: s.content.encounters.size,
     items: s.content.items.size,
     characters: s.content.characters.size,
   };
 });
-check('content loaded from JSON', loaded.cases === 1 && loaded.maps === 4 && loaded.abilities === 11,
-  JSON.stringify(loaded));
+check(
+  'content loaded from JSON',
+  loaded.cases === 1 && loaded.maps === 5 && loaded.abilities === 15 && loaded.encounters === 6,
+  JSON.stringify(loaded),
+);
 
 // ---------------------------------------------------------------------------
 console.log('\n2. Start a new game and land in the hub');
@@ -128,6 +134,7 @@ check('spawned in the club hub', state.map === 'club_hub', state.map);
 check('starts at Sequence 9', state.sequence === 9);
 check('starts with £2 10s', state.pence === 600, `${state.pence}d`);
 check('starts part-digested', state.digestion === 55, `${state.digestion}`);
+check('starts with skills at 1', Object.values(state.skills).every((v) => v === 1), JSON.stringify(state.skills));
 
 // ---------------------------------------------------------------------------
 console.log('\n3. Accept the case from the board');
@@ -475,7 +482,240 @@ const newAbilities = await withGame((game) => {
 check('Clown abilities granted', newAbilities.includes('sleight_of_hand') && newAbilities.includes('mocking_barb'), newAbilities.join(','));
 
 // ---------------------------------------------------------------------------
-console.log('\n14. No runtime errors');
+console.log('\n14. Powers menu — abilities used on purpose');
+// The rite is still on screen from the last step; close it so the world is
+// interactive again (WorldScene refuses overlays while one is already open).
+await withGame((game) => game.scene.getScene('Ritual').close());
+await page.waitForTimeout(400);
+await withGame((game) => {
+  const world = game.scene.getScene('World');
+  world.openAbilityMenu();
+});
+check('powers menu opened', await waitForScene('AbilityMenu'));
+await page.waitForTimeout(400);
+await shot('18-powers-menu');
+
+const before1 = await session();
+const invoked = await withGame((game) => {
+  const menu = game.scene.getScene('AbilityMenu');
+  const ability = menu.session.content.ability('read_the_cards');
+  return menu.session.abilities.invoke(ability.id, { context: 'hub', witnessed: false });
+});
+state = await session();
+check('acting-method power fired from the menu', invoked.ok === true, JSON.stringify(invoked));
+check('it raised digestion', state.digestion > before1.digestion, `${before1.digestion} -> ${state.digestion}`);
+check('it spent spirituality', state.spirituality < before1.spirituality);
+
+const targeted = await withGame((game) => {
+  const menu = game.scene.getScene('AbilityMenu');
+  return menu.session.abilities.invoke('divination', { context: 'investigation', witnessed: false });
+});
+check('targeted powers refuse to fire from the menu', targeted.ok === false, JSON.stringify(targeted));
+
+const before2 = await session();
+const steadied = await withGame((game) =>
+  game.scene.getScene('AbilityMenu').session.abilities.invoke('steady_the_thread', {
+    context: 'hub',
+    witnessed: false,
+  }),
+);
+state = await session();
+check('self-directed power restored sanity', steadied.ok === true && state.sanity > before2.sanity,
+  `${before2.sanity} -> ${state.sanity}`);
+await withGame((game) => game.scene.getScene('AbilityMenu').close());
+await page.waitForTimeout(300);
+
+// ---------------------------------------------------------------------------
+console.log('\n15. Training — skills bought with money and days');
+await goTo('club_hub', 11, 8);
+await withGame((game) => {
+  const world = game.scene.getScene('World');
+  world.runHotspotAction(world.map.hotspots.find((h) => h.id === 'club_lectern'));
+});
+check('tuition opened', await waitForScene('Training'));
+await page.waitForTimeout(300);
+await shot('19-training');
+
+const beforeTrain = await session();
+await withGame((game) => game.scene.getScene('Training').train('streetwise'));
+await page.waitForTimeout(200);
+state = await session();
+check('streetwise raised', state.skills.streetwise === beforeTrain.skills.streetwise + 1,
+  `${beforeTrain.skills.streetwise} -> ${state.skills.streetwise}`);
+check('tuition cost money', state.pence < beforeTrain.pence, `${beforeTrain.pence} -> ${state.pence}`);
+check('tuition cost a day', state.day > beforeTrain.day, `${beforeTrain.day} -> ${state.day}`);
+
+// Occultism must actually make powers cheaper — the stated benefit, verified.
+const discountBefore = await withGame((game) =>
+  game.scene.getScene('Training').session.abilities.spiritCostOf(
+    game.scene.getScene('Training').session.content.ability('divination'),
+  ),
+);
+await withGame((game) => {
+  const training = game.scene.getScene('Training');
+  training.session.state.addPence(20000);
+  for (let i = 0; i < 5; i++) training.train('occultism');
+});
+const discountAfter = await withGame((game) =>
+  game.scene.getScene('Training').session.abilities.spiritCostOf(
+    game.scene.getScene('Training').session.content.ability('divination'),
+  ),
+);
+check('occultism made powers cheaper', discountAfter < discountBefore, `${discountBefore} -> ${discountAfter}`);
+await withGame((game) => game.scene.getScene('Training').close());
+await page.waitForTimeout(300);
+
+// ---------------------------------------------------------------------------
+console.log('\n16. Lines of inquiry — buying a clue with money, days and skill');
+await withGame((game) => {
+  const session = game.scene.getScenes(true)[0].registry.get('session');
+  // Reopen the closed case so leads have something to attach to.
+  session.state.setCaseState('case-01-ninth-bell', 'active');
+  session.state.clues.delete('clue_ferry_times');
+  session.state.spentLeads.clear();
+});
+await withGame((game) => {
+  const world = game.scene.getScene('World');
+  world.runHotspotAction(world.map.hotspots.find((h) => h.id === 'club_inquiry_desk'));
+});
+check('inquiry desk opened', await waitForScene('Inquiry'));
+await page.waitForTimeout(300);
+await shot('20-inquiry');
+
+const leads = await withGame((game) =>
+  game.scene.getScene('Inquiry').session.inquiries.available().map((o) => ({
+    id: o.lead.id,
+    enabled: o.enabled,
+    cost: o.costPence,
+    chance: o.chance,
+  })),
+);
+check('leads offered for the open case', leads.length === 5, JSON.stringify(leads));
+check('leads show their odds', leads.every((l) => l.chance === undefined || l.chance > 0));
+
+// Rhetoric discounts paid information — verify the price actually moves.
+const priceBefore = leads.find((l) => l.id === 'lead_vane_informant')?.cost;
+await withGame((game) => {
+  const scene = game.scene.getScene('Inquiry');
+  scene.session.state.addSkill('rhetoric', 5);
+});
+const priceAfter = await withGame((game) => {
+  const scene = game.scene.getScene('Inquiry');
+  return scene.session.inquiries.available().find((o) => o.lead.id === 'lead_vane_informant')?.costPence;
+});
+check('rhetoric cut the informant price', priceAfter < priceBefore, `${priceBefore} -> ${priceAfter}`);
+
+// Force the check to succeed so the clue-granting path is exercised deterministically.
+const beforeLead = await session();
+const leadResult = await withGame((game) => {
+  const scene = game.scene.getScene('Inquiry');
+  const original = Math.random;
+  Math.random = () => 0; // guarantee the roll passes
+  try {
+    return scene.session.inquiries.follow('lead_ferry_wharf');
+  } finally {
+    Math.random = original;
+  }
+});
+state = await session();
+check('following a lead granted its clue', state.clues.includes('clue_ferry_times'), JSON.stringify(leadResult));
+check('the lead cost money', state.pence < beforeLead.pence, `${beforeLead.pence} -> ${state.pence}`);
+check('the lead is spent afterwards', state.spentLeads.includes('lead_ferry_wharf'));
+await withGame((game) => game.scene.getScene('Inquiry').close());
+await page.waitForTimeout(300);
+
+// ---------------------------------------------------------------------------
+console.log('\n17. Random encounters');
+const encounterOptions = await withGame((game) => {
+  const session = game.scene.getScenes(true)[0].registry.get('session');
+  const encounter = session.content.encounter('enc_fence_invitation');
+  return session.encounters.present(encounter).map((o) => ({ text: o.text, enabled: o.enabled, chance: o.chance }));
+});
+check('encounter options presented with odds', encounterOptions.length >= 2, JSON.stringify(encounterOptions));
+
+await withGame((game) => {
+  const world = game.scene.getScene('World');
+  world.openModal('Encounter', { encounterId: 'enc_fence_invitation' });
+});
+check('encounter scene opened', await waitForScene('Encounter'));
+await page.waitForTimeout(900);
+await shot('21-encounter');
+await withGame((game) => {
+  const scene = game.scene.getScene('Encounter');
+  scene.typewriter.finish();
+  scene.renderOptions();
+});
+await page.waitForTimeout(300);
+await withGame((game) => game.scene.getScene('Encounter').choose(0));
+await page.waitForTimeout(500);
+await shot('22-encounter-outcome');
+state = await session();
+check('encounter outcome applied its effect', state.flags.includes('knows_crookback'), state.flags.join(','));
+await withGame((game) => game.scene.getScene('Encounter').close());
+await page.waitForTimeout(400);
+
+const weighting = await withGame((game) => {
+  const session = game.scene.getScenes(true)[0].registry.get('session');
+  return {
+    eligibleOnRow: session.encounters.eligible('ashfen_row').map((e) => e.id),
+    onceIsSpent: session.state.seenEncounters.includes
+      ? false
+      : [...session.state.seenEncounters].includes('enc_fence_invitation'),
+  };
+});
+check('one-shot encounter no longer eligible', !weighting.eligibleOnRow.includes('enc_fence_invitation'),
+  weighting.eligibleOnRow.join(','));
+
+// ---------------------------------------------------------------------------
+console.log('\n18. The black market');
+await goTo('crookback_alley', 2, 3);
+state = await session();
+check('reached Crookback Alley', state.map === 'crookback_alley', state.map);
+await shot('23-alley');
+// The alley rolls encounters on arrival; clear one if the dice produced it.
+if ((await activeScenes()).includes('Encounter')) {
+  await withGame((game) => game.scene.getScene('Encounter').close());
+  await page.waitForTimeout(500);
+}
+await withGame((game) => {
+  const world = game.scene.getScene('World');
+  world.runHotspotAction(world.map.hotspots.find((h) => h.id === 'market_counter'));
+});
+check('fence opened', await waitForScene('Shop'));
+await page.waitForTimeout(300);
+await shot('24-black-market');
+
+const marketStock = await withGame((game) => {
+  const shop = game.scene.getScene('Shop');
+  return [...shop.session.content.items.values()]
+    .filter((i) => i.pricePence !== undefined && shop.stocks(i))
+    .map((i) => ({ id: i.id, list: i.pricePence, asked: shop.priceOf(i), heat: i.heat ?? 0 }));
+});
+check('fence stocks its own goods', marketStock.some((i) => i.id === 'lockpicks'), JSON.stringify(marketStock.map((i) => i.id)));
+check('club-only goods are not on the fence table', !marketStock.some((i) => i.id === 'formula_clown'));
+check('streetwise discounts the asking price', marketStock.every((i) => i.asked <= i.list),
+  JSON.stringify(marketStock));
+
+const beforeBuy = await session();
+await withGame((game) => game.scene.getScene('Shop').buy('lockpicks'));
+state = await session();
+check('bought from the fence', state.items.includes('lockpicks'));
+check('buying illicit goods cost concealment', state.concealment < beforeBuy.concealment,
+  `${beforeBuy.concealment} -> ${state.concealment}`);
+await withGame((game) => game.scene.getScene('Shop').close());
+await page.waitForTimeout(300);
+
+// The picks are a second honest key to the strongbox.
+const strongboxOpen = await withGame((game) => {
+  const session = game.scene.getScenes(true)[0].registry.get('session');
+  const map = session.content.map('pawnshop');
+  const hotspot = map.hotspots.find((h) => h.id === 'the_strongbox');
+  return session.state.check(hotspot.locked.bypass);
+});
+check('picks open what the keys opened', strongboxOpen === true);
+
+// ---------------------------------------------------------------------------
+console.log('\n19. No runtime errors');
 check('console clean', consoleErrors.length === 0, consoleErrors.slice(0, 5).join(' || '));
 
 await browser.close();

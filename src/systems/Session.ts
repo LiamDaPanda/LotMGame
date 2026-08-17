@@ -10,6 +10,8 @@ import { AbilitySystem } from '@/systems/AbilitySystem';
 import { CaseSystem } from '@/systems/CaseSystem';
 import { Content } from '@/systems/Content';
 import { DialogueSystem } from '@/systems/DialogueSystem';
+import { EncounterSystem } from '@/systems/EncounterSystem';
+import { InquirySystem } from '@/systems/InquirySystem';
 import { GameState } from '@/systems/GameState';
 import { Progression } from '@/systems/Progression';
 
@@ -21,6 +23,8 @@ export class Session {
   readonly progression: Progression;
   readonly cases: CaseSystem;
   readonly dialogue: DialogueSystem;
+  readonly encounters: EncounterSystem;
+  readonly inquiries: InquirySystem;
 
   constructor(readonly content: Content) {
     this.state = new GameState(content);
@@ -28,6 +32,8 @@ export class Session {
     this.progression = new Progression(this.state);
     this.cases = new CaseSystem(this.state);
     this.dialogue = new DialogueSystem(this.state, this.abilities);
+    this.encounters = new EncounterSystem(this.state, this.abilities);
+    this.inquiries = new InquirySystem(this.state, this.cases);
   }
 
   static get(scene: Phaser.Scene): Session {

@@ -13,6 +13,7 @@ import type {
   CharacterData,
   ContentIndex,
   DialogueTree,
+  EncounterData,
   ItemData,
   MapData,
   PathwayData,
@@ -25,6 +26,7 @@ export class Content {
   readonly cases = new Map<string, CaseData>();
   readonly maps = new Map<string, MapData>();
   readonly dialogue = new Map<string, DialogueTree>();
+  readonly encounters = new Map<string, EncounterData>();
   readonly items = new Map<string, ItemData>();
   readonly characters = new Map<string, CharacterData>();
 
@@ -61,6 +63,10 @@ export class Content {
       const list = read('dialogue', name) as DialogueTree[];
       for (const tree of list) content.dialogue.set(tree.id, tree);
     }
+    for (const name of index.encounters ?? []) {
+      const list = read('encounters', name) as EncounterData[];
+      for (const encounter of list) content.encounters.set(encounter.id, encounter);
+    }
     for (const item of read('items', index.items) as ItemData[]) {
       content.items.set(item.id, item);
     }
@@ -92,6 +98,10 @@ export class Content {
 
   map(id: string): MapData | undefined {
     return this.maps.get(id);
+  }
+
+  encounter(id: string): EncounterData | undefined {
+    return this.encounters.get(id);
   }
 
   item(id: string): ItemData | undefined {

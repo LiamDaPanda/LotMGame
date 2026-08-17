@@ -8,7 +8,8 @@
 
 import { bus } from '@/systems/EventBus';
 import type { Content } from '@/systems/Content';
-import type { CaseState, Condition, Effect, ResolutionGrade } from '@/types/schema';
+import { MAX_SKILL } from '@/systems/Skills';
+import { SKILL_IDS, type CaseState, type Condition, type Effect, type ResolutionGrade, type SkillId } from '@/types/schema';
 
 export interface CaseProgress {
   state: CaseState;
@@ -38,6 +39,9 @@ export interface SaveData {
   currentMap: string;
   extraAbilities: string[];
   lossOfControlCount: number;
+  skills: Record<SkillId, number>;
+  spentLeads: string[];
+  seenEncounters: string[];
 }
 
 const SAVE_VERSION = 1;
@@ -84,6 +88,19 @@ export class GameState {
 
   currentMap = 'club_hub';
   lossOfControlCount = 0;
+
+  /** Trained skills, 0-10. Everyone starts competent at nothing in particular. */
+  skills: Record<SkillId, number> = {
+    observation: 1,
+    rhetoric: 1,
+    occultism: 1,
+    streetwise: 1,
+  };
+
+  /** Leads already followed to a conclusion — they do not pay twice. */
+  spentLeads = new Set<string>();
+  /** One-shot encounters already played. */
+  seenEncounters = new Set<string>();
 
   constructor(content: Content) {
     this.content = content;
@@ -132,6 +149,20 @@ export class GameState {
   /** Suspicion is the inverse of concealment — what the HUD shows as risk. */
   get suspicion(): number {
     return 100 - this.concealment;
+  }
+
+  skill(id: SkillId): number {
+    return this.skills[id] ?? 0;
+  }
+
+  /** Returns false when already at the ceiling. */
+  addSkill(id: SkillId, delta: number): boolean {
+    const current = this.skill(id);
+    const next = Math.max(0, Math.min(MAX_SKILL, current + delta));
+    if (next === current) return false;
+    this.skills[id] = next;
+    bus.emit('skill:changed', { skill: id, value: next, delta: next - current });
+    return true;
   }
 
   // -------------------------------------------------------------------------
@@ -345,6 +376,8 @@ export class GameState {
   /** Evaluate a data-defined gate. Every present field must pass. */
   check(condition?: Condition): boolean {
     if (!condition) return true;
+    // `anyOf` is the one disjunction; everything else on the object still ANDs.
+    if (condition.anyOf && !condition.anyOf.some((option) => this.check(option))) return false;
     if (condition.ability && !this.knowsAbility(condition.ability)) return false;
     if (condition.clue && !this.hasClue(condition.clue)) return false;
     if (condition.deduction && !this.hasDeduction(condition.deduction)) return false;
@@ -357,6 +390,9 @@ export class GameState {
       return false;
     }
     if (condition.caseState && this.caseState(condition.caseState.caseId) !== condition.caseState.state) {
+      return false;
+    }
+    if (condition.skillAtLeast && this.skill(condition.skillAtLeast.skill) < condition.skillAtLeast.value) {
       return false;
     }
     return true;
@@ -381,6 +417,13 @@ export class GameState {
     if (condition.trustAtLeast && this.trustWith(condition.trustAtLeast.member) < condition.trustAtLeast.value) {
       return `${this.content.characterName(condition.trustAtLeast.member)} does not trust you that far`;
     }
+    if (condition.skillAtLeast && this.skill(condition.skillAtLeast.skill) < condition.skillAtLeast.value) {
+      return `Requires ${condition.skillAtLeast.skill} ${condition.skillAtLeast.value}`;
+    }
+    if (condition.anyOf) {
+      const reasons = condition.anyOf.map((option) => this.explain(option)).filter(Boolean);
+      if (reasons.length) return reasons.join(', or ');
+    }
     if (condition.flag || condition.notFlag || condition.caseState) return 'Not now';
     return 'Not available';
   }
@@ -399,6 +442,14 @@ export class GameState {
     if (effect.clues) for (const clue of effect.clues) this.addClue(clue);
     if (effect.items) for (const item of effect.items) this.addItem(item);
     if (effect.removeItems) for (const item of effect.removeItems) this.removeItem(item);
+    if (effect.skills) {
+      for (const [skill, delta] of Object.entries(effect.skills)) {
+        if (delta) this.addSkill(skill as SkillId, delta);
+      }
+    }
+    // Time last: a day passing can trigger rent, which should settle after the
+    // rest of the outcome has been paid out.
+    if (effect.days) this.advanceDay(effect.days);
   }
 
   // -------------------------------------------------------------------------
@@ -427,6 +478,9 @@ export class GameState {
       currentMap: this.currentMap,
       extraAbilities: [...this.extraAbilities],
       lossOfControlCount: this.lossOfControlCount,
+      skills: { ...this.skills },
+      spentLeads: [...this.spentLeads],
+      seenEncounters: [...this.seenEncounters],
     };
   }
 
@@ -453,5 +507,9 @@ export class GameState {
     this.currentMap = data.currentMap;
     this.extraAbilities = new Set(data.extraAbilities);
     this.lossOfControlCount = data.lossOfControlCount;
+    // Tolerate a save written before a skill existed rather than throwing.
+    for (const id of SKILL_IDS) this.skills[id] = data.skills?.[id] ?? 1;
+    this.spentLeads = new Set(data.spentLeads ?? []);
+    this.seenEncounters = new Set(data.seenEncounters ?? []);
   }
 }

@@ -36,6 +36,9 @@ export class PreloadScene extends Phaser.Scene {
     for (const name of this.index.cases) this.load.json(`cases/${name}`, `cases/${name}.json`);
     for (const name of this.index.maps) this.load.json(`maps/${name}`, `maps/${name}.json`);
     for (const name of this.index.dialogue) this.load.json(`dialogue/${name}`, `dialogue/${name}.json`);
+    for (const name of this.index.encounters ?? []) {
+      this.load.json(`encounters/${name}`, `encounters/${name}.json`);
+    }
     this.load.json(`items/${this.index.items}`, `items/${this.index.items}.json`);
     this.load.json(`characters/${this.index.characters}`, `characters/${this.index.characters}.json`);
   }

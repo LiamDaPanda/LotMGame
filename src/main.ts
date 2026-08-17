@@ -1,15 +1,19 @@
 import Phaser from 'phaser';
+import { AbilityMenuScene } from '@/scenes/AbilityMenuScene';
 import { BootScene } from '@/scenes/BootScene';
 import { CaseBoardScene } from '@/scenes/CaseBoardScene';
 import { DialogueScene } from '@/scenes/DialogueScene';
+import { EncounterScene } from '@/scenes/EncounterScene';
 import { ExamineScene } from '@/scenes/ExamineScene';
 import { HudScene } from '@/scenes/HudScene';
+import { InquiryScene } from '@/scenes/InquiryScene';
 import { JournalScene } from '@/scenes/JournalScene';
 import { MainMenuScene } from '@/scenes/MainMenuScene';
 import { PreloadScene } from '@/scenes/PreloadScene';
 import { ResolveScene } from '@/scenes/ResolveScene';
 import { RitualScene } from '@/scenes/RitualScene';
 import { ShopScene } from '@/scenes/ShopScene';
+import { TrainingScene } from '@/scenes/TrainingScene';
 import { WorldScene } from '@/scenes/WorldScene';
 import { COLORS, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
 
@@ -55,6 +59,10 @@ try {
       ShopScene,
       RitualScene,
       ResolveScene,
+      AbilityMenuScene,
+      EncounterScene,
+      TrainingScene,
+      InquiryScene,
     ],
   });
 
