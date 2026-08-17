@@ -18,9 +18,22 @@ npm install
 npm run dev          # http://localhost:5173/LotMGame/
 ```
 
-Push to `main` and GitHub Actions builds and publishes to GitHub Pages at
-`https://<user>.github.io/LotMGame/`. Enable it once under
-**Settings → Pages → Source → GitHub Actions**.
+### Live build
+
+**<https://liamdapanda.github.io/LotMGame/>**
+
+Push to `main` and Actions builds, validates the content, and publishes. The
+workflow covers both Pages modes, so one of these is already true:
+
+- **Settings → Pages → Source → Deploy from a branch → `gh-pages` / `(root)`** —
+  works today; the workflow force-pushes the built site to `gh-pages` on every
+  push to `main`.
+- **Settings → Pages → Source → GitHub Actions** — the tidier option, and the
+  one to prefer. Nothing else needs changing; the native deploy step starts
+  succeeding as soon as it is selected.
+
+If the site shows a blank page or 404s on `assets/`, Pages is serving the repo
+root rather than the build — switch the source to one of the two above.
 
 On iOS, open that URL in Safari and use **Share → Add to Home Screen**. The
 manifest and meta tags are already set up, so it launches full-screen with no

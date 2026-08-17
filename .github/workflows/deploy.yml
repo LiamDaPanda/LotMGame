@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write # the gh-pages fallback pushes a branch
   pages: write
   id-token: write
 
@@ -40,18 +40,43 @@ jobs:
           # Served from https://<user>.github.io/<repo>/
           VITE_BASE: /${{ github.event.repository.name }}/
 
+      # Publish to the gh-pages branch. This is the path that works while
+      # Settings → Pages is on "Deploy from a branch"; point it at gh-pages / root.
+      - name: Publish to gh-pages branch
+        run: |
+          touch dist/.nojekyll
+          cd dist
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
+          git add -A
+          git commit -q -m "Publish ${GITHUB_SHA::7}"
+          git push --force origin gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/configure-pages@v5
+        # Only meaningful once Pages is switched to "GitHub Actions"; skipped
+        # rather than failing the run while it is still on branch mode.
+        continue-on-error: true
 
       - uses: actions/upload-pages-artifact@v3
+        continue-on-error: true
         with:
           path: dist
 
+  # The native Pages deployment. It only succeeds when Settings → Pages →
+  # Source is "GitHub Actions"; on branch mode it is expected to fail, and the
+  # gh-pages push above has already published the site.
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    continue-on-error: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        continue-on-error: true
