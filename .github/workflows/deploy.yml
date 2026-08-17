@@ -2,7 +2,10 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    # The working branch is this repository's default branch, so it is what
+    # should be on the live site — deploying only `main` meant the published
+    # game silently lagged behind every push.
+    branches: [main, claude/mysteries-fangame-setup-8x8eji]
   # Lets you redeploy by hand from the Actions tab.
   workflow_dispatch:
 
