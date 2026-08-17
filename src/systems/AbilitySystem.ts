@@ -170,9 +170,21 @@ export class AbilitySystem {
       case 'practice_role': {
         const before = this.state.digestion;
         this.state.addDigestion(9 + this.state.skill('occultism'));
+
+        // Performing the role where people can see it is what the higher tiers
+        // ask for by name. The flag is derived from the Sequence title, so a
+        // new pathway gets this for free.
+        let publicly = '';
+        if (options.witnessed) {
+          const flag = `act_${this.state.sequenceTitle.toLowerCase().replace(/[^a-z0-9]+/g, '_')}_public`;
+          if (!this.state.hasFlag(flag)) {
+            this.state.setFlag(flag);
+            publicly = ' Somebody watched you do it, and that is the part that counts.';
+          }
+        }
         return {
           ok: true,
-          text: `You play the part for an hour, and mean it. (digestion ${before} → ${this.state.digestion})`,
+          text: `You play the part for an hour, and mean it. (digestion ${before} → ${this.state.digestion})${publicly}`,
         };
       }
       case 'disguise': {

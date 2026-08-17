@@ -30,6 +30,8 @@ export interface AdvanceResult {
   narrative?: string;
   forced?: boolean;
   lostControl?: boolean;
+  /** The circle was drawn properly, halving the risk. */
+  warded?: boolean;
   grantedAbilities?: string[];
 }
 
@@ -61,8 +63,9 @@ export class Progression {
         return { requirement, met };
       }
       case 'item': {
-        const met = requirement.itemId ? state.hasItem(requirement.itemId) : false;
-        return { requirement, met };
+        // Either the named item, or any of the listed substitutes.
+        const candidates = requirement.itemAnyOf ?? (requirement.itemId ? [requirement.itemId] : []);
+        return { requirement, met: candidates.some((id) => state.hasItem(id)) };
       }
       case 'flag': {
         const met = requirement.flag ? state.hasFlag(requirement.flag) : false;
@@ -126,12 +129,26 @@ export class Progression {
       return { ok: false, reason: 'That Sequence has not been written yet.' };
     }
 
-    // Consume the potion the requirements asked for.
+    // Consume the potion the requirements asked for — whichever of the
+    // acceptable substitutes the player actually brought.
     for (const requirement of advancement.requirements) {
-      if (requirement.type === 'item' && requirement.itemId) {
-        const item = state.content.item(requirement.itemId);
-        if (item?.kind === 'potion') state.removeItem(requirement.itemId);
+      if (requirement.type !== 'item') continue;
+      const candidates = requirement.itemAnyOf ?? (requirement.itemId ? [requirement.itemId] : []);
+      for (const id of candidates) {
+        const item = state.content.item(id);
+        if (item?.kind === 'potion' && state.hasItem(id)) {
+          state.removeItem(id);
+          break;
+        }
       }
+    }
+
+    // Warding chalk is spent by the rite, and makes a forced one less likely
+    // to take something from you.
+    let chalkUsed = false;
+    if (force && state.hasItem('warding_chalk')) {
+      state.removeItem('warding_chalk');
+      chalkUsed = true;
     }
 
     let lostControl = false;
@@ -142,7 +159,8 @@ export class Progression {
       // Undigested power carries over as a deficit, not a clean slate.
       state.digestion = Math.min(40, state.digestion);
       state.setFlag(`forced_advance_${advancement.toSequence}`);
-      lostControl = Math.random() < temptation.lossOfControlChance;
+      const risk = chalkUsed ? temptation.lossOfControlChance / 2 : temptation.lossOfControlChance;
+      lostControl = Math.random() < risk;
       if (lostControl) {
         state.lossOfControlCount += 1;
         state.addSanity(-12);
@@ -174,6 +192,7 @@ export class Progression {
       narrative: target.narrative,
       forced: force,
       lostControl,
+      warded: chalkUsed,
       grantedAbilities: target.grantsAbilities,
     };
   }

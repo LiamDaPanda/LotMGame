@@ -715,7 +715,98 @@ const strongboxOpen = await withGame((game) => {
 check('picks open what the keys opened', strongboxOpen === true);
 
 // ---------------------------------------------------------------------------
-console.log('\n19. No runtime errors');
+console.log('\n19. Usable items, and the ladder past Sequence 8');
+
+// Laudanum: bought, then actually consumed for an effect.
+await withGame((game) => {
+  const s = game.scene.getScenes(true)[0].registry.get('session');
+  s.state.addPence(60000);
+  s.state.addItem('laudanum');
+  s.state.addSanity(-40);
+});
+const beforeDose = await session();
+const dose = await withGame((game) =>
+  game.scene.getScenes(true)[0].registry.get('session').state.useItem('laudanum'),
+);
+state = await session();
+check('a consumable can be used', dose.ok === true, JSON.stringify(dose));
+check('using it restored sanity', state.sanity > beforeDose.sanity, `${beforeDose.sanity} -> ${state.sanity}`);
+check('using it consumed the item', !state.items.includes('laudanum'));
+
+// The grey-market formula must satisfy the rung the Club's formula satisfies —
+// which is the 9 -> 8 rite, so evaluate it at that rank.
+const substitution = await withGame((game) => {
+  const s = game.scene.getScenes(true)[0].registry.get('session');
+  const actualSequence = s.state.sequence;
+  s.state.inventory.delete('formula_clown');
+  s.state.inventory.delete('potion_clown');
+  try {
+    s.state.sequence = 9;
+    const withoutAny = s.progression
+      .requirements()
+      .find((r) => r.requirement.itemAnyOf)?.met;
+    s.state.addItem('grey_formula_clown');
+    const withCopy = s.progression.requirements().find((r) => r.requirement.itemAnyOf);
+    return { withoutAny, met: withCopy?.met, label: withCopy?.requirement.label };
+  } finally {
+    s.state.sequence = actualSequence;
+  }
+});
+check(
+  'the formula requirement is unmet with neither formula',
+  substitution.withoutAny === false,
+  JSON.stringify(substitution),
+);
+check(
+  'a fence-copied formula satisfies it',
+  substitution.met === true,
+  JSON.stringify(substitution),
+);
+
+// Brewing from doubtful reagents produces the potion the rite wants.
+const brewed = await withGame((game) => {
+  const s = game.scene.getScenes(true)[0].registry.get('session');
+  s.state.addItem('cheap_reagents');
+  const result = s.state.useItem('cheap_reagents');
+  return { result, has: s.state.hasItem('potion_clown') };
+});
+check('reagents plus a formula brew the potion', brewed.result.ok && brewed.has, JSON.stringify(brewed));
+
+// Now the previously dead-ended rung: Sequence 8 -> 7.
+const ladder = await withGame((game) => {
+  const s = game.scene.getScenes(true)[0].registry.get('session');
+  // Everything the tier asks for except the public performance.
+  s.state.addItem('formula_magician');
+  s.state.addItem('potion_magician');
+  s.state.addTrust('hermit', 60);
+  s.state.digestion = 100;
+  const before = s.progression.requirements().map((r) => ({ label: r.requirement.label, met: r.met }));
+
+  // The acting method, performed where somebody can see it.
+  const acted = s.abilities.invoke('read_the_cards', { context: 'hub', witnessed: true });
+  const after = s.progression.requirements().map((r) => ({ label: r.requirement.label, met: r.met }));
+  return { before, after, acted, flags: [...s.state.flags].filter((f) => f.startsWith('act_')) };
+});
+check(
+  'the public-performance requirement starts unmet',
+  ladder.before.some((r) => !r.met),
+  JSON.stringify(ladder.before),
+);
+check('performing the role in company sets the flag', ladder.flags.includes('act_clown_public'),
+  ladder.flags.join(','));
+check('every Sequence 7 requirement is now met', ladder.after.every((r) => r.met), JSON.stringify(ladder.after));
+
+const advanced = await withGame((game) => {
+  const s = game.scene.getScenes(true)[0].registry.get('session');
+  const result = s.progression.advance(false);
+  return { result, sequence: s.state.sequence, abilities: s.state.knownAbilities() };
+});
+check('advanced cleanly to Sequence 7', advanced.sequence === 7, JSON.stringify(advanced.result));
+check('Magician abilities granted', advanced.abilities.includes('paper_mask') && advanced.abilities.includes('stage_presence'),
+  advanced.abilities.join(','));
+
+// ---------------------------------------------------------------------------
+console.log('\n20. No runtime errors');
 check('console clean', consoleErrors.length === 0, consoleErrors.slice(0, 5).join(' || '));
 
 await browser.close();

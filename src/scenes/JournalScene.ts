@@ -512,13 +512,32 @@ export class JournalScene extends Phaser.Scene {
     for (const [itemId, count] of state.inventory) {
       const item = this.session.content.item(itemId);
       if (!item) continue;
-      rows.push(
-        this.conclusionRow(
-          `${item.name}${count > 1 ? ` ×${count}` : ''}`,
-          `${item.description}${item.sellPence ? `\nThe Club would pay ${format(item.sellPence)}.` : ''}`,
-          bounds.width,
-        ),
+      const label = `${item.name}${count > 1 ? ` ×${count}` : ''}`;
+      const detail = `${item.description}${item.sellPence ? `\nThe Club would pay ${format(item.sellPence)}.` : ''}`;
+
+      if (!item.use) {
+        rows.push(this.conclusionRow(label, detail, bounds.width));
+        continue;
+      }
+
+      // Usable items get a button instead of a plain row.
+      const usable = state.check(item.use.requires);
+      const container = this.add.container(0, 0);
+      const height = 66;
+      container.setSize(bounds.width, height);
+      container.add(
+        new Button(this, 0, 0, `${label}  —  ${item.use.label}`, () => this.useItem(itemId), {
+          width: bounds.width,
+          height,
+          align: 'left',
+          fontSize: 13,
+          iconFrame: item.icon,
+          tone: 'good',
+          enabled: usable,
+          subtitle: usable ? detail : `${detail}\n${state.explain(item.use.requires) ?? 'Not now'}`,
+        }),
       );
+      rows.push(container);
     }
 
     this.list = new ScrollList(this, bounds.x, bounds.y + 54, {
@@ -528,6 +547,12 @@ export class JournalScene extends Phaser.Scene {
     });
     this.list.setRows(rows);
     this.list.refreshMask();
+  }
+
+  private useItem(itemId: string): void {
+    const result = this.session.state.useItem(itemId);
+    this.statusText.setText(result.text).setColor(result.ok ? CSS.good : CSS.bad);
+    if (result.ok) this.render();
   }
 
   private renderClub(): void {

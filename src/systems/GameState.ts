@@ -255,6 +255,27 @@ export class GameState {
     return true;
   }
 
+  /**
+   * Use a carried item. Returns the line to show, or a refusal.
+   *
+   * Items without a `use` block are carried, sold or checked for by a
+   * condition — evidence and formulae are like that. Anything the player can
+   * buy and then do something with goes through here.
+   */
+  useItem(itemId: string): { ok: boolean; text: string } {
+    const item = this.content.item(itemId);
+    if (!item?.use) return { ok: false, text: 'There is nothing to be done with it.' };
+    if (!this.hasItem(itemId)) return { ok: false, text: 'You do not have it.' };
+    if (!this.check(item.use.requires)) {
+      return { ok: false, text: this.explain(item.use.requires) ?? 'Not now.' };
+    }
+    // Spend it before applying, so an effect that grants the same item works.
+    if (item.use.consume !== false) this.removeItem(itemId);
+    this.apply(item.use.effect);
+    bus.emit('notice', { text: `Used: ${item.name}`, tone: 'good' });
+    return { ok: true, text: item.use.description };
+  }
+
   // -------------------------------------------------------------------------
   // Flags, clues, deductions, trust
   // -------------------------------------------------------------------------

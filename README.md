@@ -268,9 +268,27 @@ gated, because a player with nothing must always be able to leave.
 days, a skill check, and the clues it grants. The validator warns if a lead
 costs nothing and cannot fail, since that is a free clue rather than legwork.
 
+## The Sequence ladder
+
+All four written tiers are reachable: 9 → 8 → 7 → 6. Each rung wants a case
+closed or a role performed, a formula, a potion, and the previous potion
+digested.
+
+Two routes to every rung, which is the point of having a fence:
+
+|  | The Club | Crookback Alley |
+|---|---|---|
+| Clown formula | £6 | £3 15s, copied, 4 concealment |
+| Clown potion | £12 | brew it: £5 reagents + a night + 4 sanity |
+| Risk on a forced rite | as printed | warding chalk halves it |
+
+Performing the role where somebody can see it — **Read the Cards** from the
+powers menu, in company — is what satisfies the "act the part in public"
+requirement at Sequence 8 and above. The flag is derived from the Sequence
+title, so a new pathway gets this behaviour without any code.
+
 ## Not yet built
 
-The slice deliberately stops at one case and one pathway. Sequences 7 and 6 have
-their abilities and requirements written but no content that grants their
-formulae; dual-pathway at high rank, rival-faction pressure, and cases that
-escalate with rank are structured for but not implemented.
+The slice deliberately stops at one case and one pathway. Dual-pathway at high
+rank, rival-faction pressure, and cases that escalate with rank are structured
+for but not implemented.

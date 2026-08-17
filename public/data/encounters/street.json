@@ -67,7 +67,7 @@
         "check": { "skill": "rhetoric", "base": 0.3, "perPoint": 0.09 },
         "success": {
           "text": "You start telling them about a debt you are collecting for a man on Whitlock Row, and by the second sentence you are all facing the same direction, complaining about the same absent villain. They let you go with directions.",
-          "effect": { "skills": { "rhetoric": 0 } }
+          "effect": { "concealment": 2 }
         },
         "failure": {
           "text": "The one with the pipe waits for you to finish. Then he takes your purse anyway, and a good deal of what was in it, and the wall takes a rib.",

@@ -90,13 +90,21 @@
     "id": "warding_chalk",
     "name": "Warding Chalk",
     "kind": "ritual",
-    "description": "A stick of consecrated chalk. Draw the circle before you drink, every time, no matter how late it is.",
+    "description": "A stick of consecrated chalk. Draw the circle before you drink, every time, no matter how late it is. Carrying one halves the risk when you take the reckless route.",
     "pricePence": 96,
     "sellPence": 24,
     "icon": 10,
     "vendors": [
       "club"
-    ]
+    ],
+    "use": {
+      "label": "Check the circle",
+      "description": "You draw a practice circle on the floorboards and walk it twice, correcting nothing, which is how you know you have it. Keep the chalk for the rite itself.",
+      "effect": {
+        "digestion": 4
+      },
+      "consume": false
+    }
   },
   {
     "id": "sealed_watch",
@@ -133,7 +141,7 @@
     "id": "grey_formula_clown",
     "name": "Clown Formula (copied)",
     "kind": "ritual",
-    "description": "The same four ingredients in a stranger's hand, on paper that has been folded too many times. Cheaper. Probably correct.",
+    "description": "The same four ingredients in a stranger's hand, on paper that has been folded too many times. Cheaper. Counts for the rite, and the Hermit will know.",
     "pricePence": 900,
     "icon": 11,
     "vendors": [
@@ -154,7 +162,28 @@
       "market"
     ],
     "heat": 5,
-    "patter": "He does not tell you where they came from and you decide not to develop a theory."
+    "patter": "He does not tell you where they came from and you decide not to develop a theory.",
+    "use": {
+      "label": "Brew it yourself",
+      "description": "You spend a night over a borrowed burner with the formula propped against the sugar tin. What comes out is the right colour and very slightly wrong, and it will do.",
+      "requires": {
+        "anyOf": [
+          {
+            "item": "formula_clown"
+          },
+          {
+            "item": "grey_formula_clown"
+          }
+        ]
+      },
+      "effect": {
+        "items": [
+          "potion_clown"
+        ],
+        "days": 1,
+        "sanity": -4
+      }
+    }
   },
   {
     "id": "forged_warrant",
@@ -167,7 +196,27 @@
       "market"
     ],
     "heat": 8,
-    "patter": "'The seal's genuine,' he says, which is not the same as the warrant being genuine, and he knows you noticed."
+    "patter": "'The seal's genuine,' he says, which is not the same as the warrant being genuine, and he knows you noticed.",
+    "use": {
+      "label": "Present it to the constable",
+      "description": "Rell reads as far as the seal, which is the only part that is real, and hands over the ring of keys without finishing the sentence he had started.",
+      "requires": {
+        "caseState": {
+          "caseId": "case-01-ninth-bell",
+          "state": "active"
+        },
+        "notFlag": "warrant_burned"
+      },
+      "effect": {
+        "items": [
+          "shop_keys"
+        ],
+        "flags": [
+          "warrant_burned"
+        ],
+        "concealment": -4
+      }
+    }
   },
   {
     "id": "lockpicks",
@@ -193,6 +242,15 @@
       "club",
       "market"
     ],
-    "heat": 1
+    "heat": 1,
+    "use": {
+      "label": "Take a dose",
+      "description": "Bitter, and it works. The shaking stops and the room stops leaning. You will pay for it tomorrow, but tomorrow is a separate problem.",
+      "effect": {
+        "sanity": 14,
+        "spirituality": 8,
+        "concealment": -1
+      }
+    }
   }
 ]

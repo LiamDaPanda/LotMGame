@@ -128,6 +128,44 @@ function checkEffect(effect, where) {
 }
 
 // ---------------------------------------------------------------------------
+// Every flag anything in the data sets, plus the ones the engine derives.
+// Used to catch advancement requirements that can never be satisfied — the
+// failure mode where the Sequence ladder silently dead-ends.
+// ---------------------------------------------------------------------------
+
+const settableFlags = new Set();
+(function collectFlags(node) {
+  if (Array.isArray(node)) {
+    for (const child of node) collectFlags(child);
+  } else if (node && typeof node === 'object') {
+    for (const [key, value] of Object.entries(node)) {
+      if (key === 'flags' && Array.isArray(value)) for (const flag of value) settableFlags.add(flag);
+      else collectFlags(value);
+    }
+  }
+})([pathways, cases, maps, dialogues, encounters, items, characters]);
+
+// AbilitySystem sets act_<sequence title>_public when a practice_role power is
+// used in company; mirror that derivation rather than hard-coding the names.
+for (const pathway of pathways) {
+  for (const tier of pathway.sequences) {
+    settableFlags.add(`act_${tier.title.toLowerCase().replace(/[^a-z0-9]+/g, '_')}_public`);
+  }
+}
+// Set by ExamineScene when a locked hotspot is forced, and by the rite.
+for (const map of maps) {
+  for (const hotspot of map.hotspots ?? []) settableFlags.add(`unlocked_${hotspot.id}`);
+  for (const hotspot of map.hotspots ?? []) settableFlags.add(`examined_${hotspot.id}`);
+}
+for (const pathway of pathways) {
+  for (const tier of pathway.sequences) {
+    settableFlags.add(`sequence_${tier.sequence}`);
+    if (tier.advancement) settableFlags.add(`forced_advance_${tier.advancement.toSequence}`);
+  }
+}
+settableFlags.add('rent_missed');
+
+// ---------------------------------------------------------------------------
 // Pathways & abilities
 // ---------------------------------------------------------------------------
 
@@ -150,8 +188,16 @@ for (const pathway of pathways) {
     }
     for (const requirement of advancement.requirements) {
       const where = `${pathway.id} Sequence ${tier.sequence} requirement "${requirement.label}"`;
-      if (requirement.type === 'item' && !itemIds.has(requirement.itemId)) {
-        fail(`${where}: unknown item "${requirement.itemId}"`);
+      if (requirement.type === 'item') {
+        const candidates = requirement.itemAnyOf ?? [requirement.itemId];
+        if (candidates.length === 0) fail(`${where}: names no item`);
+        for (const id of candidates) {
+          if (!itemIds.has(id)) fail(`${where}: unknown item "${id}"`);
+        }
+      }
+      if (requirement.type === 'flag' && !settableFlags.has(requirement.flag)) {
+        // The ladder would dead-end here with no way forward.
+        fail(`${where}: requires flag "${requirement.flag}", which nothing can set.`);
       }
       if (requirement.type === 'case_completed' && !caseIds.has(requirement.caseId)) {
         fail(`${where}: unknown case "${requirement.caseId}"`);
@@ -160,6 +206,35 @@ for (const pathway of pathways) {
         fail(`${where}: unknown character "${requirement.member}"`);
       }
     }
+  }
+}
+
+// Anything the player can buy should do something: be usable, be required by
+// an advancement, or be referenced by a condition somewhere.
+const referencedItems = new Set();
+(function collectItems(node) {
+  if (Array.isArray(node)) {
+    for (const child of node) collectItems(child);
+  } else if (node && typeof node === 'object') {
+    for (const [key, value] of Object.entries(node)) {
+      if ((key === 'item' || key === 'itemId') && typeof value === 'string') referencedItems.add(value);
+      else if ((key === 'items' || key === 'removeItems' || key === 'itemAnyOf') && Array.isArray(value)) {
+        for (const id of value) referencedItems.add(id);
+      } else collectItems(value);
+    }
+  }
+})([pathways, cases, maps, dialogues, encounters, characters]);
+
+for (const item of items) {
+  checkCondition(item.requires, `Item "${item.id}"`);
+  if (item.use) {
+    checkCondition(item.use.requires, `Item "${item.id}" use`);
+    checkEffect(item.use.effect, `Item "${item.id}" use`);
+  }
+  if (item.pricePence === undefined) continue;
+  const inert = !item.use && !referencedItems.has(item.id) && !item.sellPence;
+  if (inert) {
+    fail(`Item "${item.id}" can be bought but has no use, no sale value and nothing references it.`);
   }
 }
 

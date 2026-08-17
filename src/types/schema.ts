@@ -129,6 +129,11 @@ export interface AdvancementRequirement {
   type: 'case_completed' | 'item' | 'flag' | 'digestion' | 'trust';
   caseId?: string;
   itemId?: string;
+  /**
+   * Alternatives to `itemId` — any one satisfies it. A formula copied by a
+   * fence is still a formula, so the grey-market route must count.
+   */
+  itemAnyOf?: string[];
   flag?: string;
   /** For type 'digestion': required percentage (0-100). */
   value?: number;
@@ -210,6 +215,20 @@ export interface ItemData {
   heat?: number;
   /** Line the vendor says when it changes hands. */
   patter?: string;
+  /**
+   * Makes the item usable from the journal. Without this an item can only be
+   * carried, sold, or checked for by a condition — which is fine for evidence
+   * and formulae, and useless for a bottle of laudanum.
+   */
+  use?: {
+    label: string;
+    /** What using it does, in words, shown on the button. */
+    description: string;
+    requires?: Condition;
+    effect: Effect;
+    /** Defaults to true; false for tools that are not spent. */
+    consume?: boolean;
+  };
 }
 
 // ---------------------------------------------------------------------------

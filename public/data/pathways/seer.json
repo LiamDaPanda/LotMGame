@@ -31,7 +31,11 @@
           {
             "type": "item",
             "itemId": "formula_clown",
-            "label": "Obtain the Clown formula"
+            "label": "Obtain the Clown formula (the Club’s, or a copy)",
+            "itemAnyOf": [
+              "formula_clown",
+              "grey_formula_clown"
+            ]
           },
           {
             "type": "item",
