@@ -5,94 +5,102 @@
     "title": "The Querent",
     "spriteRow": 0,
     "clubMember": true,
-    "bio": "A history graduate with a private investigator's shingle on a rented door, the newest card at the table, and the only one of them who still has to worry about the rent."
+    "bio": "A history graduate of Tingen University who woke at his own desk on a crimson moon night with a revolver by his hand and no memory of firing it — and who is quietly certain he did not."
   },
   {
     "id": "hermit",
-    "name": "Ambrose Quill",
-    "title": "The Hermit",
+    "name": "Dunn Smith",
+    "title": "Captain of the Nighthawks",
     "spriteRow": 1,
     "clubMember": true,
-    "bio": "Keeps the Club's records and hands out its work. Speaks slowly on purpose, so you will hear the part he leaves out."
+    "bio": "Runs the Tingen team out of Blackthorn Security Company. Forgets names, dates and where he left his hat, and has never once forgotten a Sealed Artifact's number."
   },
   {
     "id": "star",
-    "name": "Wren Falkirk",
-    "title": "The Star",
+    "name": "Rozanne Bansi",
+    "title": "Blackthorn's front desk",
     "spriteRow": 2,
     "clubMember": true,
-    "bio": "Quartermaster. Everything the Club owns passes through her ledger, and she remembers every line of it."
+    "bio": "Books the appointments, keeps the ledgers, and knows exactly which of the company's clients are clients."
   },
   {
     "id": "tower",
-    "name": "Bryce Halloran",
-    "title": "The Tower",
+    "name": "Leonard Mitchell",
+    "title": "Nighthawk",
     "spriteRow": 3,
     "clubMember": true,
-    "bio": "Constabulary, once. Watches the doors and tells you which factions have noticed you this week."
+    "bio": "Handsome, idle, and the fastest man on the team to notice a thing nobody wanted noticed. Owes everyone in the office money."
   },
   {
     "id": "moon",
-    "name": "Ilma Voss",
-    "title": "The Moon",
+    "name": "Old Neil",
+    "title": "Nighthawk",
     "spriteRow": 4,
     "clubMember": true,
-    "bio": "Advanced twice in a year and will not discuss the second time. Knows more about digestion than anyone alive should have needed to learn."
+    "bio": "Was a scholar before he was this. Explains the theory whether or not anybody asked, which is how most of the team learned any."
   },
   {
     "id": "constable",
-    "name": "Constable Rell",
-    "title": "Ashfen Row beat",
+    "name": "Sergeant Gehrman",
+    "title": "Tingen police",
     "spriteRow": 5,
     "clubMember": false,
-    "bio": "Twenty years on the same six streets. Not stupid — incurious, which is cheaper."
+    "bio": "Wrote up your death as a suicide, and has been sleeping badly since he did."
   },
   {
     "id": "widow",
-    "name": "Ilsabet Crane",
-    "title": "The complainant",
+    "name": "Naya Gerard",
+    "title": "Found him",
     "spriteRow": 6,
     "clubMember": false,
-    "bio": "The dead man's sister-in-law. Paid the Club's fee out of a jar she had been saving for a headstone."
+    "bio": "Was at the gathering, went back on the Tuesday because nobody had seen him, and has not been able to describe the door properly to anyone since."
   },
   {
     "id": "apprentice",
-    "name": "Cass Whitlow",
-    "title": "Halloway's apprentice",
+    "name": "Kohler Fels",
+    "title": "Also at the gathering",
     "spriteRow": 7,
     "clubMember": false,
-    "bio": "Nineteen, quick with figures, and has not slept."
+    "bio": "Talks first and fastest, which in a room of frightened people passes for calm. Says he went home at nine."
   },
   {
     "id": "landlady",
-    "name": "Mrs. Peale",
-    "title": "Your landlady",
+    "name": "Melissa Moretti",
+    "title": "Your sister",
     "spriteRow": 8,
     "clubMember": false,
-    "bio": "Collects on the day, not the day after."
+    "bio": "Technical school, top of her year, and doing sums about this household she should not have to be doing."
   },
   {
     "id": "rival",
-    "name": "Mr. Vane",
+    "name": "Mr. Aldous",
     "title": "Collector",
     "spriteRow": 9,
     "clubMember": false,
-    "bio": "Buys sealed things. Nobody has established what he does with them."
+    "bio": "Buys things the Church would burn, pays in cash, and has never told anybody who he buys them for."
   },
   {
     "id": "pawnbroker",
-    "name": "Ezra Halloway",
+    "name": "Welch Tapman",
     "title": "Deceased",
     "spriteRow": 10,
     "clubMember": false,
-    "bio": "Pawnbroker of Ashfen Row for thirty-one years. Took in one thing he should not have."
+    "bio": "University acquaintance with a taste for the occult as a party trick. It was his gathering, his rooms, and his idea to read the thing aloud."
   },
   {
     "id": "dockhand",
     "name": "Sil Mowbray",
-    "title": "Ash ferry hand",
+    "title": "Tussock ferry hand",
     "spriteRow": 11,
     "clubMember": false,
-    "bio": "Knows the river's timetable and everyone who has ever missed it. Sells both."
+    "bio": "Works the night crossing, sees who goes over and when, and will tell you for the price of a drink he will not stop at one of."
+  },
+  {
+    "id": "benson",
+    "name": "Benson Moretti",
+    "title": "Your brother",
+    "spriteRow": 12,
+    "clubMember": false,
+    "bio": "Clerk at a shipping office and, since your father died, the reason this family still eats. He is the one who opened the door and found you."
   }
 ]

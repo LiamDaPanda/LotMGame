@@ -3,7 +3,7 @@
     "id": "formula_clown",
     "name": "Clown Formula",
     "kind": "ritual",
-    "description": "Four ingredients and a method, copied in the Hermit's hand. The Club sells these at cost and still makes a profit on what you must buy to fill them.",
+    "description": "Four ingredients and a method, copied in the Church clerk's hand. The Club sells these at cost and still makes a profit on what you must buy to fill them.",
     "pricePence": 1440,
     "icon": 11,
     "requires": {
@@ -20,7 +20,7 @@
     "id": "potion_clown",
     "name": "Clown Potion",
     "kind": "potion",
-    "description": "Brewed to the formula by the Club's own hand. Drinking it is the easy part.",
+    "description": "Brewed to the formula by the Church's own dispensary. Drinking it is the easy part.",
     "pricePence": 2880,
     "icon": 8,
     "requires": {
@@ -34,7 +34,7 @@
     "id": "formula_magician",
     "name": "Magician Formula",
     "kind": "ritual",
-    "description": "The next rung, written out. The Star will not sell it to a Sequence 9.",
+    "description": "The next rung, written out. Rozanne will not sign it out to a Sequence 9.",
     "pricePence": 4320,
     "icon": 11,
     "requires": {
@@ -76,7 +76,7 @@
     "id": "potion_faceless",
     "name": "Faceless Potion",
     "kind": "potion",
-    "description": "The Star hands it over without looking at you, which is not like her.",
+    "description": "Rozanne hands it over without looking at you, which is not like her.",
     "pricePence": 21600,
     "icon": 8,
     "requires": {
@@ -90,7 +90,7 @@
     "id": "formula_telepathist",
     "name": "Telepathist Formula",
     "kind": "ritual",
-    "description": "Four ingredients and a method for opening a mind that is not yours, copied in the Hermit's hand, with a marginal note advising against it.",
+    "description": "Four ingredients and a method for opening a mind that is not yours, copied in the Church clerk's hand, with a marginal note advising against it.",
     "pricePence": 1440,
     "icon": 11,
     "vendors": [
@@ -107,7 +107,7 @@
     "id": "potion_telepathist",
     "name": "Telepathist Potion",
     "kind": "potion",
-    "description": "Brewed to the formula by the Club's own hand. It is quieter in the bottle than it will be in you.",
+    "description": "Brewed to the formula by the Church's own dispensary. It is quieter in the bottle than it will be in you.",
     "pricePence": 2880,
     "icon": 8,
     "requires": {
@@ -132,7 +132,7 @@
     "id": "potion_psychiatrist",
     "name": "Psychiatrist Potion",
     "kind": "potion",
-    "description": "Brewed by the Club. The Hermit recommends taking it somewhere you can be talked down from.",
+    "description": "Brewed by the Church. Smith recommends taking it somewhere you can be talked down from.",
     "pricePence": 8640,
     "icon": 8,
     "requires": {
@@ -146,7 +146,7 @@
     "id": "formula_hypnotist",
     "name": "Hypnotist Formula",
     "kind": "ritual",
-    "description": "The Club keeps this one in a locked drawer and the Hermit signs it out to himself before he signs it out to you.",
+    "description": "Blackthorn keeps this one in a locked drawer and the captain signs it out to himself before he signs it out to you.",
     "pricePence": 12960,
     "icon": 11,
     "vendors": [
@@ -157,7 +157,7 @@
     "id": "potion_hypnotist",
     "name": "Hypnotist Potion",
     "kind": "potion",
-    "description": "Brewed by the Club, and handed over with a look.",
+    "description": "Brewed by the Church, and handed over with a look.",
     "pricePence": 21600,
     "icon": 8,
     "requires": {
@@ -171,7 +171,7 @@
     "id": "formula_coffin_bearer",
     "name": "Coffin Bearer Formula",
     "kind": "ritual",
-    "description": "Four ingredients and a method, in the Hermit's hand, with the weights given in stones rather than ounces. He says that is deliberate.",
+    "description": "Four ingredients and a method, in the Church clerk's hand, with the weights given in stones rather than ounces. He says that is deliberate.",
     "pricePence": 1440,
     "icon": 11,
     "vendors": [
@@ -188,7 +188,7 @@
     "id": "potion_coffin_bearer",
     "name": "Coffin Bearer Potion",
     "kind": "potion",
-    "description": "Brewed to the formula by the Club's own hand. It is heavier than the bottle should be.",
+    "description": "Brewed to the formula by the Church's own dispensary. It is heavier than the bottle should be.",
     "pricePence": 2880,
     "icon": 8,
     "requires": {
@@ -213,7 +213,7 @@
     "id": "potion_gravekeeper",
     "name": "Gravekeeper Potion",
     "kind": "potion",
-    "description": "Brewed by the Club, on ground the Hermit declines to name.",
+    "description": "Brewed by the Church, on ground Old Neil declines to name.",
     "pricePence": 8640,
     "icon": 8,
     "requires": {
@@ -227,7 +227,7 @@
     "id": "formula_undertaker",
     "name": "Undertaker Formula",
     "kind": "ritual",
-    "description": "Written out on mourning stationery, which the Hermit insists is not a joke either.",
+    "description": "Written out on mourning stationery, which the captain insists is not a joke either.",
     "pricePence": 12960,
     "icon": 11,
     "vendors": [
@@ -238,7 +238,7 @@
     "id": "potion_undertaker",
     "name": "Undertaker Potion",
     "kind": "potion",
-    "description": "Brewed by the Club. It is exactly at room temperature and stays there.",
+    "description": "Brewed by the Church. It is exactly at room temperature and stays there.",
     "pricePence": 21600,
     "icon": 8,
     "requires": {
@@ -252,7 +252,7 @@
     "id": "grey_formula_telepathist",
     "name": "Telepathist Formula (copied)",
     "kind": "ritual",
-    "description": "The same method in a stranger's hand, on paper that has been folded too many times. Cheaper. Counts for the rite, and the Hermit will know.",
+    "description": "The same method in a stranger's hand, on paper that has been folded too many times. Cheaper. Counts for the rite, and the captain will know.",
     "pricePence": 900,
     "icon": 11,
     "vendors": [
@@ -265,7 +265,7 @@
     "id": "grey_formula_coffin_bearer",
     "name": "Coffin Bearer Formula (copied)",
     "kind": "ritual",
-    "description": "A trade method, copied by somebody in the trade, with one weight corrected in a second hand. Cheaper. Counts for the rite, and the Hermit will know.",
+    "description": "A trade method, copied by somebody in the trade, with one weight corrected in a second hand. Cheaper. Counts for the rite, and the captain will know.",
     "pricePence": 900,
     "icon": 11,
     "vendors": [
@@ -296,17 +296,17 @@
   },
   {
     "id": "sealed_watch",
-    "name": "Stopped Pocket-Watch",
+    "name": "Copper Plumb and Thread",
     "kind": "evidence",
-    "description": "A gentleman's watch, stopped at four minutes past nine. It is warm, and it has been in an evidence bag for two days.",
+    "description": "A diviner's weight on waxed thread, taken off Welch Tapman's floor. It is warm, it has not stopped pointing, and the Church has a number for it.",
     "sellPence": 960,
     "icon": 9
   },
   {
     "id": "forged_ledger",
-    "name": "Halloway's Ledger",
+    "name": "Welch’s Notebook",
     "kind": "document",
-    "description": "Thirty-one years of a man's careful hand, and eleven days in somebody else's.",
+    "description": "His own stitching and his own hand, with one leaf cut out close to the thread and two words surviving at the gutter.",
     "sellPence": 120,
     "icon": 11
   },
@@ -314,22 +314,22 @@
     "id": "mourning_ring",
     "name": "Mourning Ring",
     "kind": "mundane",
-    "description": "Jet and braided hair, unclaimed since the spring. The Club will take it off your hands and ask nothing.",
+    "description": "Jet and braided hair, out of the estate and unclaimed. Blackthorn will take it off your hands and not ask which estate.",
     "sellPence": 144,
     "icon": 0
   },
   {
     "id": "shop_keys",
-    "name": "Shop Keys",
+    "name": "Sergeant’s Key",
     "kind": "mundane",
-    "description": "Constable Rell's ring of keys for the Halloway premises, lent for the afternoon and not one minute past it.",
+    "description": "Gehrman's key to the sealed rooms off Narcissus Street, lent for the afternoon on the understanding that you were never given it.",
     "icon": 9
   },
   {
     "id": "grey_formula_clown",
     "name": "Clown Formula (copied)",
     "kind": "ritual",
-    "description": "The same four ingredients in a stranger's hand, on paper that has been folded too many times. Cheaper. Counts for the rite, and the Hermit will know.",
+    "description": "The same four ingredients in a stranger's hand, on paper that has been folded too many times. Cheaper. Counts for the rite, and the captain will know.",
     "pricePence": 900,
     "icon": 11,
     "vendors": [
@@ -342,7 +342,7 @@
     "id": "cheap_reagents",
     "name": "Doubtful Reagents",
     "kind": "ritual",
-    "description": "Enough to brew one potion, at about the purity the label does not claim. Whatever formula you are working from, these will fill it. The Club would not sign for them.",
+    "description": "Enough to brew one potion, at about the purity the label does not claim. Whatever formula you are working from, these will fill it. Blackthorn would not sign for them.",
     "pricePence": 1200,
     "sellPence": 300,
     "icon": 8,
@@ -378,7 +378,7 @@
     "patter": "'The seal's genuine,' he says, which is not the same as the warrant being genuine, and he knows you noticed.",
     "use": {
       "label": "Present it to the constable",
-      "description": "Rell reads as far as the seal, which is the only part that is real, and hands over the ring of keys without finishing the sentence he had started.",
+      "description": "Gehrman reads as far as the seal, which is the only part that is real, and hands over the key without finishing the sentence he had started.",
       "requires": {
         "caseState": {
           "caseId": "case-01-ninth-bell",

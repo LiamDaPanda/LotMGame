@@ -18,7 +18,7 @@
         "grave_quiet",
         "keep_the_vigil"
       ],
-      "narrative": "You drank it in the back of a mortuary van on the Whitlock run, because the Fool said the role would want somewhere honest to start. The next body you lifted told you where it had been carried from, and you had to put it down again.",
+      "narrative": "You drank it in the back of a mortuary van on the Tussock run, because the Church's index said the role would want somewhere honest to start. The next body you lifted told you where it had been carried from, and you had to put it down again.",
       "advancement": {
         "toSequence": 8,
         "toTitle": "Coffin Bearer",
@@ -26,12 +26,12 @@
           {
             "type": "case_completed",
             "caseId": "case-01-ninth-bell",
-            "label": "Close a case for the Club"
+            "label": "Close a case for the Nighthawks"
           },
           {
             "type": "item",
             "itemId": "formula_coffin_bearer",
-            "label": "Obtain the Coffin Bearer formula (the Club’s, or a copy)",
+            "label": "Obtain the Coffin Bearer formula (requisitioned, or a copy)",
             "itemAnyOf": ["formula_coffin_bearer", "grey_formula_coffin_bearer"]
           },
           {
@@ -45,7 +45,7 @@
             "label": "Digest the Corpse Collector potion — do the work, and do it properly"
           }
         ],
-        "ritualText": "The Club's back room has been swept and the candles are the cheap tallow kind, at your insistence: the rite wants a pauper's funeral, not a gentleman's. You mark the circle. Then you drink, and something takes the weight of you as though you were being carried.",
+        "ritualText": "Blackthorn's cellar room has been swept and the candles are the cheap tallow kind, at your insistence: the rite wants a pauper's funeral, not a gentleman's. You mark the circle. Then you drink, and something takes the weight of you as though you were being carried.",
         "temptation": {
           "label": "Drink it now, and let the ground settle afterwards",
           "description": "You have not finished being what you are. Taking the next role early is a burial with the earth thrown in first.",
@@ -95,7 +95,7 @@
             "label": "Be seen bearing a stranger to the ground"
           }
         ],
-        "ritualText": "You do this one at four in the morning, which is when the trade does its honest work. The Hermit attends and says nothing, and afterwards admits he has never watched this pathway climb before.",
+        "ritualText": "You do this one at four in the morning, which is when the trade does its honest work. Smith attends and says nothing, and afterwards admits he has never watched this pathway climb before.",
         "temptation": {
           "label": "Drink it now, and let the ground keep what it takes",
           "description": "The role you are wearing is not finished with you. Putting another on top of it is how bearers stop coming back up the path.",
@@ -142,10 +142,10 @@
             "type": "trust",
             "member": "hermit",
             "value": 60,
-            "label": "The Hermit signs for you"
+            "label": "Smith signs for you"
           }
         ],
-        "ritualText": "The circle is marked in grave-earth this time, because at this rung the method stops pretending to be a metaphor. The Hermit reads it out twice and asks you, twice, to say your own name.",
+        "ritualText": "The circle is marked in grave-earth this time, because at this rung the method stops pretending to be a metaphor. Old Neil reads it out twice and asks you, twice, to say your own name.",
         "temptation": {
           "label": "Drink it now, and be buried in the office",
           "description": "An Undertaker taken early does not walk out of the rite so much as attend it.",
@@ -167,7 +167,7 @@
         "read_the_remains",
         "undertakers_face"
       ],
-      "narrative": "You went back to Whitlock Row in the coat, and the same constable who moved you on in the spring held the door and called you sir, and did not recognise you at all."
+      "narrative": "You went back to Narcissus Street in the coat, and the same constable who moved you on in the spring held the door and called you sir, and did not recognise you at all."
     }
   ]
 }

@@ -46,6 +46,8 @@ const CAST = [
   { id: 'rival', skin: '#d9a67e', hair: '#141210', coat: '#2a1f2c', accent: '#a03a4a', trouser: '#1e1620', hat: 'top', scarf: '#5c1f28' },
   { id: 'pawnbroker', skin: '#dfb894', hair: '#4a4238', coat: '#4a3b2a', accent: '#b09060', trouser: '#3a2f22', hat: null, scarf: null },
   { id: 'dockhand', skin: '#c08a5e', hair: '#2a2018', coat: '#40514f', accent: '#8aa8a2', trouser: '#2c3a38', hat: 'cap', scarf: null },
+  // Family. Appended, not inserted: the index is the frame number.
+  { id: 'benson', skin: '#f0c5a2', hair: '#33251d', coat: '#4a4034', accent: '#b9a37c', trouser: '#332c24', hat: 'flat', scarf: null },
 ];
 
 // ---------------------------------------------------------------------------

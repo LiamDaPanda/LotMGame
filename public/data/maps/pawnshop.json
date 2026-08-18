@@ -1,19 +1,56 @@
 {
   "id": "pawnshop",
-  "name": "Halloway's Pawnshop",
+  "name": "Welch’s Rooms",
   "ambient": "#3a2f4a",
   "legend": {
-    "#": { "floor": 8, "collide": true },
-    "W": { "floor": 12, "collide": true },
-    ".": { "floor": 3 },
-    "C": { "floor": 3, "object": 21, "collide": true },
-    "A": { "floor": 3, "object": 26, "collide": true },
-    "B": { "floor": 3, "object": 18, "collide": true },
-    "K": { "floor": 3, "object": 19, "collide": true },
-    "b": { "floor": 3, "object": 20, "collide": true },
-    "O": { "floor": 3, "object": 31, "collide": true },
-    "D": { "floor": 13, "collide": true },
-    "o": { "floor": 14 }
+    "#": {
+      "floor": 8,
+      "collide": true
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    ".": {
+      "floor": 3
+    },
+    "C": {
+      "floor": 3,
+      "object": 21,
+      "collide": true
+    },
+    "A": {
+      "floor": 3,
+      "object": 26,
+      "collide": true
+    },
+    "B": {
+      "floor": 3,
+      "object": 18,
+      "collide": true
+    },
+    "K": {
+      "floor": 3,
+      "object": 19,
+      "collide": true
+    },
+    "b": {
+      "floor": 3,
+      "object": 20,
+      "collide": true
+    },
+    "O": {
+      "floor": 3,
+      "object": 31,
+      "collide": true
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    }
   },
   "rows": [
     "####W#########W#####",
@@ -31,76 +68,122 @@
     "#########D##########",
     "####################"
   ],
-  "spawn": { "x": 9, "y": 11 },
+  "spawn": {
+    "x": 9,
+    "y": 11
+  },
   "hotspots": [
     {
       "id": "shop_door_inside",
       "x": 9,
       "y": 11,
-      "name": "The Shop Door",
-      "description": "The constables broke the frame to get in. The bolt is still thrown, still seated in its housing, and the housing came away with the wood.",
-      "clues": ["clue_bolted_door"],
+      "name": "The Street Door",
+      "description": "The bolt is still thrown. The police broke the frame around it rather than cut it, which is the one careful thing anybody did here.",
+      "clues": [
+        "clue_bolted_door"
+      ],
       "icon": 9
     },
     {
       "id": "shuttered_window",
       "x": 4,
       "y": 0,
-      "name": "Shuttered Window",
-      "description": "Nailed from the inside, and recently — the heads are bright, and the wood around them has not weathered.",
-      "clues": ["clue_nailed_shutters"]
+      "name": "The Shutters",
+      "description": "Nailed from the inside, and the nail heads are bright. A man who has decided a window is a way in does this, and does not tell his friends why.",
+      "clues": [
+        "clue_nailed_shutters"
+      ]
     },
     {
       "id": "the_body",
       "x": 10,
       "y": 7,
-      "name": "Ezra Halloway",
-      "description": "Sixty-one years old, laid out where he fell behind his own counter. The undertaker has been twice and has twice failed to do anything about his face.",
-      "clues": ["clue_no_wounds"],
-      "abilityClues": { "reveal_clue": ["clue_terror_echo"] },
+      "name": "Welch Tapman",
+      "description": "Upright at his own desk with his pen still in his hand and nothing wrong with him at all.\n\nYou were found like this. In your own room, at your own desk, eight days ago, and the only difference in the account is a revolver.",
+      "clues": [
+        "clue_no_wounds"
+      ],
+      "abilityClues": {
+        "reveal_clue": [
+          "clue_terror_echo"
+        ]
+      },
       "icon": 12
     },
     {
       "id": "the_watch",
       "x": 11,
       "y": 6,
-      "name": "A Pocket-Watch",
-      "description": "Lying open where his right hand fell away from it. A good watch, a gentleman's watch, and no gentleman has been in this shop in years.",
-      "clues": ["clue_stopped_watch"],
-      "abilityClues": { "reveal_clue": ["clue_watch_residue"] },
-      "effect": { "items": ["sealed_watch"] },
+      "name": "A Copper Plumb",
+      "description": "A weight on a waxed thread, lying where it dropped beside his hand. It has stopped swinging. It has not stopped pointing.",
+      "clues": [
+        "clue_stopped_watch"
+      ],
+      "abilityClues": {
+        "reveal_clue": [
+          "clue_watch_residue"
+        ]
+      },
+      "effect": {
+        "items": [
+          "sealed_watch"
+        ]
+      },
       "icon": 9
     },
     {
       "id": "the_counter",
       "x": 7,
       "y": 4,
-      "name": "The Counter",
-      "description": "Scrubbed deal, worn to a hollow where thirty-one years of elbows have rested.",
-      "clues": ["clue_two_cups"]
+      "name": "The Desk",
+      "description": "Two cups, both poured. One is empty and one is cold and full. His inkwell is open and his blotter has one clean corner where a second man's elbow rested.",
+      "clues": [
+        "clue_two_cups"
+      ]
     },
     {
       "id": "the_ledger",
       "x": 9,
       "y": 4,
-      "name": "Halloway's Ledger",
-      "description": "Open at the fourteenth. Every pledge, every redemption, every forfeit, in a hand that does not vary — until it does.",
-      "clues": ["clue_ledger_gap"],
-      "effect": { "items": ["forged_ledger"] },
+      "name": "Welch’s Notebook",
+      "description": "His own stitching, his own hand, and one leaf cut out close to the thread. He kept a list of everyone who came to the gathering. Your name is on it, in his writing, and seeing it is worse than it should be.",
+      "clues": [
+        "clue_ledger_gap"
+      ],
+      "effect": {
+        "items": [
+          "forged_ledger"
+        ]
+      },
       "icon": 11
     },
     {
       "id": "the_strongbox",
       "x": 5,
       "y": 4,
-      "name": "Japanned Strongbox",
-      "description": "Bolted to the underside of the counter, where a man keeps the day's takings and does not mention it.",
+      "name": "The Cash Box",
+      "description": "Unlocked, on the shelf, a yard from the body, with eleven pounds and some silver in it. Whatever came here did not come for that, and neither did the man who waited downstairs.",
       "locked": {
-        "reason": "It is locked, and the key is not on the body. Constable Rell has the ring — or a set of picks would do it.",
-        "bypass": { "anyOf": [{ "item": "shop_keys" }, { "item": "lockpicks" }] }
+        "reason": "It is locked, and the key is not on the body. Sergeant Gehrman has the key — or a set of picks would do it.",
+        "bypass": {
+          "anyOf": [
+            {
+              "item": "shop_keys"
+            },
+            {
+              "item": "lockpicks"
+            }
+          ]
+        }
       },
-      "clues": ["clue_strongbox_intact"],
-      "effect": { "items": ["mourning_ring"] },
+      "clues": [
+        "clue_strongbox_intact"
+      ],
+      "effect": {
+        "items": [
+          "mourning_ring"
+        ]
+      },
       "icon": 15
     },
     {
@@ -108,24 +191,55 @@
       "x": 5,
       "y": 9,
       "name": "The Cellar Stair",
-      "description": "Bare treads going down into the coal dark. Somebody has been up and down them since the last delivery.",
-      "clues": ["clue_coal_dust"]
+      "description": "Coal dust on the third step and the fifth, dry, tracked upwards. It rained until eight. Somebody came up out of there after that.",
+      "clues": [
+        "clue_coal_dust"
+      ]
     },
     {
       "id": "display_case",
       "x": 13,
       "y": 2,
-      "name": "Display Case",
-      "description": "Unredeemed pledges under glass: a christening spoon, a surgeon's lancet, three wedding rings, and a jet mourning ring with braided hair under the stone."
+      "name": "The Curio Shelf",
+      "description": "The occult as a party trick: a scrying bowl with a chip out of it, three tarot decks, a mounted moth, and a gap in the dust the size of a small book."
     }
   ],
   "npcs": [
-    { "id": "constable", "x": 12, "y": 9, "dialogue": "dlg_constable" },
-    { "id": "widow", "x": 3, "y": 6, "dialogue": "dlg_widow" },
-    { "id": "apprentice", "x": 16, "y": 8, "dialogue": "dlg_apprentice" }
+    {
+      "id": "constable",
+      "x": 12,
+      "y": 9,
+      "dialogue": "dlg_constable"
+    },
+    {
+      "id": "widow",
+      "x": 3,
+      "y": 6,
+      "dialogue": "dlg_widow"
+    },
+    {
+      "id": "apprentice",
+      "x": 16,
+      "y": 8,
+      "dialogue": "dlg_apprentice"
+    }
   ],
   "exits": [
-    { "x": 9, "y": 12, "toMap": "ashfen_row", "toX": 10, "toY": 7, "label": "Ashfen Row" },
-    { "x": 5, "y": 10, "toMap": "cellar", "toX": 6, "toY": 6, "label": "Cellar" }
+    {
+      "x": 9,
+      "y": 12,
+      "toMap": "ashfen_row",
+      "toX": 10,
+      "toY": 7,
+      "label": "Narcissus Street"
+    },
+    {
+      "x": 5,
+      "y": 10,
+      "toMap": "cellar",
+      "toX": 6,
+      "toY": 6,
+      "label": "Down to the cellar"
+    }
   ]
 }

@@ -155,14 +155,25 @@ const speak = (label) =>
     return { ok: true };
   }, label);
 
+// The opening is the transmigration; the pathway question comes after it.
+await speak('Look at what is on the desk');
+await page.waitForTimeout(150);
+await speak('Look at your hands');
+await page.waitForTimeout(150);
+await speak('Go to the window');
+await page.waitForTimeout(150);
 const studied = await speak('Think it through');
 check('the prologue offers a considered opening', studied.ok, JSON.stringify(studied));
-await page.waitForTimeout(200);
-await speak('Turn the three formulas');
+await page.waitForTimeout(150);
+await speak('Somebody is knocking');
+await page.waitForTimeout(150);
+await speak('Eight days pass');
+await page.waitForTimeout(150);
+await speak('Turn the three dockets');
 await page.waitForTimeout(200);
 await shot('02b-pathway-choice');
 
-const picked = await speak('the dead will answer');
+const picked = await speak('Corpse Collector');
 check('a speech option picks the pathway', picked.ok, JSON.stringify(picked));
 await page.waitForTimeout(300);
 state = await session();
@@ -344,7 +355,7 @@ await pickChoice('Back');
 
 // The keys cost money; confirm the purse actually pays.
 const beforeKeys = await session();
-await pickChoice("I'd like the keys");
+await pickChoice("I'd like the key");
 const lockedAbilityChoice = await withGame((game) => {
   const scene = game.scene.getScene('Dialogue');
   return scene.node.choices.map((c) => ({ text: c.text, enabled: c.enabled, reason: c.reason }));
@@ -412,7 +423,7 @@ await goTo('pawnshop', 9, 11);
 await talk('dlg_apprentice', 'apprentice');
 await pickChoice('Where were you that night');
 await pickChoice('Back');
-await pickChoice('The last ferry across the Ash');
+await pickChoice('The last ferry over the Tussock');
 await withGame((game) => game.scene.getScene('Dialogue').close());
 await page.waitForTimeout(200);
 state = await session();

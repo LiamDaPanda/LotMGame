@@ -26,12 +26,12 @@
           {
             "type": "case_completed",
             "caseId": "case-01-ninth-bell",
-            "label": "Close a case for the Club"
+            "label": "Close a case for the Nighthawks"
           },
           {
             "type": "item",
             "itemId": "formula_clown",
-            "label": "Obtain the Clown formula (the Club’s, or a copy)",
+            "label": "Obtain the Clown formula (requisitioned, or a copy)",
             "itemAnyOf": [
               "formula_clown",
               "grey_formula_clown"
@@ -48,7 +48,7 @@
             "label": "Digest the Seer potion — act the part in public"
           }
         ],
-        "ritualText": "The Club's back room smells of candle fat and old paper. You mark the circle yourself, because the Fool insists that a rite performed by somebody else is somebody else's rite. Then you drink.",
+        "ritualText": "Blackthorn's cellar room smells of candle fat and old paper. You mark the circle yourself, because the Fool insists that a rite performed by somebody else is somebody else's rite. Then you drink.",
         "temptation": {
           "label": "Drink it now, and let the role catch up",
           "description": "The potion is in your hand. You are not finished being a Seer, and it will notice.",
@@ -96,7 +96,7 @@
             "type": "trust",
             "member": "hermit",
             "value": 45,
-            "label": "The Hermit must vouch for you"
+            "label": "Dunn Smith must vouch for you"
           },
           {
             "type": "digestion",
@@ -104,7 +104,7 @@
             "label": "Digest the Clown potion"
           }
         ],
-        "ritualText": "The Hermit reads the formula aloud twice, the second time slower, watching your face for the place where you stop listening. You do not give him one.",
+        "ritualText": "Old Neil reads the formula aloud twice, the second time slower, watching your face for the place where you stop listening. You do not give him one.",
         "temptation": {
           "label": "Skip the vouching. Drink.",
           "description": "The Club's blessing is a formality, and formalities are for people with time.",

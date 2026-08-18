@@ -18,7 +18,7 @@
         "compose_yourself",
         "keep_watching"
       ],
-      "narrative": "You drank it in the gallery of a lecture theatre with forty strangers below you, because the Hermit said the role wanted an audience to spectate. For a week afterwards you could not stop cataloguing people.",
+      "narrative": "You drank it in the gallery of a lecture theatre with forty strangers below you, because the captain said the role wanted an audience to spectate. For a week afterwards you could not stop cataloguing people.",
       "advancement": {
         "toSequence": 8,
         "toTitle": "Telepathist",
@@ -26,12 +26,12 @@
           {
             "type": "case_completed",
             "caseId": "case-01-ninth-bell",
-            "label": "Close a case for the Club"
+            "label": "Close a case for the Nighthawks"
           },
           {
             "type": "item",
             "itemId": "formula_telepathist",
-            "label": "Obtain the Telepathist formula (the Club’s, or a copy)",
+            "label": "Obtain the Telepathist formula (requisitioned, or a copy)",
             "itemAnyOf": ["formula_telepathist", "grey_formula_telepathist"]
           },
           {
@@ -45,7 +45,7 @@
             "label": "Digest the Spectator potion — watch, and keep watching"
           }
         ],
-        "ritualText": "The Club's back room is cleared but for two chairs, and Ilma sits in the second one and does not speak, because the rite wants somebody to be observed. You mark the circle. Then you drink, and for a moment you are sitting in the other chair looking back.",
+        "ritualText": "Blackthorn's cellar room is cleared but for two chairs, and Leonard sits in the second one and does not speak, because the rite wants somebody to be observed. You mark the circle. Then you drink, and for a moment you are sitting in the other chair looking back.",
         "temptation": {
           "label": "Drink it now, before you have finished looking",
           "description": "The bottle is in your hand and you have not finished being a Spectator. What comes next will arrive in your own voice, and you will not be certain it is yours.",
@@ -95,7 +95,7 @@
             "label": "Be seen listening to somebody who needed it"
           }
         ],
-        "ritualText": "You take the rite alone this time, which the Hermit disapproves of and permits. A Telepathist advancing in company hears too much of what the company thinks of the odds.",
+        "ritualText": "You take the rite alone this time, which the captain disapproves of and permits. A Telepathist advancing in company hears too much of what the company thinks of the odds.",
         "temptation": {
           "label": "Drink it now, and sort out whose thoughts are whose later",
           "description": "You are still carrying fragments that came from other people. Adding a rank on top of them is how a Telepathist stops being able to say 'I'.",
@@ -142,10 +142,10 @@
             "type": "trust",
             "member": "hermit",
             "value": 60,
-            "label": "The Hermit signs for you"
+            "label": "Smith signs for you"
           }
         ],
-        "ritualText": "The Hermit reads the method aloud while you mark the circle, and stops twice to ask whether you are certain, which is the closest he comes to affection.",
+        "ritualText": "Old Neil reads the method aloud while you mark the circle, and stops twice to ask whether you are certain, which is the closest he comes to affection.",
         "temptation": {
           "label": "Drink it now, and let the suggestion take root anyway",
           "description": "Half-digested, the next role will not wait to be invited. It will start suggesting things to you.",
@@ -167,7 +167,7 @@
         "not_here",
         "wear_their_expectation"
       ],
-      "narrative": "You told a man on the Ashfen tram that he had left his window open, and he went home and closed a window that had been shut all week, and thanked you. Nothing about that was difficult. That is the trouble."
+      "narrative": "You told a man on the Tingen tram that he had left his window open, and he went home and closed a window that had been shut all week, and thanked you. Nothing about that was difficult. That is the trouble."
     }
   ]
 }

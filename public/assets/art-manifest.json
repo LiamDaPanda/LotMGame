@@ -24,7 +24,8 @@
       "landlady",
       "rival",
       "pawnbroker",
-      "dockhand"
+      "dockhand",
+      "benson"
     ]
   },
   "portraits": {
@@ -42,7 +43,8 @@
       "landlady",
       "rival",
       "pawnbroker",
-      "dockhand"
+      "dockhand",
+      "benson"
     ]
   },
   "tileset": {

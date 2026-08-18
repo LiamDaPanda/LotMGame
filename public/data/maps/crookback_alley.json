@@ -1,19 +1,50 @@
 {
   "id": "crookback_alley",
-  "name": "Crookback Alley",
+  "name": "The Lower Market",
   "ambient": "#241c2e",
   "encounterChance": 0.4,
   "legend": {
-    "#": { "floor": 8, "collide": true },
-    "^": { "floor": 10, "collide": true },
-    ":": { "floor": 1 },
-    "~": { "floor": 2 },
-    "m": { "floor": 29 },
-    "D": { "floor": 13, "collide": true },
-    "L": { "floor": 1, "object": 24, "collide": true },
-    "K": { "floor": 1, "object": 19, "collide": true },
-    "b": { "floor": 1, "object": 20, "collide": true },
-    "C": { "floor": 1, "object": 21, "collide": true }
+    "#": {
+      "floor": 8,
+      "collide": true
+    },
+    "^": {
+      "floor": 10,
+      "collide": true
+    },
+    ":": {
+      "floor": 1
+    },
+    "~": {
+      "floor": 2
+    },
+    "m": {
+      "floor": 29
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
+    "L": {
+      "floor": 1,
+      "object": 24,
+      "collide": true
+    },
+    "K": {
+      "floor": 1,
+      "object": 19,
+      "collide": true
+    },
+    "b": {
+      "floor": 1,
+      "object": 20,
+      "collide": true
+    },
+    "C": {
+      "floor": 1,
+      "object": 21,
+      "collide": true
+    }
   },
   "rows": [
     "^^^^^^^^^^^^^^^^^^",
@@ -27,14 +58,17 @@
     "###D####D#####D###",
     "^^^^^^^^^^^^^^^^^^"
   ],
-  "spawn": { "x": 2, "y": 3 },
+  "spawn": {
+    "x": 2,
+    "y": 3
+  },
   "hotspots": [
     {
       "id": "market_counter",
       "x": 7,
       "y": 7,
       "name": "The Third Door",
-      "description": "No sign, no window, and a counter just inside that has been worn to a shine by people not making eye contact.",
+      "description": "No sign, no window, and a man behind it who deals in the things the Church has a list for. He does not ask what you are, and the not-asking is the service.",
       "action": "black_market",
       "icon": 9
     },
@@ -43,18 +77,25 @@
       "x": 8,
       "y": 8,
       "name": "The Papered Door",
-      "description": "Bills pasted six deep: a prizefight, a patent tonic, two missing persons, and a constabulary notice about the receipt of stolen goods that somebody has thoughtfully papered over."
+      "description": "Bills pasted over bills: a prizefight, a sailing, and three hand-written cards offering good prices for books, papers and 'curiosities of the older sort, discretion assured'."
     },
     {
       "id": "alley_gutter",
       "x": 11,
       "y": 6,
       "name": "Churned Mud",
-      "description": "The alley never dries. Boot prints on top of boot prints, and a wheel rut deep enough to say that something heavy is carted through here regularly and at night."
+      "description": "Cart tracks, boot prints, and one clean rectangle where something the size of a book lay in the wet long enough to keep the rain off the ground beneath it."
     }
   ],
   "npcs": [],
   "exits": [
-    { "x": 3, "y": 8, "toMap": "ashfen_row", "toX": 20, "toY": 5, "label": "Ashfen Row" }
+    {
+      "x": 3,
+      "y": 8,
+      "toMap": "ashfen_row",
+      "toX": 20,
+      "toY": 5,
+      "label": "Narcissus Street"
+    }
   ]
 }

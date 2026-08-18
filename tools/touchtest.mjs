@@ -222,10 +222,15 @@ const say = async (label, match) => {
 };
 
 await checkTextFits('Dialogue', 'Prologue');
+await say('you can look at the desk you woke at', 'Look at what is on the desk');
+await say('and at the hands that are not yours', 'Look at your hands');
+await say('and go to the window', 'Go to the window');
 await say('the prologue takes a considered opening', 'Think it through');
-await say('and reaches the pathway question', 'Turn the three formulas');
+await say('somebody comes through the door', 'Somebody is knocking');
+await say('and eight days pass', 'Eight days pass');
+await say('and it reaches the pathway question', 'Turn the three dockets');
 await checkTextFits('Dialogue', 'Pathway question');
-await say('a speech option picks a pathway', 'the dead will answer');
+await say('a speech option picks a pathway', 'Corpse Collector');
 const chosen = await page.evaluate(
   () => window.__game.registry.get('session').state.pathwayId,
 );

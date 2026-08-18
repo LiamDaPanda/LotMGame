@@ -5,67 +5,173 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Half past two in the morning, and the lamp is down to its last inch of oil.\n\nThree formulas are laid out on the desk in the Hermit's copperplate hand, and the ingredients for all three are in a box under the bed, bought with an advance you have already spent. Tonight you brew one of them and drink it, and afterwards you are a Beyonder of that pathway and of no other.\n\nThe Fool's instruction was four words long. 'Choose what you are.'",
+        "text": "You are sitting up at a desk you have never seen, in a body that is doing the sitting without being asked.\n\nThe lamp is out. The door is bolted on the inside. There is a revolver by your right hand, and the smell in the room is the smell after a shot, and there is nothing at all wrong with your head.\n\nYou were in a reading room in a university, four hours ago and a world away, with an open book and a bad idea.",
         "choices": [
-          { "text": "Think it through properly first.", "goto": "weigh" },
-          { "text": "You have already decided. Go on.", "goto": "choose" }
+          {
+            "text": "Look at what is on the desk.",
+            "goto": "desk"
+          },
+          {
+            "text": "Look at your hands.",
+            "goto": "hands"
+          }
+        ]
+      },
+      "desk": {
+        "text": "A diagram: concentric circles, drawn carefully with a compass, and at the four points four words in a language that is not Loenese and that you can read anyway.\n\nUnderneath it, in a neat scholarly hand, a page of notes copied from something older. Down the left margin, dates. The last of them is tonight.",
+        "choices": [
+          {
+            "text": "Look at your hands.",
+            "goto": "hands"
+          }
+        ]
+      },
+      "hands": {
+        "text": "They are not your hands. They are a little broader, ink on the second finger, a callus from a pen held wrongly.\n\nAnd they know this desk. You reach for the drawer without deciding to, and your fingers stop at the exact depth where the catch is.\n\nHis name arrives before his face does. Klein Moretti. Which is, and this is the part you cannot get past, also yours.",
+        "choices": [
+          {
+            "text": "Go to the window.",
+            "goto": "moon"
+          }
+        ]
+      },
+      "moon": {
+        "text": "The moon over Tingen is red. Not the ordinary red of smoke over a mill town — a full, arterial red, filling the street, and nobody down there is looking up at it, because in this world it is Tuesday.\n\nAnd then the rest of him arrives, all at once and out of order: a brother, a sister, a father who is dead, a faculty, a friend named Welch with an occult party trick and a book he should not have had.\n\nHe read it aloud. Something answered. The revolver is the part of the account that will go in the report, and you know, with the whole of a stranger's memory, that his hand was not the one that decided.",
+        "choices": [
+          {
+            "text": "Think it through properly before you move.",
+            "goto": "weigh"
+          },
+          {
+            "text": "Somebody is knocking.",
+            "goto": "benson"
+          }
         ]
       },
       "weigh": {
-        "text": "You do what you were trained to do, which is to write it down.\n\nA potion is not a tool you pick up. It is a role you agree to act until the acting stops being acting — that is what digestion is, and it is why the Hermit's notes spend four pages on temperament and half a page on dosage. Take a role you cannot hold and it holds you.\n\nSo the question is not which power is strongest. It is which one you could keep being, on a bad week, without noticing you had stopped pretending.",
-        "effect": { "skills": { "occultism": 1 }, "flags": ["prologue_studied"] },
-        "choices": [{ "text": "Turn the three formulas face up.", "goto": "choose" }]
-      },
-      "choose": {
-        "text": "Three, then. Which do you write to?",
+        "text": "You do what you were trained to do, which is to treat it as a source.\n\nThe circle is drawn by a man who had practised it. The notes are a copy, and copies have owners. The door is bolted from the inside, which means the account will say what accounts always say when a door is bolted from the inside — and the account will be wrong, and being the only person who knows that is a position you have been in before, in a reading room, with a book.\n\nWhat you are is a historian. It is not much. It happens to be exactly the thing this needs.",
+        "effect": {
+          "skills": {
+            "occultism": 1
+          },
+          "flags": [
+            "prologue_studied"
+          ]
+        },
         "choices": [
           {
-            "text": "The one that answers questions.",
+            "text": "Somebody is knocking.",
+            "goto": "benson"
+          }
+        ]
+      },
+      "benson": {
+        "text": "The door comes off its bolt with a shoulder behind it, and Benson Moretti is in the room, and he is not looking at the revolver. He is looking at you being alive.\n\nHe does not ask what happened. He asks whether you can stand, and then he puts the revolver in his coat before the constable comes up, and he does that so quickly and so unthinkingly that you understand at once what kind of brother the man whose desk this is had.\n\nMelissa is on the stair, not coming in. She is fourteen and she is doing sums about the funeral.",
+        "effect": {
+          "flags": [
+            "prologue_found"
+          ]
+        },
+        "choices": [
+          {
+            "text": "Eight days pass.",
+            "goto": "smith"
+          }
+        ]
+      },
+      "smith": {
+        "text": "Eight days, and a sergeant who wrote suicide and did not sleep well after, and a second man dead in the same posture across the road from your own street.\n\nAnd now a tired man in an unpressed coat on your landing, who says he is from Blackthorn Security Company, and who names the ritual on your desk before he has been asked, and its number, and the two other men in this Kingdom known to have used it.\n\n'Dunn Smith,' he says. 'You have three choices and I am going to be honest about all three. You can forget it, and I will help you forget it properly. You can be a witness, which lasts until whoever wanted that page decides you are a loose end.'\n\nHe puts three requisition dockets on the table by the door.\n\n'Or you sign, and you take one of these, and you become the thing that goes and looks.'",
+        "choices": [
+          {
+            "text": "Turn the three dockets face up.",
+            "goto": "choose"
+          }
+        ]
+      },
+      "choose": {
+        "text": "Three Sequence 9 potions, which is as low as the ladder goes and further up it than anyone in this room was yesterday.\n\n'Take your time,' says Smith, in the voice of a man who has watched somebody not take their time. 'It is a role, not a tool. You will be acting it for the rest of your life and it does not come off.'\n\nThe top docket already has your name written on it in a Church clerk's hand. Somebody decided which one suited you before you were asked.",
+        "choices": [
+          {
+            "text": "The Seer. The one that answers questions — and the one already in your name.",
             "goto": "drink_seer",
-            "effect": { "pathway": "seer" }
+            "effect": {
+              "pathway": "seer",
+              "flags": [
+                "canon_path"
+              ]
+            }
           },
           {
-            "text": "The one that reads the man across the table.",
+            "text": "The Spectator. The one that reads the man across the table.",
             "goto": "drink_spectator",
-            "effect": { "pathway": "spectator" }
+            "effect": {
+              "pathway": "spectator"
+            }
           },
           {
-            "text": "The one the dead will answer.",
+            "text": "The Corpse Collector. The one the dead will answer.",
             "goto": "drink_corpse",
-            "effect": { "pathway": "corpse_collector" }
+            "effect": {
+              "pathway": "corpse_collector"
+            }
           }
         ]
       },
       "drink_seer": {
-        "text": "The Seer, then. Divination, misdirection, and a worn face — powers that ask rather than take, which is the shape of the work you have already been doing badly without them.\n\nIt tastes of wet paper and something underneath the wet paper. For a week afterwards every deck of cards you pass will feel like it is watching you back.",
-        "choices": [{ "text": "Sit with it.", "goto": "intent" }]
+        "text": "The Seer, then — divination, misdirection, and a worn face. Powers that ask rather than take, which is the shape of the work you were already doing badly without them.\n\nSmith watches you drink it in the cellar room at Blackthorn with the drain in the floor, because a man who takes one alone in a rented room is how a team finds out he had one.\n\nIt tastes of wet paper and something underneath the wet paper. For a week afterwards every deck of cards you pass will feel like it is watching you back.",
+        "choices": [
+          {
+            "text": "Sit with it.",
+            "goto": "intent"
+          }
+        ]
       },
       "drink_spectator": {
-        "text": "The Spectator, then. To be present, thoroughly, until a room stops being able to keep anything from you — and later, to reach past the words a man chooses.\n\nIt tastes of chalk dust and lecture halls. For a week afterwards you cannot stop cataloguing people, and you catch yourself doing it to your own reflection.",
-        "choices": [{ "text": "Sit with it.", "goto": "intent" }]
+        "text": "The Spectator, then — to be present, thoroughly, until a room stops being able to keep anything from you.\n\nSmith watches you drink it in the cellar room at Blackthorn with the drain in the floor, and notes, mildly, that this was not the docket with your name on it.\n\nIt tastes of chalk dust and lecture halls. For a week afterwards you cannot stop cataloguing people, and you catch yourself doing it to your own reflection, which is not your reflection.",
+        "choices": [
+          {
+            "text": "Sit with it.",
+            "goto": "intent"
+          }
+        ]
       },
       "drink_corpse": {
-        "text": "The Corpse Collector, then. What is finished cannot lie about what was done to it, and there is a whole trade in this city built on that fact and paid badly for it.\n\nIt tastes of cold iron and turned earth. For a week afterwards rooms will tell you their temperature in a way that has nothing to do with the fire.",
-        "choices": [{ "text": "Sit with it.", "goto": "intent" }]
+        "text": "The Corpse Collector, then. What is finished cannot lie about what was done to it, and there is a whole trade in this city built on that and paid badly for it.\n\nSmith watches you drink it in the cellar room at Blackthorn with the drain in the floor, and says nothing about the docket with your name on it, and puts it back in his coat.\n\nIt tastes of cold iron and turned earth. For a week afterwards rooms will tell you their temperature in a way that has nothing to do with the fire.",
+        "choices": [
+          {
+            "text": "Sit with it.",
+            "goto": "intent"
+          }
+        ]
       },
       "intent": {
-        "text": "It is done, and the light is going grey at the window, and there is one thing left to settle before you sleep.\n\nYou are going to be doing this while holding a licence, a client list and a lease. How do you intend to carry it?",
+        "text": "Smith waits until the shaking has stopped, and then asks the only question he seems to actually care about.\n\n'You have a brother who took a revolver off a table for you and a sister who is fourteen. So. How do you mean to carry this?'",
         "choices": [
           {
             "text": "Carefully. I want to be able to explain every step of it, to myself if to nobody else.",
             "goto": "after",
             "effect": {
-              "skills": { "occultism": 1 },
-              "flags": ["disposition_scholar"],
-              "trust": { "hermit": 10 }
+              "skills": {
+                "occultism": 1
+              },
+              "flags": [
+                "disposition_scholar"
+              ],
+              "trust": {
+                "hermit": 10
+              }
             }
           },
           {
-            "text": "Quietly. Nobody needs to know what I am, least of all a client.",
+            "text": "Quietly. Nobody needs to know what I am, least of all my family.",
             "goto": "after",
             "effect": {
-              "skills": { "streetwise": 1 },
-              "flags": ["disposition_quiet"],
+              "skills": {
+                "streetwise": 1
+              },
+              "flags": [
+                "disposition_quiet"
+              ],
               "concealment": 5
             }
           },
@@ -73,8 +179,12 @@
             "text": "Openly enough to be paid for it. A reputation is worth more than a secret.",
             "goto": "after",
             "effect": {
-              "skills": { "rhetoric": 1 },
-              "flags": ["disposition_open"],
+              "skills": {
+                "rhetoric": 1
+              },
+              "flags": [
+                "disposition_open"
+              ],
               "concealment": -5,
               "pence": 120
             }
@@ -82,7 +192,7 @@
         ]
       },
       "after": {
-        "text": "A week goes by.\n\nThe role settles a little further in each day and is nowhere near finished with you. The rent is due on the seventh. The Club meets in the parlour off Ashfen Row and there is work on the board.\n\nYou put on the good coat.",
+        "text": "A week goes by. The role settles a little further in each day and is nowhere near finished with you.\n\nBenson has stopped watching the door of your room at night, which took six days. Melissa has started leaving the lamp lit on the landing, which she has not mentioned and neither have you.\n\nThere is a file at Blackthorn with a man dead at a desk in it, and a page cut out of a notebook, and your own name written twice.\n\nYou put on the good coat.",
         "end": true
       }
     }
@@ -93,33 +203,116 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Mrs. Peale is on the landing with her hands folded, which is how she stands when she has decided not to shout.\n\n'Mr. Moretti. You are a quiet tenant and I have had worse, and I would like to keep saying so. But the rent was Tuesday.'",
+        "text": "Melissa is at the kitchen table with the household book open and a pencil she has been holding without writing.\n\n'The quarter was due on Tuesday. Benson has been paying it out of the Sunday overtime and telling me he is not, and I can add.'\n\nShe does not look up. 'I am not asking where your money comes from. I am asking you to notice that I could.'",
         "choices": [
           {
-            "text": "Pay her now.",
+            "text": "Settle the quarter now.",
             "goto": "paid",
-            "requires": { "pence": 216 },
-            "effect": { "pence": -216, "clearFlags": ["rent_missed"], "flags": ["rent_settled"] }
+            "requires": {
+              "pence": 216
+            },
+            "effect": {
+              "pence": -216,
+              "clearFlags": [
+                "rent_missed"
+              ],
+              "flags": [
+                "rent_settled"
+              ]
+            }
           },
           {
-            "text": "Ask for the week.",
+            "text": "Ask her to give it another week.",
             "goto": "grace",
-            "effect": { "concealment": -3 }
+            "effect": {
+              "concealment": -3
+            }
           },
-          { "text": "Say nothing useful.", "goto": "bye" }
+          {
+            "text": "Say nothing useful.",
+            "goto": "bye"
+          }
         ]
       },
       "paid": {
-        "text": "She counts it once, which is not distrust so much as habit, and the folded hands come apart.\n\n'There. Now we are neither of us thinking about it.' At the stairs she stops. 'There was a man asking after you on Monday. Not a client sort of man. I told him you were out, because you were.'",
-        "effect": { "flags": ["asked_after_by_stranger"] },
+        "text": "She counts it once, which is not distrust but arithmetic, and writes the line in a hand far better than yours.\n\n'There. Now neither of us is thinking about it.' At the door she stops. 'A man came asking for you on Monday. Not a client sort of man. He asked whether you had been ill in the spring, and I said you had not, and afterwards I could not remember his face at all.'",
+        "effect": {
+          "flags": [
+            "asked_after_by_stranger"
+          ]
+        },
         "end": true
       },
       "grace": {
-        "text": "'The week,' she agrees, in the voice of somebody filing it. 'And I shall want it on the day, and I shall be telling Mr. Peale it was on the day regardless, so do not make a liar of me.'\n\nYou are aware, going back inside, that you have just become a person somebody is keeping track of.",
+        "text": "'The week,' she agrees, and writes that down too, which is worse than an argument.\n\n'Klein. You have been different since the fifteenth, and Benson has decided not to see it, and I have decided to wait.' The pencil goes down. 'I would rather be waiting for something than for nothing. Tell me which it is, eventually.'",
         "end": true
       },
       "bye": {
-        "text": "She waits exactly long enough for it to be your turn, and then goes back down without another word, which is worse.",
+        "text": "She lets the silence run exactly long enough for it to have been your turn, and then goes back to the book.",
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_benson",
+    "speaker": "benson",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Benson has his coat off and his collar still on, which means he has been home under an hour and intends to go out again.\n\n'You are up.' He says it the way he has said it every evening since the fifteenth: as a fact he is checking rather than a greeting.",
+        "choices": [
+          {
+            "text": "Ask how the office was.",
+            "goto": "office"
+          },
+          {
+            "text": "Ask what he told the police.",
+            "goto": "police"
+          },
+          {
+            "text": "Ask about Father.",
+            "goto": "father"
+          },
+          {
+            "text": "Let him get his coat.",
+            "goto": "bye"
+          }
+        ]
+      },
+      "office": {
+        "text": "'Manifests. A ship that is late and a clerk senior to me who has decided it is my fault.' He shrugs it off with practice. 'It pays the quarter and it will pay Melissa's next term, and I would rather you did not do the sum out loud where she can hear it.'",
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "police": {
+        "text": "He takes slightly too long over the buttons on the collar.\n\n'That I found you at the desk and that you had been unwell. That is all I said and all I am going to say.' He looks up. 'I know what was on the table, Klein. I know what I put in my pocket. I have not asked you a single question about it and I am not going to, and I would like you to understand that as a thing I am doing on purpose.'",
+        "effect": {
+          "trust": {
+            "hermit": 0
+          }
+        },
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "father": {
+        "text": "'He would have said the same as me. Eat something, do not be clever at people who can have you dismissed, and keep the door shut after dark.'\n\nA pause. 'He also went out on a night he had said he would not, and did not come back, so take the advice in the order I gave it.'",
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "bye": {
+        "text": "'There is bread in the crock and Melissa has hidden the good jam somewhere I am not clever enough to find.' He gets his coat. 'Shut the door after me.'",
         "end": true
       }
     }

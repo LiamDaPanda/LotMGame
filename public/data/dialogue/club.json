@@ -5,59 +5,112 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Ambrose Quill does not look up from the book he is copying. 'The board is behind you. The Club takes work in, the Club hands it out, and what you do with it afterwards is the Club's business only when it becomes the Club's business.'",
+        "text": "Dunn Smith is asleep, or doing the thing he does that is indistinguishable from it. He answers without opening his eyes.\n\n'Board's behind you. Church takes the work in, the team takes it out, and what you did before you got here is your business until it turns up in a file.'",
         "choices": [
-          { "text": "What is the Club, exactly?", "goto": "what" },
-          { "text": "Ask about advancement.", "goto": "advance" },
           {
-            "text": "Ask for an advance against the fee.",
-            "goto": "stipend",
-            "effect": { "pence": 240, "trust": { "hermit": -5 } }
+            "text": "What are the Nighthawks, exactly?",
+            "goto": "what"
           },
-          { "text": "Nothing. Not yet.", "goto": "bye" }
+          {
+            "text": "Ask about advancement.",
+            "goto": "advance"
+          },
+          {
+            "text": "Ask for an advance against pay.",
+            "goto": "stipend",
+            "effect": {
+              "pence": 240,
+              "trust": {
+                "hermit": -5
+              }
+            }
+          },
+          {
+            "text": "Nothing. Not yet.",
+            "goto": "bye"
+          }
         ]
       },
       "what": {
-        "text": "'Nine of us, and one of him.' He turns a page. 'We do not use names in session. You are the Querent until you are something else. The Fool set it up that way so that when one of us is taken, the rest are only cards.'\n\n'It is not sentiment. It is bookkeeping.'",
+        "text": "'A team of five who work for the Church of the Evernight Goddess and are on the books here as a security company, because Blackthorn Security can rent an office and a Nighthawk squad cannot.'\n\nHe finally opens one eye. 'We recover Sealed Artifacts and we find people who have been using them. That is the whole of it, and it is more than enough.'",
         "choices": [
-          { "text": "Taken by whom?", "goto": "taken" },
-          { "text": "Back.", "goto": "start" }
+          {
+            "text": "Find them and do what?",
+            "goto": "taken"
+          },
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
         ]
       },
       "taken": {
-        "text": "'The Church has three orders in this city and all three would like a word with you. There are private collectors who are worse. And there is the plain arithmetic that most Beyonders who lose themselves do it alone in a rented room, and nobody comes.'\n\nHe finally looks up. 'That is what the Club is for. Somebody comes.'",
-        "effect": { "trust": { "hermit": 3 } },
-        "choices": [{ "text": "Back.", "goto": "start" }]
+        "text": "'Bring them in, if they will come. And if they will not.' He does not finish it, and does not need to.\n\n'The Church has three orders in this city. There are private collectors who are worse. And there is the plain arithmetic that most people who lose themselves do it alone in a rented room, with the door bolted, and nobody comes.'\n\nHe closes the eye again. 'You have seen one of those this week. That is why you are standing here.'",
+        "effect": {
+          "trust": {
+            "hermit": 3
+          }
+        },
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
       },
       "advance": {
-        "text": "'Sequence 8 is the Clown. You will need the formula, the potion, a case closed to show you can be relied upon — and you will need to have finished being a Seer before you start being something else.'\n\n'That last is the one people skip. Do not skip it. I have signed four notes of condolence to people who skipped it.'",
+        "text": "'Sequence 8 on your pathway. You will want the formula, the ingredients, a case closed to justify the requisition, and to have finished being a Seer first.'\n\n'The last one is not paperwork. The last one is the whole thing.'",
         "choices": [
-          { "text": "What does 'finished being a Seer' mean?", "goto": "digest" },
-          { "text": "Back.", "goto": "start" }
+          {
+            "text": "What does 'finished being a Seer' mean?",
+            "goto": "digest"
+          },
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
         ]
       },
       "digest": {
-        "text": "'Act the part. Read fortunes. Answer questions you were not asked. Use what you were given until using it stops feeling like reaching for a tool and starts feeling like reaching for your own hand.'\n\n'The Moon can tell you more. The Moon can tell you rather more than you will want.'",
+        "text": "'Act it. Read fortunes. Answer questions nobody asked. Do the thing the role does until doing it stops feeling like a decision — and do it where people can see you, because a role performed alone is a role you are only telling yourself about.'\n\n'Half the potion is the potion. The other half is you agreeing to be the sort of man who took it.'",
         "choices": [
           {
             "text": "Read his fortune, unasked.",
             "goto": "act_seer",
             "useAbilityEffect": "reveal_clue",
-            "effect": { "digestion": 12, "trust": { "hermit": 4 } }
+            "effect": {
+              "digestion": 12,
+              "trust": {
+                "hermit": 4
+              }
+            }
           },
-          { "text": "Back.", "goto": "start" }
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
         ]
       },
       "act_seer": {
-        "text": "You take his hand and tell him a small true thing about the week he has had, in the voice of somebody who does this. He allows it. At the end he says, 'Better. You were performing before. That was closer to being.'",
-        "choices": [{ "text": "Back.", "goto": "start" }]
+        "text": "You take his hand and tell him a small true thing about the week he has had, and he lets you, and does not look surprised by any of it.\n\n'Mm,' says Dunn Smith. 'That is the idea. Do it to somebody who will be startled next time.'",
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
       },
       "stipend": {
-        "text": "He counts out a pound and writes the line without being asked to. 'Against the fee. Not a gift — the Club is not a charity and you are not a foundling.'\n\nHe does not say anything else. That is the part that costs.",
-        "choices": [{ "text": "Back.", "goto": "start" }]
+        "text": "He counts out a pound and writes the line without being asked, in handwriting that has clearly defeated Rozanne for years.\n\n'Against pay. Do not make a habit of it, and do not tell Leonard I did it, because Leonard has made a habit of it.'",
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
       },
       "bye": {
-        "text": "'Mm.' He returns to the book.",
+        "text": "'Mm.' He is asleep again, or doing the thing.",
         "end": true
       }
     }
@@ -68,23 +121,49 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Wren Falkirk has a ledger open and a pen behind each ear. 'Requisition table. Everything on it is the Club's, everything you take is written down, and everything written down is eventually read out.'",
+        "text": "Rozanne Bansi has a ledger open and a pen behind each ear.\n\n'Requisitions, dockets, and anything you break. If you sign for it I can defend it, and if you do not I get to explain it to the Church, which I will not enjoy and neither will you.'",
         "choices": [
-          { "text": "What do you keep back here?", "goto": "stock" },
-          { "text": "Ask about the Club's cupboard.", "goto": "cupboard" },
-          { "text": "Leave her to the ledger.", "goto": "bye" }
+          {
+            "text": "What do you keep back here?",
+            "goto": "stock"
+          },
+          {
+            "text": "Ask about the sealed cupboard.",
+            "goto": "cupboard"
+          },
+          {
+            "text": "Leave her to the ledger.",
+            "goto": "bye"
+          }
         ]
       },
       "stock": {
-        "text": "'Formulae, potions, chalk, and the sort of dull practical thing nobody thinks to buy until they are standing in the dark without it.'\n\n'Prices are what they cost us plus what it costs to not ask you why you want them.'",
-        "choices": [{ "text": "Back.", "goto": "start" }]
+        "text": "'Formulae, ingredients, chalk, charms, and the dull practical things nobody thinks of until it is dark and they want one.'\n\n'The potions come from the Church, at cost, against a case and a countersignature. They are not sold to you. They are issued to you, and there is a difference, and the difference is the form.'",
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
       },
       "cupboard": {
-        "text": "'Sealed artefacts. Forty-one of them, in lead and lime, on a shelf I check twice a week.' She taps the ledger. 'Every one of them was loose in this city once, and every one of them was found by somebody who thought it was a trinket.'\n\n'If your case turns up something that hums, you bring it here. You do not sell it. You do not keep it because it seems useful.'",
-        "effect": { "trust": { "star": 3 } },
-        "choices": [{ "text": "Back.", "goto": "start" }]
+        "text": "'Sealed Artifacts. Forty-one at last count, in lead and lime, behind a door I do not have the key to.'\n\nShe taps the ledger. 'I have the numbers, though. Every one of them came in because somebody found it interesting first.'",
+        "effect": {
+          "trust": {
+            "star": 3
+          }
+        },
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
       },
-      "bye": { "text": "She is already writing again.", "end": true }
+      "bye": {
+        "text": "She is already writing again.",
+        "end": true
+      }
     }
   },
   {
@@ -93,31 +172,67 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Bryce Halloran has a chair angled so that he can see both doors and is not pretending otherwise. 'Querent.'",
+        "text": "Leonard Mitchell has his chair angled so that he can see both doors and is entirely aware that you noticed.\n\n'The probationer. You have that look people get in their first fortnight, where you have not decided yet whether we are the frightening thing in the room.'",
         "choices": [
-          { "text": "Who has noticed me?", "goto": "heat" },
-          { "text": "What should I be afraid of out there?", "goto": "factions" },
-          { "text": "Nothing tonight.", "goto": "bye" }
+          {
+            "text": "Who has noticed me?",
+            "goto": "heat"
+          },
+          {
+            "text": "What should I be afraid of out there?",
+            "goto": "factions"
+          },
+          {
+            "text": "Nothing tonight.",
+            "goto": "bye"
+          }
         ]
       },
       "heat": {
-        "text": "He looks at you for slightly too long — the way a man looks who is counting something.\n\n'Nobody, yet. That is a temporary condition and it is entirely in your hands. Every time you use what you have where somebody can see it, you spend a little of the reason nobody has looked at you.'",
+        "text": "He looks at you a beat too long — the way a man looks who is counting something.\n\n'Nobody yet. You have used nothing in front of anyone who matters, and that is the only reason. Concealment is not a talent. It is a balance, and everything interesting you do is a withdrawal.'",
         "choices": [
-          { "text": "And when it runs out?", "goto": "runout" },
-          { "text": "Back.", "goto": "start" }
+          {
+            "text": "And when it runs out?",
+            "goto": "runout"
+          },
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
         ]
       },
       "runout": {
-        "text": "'Then somebody looks at you.' He shrugs. 'Church first, most likely. They are thorough and they are patient and they do not have to prove anything to a magistrate.'\n\n'Do it in an empty room, or do not do it. That is the whole of the advice and it took me nine years to learn it.'",
-        "effect": { "trust": { "tower": 4 } },
-        "choices": [{ "text": "Back.", "goto": "start" }]
+        "text": "'Then somebody looks at you properly.' He shrugs. 'The Church first, most likely, and the Church is us, and I would rather it was us. After that it is whoever is paying the collectors, and they do not send anybody to talk.'",
+        "effect": {
+          "trust": {
+            "tower": 4
+          }
+        },
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
       },
       "factions": {
-        "text": "'Three orders of the Church, who want you catalogued. The Ashfen collectors, who want what you find. And a gentleman named Vane, who has been buying sealed things off the river districts for three months and paying stupid money for them.'\n\n'Nobody knows what Vane is for. That is why I mention him.'",
-        "effect": { "flags": ["heard_of_vane"] },
-        "choices": [{ "text": "Back.", "goto": "start" }]
+        "text": "'Three orders of the Church, who want you catalogued. Collectors who want you inventoried. And the ones who have already lost the argument with whatever they took and are still walking about.'\n\n'That last sort is why the captain sleeps in that chair instead of at home.'",
+        "effect": {
+          "flags": [
+            "heard_of_vane"
+          ]
+        },
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
       },
-      "bye": { "text": "'Mind the doors.'", "end": true }
+      "bye": {
+        "text": "'Mind the doors.'",
+        "end": true
+      }
     }
   },
   {
@@ -126,26 +241,54 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Ilma Voss is sitting on the edge of the Circle with her boots off, which nobody has ever told her not to do. 'You want to know about going up.'",
+        "text": "Old Neil is sitting on the edge of the ritual room's circle with his boots off, which he does not explain.\n\n'You want to know how fast it can be done. They all want to know how fast it can be done.'",
         "choices": [
-          { "text": "How fast can it be done?", "goto": "fast" },
-          { "text": "The Hermit said you advanced twice in a year.", "goto": "twice" },
-          { "text": "Not now.", "goto": "bye" }
+          {
+            "text": "How fast can it be done?",
+            "goto": "fast"
+          },
+          {
+            "text": "Dunn said you advanced twice in a year.",
+            "goto": "twice"
+          },
+          {
+            "text": "Not now.",
+            "goto": "bye"
+          }
         ]
       },
       "fast": {
-        "text": "'Very. That is the trouble with it. You can hold the potion in your hand at nine in the evening and be a Sequence 8 by ten, and nobody in this building can physically stop you.'\n\n'What you cannot do is be finished. The role takes as long as it takes. Drink before it is done and the rest of it happens anyway — just inside you, and without your say in it.'",
+        "text": "'Very. That is the trouble with it. You can hold the potion in your hand at breakfast and be a Sequence 8 by supper, and there is nothing in the world that will stop you.'\n\n'What there is instead is a word. Digestion. It means the role has finished arriving. Take the next one before it has, and the two of them argue, and you are the room they argue in.'",
         "choices": [
-          { "text": "What does that feel like?", "goto": "twice" },
-          { "text": "Back.", "goto": "start" }
+          {
+            "text": "What does that feel like?",
+            "goto": "twice"
+          },
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
         ]
       },
       "twice": {
-        "text": "She thinks about it for long enough that you consider withdrawing the question.\n\n'I lost eleven days. Not asleep — I was up and about and people spoke to me and I answered them. I have been told what I said. I do not remember choosing any of it.' She pulls her boots back on. 'It came back. Most of it. I check, sometimes, that it is still all there.'",
-        "effect": { "trust": { "moon": 5 }, "sanity": -2 },
-        "choices": [{ "text": "Back.", "goto": "start" }]
+        "text": "He thinks about it long enough that you consider withdrawing the question.\n\n'Like remembering a thing you did that you did not do. And then agreeing with the man who did it, because he is nearer than you are.'\n\nHe puts his boots back on. 'I do not recommend it. I recommend the four pages of theory, which nobody reads, and which is why I keep saying them out loud at people.'",
+        "effect": {
+          "trust": {
+            "moon": 5
+          },
+          "sanity": -2
+        },
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
       },
-      "bye": { "text": "'Mm. Ask when you are holding one.'", "end": true }
+      "bye": {
+        "text": "'Mm. Ask again when you are holding one.'",
+        "end": true
+      }
     }
   }
 ]
