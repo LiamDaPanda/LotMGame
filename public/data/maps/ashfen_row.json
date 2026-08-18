@@ -4,12 +4,29 @@
   "ambient": "#2c3a52",
   "encounterChance": 0.45,
   "legend": {
-    "#": { "floor": 8, "collide": true },
-    ":": { "floor": 1 },
-    "~": { "floor": 2 },
-    "D": { "floor": 13, "collide": true },
-    "W": { "floor": 12, "collide": true },
-    "L": { "floor": 1, "object": 24, "collide": true }
+    "#": {
+      "floor": 8,
+      "collide": true
+    },
+    ":": {
+      "floor": 1
+    },
+    "~": {
+      "floor": 2
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "L": {
+      "floor": 1,
+      "object": 24,
+      "collide": true
+    }
   },
   "rows": [
     "##########################",
@@ -20,10 +37,13 @@
     "::::::::::::::::::::::::::",
     "::::L::::::::::::L::::::::",
     "::::::::::::::::::::::::::",
-    "##########D#W#############",
+    "###D######D#W#############",
     "##########################"
   ],
-  "spawn": { "x": 9, "y": 2 },
+  "spawn": {
+    "x": 9,
+    "y": 2
+  },
   "hotspots": [
     {
       "id": "row_gutter",
@@ -38,7 +58,9 @@
       "y": 8,
       "name": "Halloway's Window",
       "description": "The pawnshop's front window, shuttered from within. From the street you can see the nail heads through the gap in the boards.",
-      "clues": ["clue_nailed_shutters"]
+      "clues": [
+        "clue_nailed_shutters"
+      ]
     },
     {
       "id": "row_notice",
@@ -57,7 +79,22 @@
     }
   ],
   "exits": [
-    { "x": 9, "y": 1, "toMap": "club_hub", "toX": 9, "toY": 13, "label": "The Club" },
+    {
+      "x": 3,
+      "y": 8,
+      "toMap": "lodgings",
+      "toX": 6,
+      "toY": 9,
+      "label": "Your lodgings"
+    },
+    {
+      "x": 9,
+      "y": 1,
+      "toMap": "club_hub",
+      "toX": 9,
+      "toY": 13,
+      "label": "The Club"
+    },
     {
       "x": 20,
       "y": 8,
@@ -65,7 +102,9 @@
       "toX": 3,
       "toY": 7,
       "label": "Crookback Alley",
-      "requires": { "flag": "knows_crookback" }
+      "requires": {
+        "flag": "knows_crookback"
+      }
     },
     {
       "x": 10,
@@ -74,7 +113,12 @@
       "toX": 9,
       "toY": 11,
       "label": "Halloway's",
-      "requires": { "caseState": { "caseId": "case-01-ninth-bell", "state": "active" } }
+      "requires": {
+        "caseState": {
+          "caseId": "case-01-ninth-bell",
+          "state": "active"
+        }
+      }
     }
   ]
 }

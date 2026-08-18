@@ -188,11 +188,60 @@ console.log('\n2. Hit areas agree with what is drawn');
 await checkAlignment('MainMenu');
 await checkTextFits('MainMenu', 'Main menu');
 
-console.log('\n3. Touch reaches the menu');
-await tapStep('New Investigation starts the game', 'MainMenu', 'New Investigation', (list) =>
-  list.includes('World'),
+console.log('\n3. Touch reaches the menu, and the prologue plays');
+await tapStep('Begin wakes you in your room', 'MainMenu', 'Begin', (list) => list.includes('World'));
+// The room fades in before the prologue takes the screen, so wait for it
+// rather than assuming it is up the instant the tap lands.
+await page.waitForFunction(
+  () => window.__game.scene.getScenes(true).some((scene) => scene.scene.key === 'Dialogue'),
+  null,
+  { timeout: 8000 },
 );
+check('the prologue plays itself', true);
+
+/** Tap the speech panel to finish the line, the way a player does. */
+const finishTyping = async () => {
+  const point = await page.evaluate(() => {
+    const game = window.__game;
+    const dialogue = game.scene.getScene('Dialogue');
+    if (!dialogue || !dialogue.scene.isActive()) return null;
+    return { x: game.scale.gameSize.width / 2, y: game.scale.gameSize.height * 0.88 };
+  });
+  if (!point) return;
+  await page.touchscreen.tap(
+    geometry.rx + (point.x / geometry.gw) * geometry.rw,
+    geometry.ry + (point.y / geometry.gh) * geometry.rh,
+  );
+  await page.waitForTimeout(350);
+};
+
+const say = async (label, match) => {
+  await finishTyping();
+  const result = await tapWidget('Dialogue', match);
+  check(label, result.found, result.found ? '' : `have: ${(result.have ?? []).join(' | ')}`);
+};
+
+await checkTextFits('Dialogue', 'Prologue');
+await say('the prologue takes a considered opening', 'Think it through');
+await say('and reaches the pathway question', 'Turn the three formulas');
+await checkTextFits('Dialogue', 'Pathway question');
+await say('a speech option picks a pathway', 'the dead will answer');
+const chosen = await page.evaluate(
+  () => window.__game.registry.get('session').state.pathwayId,
+);
+check('the tapped pathway took', chosen === 'corpse_collector', String(chosen));
+await say('and asks how it will be carried', 'Sit with it');
+await say('the disposition option is takeable', 'Quietly');
+await finishTyping();
+await finishTyping();
 await page.waitForTimeout(600);
+const afterPrologue = await scenes();
+check(
+  'the prologue hands the room back and closes itself',
+  afterPrologue.includes('World') && !afterPrologue.includes('Dialogue'),
+  afterPrologue.join(','),
+);
+await page.waitForTimeout(400);
 
 console.log('\n4. Touch reaches the HUD, and its targets are thumb-sized');
 const hud = await widgets('Hud');

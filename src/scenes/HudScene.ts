@@ -64,8 +64,19 @@ export class HudScene extends Phaser.Scene {
     const meters = metersRect();
 
     this.drawStrip(status);
-    this.rankText = pixelText(this, 10, 8, '', { size: 'md', color: CSS.brass });
-    this.dayText = pixelText(this, 10, 32, '', { size: 'md', color: CSS.muted });
+    const identityWidth = GAME_WIDTH - (tall ? 130 : landscapeRightStrip()) - 20;
+    this.rankText = pixelText(this, 10, 8, '', {
+      size: 'md',
+      color: CSS.brass,
+      wrap: identityWidth,
+      maxHeight: 20,
+    });
+    this.dayText = pixelText(this, 10, 30, '', {
+      size: 'md',
+      color: CSS.muted,
+      wrap: identityWidth,
+      maxHeight: 20,
+    });
 
     // Portrait has the whole right edge; landscape has to stop short of the two
     // buttons that live there, so both use the same reserved lane.
@@ -73,12 +84,14 @@ export class HudScene extends Phaser.Scene {
     this.add.image(purseRight, 20, 'icons', ICONS.pound).setScale(1.2).setOrigin(1, 0.5);
     this.purse = pixelText(this, purseRight - 16, 20, '', { size: 'md', color: CSS.parchment }).setOrigin(1, 0.5);
 
+    // Both orientations give the meters a row to themselves; in landscape it is
+    // the second row of the same strip, so there is no separate band to draw.
     if (tall) this.drawStrip(meters);
     // Four meters share the row. Each is icon + bar + value; the bar takes
     // whatever is left once those fixed parts are paid for, so the last meter
     // ends exactly at the right margin instead of past it.
-    const meterX = tall ? 8 : meters.x;
-    const meterY = tall ? meters.y + 9 : 12;
+    const meterX = meters.x + (tall ? 8 : 0);
+    const meterY = meters.y + (tall ? 9 : 6);
     const meterGap = (meters.width - (tall ? 16 : 0)) / 4;
     // Icon, bar, value — and no three-letter tag. At either width the row
     // cannot pay for all four, and the floor under the bar pushed each meter

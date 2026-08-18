@@ -86,7 +86,8 @@ export class GameState {
   /** Abilities granted outside the pathway ladder (artefacts, story beats). */
   extraAbilities = new Set<string>();
 
-  currentMap = 'club_hub';
+  /** A run opens in Klein's own room, the night he chooses a pathway. */
+  currentMap = 'lodgings';
   lossOfControlCount = 0;
 
   /** Trained skills, 0-10. Everyone starts competent at nothing in particular. */
@@ -121,6 +122,9 @@ export class GameState {
     this.sequence = Math.max(...pathway.sequences.map((tier) => tier.sequence));
     this.sanity = this.sanityMax;
     this.spirituality = this.spiritualityMax;
+    // The HUD is a listener; without this it would keep showing whichever
+    // pathway the state was built with until something else changed.
+    bus.emit('sequence:changed', { sequence: this.sequence, title: this.sequenceTitle });
   }
 
   // -------------------------------------------------------------------------
@@ -494,6 +498,9 @@ export class GameState {
   /** Apply a data-defined mutation bundle. */
   apply(effect?: Effect): void {
     if (!effect) return;
+    // First: the rank ceilings a pathway sets decide what the rest of this
+    // effect's sanity and spirituality numbers are clamped against.
+    if (effect.pathway) this.setPathway(effect.pathway);
     if (effect.sanity) this.addSanity(effect.sanity);
     if (effect.spirituality) this.addSpirituality(effect.spirituality);
     if (effect.concealment) this.addConcealment(effect.concealment);

@@ -97,6 +97,12 @@ export interface Effect {
    * every pathway, and only the label on the bottle changes.
    */
   brewNextPotion?: boolean;
+  /**
+   * Sets the pathway this run walks. Only the prologue uses it: which potion
+   * Klein brews is a thing he decides in a conversation with himself, not a
+   * menu, so the choice has to be expressible as a dialogue outcome.
+   */
+  pathway?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -493,6 +499,11 @@ export interface HotspotData {
   abilityClues?: Partial<Record<AbilityEffectKind, string[]>>;
   /** Blocked until the condition passes or an unlock_access ability is used. */
   locked?: { reason: string; bypass?: Condition };
+  /**
+   * For `action: 'rest'`: somewhere nothing will find you. Your own bed and the
+   * Club's back room qualify; a bench does not.
+   */
+  safeRest?: boolean;
   effect?: Effect;
   /** Icon index for the world marker. */
   icon?: number;
@@ -542,6 +553,12 @@ export interface MapData {
   hotspots?: HotspotData[];
   npcs?: MapNpcData[];
   exits?: MapExitData[];
+  /**
+   * Plays the moment the player first arrives, then never again — the flag is
+   * set as it starts. This is how the prologue runs: Klein wakes up in his own
+   * room and the game begins mid-thought rather than at a menu.
+   */
+  intro?: { dialogue: string; flag: string };
 }
 
 // ---------------------------------------------------------------------------

@@ -1,0 +1,127 @@
+[
+  {
+    "id": "dlg_prologue",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Half past two in the morning, and the lamp is down to its last inch of oil.\n\nThree formulas are laid out on the desk in the Hermit's copperplate hand, and the ingredients for all three are in a box under the bed, bought with an advance you have already spent. Tonight you brew one of them and drink it, and afterwards you are a Beyonder of that pathway and of no other.\n\nThe Fool's instruction was four words long. 'Choose what you are.'",
+        "choices": [
+          { "text": "Think it through properly first.", "goto": "weigh" },
+          { "text": "You have already decided. Go on.", "goto": "choose" }
+        ]
+      },
+      "weigh": {
+        "text": "You do what you were trained to do, which is to write it down.\n\nA potion is not a tool you pick up. It is a role you agree to act until the acting stops being acting — that is what digestion is, and it is why the Hermit's notes spend four pages on temperament and half a page on dosage. Take a role you cannot hold and it holds you.\n\nSo the question is not which power is strongest. It is which one you could keep being, on a bad week, without noticing you had stopped pretending.",
+        "effect": { "skills": { "occultism": 1 }, "flags": ["prologue_studied"] },
+        "choices": [{ "text": "Turn the three formulas face up.", "goto": "choose" }]
+      },
+      "choose": {
+        "text": "Three, then. Which do you write to?",
+        "choices": [
+          {
+            "text": "The one that answers questions.",
+            "goto": "drink_seer",
+            "effect": { "pathway": "seer" }
+          },
+          {
+            "text": "The one that reads the man across the table.",
+            "goto": "drink_spectator",
+            "effect": { "pathway": "spectator" }
+          },
+          {
+            "text": "The one the dead will answer.",
+            "goto": "drink_corpse",
+            "effect": { "pathway": "corpse_collector" }
+          }
+        ]
+      },
+      "drink_seer": {
+        "text": "The Seer, then. Divination, misdirection, and a worn face — powers that ask rather than take, which is the shape of the work you have already been doing badly without them.\n\nIt tastes of wet paper and something underneath the wet paper. For a week afterwards every deck of cards you pass will feel like it is watching you back.",
+        "choices": [{ "text": "Sit with it.", "goto": "intent" }]
+      },
+      "drink_spectator": {
+        "text": "The Spectator, then. To be present, thoroughly, until a room stops being able to keep anything from you — and later, to reach past the words a man chooses.\n\nIt tastes of chalk dust and lecture halls. For a week afterwards you cannot stop cataloguing people, and you catch yourself doing it to your own reflection.",
+        "choices": [{ "text": "Sit with it.", "goto": "intent" }]
+      },
+      "drink_corpse": {
+        "text": "The Corpse Collector, then. What is finished cannot lie about what was done to it, and there is a whole trade in this city built on that fact and paid badly for it.\n\nIt tastes of cold iron and turned earth. For a week afterwards rooms will tell you their temperature in a way that has nothing to do with the fire.",
+        "choices": [{ "text": "Sit with it.", "goto": "intent" }]
+      },
+      "intent": {
+        "text": "It is done, and the light is going grey at the window, and there is one thing left to settle before you sleep.\n\nYou are going to be doing this while holding a licence, a client list and a lease. How do you intend to carry it?",
+        "choices": [
+          {
+            "text": "Carefully. I want to be able to explain every step of it, to myself if to nobody else.",
+            "goto": "after",
+            "effect": {
+              "skills": { "occultism": 1 },
+              "flags": ["disposition_scholar"],
+              "trust": { "hermit": 10 }
+            }
+          },
+          {
+            "text": "Quietly. Nobody needs to know what I am, least of all a client.",
+            "goto": "after",
+            "effect": {
+              "skills": { "streetwise": 1 },
+              "flags": ["disposition_quiet"],
+              "concealment": 5
+            }
+          },
+          {
+            "text": "Openly enough to be paid for it. A reputation is worth more than a secret.",
+            "goto": "after",
+            "effect": {
+              "skills": { "rhetoric": 1 },
+              "flags": ["disposition_open"],
+              "concealment": -5,
+              "pence": 120
+            }
+          }
+        ]
+      },
+      "after": {
+        "text": "A week goes by.\n\nThe role settles a little further in each day and is nowhere near finished with you. The rent is due on the seventh. The Club meets in the parlour off Ashfen Row and there is work on the board.\n\nYou put on the good coat.",
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_landlady",
+    "speaker": "landlady",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Mrs. Peale is on the landing with her hands folded, which is how she stands when she has decided not to shout.\n\n'Mr. Moretti. You are a quiet tenant and I have had worse, and I would like to keep saying so. But the rent was Tuesday.'",
+        "choices": [
+          {
+            "text": "Pay her now.",
+            "goto": "paid",
+            "requires": { "pence": 216 },
+            "effect": { "pence": -216, "clearFlags": ["rent_missed"], "flags": ["rent_settled"] }
+          },
+          {
+            "text": "Ask for the week.",
+            "goto": "grace",
+            "effect": { "concealment": -3 }
+          },
+          { "text": "Say nothing useful.", "goto": "bye" }
+        ]
+      },
+      "paid": {
+        "text": "She counts it once, which is not distrust so much as habit, and the folded hands come apart.\n\n'There. Now we are neither of us thinking about it.' At the stairs she stops. 'There was a man asking after you on Monday. Not a client sort of man. I told him you were out, because you were.'",
+        "effect": { "flags": ["asked_after_by_stranger"] },
+        "end": true
+      },
+      "grace": {
+        "text": "'The week,' she agrees, in the voice of somebody filing it. 'And I shall want it on the day, and I shall be telling Mr. Peale it was on the day regardless, so do not make a liar of me.'\n\nYou are aware, going back inside, that you have just become a person somebody is keeping track of.",
+        "end": true
+      },
+      "bye": {
+        "text": "She waits exactly long enough for it to be your turn, and then goes back down without another word, which is worse.",
+        "end": true
+      }
+    }
+  }
+]

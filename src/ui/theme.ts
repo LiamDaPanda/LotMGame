@@ -80,9 +80,15 @@ const PANES = {
   tabs: 64,
 } as const;
 
-/** The status strip along the top. */
+/**
+ * The status strip along the top.
+ *
+ * Two rows in both orientations. One row cannot hold an identity line, four
+ * meters and two buttons at pixel-font size: "SEQ 9 CORPSE COLLECTOR" alone is
+ * 276px, and squeezing the meters in beside it drew them over the title.
+ */
 export function statusRect(): Rect {
-  return { x: 0, y: 0, width: GAME_WIDTH, height: isPortrait() ? PANES.status : 48 };
+  return { x: 0, y: 0, width: GAME_WIDTH, height: isPortrait() ? PANES.status : 76 };
 }
 
 /** Where the world camera draws. In landscape that is the whole board. */
@@ -92,8 +98,8 @@ export function mapRect(): Rect {
 }
 
 /**
- * Width the landscape status strip reserves on its right: the two buttons, and
- * room for the purse beside them. Everything else in the strip stops here.
+ * Width the landscape status strip's first row reserves on its right: the two
+ * buttons, and room for the purse beside them.
  */
 export function landscapeRightStrip(): number {
   const buttons = 2 * (7 * 12 + 16) + 22;
@@ -107,10 +113,7 @@ export function landscapeRightStrip(): number {
  * two buttons on the right, so it has to stop short of them.
  */
 export function metersRect(): Rect {
-  if (!isPortrait()) {
-    const left = 168;
-    return { x: left, y: 12, width: GAME_WIDTH - left - landscapeRightStrip(), height: 36 };
-  }
+  if (!isPortrait()) return { x: 8, y: 44, width: GAME_WIDTH - 16, height: 30 };
   return { x: 0, y: PANES.status + PANES.map, width: GAME_WIDTH, height: PANES.meters };
 }
 
@@ -122,7 +125,8 @@ export function metersRect(): Rect {
 export function menuRect(): Rect {
   if (!isPortrait()) {
     const inset = panelInset();
-    return { x: inset, y: 56, width: GAME_WIDTH - inset * 2, height: GAME_HEIGHT - 102 };
+    const top = statusRect().height + 8;
+    return { x: inset, y: top, width: GAME_WIDTH - inset * 2, height: GAME_HEIGHT - top - 12 };
   }
   const top = PANES.status + PANES.map + PANES.meters;
   return { x: 0, y: top, width: GAME_WIDTH, height: GAME_HEIGHT - top - PANES.tabs };
@@ -136,7 +140,7 @@ export function tabBarRect(): Rect {
 
 /** Height of the status strip. */
 export function hudHeight(): number {
-  return isPortrait() ? PANES.status + PANES.map + PANES.meters : 48;
+  return isPortrait() ? PANES.status + PANES.map + PANES.meters : statusRect().height;
 }
 
 /** Height of the bottom tab bar. */

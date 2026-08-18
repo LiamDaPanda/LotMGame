@@ -76,6 +76,8 @@ const session = () =>
     if (!s) return null;
     return {
       sequence: s.state.sequence,
+      pathway: s.state.pathwayId,
+      sequenceTitle: s.state.sequenceTitle,
       digestion: s.state.digestion,
       sanity: s.state.sanity,
       spirituality: s.state.spirituality,
@@ -116,7 +118,7 @@ const loaded = await withGame((game) => {
 check(
   'content loaded from JSON',
   loaded.cases === 1 &&
-    loaded.maps === 5 &&
+    loaded.maps === 6 &&
     loaded.pathways === 3 &&
     loaded.abilities === 43 &&
     loaded.encounters === 6,
@@ -124,21 +126,84 @@ check(
 );
 
 // ---------------------------------------------------------------------------
-console.log('\n2. Start a new game and land in the hub');
+console.log('\n2. Wake up in your own room');
 await withGame((game) => {
   const menu = game.scene.getScene('MainMenu');
   menu.newGame(false);
 });
 check('world scene started', await waitForScene('World'));
 check('HUD launched', await waitForScene('Hud'));
+check('the prologue plays itself', await waitForScene('Dialogue'));
 await page.waitForTimeout(600);
-await shot('02-club-hub');
+await shot('02-lodgings');
 let state = await session();
-check('spawned in the club hub', state.map === 'club_hub', state.map);
+check('a run opens in Klein’s lodgings', state.map === 'lodgings', state.map);
 check('starts at Sequence 9', state.sequence === 9);
 check('starts with £2 10s', state.pence === 600, `${state.pence}d`);
 check('starts part-digested', state.digestion === 55, `${state.digestion}`);
 check('starts with skills at 1', Object.values(state.skills).every((v) => v === 1), JSON.stringify(state.skills));
+
+// ---------------------------------------------------------------------------
+console.log('\n2b. The prologue chooses the pathway');
+// Walk the tree by choice text, the way a player does, rather than by index.
+const speak = (label) =>
+  withGame((game, wanted) => {
+    const scene = game.scene.getScene('Dialogue');
+    const choice = scene.node.choices.find((option) => option.text.includes(wanted));
+    if (!choice) return { ok: false, have: scene.node.choices.map((o) => o.text) };
+    scene.choose(choice.index);
+    return { ok: true };
+  }, label);
+
+const studied = await speak('Think it through');
+check('the prologue offers a considered opening', studied.ok, JSON.stringify(studied));
+await page.waitForTimeout(200);
+await speak('Turn the three formulas');
+await page.waitForTimeout(200);
+await shot('02b-pathway-choice');
+
+const picked = await speak('the dead will answer');
+check('a speech option picks the pathway', picked.ok, JSON.stringify(picked));
+await page.waitForTimeout(300);
+state = await session();
+check('the chosen pathway took', state.pathway === 'corpse_collector', String(state.pathway));
+check('and its rank title with it', state.sequenceTitle === 'Corpse Collector', String(state.sequenceTitle));
+
+await speak('Sit with it');
+await page.waitForTimeout(200);
+await speak('Quietly');
+await page.waitForTimeout(300);
+state = await session();
+check(
+  'the disposition option trained a skill',
+  state.skills.streetwise === 2 && state.skills.occultism === 2,
+  JSON.stringify(state.skills),
+);
+
+// Back to the Seer for the rest of the run: the case content below is written
+// against its ability names.
+await withGame((game) => {
+  game.scene.stop('Dialogue');
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(400);
+await withGame((game) => {
+  const s = game.scene.getScenes(true)[0].registry.get('session');
+  s.state.setPathway('seer');
+  s.state.skills.occultism = 1;
+  s.state.skills.streetwise = 1;
+  // Restart the room the way an exit does, rather than starting the scene from
+  // inside itself.
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+  world.scene.restart({ mapId: 'club_hub' });
+});
+check('reached the club hub', await waitForScene('World'));
+await page.waitForTimeout(700);
+await shot('02c-club-hub');
+state = await session();
+check('spawned in the club hub', state.map === 'club_hub', state.map);
 
 // ---------------------------------------------------------------------------
 console.log('\n3. Accept the case from the board');

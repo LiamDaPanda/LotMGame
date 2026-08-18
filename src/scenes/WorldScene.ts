@@ -88,7 +88,13 @@ export class WorldScene extends Phaser.Scene {
 
     this.session.cases.refreshObjectives();
     this.announceRoom();
-    this.maybeEncounter();
+
+    // Both of these pause this scene, and a paused scene's camera never
+    // finishes its fade — which would leave the room behind the panel black.
+    // So wait for the fade to land first.
+    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_IN_COMPLETE, () => {
+      if (!this.playIntro()) this.maybeEncounter();
+    });
 
     this.unsubscribe.push(
       bus.on('loss-of-control', ({ reason }) => this.playLossOfControl(reason)),
@@ -332,6 +338,20 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * A room may open with a scene of its own — the prologue does. Returns true
+   * when one played, so nothing else grabs the screen on top of it.
+   */
+  private playIntro(): boolean {
+    const intro = this.map.intro;
+    if (!intro || this.session.state.hasFlag(intro.flag)) return false;
+    // Set before launching: an intro that somehow fails to finish should not
+    // trap the player in it every time they walk back into the room.
+    this.session.state.setFlag(intro.flag);
+    this.openModal('Dialogue', { treeId: intro.dialogue });
+    return true;
+  }
+
   private announceRoom(): void {
     // Screen space, so it sits at the top of the map pane rather than moving
     // with the room. It gets its own band: the names of everyone standing about
@@ -517,7 +537,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private rest(hotspot: HotspotData): void {
-    const safe = hotspot.id.includes('club');
+    const safe = hotspot.safeRest ?? false;
     this.session.abilities.rest(safe);
     this.cameras.main.fadeOut(400, 0, 0, 0);
     this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {

@@ -1,0 +1,95 @@
+{
+  "id": "lodgings",
+  "name": "Your Room, Whitlock Row",
+  "ambient": "#2a2118",
+  "encounterChance": 0,
+  "legend": {
+    "#": { "floor": 8, "collide": true },
+    "W": { "floor": 12, "collide": true },
+    "D": { "floor": 13, "collide": true },
+    ".": { "floor": 3 },
+    "B": { "floor": 3, "object": 23, "collide": true },
+    "E": { "floor": 3, "object": 25, "collide": true },
+    "F": { "floor": 3, "object": 22, "collide": true },
+    "A": { "floor": 3, "object": 18, "collide": true },
+    "C": { "floor": 3, "object": 26, "collide": true },
+    "t": { "floor": 3, "object": 16, "collide": true },
+    "L": { "floor": 3, "object": 24, "collide": true }
+  },
+  "rows": [
+    "####W###W#####",
+    "#............#",
+    "#.B.........F#",
+    "#............#",
+    "#.E.........L#",
+    "#............#",
+    "#......t.....#",
+    "#............#",
+    "#.A.........C#",
+    "#............#",
+    "######D#######"
+  ],
+  "spawn": { "x": 6, "y": 8 },
+  "intro": { "dialogue": "dlg_prologue", "flag": "prologue_played" },
+  "hotspots": [
+    {
+      "id": "home_bed",
+      "x": 2,
+      "y": 2,
+      "name": "Your Bed",
+      "description": "A narrow iron frame and a mattress that has given up arguing. It is yours until the rent says otherwise.",
+      "action": "rest",
+      "safeRest": true,
+      "icon": 4
+    },
+    {
+      "id": "home_desk",
+      "x": 2,
+      "y": 4,
+      "name": "The Desk",
+      "description": "Your notes, in the hand of a man who was trained to cite his sources: dates down the left, a column for what you saw and a column for what you were told, and a rule between them because they are not the same thing.\n\nUnderneath, face down, the card the Club dealt you.",
+      "clues": [],
+      "icon": 11
+    },
+    {
+      "id": "home_window",
+      "x": 4,
+      "y": 0,
+      "name": "The Window",
+      "description": "Whitlock Row, four floors down and going about its evening. The lamplighter comes at half six and is never late, which you find steadying in a way you would rather not examine."
+    },
+    {
+      "id": "home_hearth",
+      "x": 12,
+      "y": 2,
+      "name": "The Grate",
+      "description": "Coal is dearer than it was. You have been burning it in the evenings only, and telling yourself that is discipline rather than arithmetic."
+    },
+    {
+      "id": "home_shelf",
+      "x": 2,
+      "y": 8,
+      "name": "The Shelf",
+      "description": "Six books, four of them borrowed and two of them overdue. A history of the Intis wars, a grammar, and — pushed to the back where the light does not reach it — a slim thing with no title on the spine at all."
+    },
+    {
+      "id": "home_press",
+      "x": 12,
+      "y": 8,
+      "name": "The Clothes Press",
+      "description": "One good coat, brushed. One working coat, not. A hat you can be respectable in and a hat you can be forgotten in, which between them are most of what this trade requires."
+    }
+  ],
+  "npcs": [
+    {
+      "id": "landlady",
+      "x": 7,
+      "y": 9,
+      "dialogue": "dlg_landlady",
+      "requires": { "flag": "rent_missed" }
+    }
+  ],
+  "exits": [
+    { "x": 6, "y": 10, "toMap": "ashfen_row", "toX": 3, "toY": 7, "label": "Out to Ashfen Row" }
+  ]
+}

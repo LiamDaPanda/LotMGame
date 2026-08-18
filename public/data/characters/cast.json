@@ -1,11 +1,11 @@
 [
   {
     "id": "player",
-    "name": "You",
+    "name": "Klein Moretti",
     "title": "The Querent",
     "spriteRow": 0,
     "clubMember": true,
-    "bio": "Newest of the Club, and the only member with a shingle on a door."
+    "bio": "A history graduate with a private investigator's shingle on a rented door, the newest card at the table, and the only one of them who still has to worry about the rent."
   },
   {
     "id": "hermit",

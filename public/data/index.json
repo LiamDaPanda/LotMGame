@@ -13,6 +13,7 @@
     "case-01-ninth-bell"
   ],
   "maps": [
+    "lodgings",
     "club_hub",
     "ashfen_row",
     "pawnshop",
@@ -21,7 +22,8 @@
   ],
   "dialogue": [
     "club",
-    "case-01"
+    "case-01",
+    "prologue"
   ],
   "items": "items",
   "characters": "cast",
