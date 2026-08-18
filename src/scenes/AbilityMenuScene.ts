@@ -6,6 +6,7 @@ import {
   CSS,
   ICONS,
   menuRect,
+  minTapHeight,
 } from '@/ui/theme';
 import type { AbilityContext, AbilityData } from '@/types/schema';
 
@@ -27,6 +28,8 @@ interface AbilityMenuData {
 export class AbilityMenuScene extends Phaser.Scene {
   private session!: Session;
   private list?: ScrollList;
+  /** Where the body may start, once the header has measured itself. */
+  private headerBottom = 0;
   private resultText!: PixelText;
   private context: AbilityContext = 'hub';
   private witnessed = false;
@@ -56,7 +59,7 @@ export class AbilityMenuScene extends Phaser.Scene {
     drawPanel(this, this.x, this.y, this.w, this.h);
 
     const state = this.session.state;
-    sectionHeader(
+    const header = sectionHeader(
       this,
       this.x + 24,
       this.y + 16,
@@ -66,6 +69,7 @@ export class AbilityMenuScene extends Phaser.Scene {
         this.witnessed ? 'You are in company: full exposure' : 'Nobody is watching: reduced exposure'
       }`,
     );
+    this.headerBottom = header.y + header.height;
 
     this.resultText = pixelText(this, this.x + 24, this.y + this.h - 76, '', {
         fontSize: '13px',
@@ -92,9 +96,10 @@ export class AbilityMenuScene extends Phaser.Scene {
     const rows = abilities.map((ability) => this.abilityRow(ability));
     if (rows.length === 0) rows.push(this.emptyRow('You have nothing you could reach for here.'));
 
-    this.list = new ScrollList(this, this.x + 24, this.y + 76, {
+    const bodyY = this.headerBottom;
+    this.list = new ScrollList(this, this.x + 24, bodyY, {
       width: this.w - 48,
-      height: this.h - 160,
+      height: this.y + this.h - minTapHeight() - 24 - bodyY,
       gap: 8,
     });
     this.list.setRows(rows);

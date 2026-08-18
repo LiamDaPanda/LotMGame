@@ -54,17 +54,25 @@ export class ExamineScene extends Phaser.Scene {
     const panelH = GAME_HEIGHT - panelY - (isPortrait() ? 90 : 80);
     drawPanel(this, panelX, panelY, panelW, panelH);
 
-    sectionHeader(this, panelX + 24, panelY + 18, panelW - 48, this.hotspot.name);
+    const header = sectionHeader(this, panelX + 24, panelY + 18, panelW - 48, this.hotspot.name);
 
-    this.body = pixelText(this, panelX + 24, panelY + 62, '', {
-      fontSize: '15px',
-      color: CSS.parchment,
-      wordWrap: { width: panelW - 48 },
-    });
+    // First look before layout: the description's own height decides where the
+    // findings list starts, and an empty text object measures zero — which put
+    // the list straight through the prose.
+    this.applyFirstLook();
+    const locked = this.isLocked();
+    this.body = pixelText(
+      this,
+      panelX + 24,
+      header.y + header.height,
+      locked ? `${this.hotspot.description}\n\n${this.hotspot.locked?.reason}` : this.hotspot.description,
+      { size: 'md', color: CSS.parchment, wrap: panelW - 48, maxHeight: panelH * 0.4 },
+    );
 
-    this.list = new ScrollList(this, panelX + 24, panelY + 150, {
+    const listY = this.body.y + this.body.height + 10;
+    this.list = new ScrollList(this, panelX + 24, listY, {
       width: panelW - 48,
-      height: panelH - 220,
+      height: panelY + panelH - minTapHeight() - 24 - listY,
       gap: 8,
     });
 
@@ -78,10 +86,6 @@ export class ExamineScene extends Phaser.Scene {
     );
 
     this.input.keyboard?.on('keydown-ESC', () => this.close());
-
-    // First look grants the mundane clues automatically — searching a room
-    // should never be a hunt for the right button.
-    this.applyFirstLook();
     this.refresh();
   }
 

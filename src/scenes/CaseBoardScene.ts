@@ -21,6 +21,8 @@ import {
 export class CaseBoardScene extends Phaser.Scene {
   private session!: Session;
   private list?: ScrollList;
+  /** Where the body may start, once the header has measured itself. */
+  private headerBottom = 0;
 
   constructor() {
     super('CaseBoard');
@@ -37,9 +39,10 @@ export class CaseBoardScene extends Phaser.Scene {
     const w = GAME_WIDTH - panelInset() * 2;
     const h = GAME_HEIGHT - y - (isPortrait() ? 90 : 50);
     drawPanel(this, x, y, w, h);
-    sectionHeader(this, x + 24, y + 18, w - 48, 'The Board', 'Work the Club has taken in. One at a time.');
+    const header = sectionHeader(this, x + 24, y + 18, w - 48, 'The Board', 'Work the Club has taken in. One at a time.');
 
-    this.render(x, y, w, h);
+    this.headerBottom = header.y + header.height;
+    this.render(x, y, w, h, this.headerBottom);
 
     new Button(this, x + 24, y + h - minTapHeight() - 12, 'Close', () => this.close(), {
       width: 150,
@@ -49,7 +52,7 @@ export class CaseBoardScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-ESC', () => this.close());
   }
 
-  private render(x: number, y: number, w: number, h: number): void {
+  private render(x: number, y: number, w: number, h: number, bodyY: number): void {
     this.list?.destroy();
     const rows: Phaser.GameObjects.Container[] = [];
     const active = this.session.cases.activeCase();
@@ -117,14 +120,19 @@ export class CaseBoardScene extends Phaser.Scene {
       rows.push(container);
     }
 
-    this.list = new ScrollList(this, x + 24, y + 76, { width: w - 48, height: h - 150, gap: 10 });
+    this.list = new ScrollList(this, x + 24, bodyY, {
+      width: w - 48,
+      // Down to the Close button, not a guessed height: the header above grew.
+      height: y + h - minTapHeight() - 24 - bodyY,
+      gap: 10,
+    });
     this.list.setRows(rows);
     this.list.refreshMask();
   }
 
   private accept(caseId: string, x: number, y: number, w: number, h: number): void {
     if (this.session.cases.accept(caseId)) {
-      this.render(x, y, w, h);
+      this.render(x, y, w, h, this.headerBottom);
     } else {
       bus.emit('notice', { text: 'Finish what you have first.', tone: 'bad' });
     }

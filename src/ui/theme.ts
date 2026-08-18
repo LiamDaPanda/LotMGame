@@ -92,6 +92,16 @@ export function mapRect(): Rect {
 }
 
 /**
+ * Width the landscape status strip reserves on its right: the two buttons, and
+ * room for the purse beside them. Everything else in the strip stops here.
+ */
+export function landscapeRightStrip(): number {
+  const buttons = 2 * (7 * 12 + 16) + 22;
+  const purse = 9 * 12 + 24;
+  return buttons + purse;
+}
+
+/**
  * The meter row. Portrait gives it a band of its own under the map; landscape
  * squeezes it into the status strip between the rank block on the left and the
  * two buttons on the right, so it has to stop short of them.
@@ -99,8 +109,7 @@ export function mapRect(): Rect {
 export function metersRect(): Rect {
   if (!isPortrait()) {
     const left = 168;
-    const buttons = 2 * (7 * 12 + 16) + 22;
-    return { x: left, y: 12, width: GAME_WIDTH - left - buttons, height: 36 };
+    return { x: left, y: 12, width: GAME_WIDTH - left - landscapeRightStrip(), height: 36 };
   }
   return { x: 0, y: PANES.status + PANES.map, width: GAME_WIDTH, height: PANES.meters };
 }

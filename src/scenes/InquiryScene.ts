@@ -9,6 +9,7 @@ import {
   CSS,
   ICONS,
   menuRect,
+  minTapHeight,
 } from '@/ui/theme';
 
 const METHOD_ICON = {
@@ -28,6 +29,8 @@ const METHOD_ICON = {
 export class InquiryScene extends Phaser.Scene {
   private session!: Session;
   private list?: ScrollList;
+  /** Where the body may start, once the header has measured itself. */
+  private headerBottom = 0;
   private resultText!: PixelText;
   private typewriter!: Typewriter;
 
@@ -53,7 +56,7 @@ export class InquiryScene extends Phaser.Scene {
     drawPanel(this, this.x, this.y, this.w, this.h);
 
     const caseData = this.session.cases.activeCase();
-    sectionHeader(
+    const header = sectionHeader(
       this,
       this.x + 24,
       this.y + 16,
@@ -63,6 +66,7 @@ export class InquiryScene extends Phaser.Scene {
         ? `${caseData.title}  ·  legwork costs money and days, not spirituality`
         : 'No case is open.',
     );
+    this.headerBottom = header.y + header.height;
 
     this.resultText = pixelText(this, this.x + 24, this.y + this.h - 96, '', {
       fontSize: '13px',
@@ -128,9 +132,10 @@ export class InquiryScene extends Phaser.Scene {
       rows.push(container);
     }
 
-    this.list = new ScrollList(this, this.x + 24, this.y + 76, {
+    const bodyY = this.headerBottom;
+    this.list = new ScrollList(this, this.x + 24, bodyY, {
       width,
-      height: this.h - 190,
+      height: this.y + this.h - minTapHeight() - 24 - bodyY,
       gap: 8,
     });
     this.list.setRows(rows);

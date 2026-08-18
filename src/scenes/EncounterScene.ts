@@ -8,6 +8,7 @@ import {
   COLORS,
   CSS,
   menuRect,
+  minTapHeight,
 } from '@/ui/theme';
 import type { EncounterData } from '@/types/schema';
 
@@ -67,17 +68,20 @@ export class EncounterScene extends Phaser.Scene {
       border: encounter.kind === 'threat' ? COLORS.bad : COLORS.brassDim,
     });
 
-    sectionHeader(this, this.x + 24, this.y + 16, this.w - 48, encounter.title);
-    pixelText(this, this.x + this.w - 24, this.y + 26, encounter.kind.toUpperCase(), {
-        fontSize: '11px',
-        color: KIND_TONE[encounter.kind],
-      })
-      .setOrigin(1, 0);
+    // The kind tag shares the header's first line, and the title is wrapped to
+    // stop short of it rather than running underneath.
+    const tag = pixelText(this, this.x + this.w - 24, this.y + 20, encounter.kind.toUpperCase(), {
+      size: 'md',
+      color: KIND_TONE[encounter.kind],
+    }).setOrigin(1, 0);
+    const header = sectionHeader(this, this.x + 24, this.y + 16, this.w - 72 - tag.width, encounter.title);
 
-    this.bodyText = pixelText(this, this.x + 24, this.y + 68, '', {
-      fontSize: '15px',
+    this.bodyText = pixelText(this, this.x + 24, header.y + header.height, '', {
+      size: 'md',
       color: CSS.parchment,
-      wordWrap: { width: this.w - 48 },
+      wrap: this.w - 48,
+      // The options stack up from the bottom; the prose gets what is left.
+      maxHeight: this.h - (header.height + 24) - minTapHeight() * 3,
     });
     this.typewriter = new Typewriter(this, this.bodyText, 2, 12);
 

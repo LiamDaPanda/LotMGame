@@ -135,3 +135,71 @@ export function panelList(fixtures) {
     ['Ritual', {}],
   ];
 }
+
+/**
+ * "Does any text sit on top of any other text?"
+ *
+ * Fitting each label inside its own box does not stop two boxes being placed on
+ * top of each other — which is what "the text overlaps" looks like on a phone.
+ * Runs inside the page; returns colliding pairs for one scene.
+ */
+export function collectCollisions(sceneKey) {
+  const game = window.__game;
+  const scene = game.scene.getScene(sceneKey);
+  if (!scene || !scene.scene.isActive()) return null;
+
+  const board = {
+    left: 0,
+    top: 0,
+    right: game.scale.gameSize.width,
+    bottom: game.scale.gameSize.height,
+  };
+  const texts = [];
+
+  // Same clipping as collectOverflows: a row scrolled below the fold is not
+  // drawn, so it cannot be sitting on top of anything.
+  const walk = (object, clip) => {
+    if (object.type === 'Container') {
+      let next = clip;
+      const listClip = object.getData?.('clipRect');
+      if (listClip) {
+        next = {
+          left: Math.max(clip.left, listClip.x),
+          right: Math.min(clip.right, listClip.x + listClip.width),
+          top: Math.max(clip.top, listClip.y),
+          bottom: Math.min(clip.bottom, listClip.y + listClip.height),
+        };
+      }
+      for (const child of object.list) walk(child, next);
+      return;
+    }
+    if (object.type !== 'BitmapText' || !object.text.trim()) return;
+    if (object.alpha < 0.05 || !object.visible) return;
+
+    const raw = object.getBounds();
+    const visible = {
+      left: Math.max(raw.left, clip.left),
+      right: Math.min(raw.right, clip.right),
+      top: Math.max(raw.top, clip.top),
+      bottom: Math.min(raw.bottom, clip.bottom),
+    };
+    if (visible.right - visible.left < 1 || visible.bottom - visible.top < 1) return;
+    texts.push({ text: object.text.split('\n')[0].slice(0, 26), bounds: visible });
+  };
+  for (const object of scene.children.list) walk(object, board);
+
+  const hits = [];
+  for (let i = 0; i < texts.length; i++) {
+    for (let j = i + 1; j < texts.length; j++) {
+      const a = texts[i].bounds;
+      const b = texts[j].bounds;
+      // Two board pixels of slack: adjacent lines share a rounded edge.
+      const overlapX = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+      const overlapY = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+      if (overlapX > 2 && overlapY > 2) {
+        hits.push(`"${texts[i].text}" over "${texts[j].text}" (${Math.round(overlapX)}x${Math.round(overlapY)}px)`);
+      }
+    }
+  }
+  return hits;
+}

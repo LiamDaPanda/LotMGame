@@ -23,7 +23,13 @@
 //   node tools/touchtest.mjs [baseUrl]
 import fs from 'node:fs';
 import { chromium } from 'playwright';
-import { collectOverflows, openPanel, panelFixtures, panelList } from './lib/text-fit.mjs';
+import {
+  collectCollisions,
+  collectOverflows,
+  openPanel,
+  panelFixtures,
+  panelList,
+} from './lib/text-fit.mjs';
 
 const BASE = process.argv[2] ?? 'http://127.0.0.1:4173/LotMGame/';
 
@@ -157,6 +163,14 @@ const checkTextFits = async (sceneKey, label) => {
     `${label}: all text inside its box`,
     overflows !== null && overflows.length === 0,
     overflows === null ? `${sceneKey} was not active` : overflows.join(' | '),
+  );
+  // Fitting each label in its own box does not stop two boxes being placed on
+  // top of each other, which is what "the text overlaps" looks like in the hand.
+  const collisions = await page.evaluate(collectCollisions, sceneKey);
+  check(
+    `${label}: no text drawn over other text`,
+    collisions !== null && collisions.length === 0,
+    collisions === null ? `${sceneKey} was not active` : collisions.join(' | '),
   );
 };
 

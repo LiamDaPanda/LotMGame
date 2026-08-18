@@ -59,7 +59,8 @@ export class ResolveScene extends Phaser.Scene {
     const w = GAME_WIDTH - panelInset() * 2;
     const h = GAME_HEIGHT - y - (isPortrait() ? 90 : 40);
     drawPanel(this, x, y, w, h);
-    sectionHeader(this, x + 24, y + 18, w - 48, caseData.title, `Present your findings · ${caseData.client}`);
+    const header = sectionHeader(this, x + 24, y + 18, w - 48, caseData.title, `Present your findings · ${caseData.client}`);
+    const bodyY = header.y + header.height;
 
     const options = this.session.cases.resolutionOptions();
     const rows = options.map(({ resolution, unlocked, reason }) => {
@@ -88,7 +89,11 @@ export class ResolveScene extends Phaser.Scene {
       return container;
     });
 
-    this.list = new ScrollList(this, x + 24, y + 76, { width: w - 48, height: h - 150, gap: 8 });
+    this.list = new ScrollList(this, x + 24, bodyY, {
+      width: w - 48,
+      height: y + h - minTapHeight() - 24 - bodyY,
+      gap: 8,
+    });
     this.list.setRows(rows);
     this.list.refreshMask();
 

@@ -616,5 +616,10 @@ export function sectionHeader(
   rule.lineStyle(1, COLORS.brassDim, 0.8);
   rule.lineBetween(0, bottom, width, bottom);
   container.add(rule);
+  // Sized, so callers can put the body below `header.y + header.height` rather
+  // than at a guessed offset. A subtitle wraps to two or three lines at phone
+  // width where it took one on a desktop, and a guessed offset puts the body
+  // straight through it.
+  container.setSize(width, bottom + 10);
   return container;
 }

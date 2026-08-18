@@ -9,6 +9,7 @@ import {
   GAME_HEIGHT,
   GAME_WIDTH,
   menuRect,
+  minTapHeight,
 } from '@/ui/theme';
 
 /**
@@ -57,31 +58,37 @@ export class RitualScene extends Phaser.Scene {
     const state = this.session.state;
     const advancement = this.session.progression.next();
 
-    sectionHeader(
+    const header = sectionHeader(
       this,
       this.x + 24,
       this.y + 16,
-      this.w - 48,
+      this.w - 158,
       'The Rite',
-      `You are Sequence ${state.sequence} — ${state.sequenceTitle}.`,
+      `You are Sequence ${state.sequence} - ${state.sequenceTitle}.`,
     );
+    // The header stops short of the Leave button on its line.
+    header.setSize(this.w - 158, header.height);
 
     if (!advancement) {
-      pixelText(this, this.x + 24, this.y + 90, 'There is no further rung written on this ladder.', {
-        fontSize: '15px',
+      pixelText(this, this.x + 24, header.y + header.height, 'There is no further rung written on this ladder.', {
+        size: 'md',
         color: CSS.muted,
+        wrap: this.w - 48,
       });
-      new Button(this, this.x + 24, this.y + this.h - 54, 'Leave', () => this.close(), {
+      new Button(this, this.x + 24, this.y + this.h - minTapHeight() - 12, 'Leave', () => this.close(), {
         width: 150,
-        height: 38,
+        height: minTapHeight(),
       });
       return;
     }
 
-    pixelText(this, this.x + 24, this.y + 76, `Toward Sequence ${advancement.toSequence} — ${advancement.toTitle}`, {
-      fontSize: '18px',
-      color: CSS.brass,
-    });
+    const toward = pixelText(
+      this,
+      this.x + 24,
+      header.y + header.height,
+      `Toward Sequence ${advancement.toSequence} - ${advancement.toTitle}`,
+      { size: 'md', color: CSS.brass, wrap: this.w - 48 },
+    );
 
     const rows: Phaser.GameObjects.Container[] = [];
     for (const status of this.session.progression.requirements()) {
@@ -94,27 +101,34 @@ export class RitualScene extends Phaser.Scene {
       );
     }
 
-    this.list = new ScrollList(this, this.x + 24, this.y + 108, {
+    // Two rites at the bottom, requirements in whatever is left above them.
+    const canAdvance = this.session.progression.canAdvance();
+    const canForce = this.session.progression.canForceAdvance();
+    const temptation = advancement.temptation;
+
+    const forceH = minTapHeight() + 32;
+    const takeH = minTapHeight() + 20;
+    const forceY = this.y + this.h - forceH - 12;
+    const takeY = forceY - takeH - 8;
+
+    const listY = toward.y + toward.height + 10;
+    this.list = new ScrollList(this, this.x + 24, listY, {
       width: this.w - 48,
-      height: this.h - 240,
+      height: Math.max(minTapHeight(), takeY - 10 - listY),
       gap: 6,
     });
     this.list.setRows(rows);
     this.list.refreshMask();
 
-    const canAdvance = this.session.progression.canAdvance();
-    const canForce = this.session.progression.canForceAdvance();
-    const temptation = advancement.temptation;
-
     new Button(
       this,
       this.x + 24,
-      this.y + this.h - 128,
+      takeY,
       'Drink, and take the role',
       () => this.perform(false),
       {
         width: this.w - 48,
-        height: 48,
+        height: takeH,
         tone: 'good',
         enabled: canAdvance,
         fontSize: 15,
@@ -129,12 +143,12 @@ export class RitualScene extends Phaser.Scene {
     new Button(
       this,
       this.x + 24,
-      this.y + this.h - 72,
+      forceY,
       temptation.label,
       () => this.perform(true),
       {
         width: this.w - 48,
-        height: 62,
+        height: forceH,
         tone: 'bad',
         enabled: canForce,
         fontSize: 15,
@@ -144,9 +158,10 @@ export class RitualScene extends Phaser.Scene {
       },
     );
 
-    new Button(this, this.x + this.w - 174, this.y + 74, 'Leave', () => this.close(), {
-      width: 150,
-      height: 32,
+    // Leave rides on the header's line — everything below it is spoken for.
+    new Button(this, this.x + this.w - 110, this.y + 12, 'Leave', () => this.close(), {
+      width: 86,
+      height: 30,
       fontSize: 12,
     });
   }

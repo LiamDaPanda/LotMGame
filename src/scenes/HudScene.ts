@@ -12,6 +12,7 @@ import {
   METER_COLORS,
   type Rect,
   isPortrait,
+  landscapeRightStrip,
   mapRect,
   metersRect,
   statusRect,
@@ -66,10 +67,11 @@ export class HudScene extends Phaser.Scene {
     this.rankText = pixelText(this, 10, 8, '', { size: 'md', color: CSS.brass });
     this.dayText = pixelText(this, 10, 32, '', { size: 'md', color: CSS.muted });
 
-    // The purse hugs the right edge, so a long total grows leftwards into the
-    // strip's empty middle rather than off the screen.
-    this.add.image(GAME_WIDTH - 14, 20, 'icons', ICONS.pound).setScale(1.2).setOrigin(1, 0.5);
-    this.purse = pixelText(this, GAME_WIDTH - 30, 20, '', { size: 'md', color: CSS.parchment }).setOrigin(1, 0.5);
+    // Portrait has the whole right edge; landscape has to stop short of the two
+    // buttons that live there, so both use the same reserved lane.
+    const purseRight = tall ? GAME_WIDTH - 14 : GAME_WIDTH - landscapeRightStrip() + 9 * 12 + 10;
+    this.add.image(purseRight, 20, 'icons', ICONS.pound).setScale(1.2).setOrigin(1, 0.5);
+    this.purse = pixelText(this, purseRight - 16, 20, '', { size: 'md', color: CSS.parchment }).setOrigin(1, 0.5);
 
     if (tall) this.drawStrip(meters);
     // Four meters share the row. Each is icon + bar + value; the bar takes
@@ -78,17 +80,16 @@ export class HudScene extends Phaser.Scene {
     const meterX = tall ? 8 : meters.x;
     const meterY = tall ? meters.y + 9 : 12;
     const meterGap = (meters.width - (tall ? 16 : 0)) / 4;
-    // Each meter is icon + optional tag + bar + value. The bar takes what is
-    // left once the fixed parts are paid for — a hard-coded gap is how they
-    // ended up drawn on top of each other in landscape.
-    const tagWidth = tall ? 0 : 3 * 12 + 6;
-    const meterBar = Math.max(24, meterGap - 16 - tagWidth - 48 - 8);
-    const tag = (name: string) => (tall ? '' : name);
+    // Icon, bar, value — and no three-letter tag. At either width the row
+    // cannot pay for all four, and the floor under the bar pushed each meter
+    // into its neighbour's label. The icon and the colour already say which
+    // meter this is, and the journal spells them out.
+    const meterBar = Math.max(24, meterGap - 16 - 48 - 8);
     this.meters = {
-      sanity: new Meter(this, meterX, meterY, tag('SAN'), METER_COLORS.sanity, ICONS.sanity, meterBar),
-      spirituality: new Meter(this, meterX + meterGap, meterY, tag('SPI'), METER_COLORS.spirituality, ICONS.spirituality, meterBar),
-      concealment: new Meter(this, meterX + meterGap * 2, meterY, tag('HID'), METER_COLORS.concealment, ICONS.concealment, meterBar),
-      digestion: new Meter(this, meterX + meterGap * 3, meterY, tag('DIG'), METER_COLORS.digestion, ICONS.sequence, meterBar),
+      sanity: new Meter(this, meterX, meterY, '', METER_COLORS.sanity, ICONS.sanity, meterBar),
+      spirituality: new Meter(this, meterX + meterGap, meterY, '', METER_COLORS.spirituality, ICONS.spirituality, meterBar),
+      concealment: new Meter(this, meterX + meterGap * 2, meterY, '', METER_COLORS.concealment, ICONS.concealment, meterBar),
+      digestion: new Meter(this, meterX + meterGap * 3, meterY, '', METER_COLORS.digestion, ICONS.sequence, meterBar),
     };
 
     if (tall) this.buildTabs(tabBarRect());

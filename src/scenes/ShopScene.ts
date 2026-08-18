@@ -9,6 +9,7 @@ import {
   COLORS,
   CSS,
   menuRect,
+  minTapHeight,
 } from '@/ui/theme';
 import type { ItemData, VendorId } from '@/types/schema';
 
@@ -49,6 +50,8 @@ const VENDOR = {
 export class ShopScene extends Phaser.Scene {
   private session!: Session;
   private list?: ScrollList;
+  /** Where the body may start, once the header has measured itself. */
+  private headerBottom = 0;
   private mode: Mode = 'buy';
   private vendor: VendorId = 'club';
   private purseText!: PixelText;
@@ -80,7 +83,7 @@ export class ShopScene extends Phaser.Scene {
     drawPanel(this, this.x, this.y, this.w, this.h, {
       border: this.vendor === 'market' ? COLORS.blood : COLORS.brassDim,
     });
-    sectionHeader(
+    const header = sectionHeader(
       this,
       this.x + 24,
       this.y + 18,
@@ -90,34 +93,42 @@ export class ShopScene extends Phaser.Scene {
         ? `${vendor.blurb}  ·  Streetwise ${this.session.state.skill('streetwise')} — prices reflect it`
         : vendor.blurb,
     );
+    this.headerBottom = header.y + header.height;
 
-    this.purseText = pixelText(this, this.x + this.w - 220, this.y + 24, '', {
-      fontSize: '14px',
+    // The purse sits on the header's own line, right-aligned, so it cannot land
+    // on a title that wrapped further than expected.
+    this.purseText = pixelText(this, this.x + this.w - 24, this.y + 20, '', {
+      size: 'md',
       color: CSS.brass,
-    });
+    }).setOrigin(1, 0);
 
+    // Buy/Sell go directly under the header, and the list under them.
+    const tabW = (this.w - 60) / 2;
+    const tabH = minTapHeight();
     this.modeButtons = [
-      new Button(this, this.x + 24, this.y + 70, vendor.buyLabel, () => this.setMode('buy'), {
-        width: 130,
-        height: 32,
+      new Button(this, this.x + 24, this.headerBottom, vendor.buyLabel, () => this.setMode('buy'), {
+        width: tabW,
+        height: tabH,
         fontSize: 12,
       }),
-      new Button(this, this.x + 164, this.y + 70, 'Sell', () => this.setMode('sell'), {
-        width: 130,
-        height: 32,
+      new Button(this, this.x + 36 + tabW, this.headerBottom, 'Sell', () => this.setMode('sell'), {
+        width: tabW,
+        height: tabH,
         fontSize: 12,
       }),
     ];
 
-    this.flavourText = pixelText(this, this.x + 24, this.y + this.h - 84, '', {
-      fontSize: '12px',
+    const footerY = this.y + this.h - minTapHeight() - 12;
+    this.flavourText = pixelText(this, this.x + 24, footerY, '', {
+      size: 'md',
       color: CSS.muted,
-      wordWrap: { width: this.w - 220 },
+      wrap: this.w - 200,
+      maxHeight: minTapHeight(),
     });
 
-    new Button(this, this.x + this.w - 174, this.y + this.h - 54, 'Leave', () => this.close(), {
+    new Button(this, this.x + this.w - 174, footerY, 'Leave', () => this.close(), {
       width: 150,
-      height: 38,
+      height: minTapHeight(),
       fontSize: 13,
     });
     this.input.keyboard?.on('keydown-ESC', () => this.close());
@@ -139,9 +150,10 @@ export class ShopScene extends Phaser.Scene {
     const rows =
       this.mode === 'buy' ? this.buyRows() : this.sellRows();
 
-    this.list = new ScrollList(this, this.x + 24, this.y + 112, {
+    const bodyY = this.headerBottom + minTapHeight() + 12;
+    this.list = new ScrollList(this, this.x + 24, bodyY, {
       width: this.w - 48,
-      height: this.h - 210,
+      height: this.y + this.h - minTapHeight() * 2 - 28 - bodyY,
       gap: 8,
     });
     this.list.setRows(rows);
