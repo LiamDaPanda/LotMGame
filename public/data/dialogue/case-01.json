@@ -5,7 +5,7 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Sergeant Gehrman is standing where he has evidently been standing for some hours.\n\n'You'd be Blackthorn's. Smith said he'd send someone and I said I'd not stop him.' He looks at you a moment longer than the sentence needed. 'Moretti. That's a name I wrote down eight days ago.'",
+        "text": "Sergeant Gorman is standing where he has evidently been standing for some hours.\n\n'You'd be Blackthorn's. Smith said he'd send someone and I said I'd not stop him.' He looks at you a moment longer than the sentence needed. 'Moretti. That is a name I wrote down on the twenty-seventh.'",
         "choices": [
           {
             "text": "Walk me through the morning.",
@@ -26,7 +26,7 @@
         ]
       },
       "morning": {
-        "text": "'Half seven. Door fast, shutters up, and a Miss Gerard on the stair saying nobody had seen him since Sunday. We took the frame off rather than the bolt, because I wanted the bolt kept as it was.'\n\nHe says the last part slowly, as a man who has been overruled before and would like it in the record this time.",
+        "text": "'Half seven. Door fast, shutters up, and the landlord on the stair saying nobody had seen him since Sunday. We took the frame off rather than the bolt, because I wanted the bolt kept as it was.'\n\nHe says the last part slowly, as a man who has been overruled before and would like it in the record this time.",
         "effect": {
           "clues": [
             "clue_constable_time"
@@ -40,7 +40,7 @@
         ]
       },
       "night": {
-        "text": "'Two of the neighbours heard the cathedral ring eleven and both say his light was already out. The surgeon says midnight.' He lets that stand a second. 'I'm police. I write what the surgeon says. I don't have to like the arithmetic.'",
+        "text": "'Two neighbours heard the bell go eleven and both say his light was already out. Surgeon says midnight.' He lets that stand a second. 'I'm police. I write what the surgeon writes. I don't have to like the arithmetic.'\n\n'There were three that week, and I was told they were three.'",
         "effect": {
           "clues": [
             "clue_bell_time"
@@ -83,7 +83,7 @@
         ]
       },
       "keys_paid": {
-        "text": "The coins go into his glove without either of you looking at them.\n\n'Back before dark. And Moretti — if you find something the surgeon missed, you bring it to me before you bring it to the Church.'",
+        "text": "The coins go into his glove without either of you looking at them.\n\n'Back before dark. And Moretti — if you find the thing the surgeon missed, you bring it to me before you bring it to the Church.'",
         "choices": [
           {
             "text": "Back.",
@@ -115,7 +115,7 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Naya Gerard has not sat down since you arrived.\n\n'They said his heart. He is twenty-six. He came fourth in the mile at the spring meeting.' Her hands are flat on the table and she keeps them there deliberately. 'You were at the gathering. You know what he read out.'",
+        "text": "Mr. Franky has his hat in both hands and has not put it down since you arrived.\n\n'I let them in. The police. I have the keys to eleven doors on this side of the borough and I have never once had to use one for that.' He turns the hat around. 'You were at his readings. I saw you on the stair in May.'",
         "choices": [
           {
             "text": "Tell me about the last week.",
@@ -126,7 +126,7 @@
             "goto": "pledge"
           },
           {
-            "text": "Ask about Kohler.",
+            "text": "Ask about Hanass.",
             "goto": "cass"
           },
           {
@@ -136,7 +136,7 @@
         ]
       },
       "week": {
-        "text": "'He stopped going out. He nailed the shutters himself — I heard him doing it, on the Thursday, and when I knocked he talked to me through the door about the weather.'\n\n'He said the word *sincerity* to me twice and would not explain it, and I have not been able to stop thinking about that.'",
+        "text": "'He stopped going out. He nailed the shutters himself — I heard him at it on the Thursday, and when I knocked he talked to me through the door about the weather.'\n\n'He asked me whether the walls between the rooms were solid. Not the doors. The walls.'",
         "effect": {
           "clues": [
             "clue_widow_fear"
@@ -150,7 +150,7 @@
         ]
       },
       "pledge": {
-        "text": "'A book. Notes, he called them, in a hand that wasn't his — he was very proud that it wasn't his.' She looks at the ceiling. 'He said he had it off a gentleman in the lower market and that it was older than the Kingdom, which I told him was a thing men say.'",
+        "text": "'A book. Black boards, no title, and he carried it about like a man carrying a full cup.' He looks at the ceiling. 'He told me it was older than the Kingdom, which I said was a thing men say, and he did not laugh.'\n\n'It isn't in there now. I have been up and down those rooms with the sergeant and it isn't in there now.'",
         "choices": [
           {
             "text": "Back.",
@@ -159,7 +159,7 @@
         ]
       },
       "cass": {
-        "text": "'Kohler?' Something crosses her face and she folds it away. 'He was here more than the rest of us. He asked to see the notes twice in one evening.'\n\n'He asked me at the funeral whether the police had taken anything out of the rooms. Not whether they had found anything. Whether they had taken anything.'",
+        "text": "'The one who delivered it.' Something crosses his face and he folds it away. 'He came back after. Twice. Said he had a bill outstanding, and I told him the police had it sealed, and he thanked me and went, and he had not asked which rooms.'\n\n'A man collecting a bill asks which rooms.'",
         "choices": [
           {
             "text": "Back.",
@@ -168,7 +168,7 @@
         ]
       },
       "bye": {
-        "text": "'Find me something I can believe.'",
+        "text": "'Find me something I can tell the other tenants.'",
         "end": true
       }
     }
@@ -179,7 +179,7 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Kohler Fels is talking before you have finished sitting down, and has been awake a day and a half.\n\n'Terrible. Terrible business. I said to him, Welch, you don't read a thing like that out loud in a room, and he laughed at me — you were there, you heard him laugh.'",
+        "text": "Hanass is calm in the way that takes practice, and has been for eight days.\n\n'A shame. He was a pleasant gentleman and he paid in full.' He does not ask what you want. 'I carry things from one address to another. What is in them is the business of the address.'",
         "choices": [
           {
             "text": "Where were you that night?",
@@ -193,7 +193,7 @@
             }
           },
           {
-            "text": "Whose hand cut the page out of his notebook?",
+            "text": "Whose hand cut the page out of his transcription?",
             "goto": "ledger",
             "requires": {
               "clue": "clue_ledger_gap"
@@ -211,7 +211,7 @@
         ]
       },
       "alibi": {
-        "text": "'Left at nine. Straight over the water to my lodgings, and I passed the lamplighter on the bridge road and a woman with two dogs, and you may ask them both.'\n\nHe offers the dogs before anybody has asked for anything.",
+        "text": "'Over the water by nine. My lodgings are on the far bank and I keep regular hours, and I passed the lamplighter on the bridge road and a woman with two dogs, and you may ask them both.'\n\nHe offers the dogs before anybody has asked for anything.",
         "effect": {
           "clues": [
             "clue_cass_alibi"
@@ -240,7 +240,7 @@
         ]
       },
       "ledger": {
-        "text": "'He *lent* it me. He lent it to half the faculty, he was showing it about like a dog with a hat—'\n\nHis voice goes up half a step and stays there. 'One page. One page out of a book he had no right to and everybody knew he had no right to it.'",
+        "text": "'I do not read what I carry.'\n\nHe says it too quickly, and then again more slowly, which is worse. 'One leaf. Out of a copy. Not out of the book — the book was to be returned entire, that was the whole of the arrangement—'\n\nAnd there he stops, because he has just told you there was an arrangement.",
         "effect": {
           "clues": [
             "clue_ledger_gap"
@@ -254,7 +254,7 @@
         ]
       },
       "read": {
-        "text": "You ask the one thing he has spent all night preparing not to be asked, and it lands somewhere behind his eyes.\n\nWhat comes back is not the answer. It is the cellar: cold at his back, coal in his hands, and above him, through the boards, a voice that had stopped being Welch's some minutes before it stopped.",
+        "text": "You ask the one thing he has spent eight days preparing not to be asked, and it lands somewhere behind his eyes.\n\nWhat comes back is not the answer. It is the cellar: cold at his back, coal in his hands, and above him, through the boards, a voice reading steadily in a language it had no business being fluent in — and then not stopping when it should have stopped.",
         "effect": {
           "clues": [
             "clue_cass_lie"
@@ -271,7 +271,7 @@
         ]
       },
       "bye": {
-        "text": "He nods too many times and goes back to not sleeping.",
+        "text": "He wishes you a good evening, and means it, which is the unpleasant part.",
         "end": true
       }
     }
@@ -295,7 +295,7 @@
             "costPence": 120
           },
           {
-            "text": "Ask about Welch Tapman.",
+            "text": "Ask about Welch McGovern.",
             "goto": "halloway"
           },
           {
@@ -305,7 +305,7 @@
         ]
       },
       "ferry": {
-        "text": "The coins vanish into the rope coil.\n\n'Seven, and that's the summer table. No bridge nearer than Halworth, four mile up. A man on the far bank at nine got there before seven or he got there wet.'",
+        "text": "The coins vanish into the rope coil.\n\n'Seven, and that's the summer table. No bridge nearer than four mile up. A man on the far bank at nine got there before seven or he got there wet.'",
         "effect": {
           "clues": [
             "clue_ferry_times"
@@ -319,7 +319,7 @@
         ]
       },
       "vane": {
-        "text": "'Gentleman calls himself Aldous. Three month now. Buys paper — old paper, and not the pretty sort. Pays in notes and never haggles, which round here is a thing people notice.'\n\n'Word was he wanted one page out of something. One page. Stopped asking Wednesday.'",
+        "text": "'There's a gentleman does his buying through other gentlemen. Alzuhod. Never seen him, never met a man who has, and I have been asked three times this month whether I ferried a black book across.'\n\n'Wanting a thing back is one price. Wanting it back quiet is another, and he is paying the second.'",
         "effect": {
           "clues": [
             "clue_vane_offer"
@@ -336,7 +336,7 @@
         ]
       },
       "halloway": {
-        "text": "'The young gentleman with the shutters?' He spits over the side, unhurried. 'Come down here twice in a fortnight asking after the tide tables and the deep water. Not for a boat. For the depth.'\n\n'Man wants to know how deep a thing goes, he's thinking about putting something in it.'",
+        "text": "'The young gentleman with the shutters?' He spits over the side, unhurried. 'Come down here twice in a fortnight asking after the deep water. Not for a boat. For the depth.'\n\n'A man wants to know how deep a thing goes, he is thinking about putting something in it. He never did, mind. I'd have seen.'",
         "choices": [
           {
             "text": "Back.",

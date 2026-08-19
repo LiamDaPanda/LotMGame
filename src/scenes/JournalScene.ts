@@ -89,7 +89,7 @@ export class JournalScene extends Phaser.Scene {
         this.panelY + 16,
         this.panelW - 48,
         'Case Notes',
-        `Sequence ${state.sequence} - ${state.sequenceTitle}  ·  Day ${state.day}  ·  ${format(state.pence)}`,
+        `${state.rankLabel}  ·  Day ${state.day}  ·  ${format(state.pence)}`,
       );
     }
 

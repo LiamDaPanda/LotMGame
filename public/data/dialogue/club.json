@@ -121,7 +121,7 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Rozanne Bansi has a ledger open and a pen behind each ear.\n\n'Requisitions, dockets, and anything you break. If you sign for it I can defend it, and if you do not I get to explain it to the Church, which I will not enjoy and neither will you.'",
+        "text": "Rozanne has a ledger open and a pen behind each ear.\n\n'Requisitions, dockets, and anything you break. If you sign for it I can defend it, and if you do not I get to explain it to the Church, which I will not enjoy and neither will you.'",
         "choices": [
           {
             "text": "What do you keep back here?",

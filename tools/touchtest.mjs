@@ -228,14 +228,13 @@ await say('and go to the window', 'Go to the window');
 await say('the prologue takes a considered opening', 'Think it through');
 await say('somebody comes through the door', 'Somebody is knocking');
 await say('and eight days pass', 'Eight days pass');
-await say('and it reaches the pathway question', 'Turn the three dockets');
+await say('and it reaches the pathway question', 'Turn the docket over');
 await checkTextFits('Dialogue', 'Pathway question');
-await say('a speech option picks a pathway', 'Corpse Collector');
 const chosen = await page.evaluate(
   () => window.__game.registry.get('session').state.pathwayId,
 );
-check('the tapped pathway took', chosen === 'corpse_collector', String(chosen));
-await say('and asks how it will be carried', 'Sit with it');
+check('the Seer potion sets the pathway', chosen === 'seer', String(chosen));
+await say('and it asks how you will carry it', 'Sit with it');
 await say('the disposition option is takeable', 'Quietly');
 await finishTyping();
 await finishTyping();

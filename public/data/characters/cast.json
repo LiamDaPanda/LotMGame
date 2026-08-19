@@ -10,18 +10,18 @@
   {
     "id": "hermit",
     "name": "Dunn Smith",
-    "title": "Captain of the Nighthawks",
+    "title": "Captain of the Tingen Nighthawks",
     "spriteRow": 1,
     "clubMember": true,
-    "bio": "Runs the Tingen team out of Blackthorn Security Company. Forgets names, dates and where he left his hat, and has never once forgotten a Sealed Artifact's number."
+    "bio": "Runs the team out of the second floor of No. 36 Zouteland Street, which the city knows as Blackthorn Security Company. Forgets names, dates and where he left his hat, and has never once forgotten an artifact’s grade."
   },
   {
     "id": "star",
-    "name": "Rozanne Bansi",
-    "title": "Blackthorn's front desk",
+    "name": "Rozanne",
+    "title": "Blackthorn’s receptionist",
     "spriteRow": 2,
     "clubMember": true,
-    "bio": "Books the appointments, keeps the ledgers, and knows exactly which of the company's clients are clients."
+    "bio": "Civilian, early twenties, and the only person in the building who knows where anything is filed. Books the appointments and countersigns the requisitions."
   },
   {
     "id": "tower",
@@ -37,31 +37,31 @@
     "title": "Nighthawk",
     "spriteRow": 4,
     "clubMember": true,
-    "bio": "Was a scholar before he was this. Explains the theory whether or not anybody asked, which is how most of the team learned any."
+    "bio": "Was a scholar before he was this, and explains the theory whether or not anybody asked, which is how the rest of the team learned any."
   },
   {
     "id": "constable",
-    "name": "Sergeant Gehrman",
+    "name": "Sergeant Gorman",
     "title": "Tingen police",
     "spriteRow": 5,
     "clubMember": false,
-    "bio": "Wrote up your death as a suicide, and has been sleeping badly since he did."
+    "bio": "Wrote up three deaths in one week as unrelated because he was told to, and has been sleeping badly since."
   },
   {
     "id": "widow",
-    "name": "Naya Gerard",
-    "title": "Found him",
+    "name": "Mr. Franky",
+    "title": "Landlord",
     "spriteRow": 6,
     "clubMember": false,
-    "bio": "Was at the gathering, went back on the Tuesday because nobody had seen him, and has not been able to describe the door properly to anyone since."
+    "bio": "Lets the terraces on Iron Cross Street and two more besides, collects on the day, and was the man who let the police into Welch McGovern’s rooms."
   },
   {
     "id": "apprentice",
-    "name": "Kohler Fels",
-    "title": "Also at the gathering",
+    "name": "Hanass",
+    "title": "Sold him the notebook",
     "spriteRow": 7,
     "clubMember": false,
-    "bio": "Talks first and fastest, which in a room of frightened people passes for calm. Says he went home at nine."
+    "bio": "One of the two men who put the Antigonus family’s notebook in Welch McGovern’s hands, and who has been extremely calm about it ever since."
   },
   {
     "id": "landlady",
@@ -73,19 +73,19 @@
   },
   {
     "id": "rival",
-    "name": "Mr. Aldous",
-    "title": "Collector",
+    "name": "Quill of Alzuhod",
+    "title": "Arranged the sale",
     "spriteRow": 9,
     "clubMember": false,
-    "bio": "Buys things the Church would burn, pays in cash, and has never told anybody who he buys them for."
+    "bio": "Never handles the goods and never signs anything. Arranged the notebook’s last change of owner and has not stopped wanting it back."
   },
   {
     "id": "pawnbroker",
-    "name": "Welch Tapman",
+    "name": "Welch McGovern",
     "title": "Deceased",
     "spriteRow": 10,
     "clubMember": false,
-    "bio": "University acquaintance with a taste for the occult as a party trick. It was his gathering, his rooms, and his idea to read the thing aloud."
+    "bio": "Read history under Associate Professor Cohen alongside you, bought a black hardcover notebook in May from men he should not have dealt with, and asked two friends to help him read it."
   },
   {
     "id": "dockhand",

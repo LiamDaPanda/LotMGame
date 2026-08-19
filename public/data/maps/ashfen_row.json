@@ -1,6 +1,6 @@
 {
   "id": "ashfen_row",
-  "name": "Narcissus Street, Tingen",
+  "name": "Iron Cross Street, West Borough",
   "ambient": "#2c3a52",
   "encounterChance": 0.45,
   "legend": {
@@ -57,7 +57,7 @@
       "x": 12,
       "y": 8,
       "name": "A Shuttered Window",
-      "description": "Welch’s stair door, and above it his rooms, shuttered at four in the afternoon. There has been a light behind those shutters every night this week.",
+      "description": "McGovern’s stair door, and above it his rooms, shuttered at four in the afternoon. There has been a light behind those shutters every night this week.",
       "clues": [
         "clue_nailed_shutters"
       ]
@@ -93,7 +93,7 @@
       "toMap": "club_hub",
       "toX": 9,
       "toY": 13,
-      "label": "Blackthorn Security"
+      "label": "Blackthorn, Zouteland St"
     },
     {
       "x": 20,
@@ -112,7 +112,7 @@
       "toMap": "pawnshop",
       "toX": 9,
       "toY": 11,
-      "label": "Welch’s rooms",
+      "label": "McGovern’s rooms",
       "requires": {
         "caseState": {
           "caseId": "case-01-ninth-bell",

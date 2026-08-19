@@ -65,7 +65,7 @@ export class AbilityMenuScene extends Phaser.Scene {
       this.y + 16,
       this.w - 48,
       'Powers',
-      `Sequence ${state.sequence} — ${state.sequenceTitle}   ·   ${
+      `${state.rankLabel}   ·   ${
         this.witnessed ? 'You are in company: full exposure' : 'Nobody is watching: reduced exposure'
       }`,
     );

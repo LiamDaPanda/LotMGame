@@ -200,7 +200,9 @@ export class HudScene extends Phaser.Scene {
 
   private refreshAll(): void {
     const state = this.session.state;
-    this.rankText.setText(`SEQ ${state.sequence}  ${state.sequenceTitle.toUpperCase()}`);
+    this.rankText.setText(
+      state.awakened ? `SEQ ${state.sequence}  ${state.sequenceTitle.toUpperCase()}` : 'NO SEQUENCE',
+    );
     this.dayText.setText(`Day ${state.day} · rent in ${state.daysUntilRent}d`);
     this.purse.setText(format(state.pence));
     this.meters.sanity.snap(state.sanity, state.sanityMax);

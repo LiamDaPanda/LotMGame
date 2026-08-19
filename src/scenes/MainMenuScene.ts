@@ -84,8 +84,8 @@ export class MainMenuScene extends Phaser.Scene {
       panelX + 20,
       panelY + 16,
       [
-        'You are Klein Moretti, and you have just woken at a desk in Tingen that is not yours, in a body that is, with a bolted door, a revolver, and a red moon over the street.',
-        'Eight days later a tired man from Blackthorn Security puts three requisition dockets on your table. What you drink decides what you can do — and every case after it is worked with those powers or with none.',
+        'You are Klein Moretti, and you have just woken at a desk on Iron Cross Street that is not yours, in a body that is, with a bolted door, a revolver, and a red moon over the West Borough.',
+        'Three people read a black hardcover notebook on the twenty-seventh of June and all three died that night. The Nighthawks want the notebook. You want the rest of it.',
       ].join('\n\n'),
       {
         size: 'md',

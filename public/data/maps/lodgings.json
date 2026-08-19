@@ -1,6 +1,6 @@
 {
   "id": "lodgings",
-  "name": "Your Room, the Moretti Apartment",
+  "name": "Your Room, West Borough",
   "ambient": "#2a2118",
   "encounterChance": 0,
   "legend": {
@@ -101,7 +101,7 @@
       "x": 4,
       "y": 0,
       "name": "The Window",
-      "description": "Narcissus Street, three floors down, going about its evening under the gas. Tingen is a mill town pretending to be a university town, and at this hour it stops pretending."
+      "description": "Iron Cross Street, three floors down, going about its evening under the gas. Tingen is a mill town pretending to be a university town, and at this hour it stops pretending."
     },
     {
       "id": "home_hearth",
@@ -150,7 +150,7 @@
       "toMap": "ashfen_row",
       "toX": 3,
       "toY": 7,
-      "label": "Out to Narcissus Street"
+      "label": "Out to Iron Cross Street"
     }
   ]
 }

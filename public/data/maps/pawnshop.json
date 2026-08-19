@@ -1,6 +1,6 @@
 {
   "id": "pawnshop",
-  "name": "Welch’s Rooms",
+  "name": "McGovern’s Rooms",
   "ambient": "#3a2f4a",
   "legend": {
     "#": {
@@ -98,7 +98,7 @@
       "id": "the_body",
       "x": 10,
       "y": 7,
-      "name": "Welch Tapman",
+      "name": "Welch McGovern",
       "description": "Upright at his own desk with his pen still in his hand and nothing wrong with him at all.\n\nYou were found like this. In your own room, at your own desk, eight days ago, and the only difference in the account is a revolver.",
       "clues": [
         "clue_no_wounds"
@@ -145,7 +145,7 @@
       "id": "the_ledger",
       "x": 9,
       "y": 4,
-      "name": "Welch’s Notebook",
+      "name": "McGovern’s Notebook",
       "description": "His own stitching, his own hand, and one leaf cut out close to the thread. He kept a list of everyone who came to the gathering. Your name is on it, in his writing, and seeing it is worse than it should be.",
       "clues": [
         "clue_ledger_gap"
@@ -164,7 +164,7 @@
       "name": "The Cash Box",
       "description": "Unlocked, on the shelf, a yard from the body, with eleven pounds and some silver in it. Whatever came here did not come for that, and neither did the man who waited downstairs.",
       "locked": {
-        "reason": "It is locked, and the key is not on the body. Sergeant Gehrman has the key — or a set of picks would do it.",
+        "reason": "It is locked, and the key is not on the body. Sergeant Gorman has the key — or a set of picks would do it.",
         "bypass": {
           "anyOf": [
             {
@@ -231,7 +231,7 @@
       "toMap": "ashfen_row",
       "toX": 10,
       "toY": 7,
-      "label": "Narcissus Street"
+      "label": "Iron Cross Street"
     },
     {
       "x": 5,

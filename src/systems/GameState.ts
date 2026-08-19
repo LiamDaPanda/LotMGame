@@ -21,6 +21,8 @@ export interface CaseProgress {
 export interface SaveData {
   version: number;
   pathwayId: string;
+  /** Optional: saves written before the prologue existed are all post-potion. */
+  awakened?: boolean;
   sequence: number;
   digestion: number;
   sanity: number;
@@ -57,6 +59,13 @@ export class GameState {
 
   pathwayId = 'seer';
   sequence = 9;
+  /**
+   * Whether Klein has actually drunk the potion. He is a Sequence 9 Seer for
+   * the whole of the run bar its first quarter of an hour, but until Smith's
+   * docket is turned over he is a mortal with a divination habit, and the HUD
+   * must not tell him otherwise.
+   */
+  awakened = false;
   /**
    * How thoroughly the current potion has been digested, 0-100. Advancing
    * before this reaches 100 is possible but dangerous — see Progression.
@@ -118,6 +127,7 @@ export class GameState {
   setPathway(pathwayId: string): void {
     const pathway = this.content.pathway(pathwayId);
     this.pathwayId = pathway.id;
+    this.awakened = true;
     // Entry rung is the lowest-ranked tier the pathway defines.
     this.sequence = Math.max(...pathway.sequences.map((tier) => tier.sequence));
     this.sanity = this.sanityMax;
@@ -139,6 +149,11 @@ export class GameState {
     return this.sequenceData?.title ?? `Sequence ${this.sequence}`;
   }
 
+  /** How the chrome names Klein's rank, which before the potion is no rank. */
+  get rankLabel(): string {
+    return this.awakened ? `Sequence ${this.sequence} - ${this.sequenceTitle}` : 'No sequence - mortal';
+  }
+
   get sanityMax(): number {
     return this.sequenceData?.sanityMax ?? 100;
   }
@@ -149,6 +164,8 @@ export class GameState {
 
   /** Every ability unlocked at or below the current rank, plus story grants. */
   knownAbilities(): string[] {
+    // Nothing on the ladder is his until he has drunk for it.
+    if (!this.awakened) return [...this.extraAbilities].filter((id) => this.content.ability(id));
     const pathway = this.content.pathway(this.pathwayId);
     const ids: string[] = [];
     for (const tier of pathway.sequences) {
@@ -536,6 +553,7 @@ export class GameState {
     return {
       version: SAVE_VERSION,
       pathwayId: this.pathwayId,
+      awakened: this.awakened,
       sequence: this.sequence,
       digestion: this.digestion,
       sanity: this.sanity,
@@ -565,6 +583,7 @@ export class GameState {
       throw new Error(`Save is version ${data.version}; this build reads version ${SAVE_VERSION}.`);
     }
     this.pathwayId = data.pathwayId;
+    this.awakened = data.awakened ?? true;
     this.sequence = data.sequence;
     this.digestion = data.digestion;
     this.sanity = data.sanity;

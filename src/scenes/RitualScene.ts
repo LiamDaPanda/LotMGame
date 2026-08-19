@@ -64,7 +64,7 @@ export class RitualScene extends Phaser.Scene {
       this.y + 16,
       this.w - 158,
       'The Rite',
-      `You are Sequence ${state.sequence} - ${state.sequenceTitle}.`,
+      `You are ${state.rankLabel}.`,
     );
     // The header stops short of the Leave button on its line.
     header.setSize(this.w - 158, header.height);

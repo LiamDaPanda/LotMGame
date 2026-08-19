@@ -78,6 +78,9 @@ const session = () =>
       sequence: s.state.sequence,
       pathway: s.state.pathwayId,
       sequenceTitle: s.state.sequenceTitle,
+      awakened: s.state.awakened,
+      rankLabel: s.state.rankLabel,
+      abilities: s.state.knownAbilities(),
       digestion: s.state.digestion,
       sanity: s.state.sanity,
       spirituality: s.state.spirituality,
@@ -119,8 +122,8 @@ check(
   'content loaded from JSON',
   loaded.cases === 1 &&
     loaded.maps === 6 &&
-    loaded.pathways === 3 &&
-    loaded.abilities === 43 &&
+    loaded.pathways === 1 &&
+    loaded.abilities === 15 &&
     loaded.encounters === 6,
   JSON.stringify(loaded),
 );
@@ -142,6 +145,9 @@ check('starts at Sequence 9', state.sequence === 9);
 check('starts with £2 10s', state.pence === 600, `${state.pence}d`);
 check('starts part-digested', state.digestion === 55, `${state.digestion}`);
 check('starts with skills at 1', Object.values(state.skills).every((v) => v === 1), JSON.stringify(state.skills));
+check('starts as a mortal, whatever the ladder says', state.awakened === false, String(state.awakened));
+check('and the chrome says so', state.rankLabel === 'No sequence - mortal', String(state.rankLabel));
+check('with no Beyonder powers to reach for', state.abilities.length === 0, JSON.stringify(state.abilities));
 
 // ---------------------------------------------------------------------------
 console.log('\n2b. The prologue chooses the pathway');
@@ -169,16 +175,16 @@ await speak('Somebody is knocking');
 await page.waitForTimeout(150);
 await speak('Eight days pass');
 await page.waitForTimeout(150);
-await speak('Turn the three dockets');
+await speak('Turn the docket over');
 await page.waitForTimeout(200);
 await shot('02b-pathway-choice');
 
-const picked = await speak('Corpse Collector');
-check('a speech option picks the pathway', picked.ok, JSON.stringify(picked));
-await page.waitForTimeout(300);
+await page.waitForTimeout(200);
 state = await session();
-check('the chosen pathway took', state.pathway === 'corpse_collector', String(state.pathway));
-check('and its rank title with it', state.sequenceTitle === 'Corpse Collector', String(state.sequenceTitle));
+check('the Seer potion sets the pathway', state.pathway === 'seer', String(state.pathway));
+check('and its rank title with it', state.sequenceTitle === 'Seer', String(state.sequenceTitle));
+check('and wakes him to the ladder', state.awakened === true, String(state.awakened));
+check('and hands him the Sequence 9 powers', state.abilities.length > 0, JSON.stringify(state.abilities));
 
 await speak('Sit with it');
 await page.waitForTimeout(200);
@@ -201,7 +207,8 @@ await withGame((game) => {
 await page.waitForTimeout(400);
 await withGame((game) => {
   const s = game.scene.getScenes(true)[0].registry.get('session');
-  s.state.setPathway('seer');
+  // The rest of the run is written against a plain Sequence 9, so undo the
+  // prologue's training bonuses rather than carrying them into every check.
   s.state.skills.occultism = 1;
   s.state.skills.streetwise = 1;
   // Restart the room the way an exit does, rather than starting the scene from

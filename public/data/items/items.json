@@ -87,194 +87,6 @@
     ]
   },
   {
-    "id": "formula_telepathist",
-    "name": "Telepathist Formula",
-    "kind": "ritual",
-    "description": "Four ingredients and a method for opening a mind that is not yours, copied in the Church clerk's hand, with a marginal note advising against it.",
-    "pricePence": 1440,
-    "icon": 11,
-    "vendors": [
-      "club"
-    ],
-    "requires": {
-      "caseState": {
-        "caseId": "case-01-ninth-bell",
-        "state": "resolved"
-      }
-    }
-  },
-  {
-    "id": "potion_telepathist",
-    "name": "Telepathist Potion",
-    "kind": "potion",
-    "description": "Brewed to the formula by the Church's own dispensary. It is quieter in the bottle than it will be in you.",
-    "pricePence": 2880,
-    "icon": 8,
-    "requires": {
-      "item": "formula_telepathist"
-    },
-    "vendors": [
-      "club"
-    ]
-  },
-  {
-    "id": "formula_psychiatrist",
-    "name": "Psychiatrist Formula",
-    "kind": "ritual",
-    "description": "A method, a dosage, and three pages on what to do when the patient is you.",
-    "pricePence": 4320,
-    "icon": 11,
-    "vendors": [
-      "club"
-    ]
-  },
-  {
-    "id": "potion_psychiatrist",
-    "name": "Psychiatrist Potion",
-    "kind": "potion",
-    "description": "Brewed by the Church. Smith recommends taking it somewhere you can be talked down from.",
-    "pricePence": 8640,
-    "icon": 8,
-    "requires": {
-      "item": "formula_psychiatrist"
-    },
-    "vendors": [
-      "club"
-    ]
-  },
-  {
-    "id": "formula_hypnotist",
-    "name": "Hypnotist Formula",
-    "kind": "ritual",
-    "description": "Blackthorn keeps this one in a locked drawer and the captain signs it out to himself before he signs it out to you.",
-    "pricePence": 12960,
-    "icon": 11,
-    "vendors": [
-      "club"
-    ]
-  },
-  {
-    "id": "potion_hypnotist",
-    "name": "Hypnotist Potion",
-    "kind": "potion",
-    "description": "Brewed by the Church, and handed over with a look.",
-    "pricePence": 21600,
-    "icon": 8,
-    "requires": {
-      "item": "formula_hypnotist"
-    },
-    "vendors": [
-      "club"
-    ]
-  },
-  {
-    "id": "formula_coffin_bearer",
-    "name": "Coffin Bearer Formula",
-    "kind": "ritual",
-    "description": "Four ingredients and a method, in the Church clerk's hand, with the weights given in stones rather than ounces. He says that is deliberate.",
-    "pricePence": 1440,
-    "icon": 11,
-    "vendors": [
-      "club"
-    ],
-    "requires": {
-      "caseState": {
-        "caseId": "case-01-ninth-bell",
-        "state": "resolved"
-      }
-    }
-  },
-  {
-    "id": "potion_coffin_bearer",
-    "name": "Coffin Bearer Potion",
-    "kind": "potion",
-    "description": "Brewed to the formula by the Church's own dispensary. It is heavier than the bottle should be.",
-    "pricePence": 2880,
-    "icon": 8,
-    "requires": {
-      "item": "formula_coffin_bearer"
-    },
-    "vendors": [
-      "club"
-    ]
-  },
-  {
-    "id": "formula_gravekeeper",
-    "name": "Gravekeeper Formula",
-    "kind": "ritual",
-    "description": "A method that specifies the ground it must be brewed on, and is not joking.",
-    "pricePence": 4320,
-    "icon": 11,
-    "vendors": [
-      "club"
-    ]
-  },
-  {
-    "id": "potion_gravekeeper",
-    "name": "Gravekeeper Potion",
-    "kind": "potion",
-    "description": "Brewed by the Church, on ground Old Neil declines to name.",
-    "pricePence": 8640,
-    "icon": 8,
-    "requires": {
-      "item": "formula_gravekeeper"
-    },
-    "vendors": [
-      "club"
-    ]
-  },
-  {
-    "id": "formula_undertaker",
-    "name": "Undertaker Formula",
-    "kind": "ritual",
-    "description": "Written out on mourning stationery, which the captain insists is not a joke either.",
-    "pricePence": 12960,
-    "icon": 11,
-    "vendors": [
-      "club"
-    ]
-  },
-  {
-    "id": "potion_undertaker",
-    "name": "Undertaker Potion",
-    "kind": "potion",
-    "description": "Brewed by the Church. It is exactly at room temperature and stays there.",
-    "pricePence": 21600,
-    "icon": 8,
-    "requires": {
-      "item": "formula_undertaker"
-    },
-    "vendors": [
-      "club"
-    ]
-  },
-  {
-    "id": "grey_formula_telepathist",
-    "name": "Telepathist Formula (copied)",
-    "kind": "ritual",
-    "description": "The same method in a stranger's hand, on paper that has been folded too many times. Cheaper. Counts for the rite, and the captain will know.",
-    "pricePence": 900,
-    "icon": 11,
-    "vendors": [
-      "market"
-    ],
-    "heat": 4,
-    "patter": "'Same words,' he says. 'Different penmanship. You're paying for the words.'"
-  },
-  {
-    "id": "grey_formula_coffin_bearer",
-    "name": "Coffin Bearer Formula (copied)",
-    "kind": "ritual",
-    "description": "A trade method, copied by somebody in the trade, with one weight corrected in a second hand. Cheaper. Counts for the rite, and the captain will know.",
-    "pricePence": 900,
-    "icon": 11,
-    "vendors": [
-      "market"
-    ],
-    "heat": 4,
-    "patter": "'Undertaker's boy sold it me,' he says, which is either a provenance or a warning."
-  },
-  {
     "id": "warding_chalk",
     "name": "Warding Chalk",
     "kind": "ritual",
@@ -298,13 +110,13 @@
     "id": "sealed_watch",
     "name": "Copper Plumb and Thread",
     "kind": "evidence",
-    "description": "A diviner's weight on waxed thread, taken off Welch Tapman's floor. It is warm, it has not stopped pointing, and the Church has a number for it.",
+    "description": "A diviner's weight on waxed thread, taken off Welch McGovern's floor. It is warm, it has not stopped pointing, and the Church has a number for it.",
     "sellPence": 960,
     "icon": 9
   },
   {
     "id": "forged_ledger",
-    "name": "Welch’s Notebook",
+    "name": "McGovern’s Notebook",
     "kind": "document",
     "description": "His own stitching and his own hand, with one leaf cut out close to the thread and two words surviving at the gutter.",
     "sellPence": 120,
@@ -322,7 +134,7 @@
     "id": "shop_keys",
     "name": "Sergeant’s Key",
     "kind": "mundane",
-    "description": "Gehrman's key to the sealed rooms off Narcissus Street, lent for the afternoon on the understanding that you were never given it.",
+    "description": "Gorman's key to the sealed rooms off Iron Cross Street, lent for the afternoon on the understanding that you were never given it.",
     "icon": 9
   },
   {
@@ -378,7 +190,7 @@
     "patter": "'The seal's genuine,' he says, which is not the same as the warrant being genuine, and he knows you noticed.",
     "use": {
       "label": "Present it to the constable",
-      "description": "Gehrman reads as far as the seal, which is the only part that is real, and hands over the key without finishing the sentence he had started.",
+      "description": "Gorman reads as far as the seal, which is the only part that is real, and hands over the key without finishing the sentence he had started.",
       "requires": {
         "caseState": {
           "caseId": "case-01-ninth-bell",

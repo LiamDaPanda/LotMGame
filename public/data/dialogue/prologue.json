@@ -5,7 +5,7 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "You are sitting up at a desk you have never seen, in a body that is doing the sitting without being asked.\n\nThe lamp is out. The door is bolted on the inside. There is a revolver by your right hand, and the smell in the room is the smell after a shot, and there is nothing at all wrong with your head.\n\nYou were in a reading room in a university, four hours ago and a world away, with an open book and a bad idea.",
+        "text": "You are sitting up at a desk you have never seen, in a body that is doing the sitting without being asked.\n\nThe lamp is out. The door is bolted on the inside. There is a revolver by your right hand, and the smell in the room is the smell after a shot, and there is nothing at all wrong with your head.\n\nYou were in a reading room four hours ago and a world away, with an open book and a bad idea.",
         "choices": [
           {
             "text": "Look at what is on the desk.",
@@ -18,7 +18,7 @@
         ]
       },
       "desk": {
-        "text": "A diagram: concentric circles, drawn carefully with a compass, and at the four points four words in a language that is not Loenese and that you can read anyway.\n\nUnderneath it, in a neat scholarly hand, a page of notes copied from something older. Down the left margin, dates. The last of them is tonight.",
+        "text": "A diagram: concentric circles drawn carefully with a compass, and at the four points four words in a language that is not Loenese and that you can read anyway.\n\nBeside it, a page of transcription in a neat scholarly hand — copied out of something black-bound and older, in a dialect of Ancient Feysac. Down the left margin, dates. The last is tonight: the twenty-seventh of June, 1349.",
         "choices": [
           {
             "text": "Look at your hands.",
@@ -27,7 +27,7 @@
         ]
       },
       "hands": {
-        "text": "They are not your hands. They are a little broader, ink on the second finger, a callus from a pen held wrongly.\n\nAnd they know this desk. You reach for the drawer without deciding to, and your fingers stop at the exact depth where the catch is.\n\nHis name arrives before his face does. Klein Moretti. Which is, and this is the part you cannot get past, also yours.",
+        "text": "They are not your hands. A little broader, ink on the second finger, a callus from a pen held wrongly.\n\nAnd they know this desk. You reach for the drawer without deciding to, and your fingers stop at the exact depth where the catch is.\n\nHis name arrives before his face does. Klein Moretti, history graduate of Tingen University. Which is, and this is the part you cannot get past, also yours.",
         "choices": [
           {
             "text": "Go to the window.",
@@ -36,7 +36,7 @@
         ]
       },
       "moon": {
-        "text": "The moon over Tingen is red. Not the ordinary red of smoke over a mill town — a full, arterial red, filling the street, and nobody down there is looking up at it, because in this world it is Tuesday.\n\nAnd then the rest of him arrives, all at once and out of order: a brother, a sister, a father who is dead, a faculty, a friend named Welch with an occult party trick and a book he should not have had.\n\nHe read it aloud. Something answered. The revolver is the part of the account that will go in the report, and you know, with the whole of a stranger's memory, that his hand was not the one that decided.",
+        "text": "The moon over the West Borough is red. Not the ordinary red of mill smoke — a full, arterial red filling Iron Cross Street, and nobody down there is looking up at it.\n\nAnd then the rest of him arrives, out of order: a brother, a sister, a father who is dead, a landlord called Franky who wants the week's rent, an associate professor named Cohen. And Welch McGovern, who bought a black hardcover notebook in May from two men he should not have been dealing with, and asked two friends to help him read it.\n\nOne of them was Naya. The other was the man whose hands these are.",
         "choices": [
           {
             "text": "Think it through properly before you move.",
@@ -49,7 +49,7 @@
         ]
       },
       "weigh": {
-        "text": "You do what you were trained to do, which is to treat it as a source.\n\nThe circle is drawn by a man who had practised it. The notes are a copy, and copies have owners. The door is bolted from the inside, which means the account will say what accounts always say when a door is bolted from the inside — and the account will be wrong, and being the only person who knows that is a position you have been in before, in a reading room, with a book.\n\nWhat you are is a historian. It is not much. It happens to be exactly the thing this needs.",
+        "text": "You do what you were trained to do, which is to treat it as a source.\n\nThe circle is drawn by a man who had practised it. The transcription is a copy, and copies have owners. The door is bolted from the inside, which means the report will say what reports always say when a door is bolted from the inside — and the report will be wrong, and being the only person who knows that is a position you have been in before, in a reading room, with a book.\n\nWhat you are is a historian. It is not much. It is exactly the thing this needs.",
         "effect": {
           "skills": {
             "occultism": 1
@@ -66,7 +66,7 @@
         ]
       },
       "benson": {
-        "text": "The door comes off its bolt with a shoulder behind it, and Benson Moretti is in the room, and he is not looking at the revolver. He is looking at you being alive.\n\nHe does not ask what happened. He asks whether you can stand, and then he puts the revolver in his coat before the constable comes up, and he does that so quickly and so unthinkingly that you understand at once what kind of brother the man whose desk this is had.\n\nMelissa is on the stair, not coming in. She is fourteen and she is doing sums about the funeral.",
+        "text": "The door comes off its bolt with a shoulder behind it, and Benson Moretti is in the room, and he is not looking at the revolver. He is looking at you being alive.\n\nHe does not ask what happened. He asks whether you can stand, and then he puts the revolver in his coat before the constable comes up, and does it so quickly and so unthinkingly that you understand at once what kind of brother the man whose desk this is had.\n\nMelissa is on the stair, not coming in. She is doing sums about a funeral that is not going to be needed.",
         "effect": {
           "flags": [
             "prologue_found"
@@ -80,63 +80,19 @@
         ]
       },
       "smith": {
-        "text": "Eight days, and a sergeant who wrote suicide and did not sleep well after, and a second man dead in the same posture across the road from your own street.\n\nAnd now a tired man in an unpressed coat on your landing, who says he is from Blackthorn Security Company, and who names the ritual on your desk before he has been asked, and its number, and the two other men in this Kingdom known to have used it.\n\n'Dunn Smith,' he says. 'You have three choices and I am going to be honest about all three. You can forget it, and I will help you forget it properly. You can be a witness, which lasts until whoever wanted that page decides you are a loose end.'\n\nHe puts three requisition dockets on the table by the door.\n\n'Or you sign, and you take one of these, and you become the thing that goes and looks.'",
+        "text": "Eight days. Long enough to learn that Welch McGovern died the same night you did, at his own desk, and that Naya drowned herself in a basin of water in a locked room across the city, and that all three of you are one paragraph in a police file that ends with the word *coincidence*.\n\nAnd now a tired man in an unpressed coat on the landing at Iron Cross Street, who says he is with Blackthorn Security Company of Zouteland Street, and who names the diagram on your desk before he has been asked, and its grade, and the family whose notebook it was copied out of.\n\n'Dunn Smith,' he says. 'Captain, of a sort. You can forget this, and I will help you forget it properly. You can be a witness, which lasts exactly as long as it takes whoever wants that notebook to decide you are a loose end.'\n\nHe puts a signed requisition on the table by the door.\n\n'Or you sign, and you drink what is on that docket, and you become the thing that goes and looks.'",
         "choices": [
           {
-            "text": "Turn the three dockets face up.",
-            "goto": "choose"
+            "text": "Turn the docket over.",
+            "goto": "drink"
           }
         ]
       },
-      "choose": {
-        "text": "Three Sequence 9 potions, which is as low as the ladder goes and further up it than anyone in this room was yesterday.\n\n'Take your time,' says Smith, in the voice of a man who has watched somebody not take their time. 'It is a role, not a tool. You will be acting it for the rest of your life and it does not come off.'\n\nThe top docket already has your name written on it in a Church clerk's hand. Somebody decided which one suited you before you were asked.",
-        "choices": [
-          {
-            "text": "The Seer. The one that answers questions — and the one already in your name.",
-            "goto": "drink_seer",
-            "effect": {
-              "pathway": "seer",
-              "flags": [
-                "canon_path"
-              ]
-            }
-          },
-          {
-            "text": "The Spectator. The one that reads the man across the table.",
-            "goto": "drink_spectator",
-            "effect": {
-              "pathway": "spectator"
-            }
-          },
-          {
-            "text": "The Corpse Collector. The one the dead will answer.",
-            "goto": "drink_corpse",
-            "effect": {
-              "pathway": "corpse_collector"
-            }
-          }
-        ]
-      },
-      "drink_seer": {
-        "text": "The Seer, then — divination, misdirection, and a worn face. Powers that ask rather than take, which is the shape of the work you were already doing badly without them.\n\nSmith watches you drink it in the cellar room at Blackthorn with the drain in the floor, because a man who takes one alone in a rented room is how a team finds out he had one.\n\nIt tastes of wet paper and something underneath the wet paper. For a week afterwards every deck of cards you pass will feel like it is watching you back.",
-        "choices": [
-          {
-            "text": "Sit with it.",
-            "goto": "intent"
-          }
-        ]
-      },
-      "drink_spectator": {
-        "text": "The Spectator, then — to be present, thoroughly, until a room stops being able to keep anything from you.\n\nSmith watches you drink it in the cellar room at Blackthorn with the drain in the floor, and notes, mildly, that this was not the docket with your name on it.\n\nIt tastes of chalk dust and lecture halls. For a week afterwards you cannot stop cataloguing people, and you catch yourself doing it to your own reflection, which is not your reflection.",
-        "choices": [
-          {
-            "text": "Sit with it.",
-            "goto": "intent"
-          }
-        ]
-      },
-      "drink_corpse": {
-        "text": "The Corpse Collector, then. What is finished cannot lie about what was done to it, and there is a whole trade in this city built on that and paid badly for it.\n\nSmith watches you drink it in the cellar room at Blackthorn with the drain in the floor, and says nothing about the docket with your name on it, and puts it back in his coat.\n\nIt tastes of cold iron and turned earth. For a week afterwards rooms will tell you their temperature in a way that has nothing to do with the fire.",
+      "drink": {
+        "text": "One potion. Sequence 9, which is as low as the ladder goes and further up it than anybody in this room was yesterday.\n\n'Seer,' says Smith. 'Divination, misdirection, a worn face. It answers questions rather than winning fights, which is the work, and the Church signed for it before I came up the stairs — somebody read your file and decided it suited you.'\n\n'Take your time. It is a role, not a tool. You will be acting it for the rest of your life and it does not come off.'\n\nYou drink it in the cellar room at Blackthorn with the drain in the floor, because a man who takes one alone in a rented room is how a team finds out he had one.\n\nIt tastes of wet paper and something underneath the wet paper. For a week afterwards every deck of cards you pass will feel like it is watching you back.",
+        "effect": {
+          "pathway": "seer"
+        },
         "choices": [
           {
             "text": "Sit with it.",
@@ -145,7 +101,7 @@
         ]
       },
       "intent": {
-        "text": "Smith waits until the shaking has stopped, and then asks the only question he seems to actually care about.\n\n'You have a brother who took a revolver off a table for you and a sister who is fourteen. So. How do you mean to carry this?'",
+        "text": "Smith waits until the shaking has stopped, and then asks the only question he seems to actually care about.\n\n'You have a brother who took a revolver off a table for you and a sister still at her schooling. So. How do you mean to carry this?'",
         "choices": [
           {
             "text": "Carefully. I want to be able to explain every step of it, to myself if to nobody else.",
@@ -192,7 +148,7 @@
         ]
       },
       "after": {
-        "text": "A week goes by. The role settles a little further in each day and is nowhere near finished with you.\n\nBenson has stopped watching the door of your room at night, which took six days. Melissa has started leaving the lamp lit on the landing, which she has not mentioned and neither have you.\n\nThere is a file at Blackthorn with a man dead at a desk in it, and a page cut out of a notebook, and your own name written twice.\n\nYou put on the good coat.",
+        "text": "A week goes by. The role settles a little further in each day and is nowhere near finished with you.\n\nBenson has stopped watching your door at night, which took six days. Melissa has started leaving the lamp lit on the landing, which she has not mentioned and neither have you. Mr. Franky wants the week's rent on the day, as ever.\n\nAnd there is a file at Blackthorn with three deaths in it, one black hardcover notebook missing from Welch McGovern's rooms, and your own name written twice.\n\nYou put on the good coat.",
         "end": true
       }
     }

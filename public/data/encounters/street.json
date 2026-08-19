@@ -96,7 +96,7 @@
           "perPoint": 0.09
         },
         "success": {
-          "text": "You start telling them about a debt you are collecting for a man on Narcissus Street, and by the second sentence you are all facing the same direction, complaining about the same absent villain. They let you go with directions.",
+          "text": "You start telling them about a debt you are collecting for a man on Iron Cross Street, and by the second sentence you are all facing the same direction, complaining about the same absent villain. They let you go with directions.",
           "effect": {
             "concealment": 2
           }
@@ -308,7 +308,7 @@
     "kind": "occult",
     "weight": 7,
     "suspicionWeighted": true,
-    "text": "Every sound in Narcissus Street arrives a half-second late, the way it does underwater, and the gas in the nearest lamp leans without any wind to lean from.\n\nSomething here is thin. Old Neil has a word for it and four pages on why the word is wrong.",
+    "text": "Every sound in Iron Cross Street arrives a half-second late, the way it does underwater, and the gas in the nearest lamp leans without any wind to lean from.\n\nSomething here is thin. Old Neil has a word for it and four pages on why the word is wrong.",
     "options": [
       {
         "text": "Look back at it.",
