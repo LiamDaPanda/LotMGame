@@ -3,7 +3,7 @@ import { PixelText, pixelText } from '@/ui/pixelFont';
 import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
-import { GamePad, padEvents } from '@/ui/gamepad';
+import { TouchControls } from '@/ui/touchControls';
 import { Button, Meter, drawPanel } from '@/ui/widgets';
 import {
   COLORS,
@@ -17,7 +17,7 @@ import {
   mapRect,
   metersRect,
   objectiveRect,
-  padZoneRect,
+  controlsRect,
   statusRect,
   tabBarRect,
 } from '@/ui/theme';
@@ -53,7 +53,7 @@ export class HudScene extends Phaser.Scene {
   private noticeBox!: Phaser.GameObjects.Container;
   private noticePlate!: Phaser.GameObjects.Rectangle;
   private noticeTimer?: Phaser.Time.TimerEvent;
-  private gamepad!: GamePad;
+  private controls!: TouchControls;
   private questCard!: Phaser.GameObjects.Container;
   private questTitle!: PixelText;
   private questLine!: PixelText;
@@ -135,7 +135,7 @@ export class HudScene extends Phaser.Scene {
       .setAlpha(0);
 
     this.buildQuestCard();
-    this.gamepad = new GamePad(this, padZoneRect());
+    this.controls = new TouchControls(this, controlsRect());
 
     this.refreshAll();
     this.refreshQuest();
@@ -145,7 +145,7 @@ export class HudScene extends Phaser.Scene {
       for (const off of this.unsubscribe) off();
       this.unsubscribe = [];
       this.tabButtons = [];
-      this.gamepad.destroy();
+      this.controls.destroy();
     });
   }
 
@@ -278,13 +278,6 @@ export class HudScene extends Phaser.Scene {
       bus.on('deduction:formed', () => this.refreshQuest()),
       bus.on('flag:set', () => this.refreshQuest()),
       bus.on('case:changed', () => this.refreshQuest()),
-      // A press of A is the world's business, but the world is not always the
-      // scene under the thumb: with a panel open the pad is hidden anyway.
-      (() => {
-        const relay = () => undefined;
-        padEvents.on('a', relay);
-        return () => padEvents.off('a', relay);
-      })(),
     );
   }
 
@@ -365,12 +358,12 @@ export class HudScene extends Phaser.Scene {
     const worldOwnsScreen = this.scene.isActive('World') && !this.scene.isPaused('World');
     if (worldOwnsScreen !== this.controlsShown) {
       this.controlsShown = worldOwnsScreen;
-      this.gamepad.setShown(worldOwnsScreen);
+      this.controls.setShown(worldOwnsScreen);
       this.questCard.setVisible(worldOwnsScreen);
       if (worldOwnsScreen) this.refreshQuest();
     }
 
-    this.gamepad.tick();
+    this.controls.tick();
     this.meters.sanity.tick();
     this.meters.spirituality.tick();
     this.meters.concealment.tick();

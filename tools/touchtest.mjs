@@ -261,44 +261,64 @@ for (const button of hud) {
 }
 await checkAlignment('Hud');
 
-console.log('\n5. The D-pad walks him, and doorways work by walking into them');
+console.log('\n5. The stick walks him, and doorways work by walking into them');
 // Real finger-holds: Playwright's tap is a press and a release in the same
-// frame, which sets a direction and drops it again before the world has looked.
+// frame, which pushes the stick and lets go before the world has looked.
 const cdp = await context.newCDPSession(page);
 const padGeom = await page.evaluate(() => {
-  const gamepad = window.__game.scene.getScene('Hud').gamepad;
-  if (!gamepad) return null;
+  const controls = window.__game.scene.getScene('Hud').controls;
+  if (!controls) return null;
+  const band = controls.zone;
   return {
-    cx: gamepad.padCentre.x,
-    cy: gamepad.padCentre.y,
-    radius: gamepad.padRadius,
-    visible: gamepad.visible,
-    a: { x: gamepad.aButton.x, y: gamepad.aButton.y, r: gamepad.aButton.getData('radius') },
-    b: { x: gamepad.bButton.x, y: gamepad.bButton.y, r: gamepad.bButton.getData('radius') },
+    cx: controls.stickHome.x,
+    cy: controls.stickHome.y,
+    radius: controls.stickRadius,
+    visible: controls.visible,
+    band,
+    act: {
+      x: controls.actionButton.x,
+      y: controls.actionButton.y,
+      r: controls.actionButton.getData('radius'),
+    },
   };
 });
 check('the controls are on the bottom screen', padGeom?.visible === true, JSON.stringify(padGeom));
 check(
-  `the D-pad is thumb-sized (${padGeom ? Math.round(padGeom.radius * 2 * scale) : 0}pt across)`,
+  `the stick is thumb-sized (${padGeom ? Math.round(padGeom.radius * 2 * scale) : 0}pt across)`,
   padGeom !== null && padGeom.radius * 2 * scale >= 88,
+);
+// "Mobile centred": the cluster sits in the middle of the band, not shoved
+// into the corners the way a console pad would be.
+const cluster = padGeom
+  ? (padGeom.cx - padGeom.radius + padGeom.act.x + padGeom.act.r) / 2
+  : 0;
+check(
+  'and the cluster is centred in the band',
+  padGeom !== null && Math.abs(cluster - (padGeom.band.x + padGeom.band.width / 2)) <= 12,
+  `cluster centre ${Math.round(cluster)} vs band centre ${padGeom ? Math.round(padGeom.band.x + padGeom.band.width / 2) : 0}`,
 );
 
 const toPage = (gx, gy) => ({
   x: geometry.rx + (gx / geometry.gw) * geometry.rw,
   y: geometry.ry + (gy / geometry.gh) * geometry.rh,
 });
-const arrow = (dx, dy) =>
-  toPage(padGeom.cx + dx * padGeom.radius * 0.7, padGeom.cy + dy * padGeom.radius * 0.7);
 
-const holdPad = async (dx, dy, ms) => {
-  const point = arrow(dx, dy);
-  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
+/**
+ * Push the stick: press at its centre, drag out by `reach` of its travel, hold,
+ * then let go — which is the gesture, not four taps on four arrows.
+ */
+const pushStick = async (dx, dy, ms, reach = 0.45, from = null) => {
+  const origin = from ?? { x: padGeom.cx, y: padGeom.cy };
+  const start = toPage(origin.x, origin.y);
+  const end = toPage(origin.x + dx * padGeom.radius * reach, origin.y + dy * padGeom.radius * reach);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [start] });
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [end] });
   await page.waitForTimeout(ms);
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   await page.waitForTimeout(200);
 };
-const pressButton = async (which) => {
-  const point = toPage(padGeom[which].x, padGeom[which].y);
+const pressAction = async () => {
+  const point = toPage(padGeom.act.x, padGeom.act.y);
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
   await page.waitForTimeout(80);
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
@@ -316,33 +336,52 @@ const player = () =>
   });
 
 const startTile = await player();
-await holdPad(-1, 0, 320);
+await pushStick(-1, 0, 320);
 const afterLeft = await player();
 check(
-  'holding left walks him left',
+  'pushing the stick left walks him left',
   afterLeft.x < startTile.x,
   `${JSON.stringify(startTile)} -> ${JSON.stringify(afterLeft)}`,
 );
 
-// Two fingers: B held while a direction is held is a run, and the world reads
-// it as a speed rather than as a different kind of step.
-const bPoint = toPage(padGeom.b.x, padGeom.b.y);
-await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [bPoint] });
-await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [bPoint, arrow(-1, 0)] });
-await page.waitForTimeout(260);
+// The stick comes to the thumb: a push that starts nowhere near its resting
+// place still steers, which is the whole point of not having a fixed D-pad.
+const corner = { x: padGeom.band.x + padGeom.radius + 6, y: padGeom.band.y + padGeom.radius + 6 };
+const beforeCorner = await player();
+await pushStick(1, 0, 320, 0.45, corner);
+const afterCorner = await player();
+check(
+  'and it works from anywhere in the band, not just where it is drawn',
+  afterCorner.x > beforeCorner.x,
+  `${JSON.stringify(beforeCorner)} -> ${JSON.stringify(afterCorner)} from ${JSON.stringify(corner)}`,
+);
+
+// How far you push is how fast you go: no second finger, no run button.
+const walkPoint = toPage(padGeom.cx, padGeom.cy);
+const farPoint = toPage(padGeom.cx - padGeom.radius * 0.95, padGeom.cy);
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [walkPoint] });
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [farPoint] });
+await page.waitForTimeout(220);
 const running = await page.evaluate(() => window.__game.scene.getScene('World').player.speedScale);
+const nearPoint = toPage(padGeom.cx - padGeom.radius * 0.35, padGeom.cy);
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [nearPoint] });
+await page.waitForTimeout(220);
+const walking = await page.evaluate(() => window.__game.scene.getScene('World').player.speedScale);
 await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
 await page.waitForTimeout(250);
-const walking = await page.evaluate(() => window.__game.scene.getScene('World').player.speedScale);
-check('B held is a run', running > 1.2, String(running));
-check('and letting go is a walk again', walking === 1, String(walking));
+check('pushed to the rim is a run', running > 1.2, String(running));
+check('and eased back is a walk again', walking === 1, String(walking));
+check(
+  'and letting go stops him',
+  (await page.evaluate(() => window.__game.scene.getScene('World').player.speedScale)) === 1,
+);
 
 // One press, one tile: releasing after the step has begun still finishes it,
 // which is what makes a D-pad feel precise rather than skiddy.
 const stepPad = async (dx, dy) => {
   // Short enough that a second step cannot begin, long enough that the first
-  // one always does: releasing mid-step still finishes it.
-  await holdPad(dx, dy, 120);
+  // one always does: letting go mid-step still finishes it.
+  await pushStick(dx, dy, 120);
 };
 const walkToTile = async (tx, ty) => {
   const trail = [];
@@ -369,11 +408,11 @@ check(
   JSON.stringify(facing),
 );
 
-await pressButton('a');
+await pressAction();
 const talking = await scenes();
-check('A talks to whoever he is facing', talking.includes('Dialogue'), talking.join(','));
+check('ACT talks to whoever he is facing', talking.includes('Dialogue'), talking.join(','));
 const padDuringPanel = await page.evaluate(
-  () => window.__game.scene.getScene('Hud').gamepad.visible,
+  () => window.__game.scene.getScene('Hud').controls.visible,
 );
 check('and the panel takes the controls with the screen', padDuringPanel === false);
 
@@ -386,7 +425,7 @@ await page.evaluate(() => {
 await page.waitForTimeout(500);
 check(
   'and gives them back when it closes',
-  (await page.evaluate(() => window.__game.scene.getScene('Hud').gamepad.visible)) === true,
+  (await page.evaluate(() => window.__game.scene.getScene('Hud').controls.visible)) === true,
 );
 
 // Out of the door at the bottom of the room, on foot, without pressing a thing.

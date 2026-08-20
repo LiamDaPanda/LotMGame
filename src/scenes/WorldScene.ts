@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { type PixelText, pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { bus } from '@/systems/EventBus';
-import { pad, padConsumes, padEvents } from '@/ui/gamepad';
+import { pad, padConsumes, padEvents } from '@/ui/touchControls';
 import { Actor } from '@/world/Actor';
 import { TileGrid, type Point } from '@/world/TileGrid';
 import {
@@ -108,8 +108,8 @@ export class WorldScene extends Phaser.Scene {
       if (!this.playIntro()) this.maybeEncounter();
     });
 
-    // The A button is pressed on the HUD and acted on here.
-    const onAction = () => this.pressA();
+    // The action button is pressed on the HUD and acted on here.
+    const onAction = () => this.pressAction();
     padEvents.on('a', onAction);
 
     this.unsubscribe.push(
@@ -482,9 +482,9 @@ export class WorldScene extends Phaser.Scene {
       // arrives here, so check anyway.
       const view = mapRect();
       if (pointer.y < view.y || pointer.y > view.y + view.height) return;
-      // In landscape the pad floats over the foot of the map, and both scenes
-      // see the same press: without this, holding "left" also orders a walk to
-      // whatever tile is under the arrow.
+      // In landscape the controls float over the foot of the map, and both
+      // scenes see the same press: without this, pushing the stick would also
+      // order a walk to whatever tile is under your thumb.
       if (padConsumes(pointer.x, pointer.y)) return;
       const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
       this.handleTap({
@@ -740,11 +740,11 @@ export class WorldScene extends Phaser.Scene {
   // -------------------------------------------------------------------------
 
   /**
-   * The A button, and the space bar with it: act on whatever you are facing,
-   * and failing that on whatever you are standing on. Facing first, because a
-   * doorway you are standing in is usually one you just walked out of.
+   * ACT, and the space bar with it: act on whatever you are facing, and failing
+   * that on whatever you are standing on. Facing first, because a doorway you
+   * are standing in is usually one you just walked out of.
    */
-  private pressA(): void {
+  private pressAction(): void {
     if (this.busy || !this.player) return;
     const interaction =
       this.interactionAt(this.player.facingTile) ??
@@ -788,8 +788,9 @@ export class WorldScene extends Phaser.Scene {
     if (this.busy) return;
     if (this.stepThroughDoor()) return;
 
-    // Held B is a run, and the walk animation keeps up with it on its own
-    // because the sprite is driven by step progress rather than by a timer.
+    // The stick pushed to its rim is a run, and the walk animation keeps up
+    // with it on its own because the sprite is driven by step progress rather
+    // than by a timer.
     this.player.speedScale = pad.run ? 1.75 : 1;
 
     if (!this.player.moving) {
@@ -808,6 +809,6 @@ export class WorldScene extends Phaser.Scene {
       else if (down) this.player.stepTowards(0, 1, walkable);
     }
 
-    if (this.keys && Phaser.Input.Keyboard.JustDown(this.keys.interact)) this.pressA();
+    if (this.keys && Phaser.Input.Keyboard.JustDown(this.keys.interact)) this.pressAction();
   }
 }

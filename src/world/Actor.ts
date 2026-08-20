@@ -18,7 +18,7 @@ export class Actor {
   tileX: number;
   tileY: number;
   facing: Facing = 'down';
-  /** Multiplier on the walk: the B button holds this above 1. */
+  /** Multiplier on the walk: a stick pushed to its rim holds this above 1. */
   speedScale = 1;
 
   private path: Point[] = [];

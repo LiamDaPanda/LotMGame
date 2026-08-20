@@ -150,13 +150,13 @@ export function objectiveRect(): Rect {
 }
 
 /**
- * Where the D-pad and face buttons live.
+ * The control band: the stick and the action button, centred in it.
  *
  * Portrait gives them the rest of the bottom screen. Landscape has no bottom
  * screen to give, so they float over the foot of the map, which is the one
  * band of a top-down room that is never the part you are looking at.
  */
-export function padZoneRect(): Rect {
+export function controlsRect(): Rect {
   if (!isPortrait()) {
     return { x: 0, y: GAME_HEIGHT - 196, width: GAME_WIDTH, height: 196 };
   }
