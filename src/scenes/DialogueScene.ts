@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { PixelText, SCALES, pixelText, textHeight } from '@/ui/pixelFont';
+import { PixelText, SCALES, paginate, pixelText, textHeight } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { Button, ScrollList, Typewriter, drawPanel } from '@/ui/widgets';
 import { COLORS, CSS, isPortrait, menuRect, minTapHeight } from '@/ui/theme';
@@ -38,6 +38,9 @@ export class DialogueScene extends Phaser.Scene {
   private choiceList?: ScrollList;
   private choiceArea = { x: 0, y: 0, width: 0, height: 0 };
   private node?: PresentedNode;
+  /** A long line is read a panel at a time rather than cut off. */
+  private pages: string[] = [];
+  private page = 0;
 
   constructor() {
     super('Dialogue');
@@ -128,12 +131,14 @@ export class DialogueScene extends Phaser.Scene {
 
     this.panel.add(drawPanel(this, inset, panelY, panelW, panelH));
 
+    const character = this.session.content.character(node.speaker);
+    // The portrait sheet is generated in the same order as the character sheet,
+    // so a character's sprite row is also its portrait frame. Without this
+    // every speaker in the game wore Klein's face.
     this.portrait = this.add
-      .image(inset + 40, panelY + 40, 'portraits', 0)
+      .image(inset + 40, panelY + 40, 'portraits', character?.spriteRow ?? 0)
       .setScale(tall ? 1.1 : 1.6);
     this.panel.add(this.portrait);
-
-    const character = this.session.content.character(node.speaker);
     this.nameText = pixelText(
       this,
       inset + 86,
@@ -146,13 +151,18 @@ export class DialogueScene extends Phaser.Scene {
     this.panel.add(this.nameText);
 
     const bodyY = panelY + 84;
+    const bodyWrap = panelW - 28;
+    const bodyHeight = panelY + panelH - bodyY - 24;
     this.bodyText = pixelText(this, inset + 14, bodyY, '', {
       size: 'md',
       color: CSS.parchment,
-      wrap: panelW - 28,
-      maxHeight: panelY + panelH - bodyY - 24,
+      wrap: bodyWrap,
+      maxHeight: bodyHeight,
     });
     this.panel.add(this.bodyText);
+
+    this.pages = paginate(node.text, bodyWrap, SCALES.md, bodyHeight);
+    this.page = 0;
 
     const hintY = panelY + panelH - 18;
     this.continueHint = pixelText(this, inset + panelW - 20, hintY, '▾', {
@@ -172,7 +182,25 @@ export class DialogueScene extends Phaser.Scene {
     });
 
     this.typewriter = new Typewriter(this, this.bodyText, 2, 14);
-    this.typewriter.play(node.text, () => this.renderChoices());
+    this.playPage();
+  }
+
+  /** Type out the current page; the choices wait until the last one is done. */
+  private playPage(): void {
+    const text = this.pages[this.page] ?? '';
+    this.continueHint.setAlpha(0);
+    this.typewriter?.play(text, () => {
+      if (this.page < this.pages.length - 1) this.continueHint.setAlpha(1);
+      else this.renderChoices();
+    });
+  }
+
+  /** True if there was another page to turn to. */
+  private nextPage(): boolean {
+    if (this.page >= this.pages.length - 1) return false;
+    this.page += 1;
+    this.playPage();
+    return true;
   }
 
   private renderChoices(): void {
@@ -249,13 +277,19 @@ export class DialogueScene extends Phaser.Scene {
     this.show(next);
   }
 
-  /** Tap to finish the line; tap again on a terminal node to leave. */
+  /**
+   * Tap to finish the line, again to turn the page, and again on a terminal
+   * node to leave. One target — the whole bottom screen — doing the obvious
+   * thing at every point in the sequence.
+   */
   private onTapBackdrop(): void {
     if (this.typewriter?.running) {
       this.typewriter.finish();
-      this.renderChoices();
+      if (this.page < this.pages.length - 1) this.continueHint.setAlpha(1);
+      else this.renderChoices();
       return;
     }
+    if (this.nextPage()) return;
     if (this.node && this.node.choices.length === 0) this.close();
   }
 

@@ -158,6 +158,39 @@ export function wrapLines(text: string, width: number, scale: number): string[] 
 }
 
 /** Height in board pixels of text once wrapped to a width. */
+/**
+ * Break text into pages that each fit `maxHeight`, at a wrap width and scale.
+ *
+ * A speech panel on a phone holds about a dozen lines. Anything longer used to
+ * be truncated with an ellipsis, which loses the end of the sentence — the one
+ * part of a line of dialogue nobody can afford to lose. Pages keep all of it
+ * and let the reader tap through, which is what a handheld does anyway.
+ */
+export function paginate(
+  text: string,
+  width: number,
+  scale: number,
+  maxHeight: number,
+): string[] {
+  const lines = wrapLines(text, width, scale);
+  const perPage = Math.max(1, Math.floor(maxHeight / lineHeight(scale)));
+  if (lines.length <= perPage) return [text];
+
+  const pages: string[] = [];
+  let page: string[] = [];
+  for (const line of lines) {
+    // Never open a page on the blank line left by a paragraph break.
+    if (page.length === 0 && line === '') continue;
+    page.push(line);
+    if (page.length === perPage) {
+      pages.push(page.join('\n'));
+      page = [];
+    }
+  }
+  if (page.length > 0) pages.push(page.join('\n'));
+  return pages;
+}
+
 export function textHeight(text: string, width: number, scale: number): number {
   return wrapLines(text, width, scale).length * lineHeight(scale);
 }

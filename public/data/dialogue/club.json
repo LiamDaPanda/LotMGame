@@ -290,5 +290,58 @@
         "end": true
       }
     }
+  },
+  {
+    "id": "dlg_potion",
+    "speaker": "hermit",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The cellar room at No. 36 has a drain in the middle of the floor and a chair bolted down beside it, and nobody in the building makes a joke about either.\n\nDunn Smith sets a phial on the table. Grey, and thicker than it looks, with something in it that turns over when the phial does not.\n\n'The Church signed for this before you did. Seer, Sequence 9 of your pathway — divination, misdirection, a face nobody remembers. It answers questions instead of winning fights, which is the work.'\n\n'Two rules. It is a role, not a tool: you act it or it acts you. And you drink it here, in front of me, because a man who takes one alone in a rented room is how a team finds out he had one.'",
+        "choices": [
+          {
+            "text": "Ask what happens to people who do it badly.",
+            "goto": "warning"
+          },
+          {
+            "text": "Drink it.",
+            "goto": "drink"
+          }
+        ]
+      },
+      "warning": {
+        "text": "'You lose the thread,' he says. 'Not all at once. You start doing the things the potion is for when nobody asked for them, and then you start doing them when somebody asked you not to, and then there is a report with your name on it and Old Neil goes out with a lead case.'\n\nHe does not soften it. 'Digest it. Act it. Keep something of your own to come back to.'",
+        "effect": {
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Drink it.",
+            "goto": "drink"
+          }
+        ]
+      },
+      "drink": {
+        "text": "It tastes of wet paper and something underneath the wet paper.\n\nThen the room goes very precise. The grain of the table, the drain's four screws, the exact number of buttons on Smith's cuff — all of it arriving at once and none of it louder than the rest, and behind all of it a sense that if you asked the room a question it would be rude of the room not to answer.\n\n'Sequence 9,' says Smith, writing it down. 'Congratulations. You are now the cheapest thing the Church owns.'\n\nFor a week afterwards every deck of cards you pass will feel like it is watching you back.",
+        "effect": {
+          "pathway": "seer",
+          "flags": [
+            "drank_seer"
+          ]
+        },
+        "choices": [
+          {
+            "text": "Sit with it.",
+            "goto": "after"
+          }
+        ]
+      },
+      "after": {
+        "text": "Rozanne brings tea nobody asked for. Leonard puts his boots on a desk that is not his and asks whether you have tried the divination yet, and Old Neil tells him to leave the boy alone in the tone of a man who intends to do exactly the same thing in an hour.\n\nYou are on the payroll of a company that does not exist, in a unit that is named after a police department it has never reported to, and you are Sequence 9 of a ladder nobody will describe to you above the next rung.",
+        "end": true
+      }
+    }
   }
 ]

@@ -96,6 +96,17 @@
       "toX": 20,
       "toY": 5,
       "label": "Iron Cross Street"
+    },
+    {
+      "x": 14,
+      "y": 8,
+      "toMap": "warehouse",
+      "toX": 8,
+      "toY": 8,
+      "label": "Cobble Yard",
+      "requires": {
+        "clue": "clue_bieber_address"
+      }
     }
   ]
 }

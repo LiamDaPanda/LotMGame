@@ -5,18 +5,18 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Sergeant Gorman is standing where he has evidently been standing for some hours.\n\n'You'd be Blackthorn's. Smith said he'd send someone and I said I'd not stop him.' He looks at you a moment longer than the sentence needed. 'Moretti. That is a name I wrote down on the twenty-seventh.'",
+        "text": "Sergeant Gorman is standing where he has evidently been standing for some time, which is in the doorway and not past it.\n\n'You are the one who lived,' he says, without any particular feeling about it. 'I have written it up. Three misadventures in one week and no connection between them, because the connection is not a thing this office has a form for.'",
         "choices": [
           {
-            "text": "Walk me through the morning.",
+            "text": "Ask what the morning looked like.",
             "goto": "morning"
           },
           {
-            "text": "Did anyone hear anything the night before?",
+            "text": "Ask about the hour.",
             "goto": "night"
           },
           {
-            "text": "I'd like the key to the cash box.",
+            "text": "Ask for the keys to the box.",
             "goto": "keys_ask"
           },
           {
@@ -26,7 +26,7 @@
         ]
       },
       "morning": {
-        "text": "'Half seven. Door fast, shutters up, and the landlord on the stair saying nobody had seen him since Sunday. We took the frame off rather than the bolt, because I wanted the bolt kept as it was.'\n\nHe says the last part slowly, as a man who has been overruled before and would like it in the record this time.",
+        "text": "'Half seven. Door fast, shutters up, and the landlord downstairs with a hatchet he had not decided how to use yet. We took the frame off. The bolt was thrown and the bolt was in its housing, and I will say that in front of anyone who asks.'\n\n'The surgeon put it near midnight and did not enjoy writing why.'",
         "effect": {
           "clues": [
             "clue_constable_time"
@@ -40,7 +40,7 @@
         ]
       },
       "night": {
-        "text": "'Two neighbours heard the bell go eleven and both say his light was already out. Surgeon says midnight.' He lets that stand a second. 'I'm police. I write what the surgeon writes. I don't have to like the arithmetic.'\n\n'There were three that week, and I was told they were three.'",
+        "text": "'Two neighbours heard the bell go eleven and both say his lamp was still lit after it. Both say he was reading aloud. Neither can tell me in what, and one of them crossed himself when I asked, which is not evidence and is not nothing.'",
         "effect": {
           "clues": [
             "clue_bell_time"
@@ -54,36 +54,42 @@
         ]
       },
       "keys_ask": {
-        "text": "'The box stays sealed until the estate's settled. That's the form of it.'\n\nHe says it the way a man says a thing he would rather be argued out of.",
+        "text": "'The box stays sealed until the estate's settled. That is the rule and I like the rule.'\n\nHe looks at your coat, and then at the letter from Zouteland Street in your hand, and decides he does not want to know which of the two is doing the talking.",
         "choices": [
           {
-            "text": "Offer him something for his trouble.",
+            "text": "Put something in his glove. (2s)",
             "goto": "keys_paid",
-            "costPence": 96,
+            "requires": {
+              "pence": 24
+            },
             "effect": {
+              "pence": -24,
               "items": [
                 "shop_keys"
-              ]
+              ],
+              "concealment": -2
             }
           },
           {
-            "text": "Suggest, gently, that he wants to hand it over.",
+            "text": "Tell him the Seventh Unit will send for it in writing.",
             "goto": "keys_pressed",
-            "useAbilityEffect": "social_pressure",
             "effect": {
               "items": [
                 "shop_keys"
-              ]
+              ],
+              "trust": {
+                "hermit": -2
+              }
             }
           },
           {
-            "text": "Let it go.",
+            "text": "Leave it.",
             "goto": "start"
           }
         ]
       },
       "keys_paid": {
-        "text": "The coins go into his glove without either of you looking at them.\n\n'Back before dark. And Moretti — if you find the thing the surgeon missed, you bring it to me before you bring it to the Church.'",
+        "text": "The coins go into his glove without either of you looking at them. The keys come out of his pocket the same way.\n\n'Lock it after you. I have enough to write.'",
         "choices": [
           {
             "text": "Back.",
@@ -92,10 +98,7 @@
         ]
       },
       "keys_pressed": {
-        "text": "He hands it over before he has finished deciding to, and then stands there holding the shape of an objection he can no longer find.\n\nYou put the key in your pocket. He will remember this conversation wrongly for a week, and after that he will remember it correctly, and you will not be able to do anything about that.",
-        "effect": {
-          "concealment": -3
-        },
+        "text": "He hands it over before he has finished deciding to, and is annoyed with himself about it for the rest of the afternoon.\n\n'In writing,' he says. 'Tomorrow.'",
         "choices": [
           {
             "text": "Back.",
@@ -115,33 +118,28 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Mr. Franky has his hat in both hands and has not put it down since you arrived.\n\n'I let them in. The police. I have the keys to eleven doors on this side of the borough and I have never once had to use one for that.' He turns the hat around. 'You were at his readings. I saw you on the stair in May.'",
+        "text": "Mr. Franky has his hat in both hands and has not put it back on since the police left, which was six days ago.\n\n'Two of my tenants in one week,' he says. 'One of them yours, if you take my meaning, and you standing there asking me questions about it in a coat you did not own in May.'",
         "choices": [
           {
-            "text": "Tell me about the last week.",
+            "text": "Ask what McGovern's last week was like.",
             "goto": "week"
           },
           {
-            "text": "What did he bring into this house?",
+            "text": "Ask about the book.",
             "goto": "pledge"
           },
           {
-            "text": "Ask about Hanass.",
-            "goto": "cass"
+            "text": "Ask whether anyone came or went that night.",
+            "goto": "night"
           },
           {
-            "text": "I'll come back.",
+            "text": "Let him be.",
             "goto": "bye"
           }
         ]
       },
       "week": {
-        "text": "'He stopped going out. He nailed the shutters himself — I heard him at it on the Thursday, and when I knocked he talked to me through the door about the weather.'\n\n'He asked me whether the walls between the rooms were solid. Not the doors. The walls.'",
-        "effect": {
-          "clues": [
-            "clue_widow_fear"
-          ]
-        },
+        "text": "'He stopped going out. He nailed the shutters himself — I heard him do it and I sent up about the damage and got no answer. He was reading at all hours and he had stopped eating what his landlady sent up.'\n\nHe turns the hat around once. 'The last two days he would not have the lamp lit after dark, and then on the last one he had it lit all night.'",
         "choices": [
           {
             "text": "Back.",
@@ -150,7 +148,7 @@
         ]
       },
       "pledge": {
-        "text": "'A book. Black boards, no title, and he carried it about like a man carrying a full cup.' He looks at the ceiling. 'He told me it was older than the Kingdom, which I said was a thing men say, and he did not laugh.'\n\n'It isn't in there now. I have been up and down those rooms with the sergeant and it isn't in there now.'",
+        "text": "'A book. Black boards, no title, and he carried it about the house like it was a baby.' He hesitates. 'He showed it to me once, to be kind, and I could not look at the page. Not would not. Could not. My eyes went off it the way they go off the sun.'",
         "choices": [
           {
             "text": "Back.",
@@ -158,8 +156,13 @@
           }
         ]
       },
-      "cass": {
-        "text": "'The one who delivered it.' Something crosses his face and he folds it away. 'He came back after. Twice. Said he had a bill outstanding, and I told him the police had it sealed, and he thanked me and went, and he had not asked which rooms.'\n\n'A man collecting a bill asks which rooms.'",
+      "night": {
+        "text": "He is quiet for long enough that you know the answer before it comes, and then he says it apologetically, as though you might be embarrassed.\n\n'You did, sir. Half past five in the morning, before it was light. I was up with a tooth. Your door, your step, no lamp, and a parcel under your arm — brown paper, string, done up neat. Back inside in a quarter of an hour.'\n\n'I did not think anything of it. A man who had just lost his friends, posting a letter.'",
+        "effect": {
+          "clues": [
+            "clue_franky_saw"
+          ]
+        },
         "choices": [
           {
             "text": "Back.",
@@ -179,42 +182,35 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Hanass is calm in the way that takes practice, and has been for eight days.\n\n'A shame. He was a pleasant gentleman and he paid in full.' He does not ask what you want. 'I carry things from one address to another. What is in them is the business of the address.'",
+        "text": "Hanass is calm in the way that takes practice, and he has been practising for six days.\n\n'Four pounds, in May, and a receipt if you want to see it. I sell books. Sometimes the books are old.'",
         "choices": [
           {
-            "text": "Where were you that night?",
-            "goto": "alibi"
+            "text": "Ask about the sale.",
+            "goto": "sale"
           },
           {
-            "text": "The last ferry over the Tussock is at seven.",
-            "goto": "broken",
-            "requires": {
-              "clue": "clue_ferry_times"
-            }
+            "text": "Ask who consigned it to him.",
+            "goto": "consignor"
           },
           {
-            "text": "Whose hand cut the page out of his transcription?",
-            "goto": "ledger",
-            "requires": {
-              "clue": "clue_ledger_gap"
-            }
+            "text": "Ask what he thinks it did.",
+            "goto": "read"
           },
           {
-            "text": "Read what he is not saying.",
-            "goto": "read",
-            "useAbilityEffect": "reveal_truth"
+            "text": "Ask about the transcription.",
+            "goto": "ledger"
           },
           {
-            "text": "That's all for now.",
+            "text": "Let him close up.",
             "goto": "bye"
           }
         ]
       },
-      "alibi": {
-        "text": "'Over the water by nine. My lodgings are on the far bank and I keep regular hours, and I passed the lamplighter on the bridge road and a woman with two dogs, and you may ask them both.'\n\nHe offers the dogs before anybody has asked for anything.",
+      "sale": {
+        "text": "'The fourteenth. Raining. He came in for a Feysac grammar and left with something I had priced at four pounds because I did not know what else to price it at.'\n\n'He asked me whether it was complete. I said the binding was original. That is not the same answer and we both knew it.'",
         "effect": {
           "clues": [
-            "clue_cass_alibi"
+            "clue_hanass_sale"
           ]
         },
         "choices": [
@@ -224,13 +220,27 @@
           }
         ]
       },
-      "broken": {
-        "text": "You put the ferryman's hours to him, plainly, and watch him arrive at the end of the sentence a little after you do.\n\nHe starts three answers. The third one is 'I may be wrong about the day,' and he hears himself say it.",
+      "consignor": {
+        "text": "He becomes extremely interested in a shelf.\n\n'It came in with a lot. Estates come in with lots.'\n\nYou notice, while he is being interested in the shelf, that the shop has a new bolt on the inside of the door and that he has stopped keeping it open after dark.",
+        "choices": [
+          {
+            "text": "Press him.",
+            "goto": "pressed",
+            "useAbilityEffect": "social_pressure"
+          },
+          {
+            "text": "Let it go.",
+            "goto": "start"
+          }
+        ]
+      },
+      "pressed": {
+        "text": "'A man who does not give a name and does not need to,' he says, to the shelf. 'Paint on his face. Not a costume, an occupation. He put it in with the lot himself and he was polite about it, and I have been sick every night since I took his money.'",
         "effect": {
           "clues": [
-            "clue_cass_lie"
+            "clue_order_watching"
           ],
-          "sanity": -1
+          "sanity": -2
         },
         "choices": [
           {
@@ -239,8 +249,17 @@
           }
         ]
       },
+      "read": {
+        "text": "'I think a man read something aloud that was written to be read aloud,' he says. 'And I think the book did not care which man.'",
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
       "ledger": {
-        "text": "'I do not read what I carry.'\n\nHe says it too quickly, and then again more slowly, which is worse. 'One leaf. Out of a copy. Not out of the book — the book was to be returned entire, that was the whole of the arrangement—'\n\nAnd there he stops, because he has just told you there was an arrangement.",
+        "text": "'He was copying it. He told me so, proudly, as though it were scholarship.' He shakes his head. 'A leaf has been taken out of that copy, and I did not take it, and he would not have. Ask yourself who else was in the room.'",
         "effect": {
           "clues": [
             "clue_ledger_gap"
@@ -253,25 +272,8 @@
           }
         ]
       },
-      "read": {
-        "text": "You ask the one thing he has spent eight days preparing not to be asked, and it lands somewhere behind his eyes.\n\nWhat comes back is not the answer. It is the cellar: cold at his back, coal in his hands, and above him, through the boards, a voice reading steadily in a language it had no business being fluent in — and then not stopping when it should have stopped.",
-        "effect": {
-          "clues": [
-            "clue_cass_lie"
-          ],
-          "flags": [
-            "cass_slipped"
-          ]
-        },
-        "choices": [
-          {
-            "text": "Back.",
-            "goto": "start"
-          }
-        ]
-      },
       "bye": {
-        "text": "He wishes you a good evening, and means it, which is the unpleasant part.",
+        "text": "He wishes you a good evening, and means it, which is somehow worse.",
         "end": true
       }
     }
@@ -282,33 +284,37 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Sil Mowbray is coiling a wet rope badly and in no hurry.\n\n'Ferry's done. Ferry's done at seven, same as it's been done at seven since my father had the licence.'",
+        "text": "Sil Mowbray is coiling a wet rope badly and in no hurry to finish.\n\n'You want the yard, the water, or the gentlemen who have been standing about looking at both?'",
         "choices": [
           {
-            "text": "When is the last crossing?",
-            "goto": "ferry",
-            "costPence": 60
+            "text": "Ask about Cobble Yard. (3s)",
+            "goto": "yard",
+            "requires": {
+              "pence": 36
+            },
+            "effect": {
+              "pence": -36
+            }
           },
           {
-            "text": "Who's been buying odd things off the market?",
-            "goto": "vane",
-            "costPence": 120
+            "text": "Ask about the gentlemen.",
+            "goto": "paint"
           },
           {
-            "text": "Ask about Welch McGovern.",
-            "goto": "halloway"
+            "text": "Ask about the warehouse.",
+            "goto": "warehouse"
           },
           {
-            "text": "Nothing today.",
+            "text": "Leave him to the rope.",
             "goto": "bye"
           }
         ]
       },
-      "ferry": {
-        "text": "The coins vanish into the rope coil.\n\n'Seven, and that's the summer table. No bridge nearer than four mile up. A man on the far bank at nine got there before seven or he got there wet.'",
+      "yard": {
+        "text": "The coins vanish into the rope coil.\n\n'Clerk at number nine signed for a parcel a week Tuesday and has not been to work since. Sent word he was ill. Nobody has heard him move about in four days and his landlady has stopped knocking.'\n\n'She says the room has gone quiet in a way a quiet room does not. I did not ask her what she meant by it and I am not going to.'",
         "effect": {
           "clues": [
-            "clue_ferry_times"
+            "clue_bieber_changed"
           ]
         },
         "choices": [
@@ -318,14 +324,11 @@
           }
         ]
       },
-      "vane": {
-        "text": "'There's a gentleman does his buying through other gentlemen. Alzuhod. Never seen him, never met a man who has, and I have been asked three times this month whether I ferried a black book across.'\n\n'Wanting a thing back is one price. Wanting it back quiet is another, and he is paying the second.'",
+      "paint": {
+        "text": "'There's a gentleman does his buying through other people — Alzuhod, calls himself, and never touches a thing himself. He has money out for a black book.'\n\nHe lowers his voice without seeming to notice he has done it.\n\n'And there is one with white paint on his face been down here twice this week, looking at the one warehouse both times, and smiling at nothing the whole while.'",
         "effect": {
           "clues": [
-            "clue_vane_offer"
-          ],
-          "flags": [
-            "heard_of_vane"
+            "clue_order_watching"
           ]
         },
         "choices": [
@@ -335,8 +338,8 @@
           }
         ]
       },
-      "halloway": {
-        "text": "'The young gentleman with the shutters?' He spits over the side, unhurried. 'Come down here twice in a fortnight asking after the deep water. Not for a boat. For the depth.'\n\n'A man wants to know how deep a thing goes, he is thinking about putting something in it. He never did, mind. I'd have seen.'",
+      "warehouse": {
+        "text": "'Cobble Yard, off the Tussock. Grain and bonded spirits, and a counting house over the bay with a clerk's room behind it.' He spits into the water. 'The dogs will not go down that end of the yard now, and the dogs down here will go anywhere.'",
         "choices": [
           {
             "text": "Back.",

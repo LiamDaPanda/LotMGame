@@ -24,8 +24,13 @@
         "toTitle": "Clown",
         "requirements": [
           {
+            "type": "flag",
+            "flag": "knows_sequence_8",
+            "label": "Learn the name of the rung above you"
+          },
+          {
             "type": "case_completed",
-            "caseId": "case-01-ninth-bell",
+            "caseId": "case-01-notebook",
             "label": "Close a case for the Nighthawks"
           },
           {

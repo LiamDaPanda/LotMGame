@@ -126,10 +126,10 @@ const loaded = await withGame((game) => {
 check(
   'content loaded from JSON',
   loaded.cases === 1 &&
-    loaded.maps === 6 &&
+    loaded.maps === 7 &&
     loaded.pathways === 1 &&
     loaded.abilities === 15 &&
-    loaded.chapters === 9 &&
+    loaded.chapters === 11 &&
     loaded.encounters === 6,
   JSON.stringify(loaded),
 );
@@ -154,10 +154,10 @@ check('starts with skills at 1', Object.values(state.skills).every((v) => v === 
 check('starts as a mortal, whatever the ladder says', state.awakened === false, String(state.awakened));
 check('and the chrome says so', state.rankLabel === 'No sequence - mortal', String(state.rankLabel));
 check('with no Beyonder powers to reach for', state.abilities.length === 0, JSON.stringify(state.abilities));
-check('and the story opens on its first chapter', state.chapter === 'ch_waking', String(state.chapter));
+check('and the story opens on its first chapter', state.chapter === 'ch_crimson', String(state.chapter));
 
 // ---------------------------------------------------------------------------
-console.log('\n2b. The prologue chooses the pathway');
+console.log('\n2b. The prologue: sign on, and stay mortal a while longer');
 // Walk the tree by choice text, the way a player does, rather than by index.
 const speak = (label) =>
   withGame((game, wanted) => {
@@ -168,7 +168,6 @@ const speak = (label) =>
     return { ok: true };
   }, label);
 
-// The opening is the transmigration; the pathway question comes after it.
 await speak('Look at what is on the desk');
 await page.waitForTimeout(150);
 await speak('Look at your hands');
@@ -182,25 +181,25 @@ await speak('Somebody is knocking');
 await page.waitForTimeout(150);
 await speak('Eight days pass');
 await page.waitForTimeout(150);
-await speak('Turn the docket over');
+await speak('Read what you are signing');
 await page.waitForTimeout(200);
-await shot('02b-pathway-choice');
-
+await shot('02b-contracts');
+await speak('Sign both');
 await page.waitForTimeout(200);
 state = await session();
-check('the Seer potion sets the pathway', state.pathway === 'seer', String(state.pathway));
-check('and its rank title with it', state.sequenceTitle === 'Seer', String(state.sequenceTitle));
-check('and wakes him to the ladder', state.awakened === true, String(state.awakened));
-check('and hands him the Sequence 9 powers', state.abilities.length > 0, JSON.stringify(state.abilities));
+check('signing on pays the first week', state.pence === 936, `${state.pence}d`);
+check(
+  'and he is still nobody at all',
+  state.awakened === false && state.abilities.length === 0,
+  `${state.awakened} / ${JSON.stringify(state.abilities)}`,
+);
 
-await speak('Sit with it');
-await page.waitForTimeout(200);
 await speak('Quietly');
 await page.waitForTimeout(300);
 state = await session();
 check(
-  'the prologue closes the first chapter',
-  state.chapter === 'ch_report' && state.chaptersDone === 1,
+  'the prologue closes the second chapter',
+  state.chapter === 'ch_seventh_unit' && state.chaptersDone === 2,
   `${state.chapter} after ${state.chaptersDone}`,
 );
 check(
@@ -219,8 +218,6 @@ check(
   JSON.stringify(state.skills),
 );
 
-// Back to the Seer for the rest of the run: the case content below is written
-// against its ability names.
 await withGame((game) => {
   game.scene.stop('Dialogue');
   const world = game.scene.getScene('World');
@@ -233,8 +230,6 @@ await withGame((game) => {
   // prologue's training bonuses rather than carrying them into every check.
   s.state.skills.occultism = 1;
   s.state.skills.streetwise = 1;
-  // Restart the room the way an exit does, rather than starting the scene from
-  // inside itself.
   const world = game.scene.getScene('World');
   if (world.scene.isPaused()) world.scene.resume();
   world.scene.restart({ mapId: 'club_hub' });
@@ -256,19 +251,71 @@ await page.waitForTimeout(300);
 await shot('03-case-board');
 await withGame((game) => {
   const board = game.scene.getScene('CaseBoard');
-  board.session.cases.accept('case-01-ninth-bell');
+  board.session.cases.accept('case-01-notebook');
   board.close();
 });
 state = await session();
-check('case accepted', state.activeCase === 'case-01-ninth-bell', String(state.activeCase));
+check('case accepted', state.activeCase === 'case-01-notebook', String(state.activeCase));
 check(
-  'and taking it moves the story on to the rooms above the shop',
-  state.chapter === 'ch_scene' && state.chapterWhere === 'pawnshop',
+  'and taking it moves the story on to the potion',
+  state.chapter === 'ch_potion' && state.chapterWhere === 'club_hub',
   `${state.chapter} at ${state.chapterWhere}`,
 );
 
 // ---------------------------------------------------------------------------
-console.log('\n4. Travel to the pawnshop and gather mundane clues');
+console.log('\n3b. The cellar room, and the grey potion');
+const talk = async (treeId, speaker) => {
+  await withGame(
+    (game, arg) => {
+      const world = game.scene.getScene('World');
+      world.openDialogue({ id: arg.speaker, x: 0, y: 0, dialogue: arg.treeId });
+    },
+    { treeId, speaker },
+  );
+  await page.waitForTimeout(400);
+};
+const pickChoice = async (needle) => {
+  await withGame(
+    (game, arg) => {
+      const scene = game.scene.getScene('Dialogue');
+      const choice = scene.node.choices.find((c) => c.text.includes(arg));
+      if (choice) scene.choose(choice.index);
+    },
+    needle,
+  );
+  await page.waitForTimeout(250);
+};
+
+await withGame((game) => {
+  const world = game.scene.getScene('World');
+  world.runHotspotAction(world.map.hotspots.find((h) => h.id === 'club_potion'));
+});
+check('the potion scene plays at the Company', await waitForScene('Dialogue'));
+await page.waitForTimeout(400);
+await shot('03b-potion');
+await pickChoice('Ask what happens to people');
+await pickChoice('Drink it');
+await pickChoice('Sit with it');
+await withGame((game) => {
+  const game_ = game;
+  if (game_.scene.isActive('Dialogue')) game_.scene.stop('Dialogue');
+  const world = game_.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(400);
+state = await session();
+check('the Seer potion sets the pathway', state.pathway === 'seer', String(state.pathway));
+check('and its rank title with it', state.sequenceTitle === 'Seer', String(state.sequenceTitle));
+check('and wakes him to the ladder', state.awakened === true, String(state.awakened));
+check('and hands him the Sequence 9 powers', state.abilities.length > 0, JSON.stringify(state.abilities));
+check(
+  'and the story turns to the ritual he copied',
+  state.chapter === 'ch_club' && state.chapterWhere === 'lodgings',
+  `${state.chapter} at ${state.chapterWhere}`,
+);
+
+// ---------------------------------------------------------------------------
+console.log('\n3c. Above the grey fog');
 const goTo = async (mapId, x, y) => {
   await withGame(
     (game, arg) => {
@@ -281,9 +328,39 @@ const goTo = async (mapId, x, y) => {
   // show the room rather than the transition.
   await page.waitForTimeout(1200);
 };
+await goTo('lodgings', 6, 8);
+await withGame((game) => {
+  const world = game.scene.getScene('World');
+  world.runHotspotAction(world.map.hotspots.find((h) => h.id === 'home_circle'));
+});
+check('the ritual plays in his own room', await waitForScene('Dialogue'));
+await page.waitForTimeout(400);
+await pickChoice('Say the last line');
+await pickChoice('Sit still');
+await shot('03c-grey-fog');
+await pickChoice('Try to summon somebody');
+await pickChoice('Say nothing');
+await pickChoice('Give them their names');
+await pickChoice('Close the gathering');
+await withGame((game) => {
+  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(400);
+state = await session();
+check('the Tarot Club is founded', state.flags.includes('tarot_club_founded'), state.flags.join(','));
+check(
+  'and the story goes back to the rooms above the shop',
+  state.chapter === 'ch_rooms' && state.chapterWhere === 'pawnshop',
+  `${state.chapter} at ${state.chapterWhere}`,
+);
+
+// ---------------------------------------------------------------------------
+console.log('\n4. Travel to the rooms and gather what an ordinary eye can see');
 await goTo('pawnshop', 9, 11);
 state = await session();
-check('reached the pawnshop', state.map === 'pawnshop', state.map);
+check('reached the rooms above the shop', state.map === 'pawnshop', state.map);
 await shot('04-pawnshop');
 
 const examine = async (hotspotId) => {
@@ -302,20 +379,29 @@ await shot('05-examine-body');
 await withGame((game) => game.scene.getScene('Examine').close());
 await page.waitForTimeout(250);
 
-for (const id of ['shop_door_inside', 'shuttered_window', 'the_watch', 'the_counter', 'the_ledger', 'cellar_stair_top']) {
+for (const id of [
+  'shop_door_inside', 'shuttered_window', 'the_watch', 'the_counter',
+  'the_ledger', 'cellar_stair_top', 'display_case',
+]) {
   await examine(id);
   await withGame((game) => game.scene.getScene('Examine').close());
   await page.waitForTimeout(150);
 }
 state = await session();
-check('mundane scene clues collected', state.clues.includes('clue_bolted_door') && state.clues.includes('clue_no_wounds') && state.clues.includes('clue_ledger_gap'), state.clues.join(','));
-check('picked up the watch as evidence', state.items.includes('sealed_watch'), state.items.join(','));
-check('picked up the ledger', state.items.includes('forged_ledger'), state.items.join(','));
+check(
+  'the sealed room is on the record',
+  ['clue_bolted_door', 'clue_no_wounds', 'clue_nailed_shutters'].every((id) => state.clues.includes(id)),
+  state.clues.join(','),
+);
+check('the empty shelf is noticed', state.clues.includes('clue_empty_shelf'));
+check('and the receipt is in his coat pocket', state.clues.includes('clue_parcel_receipt'));
+check('picked up the plumb as evidence', state.items.includes('sealed_watch'), state.items.join(','));
+check('picked up the transcription', state.items.includes('forged_ledger'), state.items.join(','));
 
 // ---------------------------------------------------------------------------
-console.log('\n5. Use a Beyonder ability to surface a hidden clue');
+console.log('\n5. Use a Beyonder ability to surface what an ordinary eye cannot');
 const before = await session();
-await examine('the_body');
+await examine('the_watch');
 await withGame((game) => {
   const scene = game.scene.getScene('Examine');
   scene.useAbility('reveal_clue', scene.session.content.ability('divination'));
@@ -325,8 +411,8 @@ await shot('06-divination');
 await withGame((game) => game.scene.getScene('Examine').close());
 await page.waitForTimeout(200);
 
-// And again on the watch, which is where the artefact reveals itself.
-await examine('the_watch');
+// And on the coat, which is where the handwriting turns out to be his own.
+await examine('display_case');
 await withGame((game) => {
   const scene = game.scene.getScene('Examine');
   scene.useAbility('reveal_clue', scene.session.content.ability('divination'));
@@ -336,7 +422,8 @@ await withGame((game) => game.scene.getScene('Examine').close());
 await page.waitForTimeout(200);
 
 state = await session();
-check('divination revealed the hidden clues', state.clues.includes('clue_terror_echo') && state.clues.includes('clue_watch_residue'));
+check('divination reads the plumb', state.clues.includes('clue_watch_residue'));
+check('and the hand on the parcel receipt', state.clues.includes('clue_own_handwriting'));
 check('spirituality was spent', state.spirituality < before.spirituality, `${before.spirituality} -> ${state.spirituality}`);
 check('concealment was spent', state.concealment < before.concealment, `${before.concealment} -> ${state.concealment}`);
 check('using the power advanced digestion', state.digestion > before.digestion, `${before.digestion} -> ${state.digestion}`);
@@ -352,16 +439,6 @@ check('strongbox clue withheld while locked', !state.clues.includes('clue_strong
 
 // ---------------------------------------------------------------------------
 console.log('\n7. Dialogue: gated choices, money, and clue-gated follow-ups');
-const talk = async (treeId, speaker) => {
-  await withGame(
-    (game, arg) => {
-      const world = game.scene.getScene('World');
-      world.openDialogue({ id: arg.speaker, x: 0, y: 0, dialogue: arg.treeId });
-    },
-    { treeId, speaker },
-  );
-  await page.waitForTimeout(400);
-};
 await talk('dlg_constable', 'constable');
 await shot('08-dialogue');
 const choiceLabels = await withGame((game) => {
@@ -370,38 +447,17 @@ const choiceLabels = await withGame((game) => {
 });
 check('dialogue presented choices', choiceLabels.length >= 3, choiceLabels.join(' | '));
 
-// Take the constable's two testimony branches.
-const pickChoice = async (needle) => {
-  await withGame(
-    (game, arg) => {
-      const scene = game.scene.getScene('Dialogue');
-      const choice = scene.node.choices.find((c) => c.text.includes(arg));
-      if (choice) scene.choose(choice.index);
-    },
-    needle,
-  );
-  await page.waitForTimeout(250);
-};
-await pickChoice('Walk me through the morning');
+await pickChoice('Ask what the morning looked like');
 await pickChoice('Back');
-await pickChoice('Did anyone hear anything');
+await pickChoice('Ask about the hour');
 await pickChoice('Back');
 
 // The keys cost money; confirm the purse actually pays.
 const beforeKeys = await session();
-await pickChoice("I'd like the key");
-const lockedAbilityChoice = await withGame((game) => {
-  const scene = game.scene.getScene('Dialogue');
-  return scene.node.choices.map((c) => ({ text: c.text, enabled: c.enabled, reason: c.reason }));
-});
-check(
-  'ability-gated choice shows why it is locked',
-  lockedAbilityChoice.some((c) => !c.enabled && c.reason),
-  JSON.stringify(lockedAbilityChoice),
-);
-await pickChoice('Offer him something');
+await pickChoice('Ask for the keys');
+await pickChoice('Put something in his glove');
 state = await session();
-check('bribe deducted 8s from the purse', beforeKeys.pence - state.pence === 96, `${beforeKeys.pence} -> ${state.pence}`);
+check('bribe deducted 2s from the purse', beforeKeys.pence - state.pence === 24, `${beforeKeys.pence} -> ${state.pence}`);
 check('bribe yielded the shop keys', state.items.includes('shop_keys'));
 await withGame((game) => game.scene.getScene('Dialogue').close());
 await page.waitForTimeout(250);
@@ -416,7 +472,7 @@ check('strongbox now yields its clue', state.clues.includes('clue_strongbox_inta
 check('strongbox yielded the ring', state.items.includes('mourning_ring'));
 
 // ---------------------------------------------------------------------------
-console.log('\n9. The cellar, and divination in an empty room');
+console.log('\n9. The cellar: nobody helped, and the room remembers');
 await goTo('cellar', 6, 6);
 state = await session();
 check('reached the cellar', state.map === 'cellar', state.map);
@@ -433,41 +489,81 @@ await page.waitForTimeout(250);
 await withGame((game) => game.scene.getScene('Examine').close());
 await page.waitForTimeout(200);
 state = await session();
-check('cellar clues collected', state.clues.includes('clue_cellar_bolt') && state.clues.includes('clue_second_presence'));
+check('the room remembers being afraid', state.clues.includes('clue_terror_echo'), state.clues.join(','));
 
 // ---------------------------------------------------------------------------
-console.log('\n10. Remaining testimony: widow, ferryman, apprentice');
+console.log('\n10. Testimony: the landlord, the ferry hand, and the man who sold it');
 await goTo('pawnshop', 9, 11);
 await talk('dlg_widow', 'widow');
-await pickChoice('Tell me about the last week');
+await pickChoice('Ask whether anyone came or went');
 await withGame((game) => game.scene.getScene('Dialogue').close());
 await page.waitForTimeout(200);
+state = await session();
+check('the landlord saw him go out with a parcel', state.clues.includes('clue_franky_saw'));
+check(
+  'which is the parcel accounted for',
+  state.clues.includes('clue_parcel_receipt') && state.clues.includes('clue_own_handwriting'),
+  state.clues.join(','),
+);
 
 await goTo('ashfen_row', 9, 2);
 await talk('dlg_dockhand', 'dockhand');
-await pickChoice('When is the last crossing');
-await pickChoice('Back');
-await pickChoice("Who's been buying odd things");
+await pickChoice('Ask about Cobble Yard');
 await withGame((game) => game.scene.getScene('Dialogue').close());
 await page.waitForTimeout(200);
 state = await session();
-check('paid-for testimony obtained', state.clues.includes('clue_ferry_times') && state.clues.includes('clue_vane_offer'));
+check('paid-for testimony obtained', state.clues.includes('clue_bieber_changed'), state.clues.join(','));
 
 await goTo('pawnshop', 9, 11);
 await talk('dlg_apprentice', 'apprentice');
-await pickChoice('Where were you that night');
+await pickChoice('Ask about the sale');
 await pickChoice('Back');
-await pickChoice('The last ferry over the Tussock');
+await pickChoice('Ask who consigned it');
+const lockedAbilityChoice = await withGame((game) => {
+  const scene = game.scene.getScene('Dialogue');
+  return scene.node.choices.map((c) => ({ text: c.text, enabled: c.enabled, reason: c.reason }));
+});
+check(
+  'ability-gated choice shows why it is locked',
+  lockedAbilityChoice.some((c) => !c.enabled && c.reason),
+  JSON.stringify(lockedAbilityChoice),
+);
+await pickChoice('Let it go');
+await pickChoice('Ask about the transcription');
 await withGame((game) => game.scene.getScene('Dialogue').close());
 await page.waitForTimeout(200);
+
+// The postal ledger is legwork rather than conversation: pay for the counter
+// clerk's memory and let the roll decide, with the roll pinned so the test is
+// about the plumbing rather than the dice.
+const postal = await withGame((game) => {
+  const session_ = game.scene.getScenes(true)[0].registry.get('session');
+  const original = Math.random;
+  Math.random = () => 0;
+  try {
+    return session_.inquiries.follow('lead_post_office');
+  } finally {
+    Math.random = original;
+  }
+});
 state = await session();
-check('alibi broken by the ferry timetable', state.clues.includes('clue_cass_lie'));
-check('all clean-solve clues in hand', [
-  'clue_bolted_door', 'clue_nailed_shutters', 'clue_cellar_bolt',
-  'clue_coal_dust', 'clue_constable_time', 'clue_second_presence',
-  'clue_no_wounds', 'clue_watch_residue', 'clue_terror_echo',
-  'clue_ledger_gap', 'clue_vane_offer', 'clue_two_cups', 'clue_cass_lie',
-].every((id) => state.clues.includes(id)), state.clues.join(','));
+check(
+  'the postal ledger gives up the address',
+  state.clues.includes('clue_bieber_address'),
+  JSON.stringify(postal),
+);
+state = await session();
+check(
+  'all clean-solve clues in hand',
+  [
+    'clue_bolted_door', 'clue_nailed_shutters', 'clue_strongbox_intact',
+    'clue_no_wounds', 'clue_terror_echo', 'clue_watch_residue',
+    'clue_empty_shelf', 'clue_ledger_gap',
+    'clue_parcel_receipt', 'clue_own_handwriting', 'clue_franky_saw',
+    'clue_bieber_address', 'clue_bieber_changed', 'clue_two_cups',
+  ].every((id) => state.clues.includes(id)),
+  state.clues.join(','),
+);
 
 // ---------------------------------------------------------------------------
 console.log('\n11. The deduction board');
@@ -486,11 +582,11 @@ const badDeduce = await withGame((game) =>
 check('unrelated clues do not form a deduction', badDeduce.ok === false, JSON.stringify(badDeduce));
 
 const deduceSets = [
-  ['clue_bolted_door', 'clue_nailed_shutters', 'clue_cellar_bolt'],
-  ['clue_coal_dust', 'clue_constable_time', 'clue_second_presence'],
-  ['clue_no_wounds', 'clue_watch_residue', 'clue_terror_echo'],
-  ['clue_ledger_gap', 'clue_vane_offer'],
-  ['clue_two_cups', 'clue_cass_lie'],
+  ['clue_bolted_door', 'clue_nailed_shutters', 'clue_strongbox_intact'],
+  ['clue_no_wounds', 'clue_terror_echo', 'clue_watch_residue'],
+  ['clue_empty_shelf', 'clue_ledger_gap', 'clue_strongbox_intact'],
+  ['clue_parcel_receipt', 'clue_own_handwriting', 'clue_franky_saw'],
+  ['clue_bieber_address', 'clue_bieber_changed', 'clue_two_cups'],
 ];
 for (const set of deduceSets) {
   const result = await withGame(
@@ -504,8 +600,51 @@ await page.waitForTimeout(300);
 await shot('11-board-concluded');
 state = await session();
 check('five conclusions drawn', state.deductions.length === 5, state.deductions.join(','));
+check(
+  'and the story is at the warehouse door',
+  state.chapter === 'ch_warehouse' && state.chapterWhere === 'warehouse',
+  `${state.chapter} at ${state.chapterWhere}`,
+);
 
 // ---------------------------------------------------------------------------
+console.log('\n11b. Cobble Yard, Ray Bieber, and the man in the paint');
+await withGame((game) => {
+  if (game.scene.isActive('Journal')) game.scene.stop('Journal');
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(300);
+await goTo('warehouse', 8, 8);
+state = await session();
+check('reached the warehouse', state.map === 'warehouse', state.map);
+check('and the raid plays on arrival', await waitForScene('Dialogue'));
+await page.waitForTimeout(500);
+await shot('11c-warehouse');
+await pickChoice('Go in');
+await pickChoice('Ask him what it promised');
+await pickChoice('Look at him properly');
+await pickChoice('Get out of the circle');
+await pickChoice('Get the team');
+await pickChoice('Then the silence');
+await pickChoice('Turn around');
+await shot('11d-clown');
+await pickChoice('Shoot him');
+await pickChoice('Say nothing about it');
+await withGame((game) => {
+  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(400);
+state = await session();
+check('the notebook is recovered', state.items.includes('antigonus_notebook'), state.items.join(','));
+check('and the name of Sequence 8 with it', state.flags.includes('knows_sequence_8'), state.flags.join(','));
+check(
+  'which turns the story to closing the file',
+  state.chapter === 'ch_clown',
+  String(state.chapter),
+);
+
 console.log('\n12. Resolution — the clean solve should now be unlocked');
 await withGame((game) => game.scene.getScene('Journal').openResolve());
 check('resolve screen opened', await waitForScene('Resolve'));
@@ -525,9 +664,13 @@ await withGame((game) => game.scene.getScene('Resolve').confirm('res_clean'));
 await page.waitForTimeout(600);
 await shot('13-epilogue');
 state = await session();
-check('case marked resolved', state.caseStates['case-01-ninth-bell'] === 'resolved', JSON.stringify(state.caseStates));
+check('case marked resolved', state.caseStates['case-01-notebook'] === 'resolved', JSON.stringify(state.caseStates));
 check('reward paid (£10 + £2 bonus)', state.pence - beforeResolve.pence === 2880, `${beforeResolve.pence} -> ${state.pence}`);
-check('watch handed to the Club', !state.items.includes('sealed_watch'), state.items.join(','));
+check(
+  'the notebook goes into the Church’s cupboard',
+  state.flags.includes('notebook_secured'),
+  state.flags.join(','),
+);
 check('a day passed writing it up', state.day > beforeResolve.day, `${beforeResolve.day} -> ${state.day}`);
 
 await withGame((game) => game.scene.getScene('Resolve').finish());
@@ -684,7 +827,7 @@ console.log('\n16. Lines of inquiry — buying a clue with money, days and skill
 await withGame((game) => {
   const session = game.scene.getScenes(true)[0].registry.get('session');
   // Reopen the closed case so leads have something to attach to.
-  session.state.setCaseState('case-01-ninth-bell', 'active');
+  session.state.setCaseState('case-01-notebook', 'active');
   session.state.clues.delete('clue_ferry_times');
   session.state.spentLeads.clear();
 });
@@ -726,15 +869,19 @@ const leadResult = await withGame((game) => {
   const original = Math.random;
   Math.random = () => 0; // guarantee the roll passes
   try {
-    return scene.session.inquiries.follow('lead_ferry_wharf');
+    return scene.session.inquiries.follow('lead_vane_informant');
   } finally {
     Math.random = original;
   }
 });
 state = await session();
-check('following a lead granted its clue', state.clues.includes('clue_ferry_times'), JSON.stringify(leadResult));
+check(
+  'following a lead granted its clue',
+  state.clues.includes('clue_order_watching'),
+  JSON.stringify(leadResult),
+);
 check('the lead cost money', state.pence < beforeLead.pence, `${beforeLead.pence} -> ${state.pence}`);
-check('the lead is spent afterwards', state.spentLeads.includes('lead_ferry_wharf'));
+check('the lead is spent afterwards', state.spentLeads.includes('lead_vane_informant'));
 await withGame((game) => game.scene.getScene('Inquiry').close());
 await page.waitForTimeout(300);
 

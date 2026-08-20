@@ -48,6 +48,12 @@ const CAST = [
   { id: 'dockhand', skin: '#c08a5e', hair: '#2a2018', coat: '#40514f', accent: '#8aa8a2', trouser: '#2c3a38', hat: 'cap', scarf: null },
   // Family. Appended, not inserted: the index is the frame number.
   { id: 'benson', skin: '#f0c5a2', hair: '#33251d', coat: '#4a4034', accent: '#b9a37c', trouser: '#332c24', hat: 'flat', scarf: null },
+  // The notebook's trail, and the two who answer above the grey fog.
+  { id: 'bieber', skin: '#cbb9a4', hair: '#2e2a26', coat: '#3b3a30', accent: '#7d8a5a', trouser: '#2a2a22', hat: null, scarf: null },
+  { id: 'clown', skin: '#efe6df', hair: '#6a2030', coat: '#5a2338', accent: '#e8dcc8', trouser: '#2a1620', hat: 'top', scarf: '#c9a227' },
+  { id: 'justice', skin: '#f6d6bd', hair: '#c8a24a', coat: '#5a4b7a', accent: '#e6d7a8', trouser: '#3c3254', hat: null, scarf: '#dcc7e0' },
+  { id: 'hanged_man', skin: '#b98b60', hair: '#241d18', coat: '#2c3f4a', accent: '#8fb0bd', trouser: '#22303a', hat: 'cap', scarf: '#6a7f88' },
+  { id: 'daly', skin: '#e6b992', hair: '#1f1a17', coat: '#33323f', accent: '#9d86c9', trouser: '#26252f', hat: null, scarf: '#4a4560' },
 ];
 
 // ---------------------------------------------------------------------------

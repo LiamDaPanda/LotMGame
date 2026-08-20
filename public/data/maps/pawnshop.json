@@ -145,7 +145,7 @@
       "id": "the_ledger",
       "x": 9,
       "y": 4,
-      "name": "McGovern’s Notebook",
+      "name": "McGovern’s Transcription",
       "description": "His own stitching, his own hand, and one leaf cut out close to the thread. He kept a list of everyone who came to the gathering. Your name is on it, in his writing, and seeing it is worse than it should be.",
       "clues": [
         "clue_ledger_gap"
@@ -190,18 +190,26 @@
       "id": "cellar_stair_top",
       "x": 5,
       "y": 9,
-      "name": "The Cellar Stair",
-      "description": "Coal dust on the third step and the fifth, dry, tracked upwards. It rained until eight. Somebody came up out of there after that.",
+      "name": "The Shelf By The Stair",
+      "description": "Where he kept it, and where it is not. A gap the width of a hardcover with no dust in it, on a shelf that has dust everywhere else.",
       "clues": [
-        "clue_coal_dust"
+        "clue_empty_shelf"
       ]
     },
     {
       "id": "display_case",
       "x": 13,
       "y": 2,
-      "name": "The Curio Shelf",
-      "description": "The occult as a party trick: a scrying bowl with a chip out of it, three tarot decks, a mounted moth, and a gap in the dust the size of a small book."
+      "name": "The Coat On The Door",
+      "description": "His good coat, still on the hook, and in the pocket a slip of paper that has no business being in it: a Tingen postal receipt, book rate, paid in coin, dated the twenty-eighth of June.\n\nIt is not McGovern's handwriting.",
+      "clues": [
+        "clue_parcel_receipt"
+      ],
+      "abilityClues": {
+        "reveal_clue": [
+          "clue_own_handwriting"
+        ]
+      }
     }
   ],
   "npcs": [

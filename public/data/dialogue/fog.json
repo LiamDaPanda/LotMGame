@@ -1,0 +1,113 @@
+[
+  {
+    "id": "dlg_grey_fog",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "You copied the ritual out of McGovern's transcription before you handed it in, which is either diligence or the first symptom, and you have not decided which.\n\nA circle on your own floor in chalk. Your own blood at four points, which the notes are matter-of-fact about. The words spoken aloud in a language you could not read in May.\n\nIt is meant to be a rite for luck. You are doing it because a man who wakes up in somebody else's body wants, more than anything, to go home.",
+        "choices": [
+          {
+            "text": "Say the last line.",
+            "goto": "fog"
+          }
+        ]
+      },
+      "fog": {
+        "text": "You do not fall. The room is simply no longer there.\n\nGrey fog to every horizon, and above it — impossibly, at a height that has no business existing — a palace of crumbling stone, and in it a long bronze table with twenty-two seats.\n\nYou are sitting at the head of it. You did not sit down.\n\nThe fog will not let anything in. You understand this the way you understand which way is down: nothing above the fog can be touched by anything below it, and nothing below the fog can hear what is said above it.",
+        "choices": [
+          {
+            "text": "Try to summon somebody, the way the notebook described.",
+            "goto": "summon"
+          },
+          {
+            "text": "Sit still and look at the empty chairs.",
+            "goto": "chairs"
+          }
+        ]
+      },
+      "chairs": {
+        "text": "Twenty-two seats, and one of them is yours by an accident you will spend the rest of your life not explaining.\n\nThe fog does not answer questions. It simply does not permit them to be asked of it, which is a different thing and worse.",
+        "effect": {
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Try to summon somebody.",
+            "goto": "summon"
+          }
+        ]
+      },
+      "summon": {
+        "text": "Two of the seats fill.\n\nA girl in a riding habit that cost more than your street, sitting very straight and clearly deciding to be delighted rather than frightened. A weathered man in a sea officer's coat who does not sit back in his chair once.\n\nThey can see the fog. They cannot see you — only where you are, which they have both already worked out is the head of the table.\n\n'Am I,' the girl says carefully, 'addressing a god?'",
+        "choices": [
+          {
+            "text": "Say nothing. Let the silence do it.",
+            "goto": "fool_silence"
+          },
+          {
+            "text": "'You may call me the Fool.'",
+            "goto": "fool_named"
+          }
+        ],
+        "speaker": "justice"
+      },
+      "fool_silence": {
+        "text": "You say nothing at all, for four seconds, which is the longest four seconds of your life and the most productive.\n\nThe girl decides on reverence. The sailor decides on caution. Neither of them decides on doubt, which is the only decision that would have cost you anything.",
+        "effect": {
+          "concealment": 6
+        },
+        "choices": [
+          {
+            "text": "Give them their names.",
+            "goto": "names"
+          }
+        ]
+      },
+      "fool_named": {
+        "text": "'You may call me the Fool,' you say, in a voice you borrowed from a lecturer who frightened you at nineteen. 'That is not a name. It is a seat.'\n\nThe girl writes it down. The sailor does not, and remembers it anyway.",
+        "effect": {
+          "skills": {
+            "rhetoric": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Give them their names.",
+            "goto": "names"
+          }
+        ]
+      },
+      "names": {
+        "text": "'Justice,' you tell the girl, because the chair she took has a scale worn into the arm of it. 'Hanged Man,' you tell the sailor, and he takes it without any expression whatsoever, which tells you he has been called worse and by people who meant it.\n\nAudrey Hall. Alger Wilson. You will not be given those names for a long time yet, and you will pretend not to have wanted them.\n\nWhat is agreed, in the end, is very small and entirely unprecedented: they will come when called. They will trade what they know. Nobody will ask anybody where they are sitting when they answer.",
+        "effect": {
+          "flags": [
+            "tarot_club_founded"
+          ],
+          "trust": {
+            "justice": 20,
+            "hanged_man": 15
+          }
+        },
+        "choices": [
+          {
+            "text": "Close the gathering.",
+            "goto": "close"
+          }
+        ],
+        "speaker": "player"
+      },
+      "close": {
+        "text": "The fog takes them back. The chairs are empty, the table is bronze and very cold, and you are on your own floor in Iron Cross Street with a nosebleed and four minutes gone off the clock.\n\nSomewhere over the fog there is now a club with three members, one of whom is a nineteen-year-old civilian clerk of the Seventh Unit who cannot pay the quarter's rent without thinking about it.\n\nYou put the chalk back in the drawer.",
+        "effect": {
+          "sanity": -4,
+          "spirituality": -6
+        },
+        "end": true,
+        "speaker": "player"
+      }
+    }
+  }
+]

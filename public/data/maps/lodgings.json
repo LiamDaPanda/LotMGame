@@ -91,8 +91,8 @@
       "id": "home_desk",
       "x": 2,
       "y": 4,
-      "name": "The Desk",
-      "description": "Where it happened. The blotter has been scrubbed and the scrubbing shows.\n\nThe notes are still here, in a hand identical to your own: a diagram of concentric circles, four words of a language you should not be able to read, and down the left margin, dates. The last is the night of the crimson moon.",
+      "name": "Your Desk",
+      "description": "The diagram is still on it, in a hand that is now yours: concentric circles drawn carefully with a compass by somebody who was copying, not composing.\n\nUnderneath it, in the same hand, four words written the night everything happened. *Everyone will die, including me.*",
       "clues": [],
       "icon": 11
     },
@@ -123,6 +123,22 @@
       "y": 8,
       "name": "The Clothes Press",
       "description": "One good coat, brushed. One working coat, not. Everything in here fits you exactly, which you have decided to stop finding remarkable."
+    },
+    {
+      "id": "home_circle",
+      "x": 3,
+      "y": 4,
+      "name": "The Chalk Circle",
+      "description": "Four points, a copied rite, and a way of asking that is not meant for people down here.",
+      "action": "dialogue",
+      "dialogue": "dlg_grey_fog",
+      "locked": {
+        "reason": "You would need to be something more than a clerk before you tried this.",
+        "bypass": {
+          "flag": "drank_seer"
+        }
+      },
+      "icon": 13
     }
   ],
   "npcs": [

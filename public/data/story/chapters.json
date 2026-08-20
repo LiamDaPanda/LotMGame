@@ -1,85 +1,121 @@
 [
   {
-    "id": "ch_waking",
-    "title": "I. The Bolted Room",
-    "objective": "Come to your senses, and decide what sort of man you are going to be about it.",
+    "id": "ch_crimson",
+    "title": "I. Crimson",
+    "objective": "Come to your senses in a room that is not yours, and work out what it is telling you.",
+    "where": "lodgings",
+    "doneWhen": {
+      "flag": "prologue_found"
+    },
+    "recap": "The small hours of the twenty-eighth of June, 1349. A desk you had never seen, a body that was already sitting up, a revolver by your right hand and four words on the page in front of you in handwriting that would shortly be yours. Everyone will die, including me."
+  },
+  {
+    "id": "ch_situation",
+    "title": "II. The Situation",
+    "objective": "Decide what sort of man you are going to be about it, and let your brother in.",
     "where": "lodgings",
     "doneWhen": {
       "anyOf": [
-        { "flag": "disposition_scholar" },
-        { "flag": "disposition_quiet" },
-        { "flag": "disposition_open" }
+        {
+          "flag": "disposition_scholar"
+        },
+        {
+          "flag": "disposition_quiet"
+        },
+        {
+          "flag": "disposition_open"
+        }
       ]
     },
-    "recap": "You woke at a desk on Iron Cross Street in a body that was already sitting up, with the door bolted from the inside and a revolver by your right hand. Eight days later a man named Dunn Smith gave you a grey potion and a job."
+    "recap": "Benson took the revolver off the table before the constable came up the stairs, and Melissa stood on the landing doing sums about a funeral that was not going to be needed. Eight days later a tired man from Zouteland Street put two contracts on the table and asked how you meant to carry it."
   },
   {
-    "id": "ch_report",
-    "title": "II. The Company",
-    "objective": "Take the black notebook case from the board at Blackthorn.",
+    "id": "ch_seventh_unit",
+    "title": "III. The Seventh Unit",
+    "objective": "Report to No. 36 Zouteland Street and take the notebook file off the board.",
     "where": "club_hub",
     "doneWhen": {
-      "caseState": { "caseId": "case-01-ninth-bell", "state": "active" }
+      "caseState": {
+        "caseId": "case-01-notebook",
+        "state": "active"
+      }
     },
-    "recap": "Three deaths on the twenty-seventh of June, and one black hardcover notebook that all three of them had read. The Company took the case; you took it off the board."
+    "recap": "Blackthorn Security Company on the brass plate, Seventh Unit of the Special Operations Department on the warrant card, and the Church of the Evernight Goddess behind both. Dunn Smith gave the notebook file to the civilian staffer whose own name was already in it."
   },
   {
-    "id": "ch_scene",
-    "title": "III. The Rooms Above the Shop",
-    "objective": "See Welch McGovern for yourself, in the rooms where he died.",
-    "where": "pawnshop",
-    "doneWhen": { "clue": "clue_no_wounds" },
-    "recap": "No wound, no poison, no struggle. A man at his own desk with his face turned towards something that was not there."
-  },
-  {
-    "id": "ch_sealed",
-    "title": "IV. Bolted from the Inside",
-    "objective": "Establish how the rooms came to be sealed.",
-    "where": "pawnshop",
-    "doneWhen": { "deduction": "ded_sealed_room" },
-    "recap": "Bolted, shuttered, and locked from within — the same room you woke up in, and you had begun to suspect that was not a coincidence."
-  },
-  {
-    "id": "ch_hanass",
-    "title": "V. The Apprentice",
-    "objective": "Put the evening of the twenty-seventh to Hanass.",
-    "where": "pawnshop",
-    "doneWhen": { "clue": "clue_cass_alibi" },
-    "recap": "Hanass had an account of that evening, and it was a better account than an honest man needs."
-  },
-  {
-    "id": "ch_watch",
-    "title": "VI. What Killed Three People",
-    "objective": "Work out what actually killed them.",
-    "where": "pawnshop",
-    "doneWhen": { "deduction": "ded_watch_killed" },
-    "recap": "Not a hand, and not a poison. Something read at a particular hour, by three people who each thought they were alone with it."
-  },
-  {
-    "id": "ch_report_back",
-    "title": "VII. The Report",
-    "objective": "Write the case up at the Company's desk and name whoever you can stand to name.",
+    "id": "ch_potion",
+    "title": "IV. Potion",
+    "objective": "Drink what the Church signed for, in the cellar room with the drain in the floor.",
     "where": "club_hub",
     "doneWhen": {
-      "anyOf": [
-        { "caseState": { "caseId": "case-01-ninth-bell", "state": "resolved" } },
-        { "caseState": { "caseId": "case-01-ninth-bell", "state": "failed" } }
-      ]
+      "flag": "drank_seer"
     },
-    "recap": "The report went in. Whatever it left out went in the drawer with the rest of what the Company does not write down."
+    "recap": "Grey, and thicker than it looked. Seer, Sequence 9: divination, misdirection, and a face nobody remembers. A role, said Smith, not a tool — you act it, or in time it acts you."
   },
   {
-    "id": "ch_rite",
-    "title": "VIII. Sequence 8",
-    "objective": "Digest the potion, find the Clown's formula, and take the rite at the circle.",
+    "id": "ch_club",
+    "title": "V. The Club",
+    "objective": "Chalk the circle on your own floor and go looking for a way home.",
+    "where": "lodgings",
+    "doneWhen": {
+      "flag": "tarot_club_founded"
+    },
+    "recap": "No way home: grey fog to every horizon, a ruined palace above it, and a bronze table with twenty-two seats. You were at the head of it before you had decided to sit down. Two of the chairs filled, and neither occupant doubted for a moment that they were addressing a god."
+  },
+  {
+    "id": "ch_rooms",
+    "title": "VI. The Rooms Above The Shop",
+    "objective": "See Welch McGovern for yourself, and establish that nobody came in or went out.",
+    "where": "pawnshop",
+    "doneWhen": {
+      "deduction": "ded_sealed_room"
+    },
+    "recap": "Bolted, shuttered and nailed from the inside, with eleven pounds untouched a yard from the body. Nobody killed Welch McGovern. He read something aloud that was written to be read aloud, and the book did not care which man was holding it."
+  },
+  {
+    "id": "ch_parcel",
+    "title": "VII. The Parcel",
+    "objective": "Work out where the notebook went — and who carried it there.",
+    "where": "pawnshop",
+    "doneWhen": {
+      "deduction": "ded_you_posted_it"
+    },
+    "recap": "A postal receipt in his coat pocket, book rate, paid in coin at half past five in the morning, in your own handwriting. Mr. Franky heard your door. You have no memory of any of it."
+  },
+  {
+    "id": "ch_bieber",
+    "title": "VIII. Ray Bieber",
+    "objective": "Find out who has been alone with it for six days.",
+    "where": "crookback_alley",
+    "doneWhen": {
+      "deduction": "ded_bieber_has_it"
+    },
+    "recap": "Number nine, Cobble Yard: a warehouse clerk who signed for a parcel, sent word he was ill, and has not been heard to move about since. His landlady has stopped knocking."
+  },
+  {
+    "id": "ch_warehouse",
+    "title": "IX. The Warehouse",
+    "objective": "Go into Cobble Yard behind the Nighthawks, and come out with the notebook.",
+    "where": "warehouse",
+    "doneWhen": {
+      "flag": "knows_sequence_8"
+    },
+    "recap": "Ray Bieber had read it all the way to the end, and it had made the book his core. Daly Simone took him apart along seams a body should not have — and then a man in white paint, sitting on the crates with his ankles crossed, offered to sell you the name of the rung above your own."
+  },
+  {
+    "id": "ch_clown",
+    "title": "X. Clown",
+    "objective": "Close the file, digest the Seer potion, and take Sequence 8 at the circle.",
     "where": "club_hub",
-    "doneWhen": { "sequenceAtMost": 8 },
-    "recap": "You drank the second one on purpose, which is the difference between an accident and a career."
+    "doneWhen": {
+      "sequenceAtMost": 8
+    },
+    "recap": "Clown. Sequence 8 of the Seer pathway, bought with a word out of a dead man's mouth and drunk in the cellar room under Zouteland Street."
   },
   {
-    "id": "ch_open_road",
-    "title": "IX. The Rest of the Ladder",
-    "objective": "Work, keep the rent paid, and stay the sort of man who can explain every step of it.",
+    "id": "ch_ladder",
+    "title": "XI. The Rest Of The Ladder",
+    "objective": "Work, keep the quarter paid, and stay the sort of man who can explain every step of it.",
     "where": "club_hub"
   }
 ]

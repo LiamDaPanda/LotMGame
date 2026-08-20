@@ -605,6 +605,12 @@ export class WorldScene extends Phaser.Scene {
       case 'rest':
         this.rest(hotspot);
         break;
+      case 'dialogue':
+        // A scene that belongs to a place rather than to a person: the circle
+        // on your own floor, the potion on Smith's desk.
+        if (hotspot.dialogue) this.openModal('Dialogue', { treeId: hotspot.dialogue });
+        else this.openExamine(hotspot);
+        break;
       default:
         this.openExamine(hotspot);
     }

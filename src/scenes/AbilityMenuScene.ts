@@ -107,9 +107,13 @@ export class AbilityMenuScene extends Phaser.Scene {
   }
 
   private emptyRow(text: string): Phaser.GameObjects.Container {
+    const width = this.w - 48;
     const container = this.add.container(0, 0);
-    container.setSize(this.w - 48, 36);
-    container.add(pixelText(this, 0, 8, text, { fontSize: '13px', color: CSS.muted }));
+    // Wrapped and measured: on a phone this line is wider than the panel, and
+    // a mortal Klein sees it every time he opens the powers menu.
+    const label = pixelText(this, 0, 8, text, { fontSize: '13px', color: CSS.muted, wrap: width });
+    container.setSize(width, label.height + 16);
+    container.add(label);
     return container;
   }
 

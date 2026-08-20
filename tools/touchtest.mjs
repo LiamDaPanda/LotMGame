@@ -216,8 +216,13 @@ const finishTyping = async () => {
 };
 
 const say = async (label, match) => {
-  await finishTyping();
-  const result = await tapWidget('Dialogue', match);
+  // A long line is read a page at a time now, so keep tapping the panel until
+  // the choices actually appear — which is what a player does.
+  let result = { found: false, have: [] };
+  for (let taps = 0; taps < 6 && !result.found; taps++) {
+    await finishTyping();
+    result = await tapWidget('Dialogue', match);
+  }
   check(label, result.found, result.found ? '' : `have: ${(result.have ?? []).join(' | ')}`);
 };
 
@@ -228,16 +233,26 @@ await say('and go to the window', 'Go to the window');
 await say('the prologue takes a considered opening', 'Think it through');
 await say('somebody comes through the door', 'Somebody is knocking');
 await say('and eight days pass', 'Eight days pass');
-await say('and it reaches the pathway question', 'Turn the docket over');
-await checkTextFits('Dialogue', 'Pathway question');
-const chosen = await page.evaluate(
-  () => window.__game.registry.get('session').state.pathwayId,
+await say('and it reaches the contracts', 'Read what you are signing');
+await checkTextFits('Dialogue', 'The contracts');
+await say('which can be signed', 'Sign both');
+const signedOn = await page.evaluate(() =>
+  [...window.__game.registry.get('session').state.flags].includes('signed_on'),
 );
-check('the Seer potion sets the pathway', chosen === 'seer', String(chosen));
-await say('and it asks how you will carry it', 'Sit with it');
+check('signing on takes him into the Seventh Unit', signedOn === true);
+const stillMortal = await page.evaluate(
+  () => window.__game.registry.get('session').state.awakened,
+);
+check('and leaves him a mortal for now', stillMortal === false, String(stillMortal));
 await say('the disposition option is takeable', 'Quietly');
-await finishTyping();
-await finishTyping();
+// The last node has no choices: tap through its pages and out.
+for (let taps = 0; taps < 8; taps++) {
+  const open = await page.evaluate(() =>
+    window.__game.scene.getScenes(true).some((scene) => scene.scene.key === 'Dialogue'),
+  );
+  if (!open) break;
+  await finishTyping();
+}
 await page.waitForTimeout(600);
 const afterPrologue = await scenes();
 check(
@@ -454,7 +469,11 @@ const quest = await page.evaluate(() => {
       .map(([tile]) => tile),
   };
 });
-check('the quest card names the chapter', quest.title.includes('THE COMPANY'), JSON.stringify(quest));
+check(
+  'the quest card names the chapter',
+  quest.title.includes('THE SEVENTH UNIT'),
+  JSON.stringify(quest),
+);
 check('and says where to go', quest.where.startsWith('Go to:'), quest.where);
 check(
   'and exactly one doorway on the street is lit for it',

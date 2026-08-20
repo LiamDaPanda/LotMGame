@@ -154,6 +154,25 @@
       "y": 2,
       "name": "Longcase Clock",
       "description": "Stopped at 11:47, and nobody winds it. Dunn says it stopped on its own the night the last captain died and that he would rather it stayed stopped, and nobody in Tingen argues with Dunn about clocks."
+    },
+    {
+      "id": "club_potion",
+      "x": 3,
+      "y": 12,
+      "name": "The Cellar Room",
+      "description": "A drain in the floor and a chair bolted beside it. This is where the Church's phials are drunk.",
+      "action": "dialogue",
+      "dialogue": "dlg_potion",
+      "locked": {
+        "reason": "Nothing has been signed for you yet.",
+        "bypass": {
+          "caseState": {
+            "caseId": "case-01-notebook",
+            "state": "active"
+          }
+        }
+      },
+      "icon": 8
     }
   ],
   "npcs": [

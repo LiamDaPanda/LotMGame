@@ -1,0 +1,87 @@
+{
+  "id": "warehouse",
+  "name": "The Warehouse, Cobble Yard",
+  "ambient": "#1b1a24",
+  "encounterChance": 0,
+  "legend": {
+    "%": {
+      "floor": 9,
+      "collide": true
+    },
+    ",": {
+      "floor": 7
+    },
+    "K": {
+      "floor": 7,
+      "object": 19,
+      "collide": true
+    },
+    "b": {
+      "floor": 7,
+      "object": 20,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    }
+  },
+  "rows": [
+    "%%%%%%%%%%%%%%%%%%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,KK,,,,,,,,,,KK,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,,b,,,,,,,,,,b,,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,KK,,,,,,,,,,KK,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%%%%%%%%o%%%%%%%%%"
+  ],
+  "spawn": {
+    "x": 8,
+    "y": 8
+  },
+  "intro": {
+    "dialogue": "dlg_warehouse",
+    "flag": "warehouse_entered"
+  },
+  "hotspots": [
+    {
+      "id": "wh_circle",
+      "x": 8,
+      "y": 3,
+      "name": "The Chalk On The Floor",
+      "description": "Concentric circles the width of the bay, drawn in chalk and then gone over in something that is not chalk. The same diagram that was on your own desk on the twenty-eighth, drawn by a man who had six days to get it right instead of one night.",
+      "clues": [],
+      "abilityClues": {
+        "reveal_clue": []
+      },
+      "icon": 13
+    },
+    {
+      "id": "wh_crates",
+      "x": 3,
+      "y": 4,
+      "name": "Bieber's Crates",
+      "description": "Six days of a man not going to work: bread gone green, a lamp burned dry, and every crate in this row opened and shut again by somebody looking for room rather than for goods."
+    },
+    {
+      "id": "wh_ledger",
+      "x": 14,
+      "y": 2,
+      "name": "The Counting House Desk",
+      "description": "The warehouse book, kept in a clerk's neat hand until the twenty-eighth of June and in something else afterwards. The last four pages are the same sentence, and it is not in Loenese."
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 8,
+      "y": 9,
+      "toMap": "crookback_alley",
+      "toX": 3,
+      "toY": 7,
+      "label": "Out to the Tussock"
+    }
+  ]
+}

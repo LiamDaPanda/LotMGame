@@ -18,7 +18,7 @@
         ]
       },
       "desk": {
-        "text": "A diagram: concentric circles drawn carefully with a compass, and at the four points four words in a language that is not Loenese and that you can read anyway.\n\nBeside it, a page of transcription in a neat scholarly hand — copied out of something black-bound and older, in a dialect of Ancient Feysac. Down the left margin, dates. The last is tonight: the twenty-seventh of June, 1349.",
+        "text": "A diagram: concentric circles drawn carefully with a compass, and at the four points four words in a language that is not Loenese and that you can read anyway.\n\nBeside it, a page of transcription in a neat scholarly hand — copied out of something black-bound and older, in a dialect of Ancient Feysac. Down the left margin, dates. The last is tonight: the twenty-eighth of June, 1349.",
         "choices": [
           {
             "text": "Look at your hands.",
@@ -80,28 +80,16 @@
         ]
       },
       "smith": {
-        "text": "Eight days. Long enough to learn that Welch McGovern died the same night you did, at his own desk, and that Naya drowned herself in a basin of water in a locked room across the city, and that all three of you are one paragraph in a police file that ends with the word *coincidence*.\n\nAnd now a tired man in an unpressed coat on the landing at Iron Cross Street, who says he is with Blackthorn Security Company of Zouteland Street, and who names the diagram on your desk before he has been asked, and its grade, and the family whose notebook it was copied out of.\n\n'Dunn Smith,' he says. 'Captain, of a sort. You can forget this, and I will help you forget it properly. You can be a witness, which lasts exactly as long as it takes whoever wants that notebook to decide you are a loose end.'\n\nHe puts a signed requisition on the table by the door.\n\n'Or you sign, and you drink what is on that docket, and you become the thing that goes and looks.'",
+        "text": "Eight days. Long enough to learn that Welch McGovern died the same night you did, at his own desk with the door bolted on the inside, and that Naya drowned herself in a basin of water in a locked room across the city — and that all three of you are one paragraph in a police file that ends with the word *coincidence*.\n\nAnd now a tired man in an unpressed coat on the landing at Iron Cross Street, who says he is with the Blackthorn Security Company of Zouteland Street, and who names the diagram on your desk before he has been asked, and its grade, and the family whose notebook it was copied out of.\n\n'Dunn Smith,' he says. 'Captain, of a sort. You can forget all of this, and I will help you forget it properly. You can be a witness, which lasts exactly as long as it takes whoever wants that notebook to decide you are a loose end.'\n\nHe puts two sheets of paper on the table by the door. 'Or you sign these, and you come in as civilian staff, and you find out what happened in this room from the inside of the only office in Tingen that believes you.'",
         "choices": [
           {
-            "text": "Turn the docket over.",
-            "goto": "drink"
-          }
-        ]
-      },
-      "drink": {
-        "text": "One potion. Sequence 9, which is as low as the ladder goes and further up it than anybody in this room was yesterday.\n\n'Seer,' says Smith. 'Divination, misdirection, a worn face. It answers questions rather than winning fights, which is the work, and the Church signed for it before I came up the stairs — somebody read your file and decided it suited you.'\n\n'Take your time. It is a role, not a tool. You will be acting it for the rest of your life and it does not come off.'\n\nYou drink it in the cellar room at Blackthorn with the drain in the floor, because a man who takes one alone in a rented room is how a team finds out he had one.\n\nIt tastes of wet paper and something underneath the wet paper. For a week afterwards every deck of cards you pass will feel like it is watching you back.",
-        "effect": {
-          "pathway": "seer"
-        },
-        "choices": [
-          {
-            "text": "Sit with it.",
-            "goto": "intent"
+            "text": "Read what you are signing.",
+            "goto": "sign"
           }
         ]
       },
       "intent": {
-        "text": "Smith waits until the shaking has stopped, and then asks the only question he seems to actually care about.\n\n'You have a brother who took a revolver off a table for you and a sister still at her schooling. So. How do you mean to carry this?'",
+        "text": "He countersigns without reading, folds the sheets into a coat that has never once been pressed, and then asks the only question he seems to actually care about.\n\n'You have a brother who took a revolver off a table for you and a sister still at her schooling. So. How do you mean to carry this?'",
         "choices": [
           {
             "text": "Carefully. I want to be able to explain every step of it, to myself if to nobody else.",
@@ -148,8 +136,26 @@
         ]
       },
       "after": {
-        "text": "A week goes by. The role settles a little further in each day and is nowhere near finished with you.\n\nBenson has stopped watching your door at night, which took six days. Melissa has started leaving the lamp lit on the landing, which she has not mentioned and neither have you. Mr. Franky wants the week's rent on the day, as ever.\n\nAnd there is a file at Blackthorn with three deaths in it, one black hardcover notebook missing from Welch McGovern's rooms, and your own name written twice.\n\nYou put on the good coat.",
+        "text": "A week goes by. Nobody explains anything, which you come to understand is the explanation.\n\nBenson has stopped watching your door at night, which took six days. Melissa has started leaving the lamp lit on the landing, which she has not mentioned and neither have you. Mr. Franky wants the quarter on the day, as ever.\n\nAnd there is a file at No. 36 Zouteland Street with three deaths in it, one black hardcover notebook missing from Welch McGovern's rooms, and your own name written twice.\n\nYou put on the good coat.",
         "end": true
+      },
+      "sign": {
+        "text": "The first sheet is an employment contract with the Blackthorn Security Company: security consultancy, records and correspondence, one pound eight a week, which is more than Benson makes and considerably more than a man with your prospects should be offered by anybody.\n\nThe second is the Seventh Unit, Special Operations Department, Awwa County Police, Kingdom of Loen — and a paragraph about what is done to people who talk, written in a tone that suggests it has been done.\n\n'You are not a Nighthawk,' says Smith, while you read. 'You are a clerk who has been in a room where something happened. What you become after that is a conversation for when I have seen you work.'",
+        "effect": {
+          "flags": [
+            "signed_on"
+          ],
+          "pence": 336,
+          "trust": {
+            "hermit": 5
+          }
+        },
+        "choices": [
+          {
+            "text": "Sign both.",
+            "goto": "intent"
+          }
+        ]
       }
     }
   },

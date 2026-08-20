@@ -115,7 +115,7 @@
       "label": "McGovern’s rooms",
       "requires": {
         "caseState": {
-          "caseId": "case-01-ninth-bell",
+          "caseId": "case-01-notebook",
           "state": "active"
         }
       }

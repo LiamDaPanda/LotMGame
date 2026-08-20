@@ -478,7 +478,9 @@ export type HotspotAction =
   | 'rest'
   | 'resolve'
   | 'training'
-  | 'inquiry';
+  | 'inquiry'
+  /** Plays a dialogue tree — a scene that happens at a place. */
+  | 'dialogue';
 
 export interface HotspotData {
   id: string;
@@ -490,6 +492,8 @@ export interface HotspotData {
   description: string;
   /** Opens a UI instead of the examine panel. */
   action?: HotspotAction;
+  /** For `action: 'dialogue'`: the tree to play. */
+  dialogue?: string;
   /** Clues granted by a plain examine. */
   clues?: string[];
   /**

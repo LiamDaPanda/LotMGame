@@ -1,0 +1,243 @@
+[
+  {
+    "id": "dlg_warehouse",
+    "speaker": "hermit",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Cobble Yard at eleven at night, and the dogs will not come past the gate.\n\nDunn Smith opens a lead case on the tailboard and takes out something wrapped in oiled cloth that the label calls 2-049 and nobody calls anything at all. Daly Simone, seconded from the capital for this and bored by the journey, does not look at it.\n\n'Bieber signed for a book eight days ago,' says Smith. 'He has not been to work since, and the last four pages of the warehouse ledger are one sentence written over and over in Ancient Feysac.'\n\n'Probationer. You are behind Neil, you do not touch the notebook, and if I say the word you are outside.'",
+        "choices": [
+          {
+            "text": "Go in.",
+            "goto": "bay"
+          }
+        ]
+      },
+      "bay": {
+        "text": "The bay is forty feet of grain sacks and the chalk goes right across it.\n\nThe same concentric circles that were on your own desk on the twenty-eighth of June, drawn by a man who had six days to get them right instead of one night. In the middle of them, on a nest of spoiled sacking, is Ray Bieber.\n\nHe is holding the notebook against his chest the way Mr. Franky said McGovern held it. He has not blinked since the door came off.\n\n'It is nearly finished with me,' he says, pleasantly. 'It has been very patient. It only wanted somebody who would read it all the way to the end, and he stopped, and you stopped, and I did not.'",
+        "choices": [
+          {
+            "text": "Ask him what it promised.",
+            "goto": "promise"
+          },
+          {
+            "text": "Tell him to put the book down.",
+            "goto": "refuse"
+          },
+          {
+            "text": "Look at him properly. (Divination)",
+            "goto": "vision",
+            "useAbilityEffect": "reveal_clue"
+          }
+        ],
+        "speaker": "bieber"
+      },
+      "promise": {
+        "text": "'That I would not have to be anybody in particular ever again.' He smiles, and the smile arrives a moment after the decision to smile. 'Do you know how much of a man is the part that has to be somebody? Nearly all of him. Nearly all of him, and it comes off.'",
+        "choices": [
+          {
+            "text": "Tell him to put the book down.",
+            "goto": "refuse"
+          },
+          {
+            "text": "Look at him properly. (Divination)",
+            "goto": "vision",
+            "useAbilityEffect": "reveal_clue"
+          }
+        ],
+        "speaker": "bieber"
+      },
+      "vision": {
+        "text": "You look, the way the Seer's potion taught you to look, and immediately wish you had not.\n\nThere is no man in the circle. There is a shape the size of a man, and the notebook is not in his hands — it is inside him, at the middle of him, and everything else about him is arranged around it the way iron filings arrange around a magnet.\n\n'Captain,' you say, and your voice comes out level, which will be the thing you are proudest of for a year. 'The book is the core.'",
+        "effect": {
+          "clues": [],
+          "sanity": -4,
+          "spirituality": -4
+        },
+        "choices": [
+          {
+            "text": "Get out of the circle.",
+            "goto": "turn"
+          }
+        ],
+        "speaker": "player"
+      },
+      "refuse": {
+        "text": "'I would rather not,' says Ray Bieber, and stands up without using his legs.",
+        "choices": [
+          {
+            "text": "Get out of the circle.",
+            "goto": "turn"
+          }
+        ],
+        "speaker": "bieber"
+      },
+      "turn": {
+        "text": "What comes up off the sacking stops being a clerk somewhere around the third foot and does not stop growing after that. Old Neil is shouting the same word over and over and it is not a word. Smith has the oiled cloth off 2-049 and the light coming out of it is the wrong colour for light.\n\nYou are Sequence 9. You have divination, misdirection and a face nobody remembers, and not one of those is any use here.\n\nWhat you have is four seconds and a spirit pendulum.",
+        "choices": [
+          {
+            "text": "Put it to sleep. Read the rite for slumber.",
+            "goto": "slumber",
+            "requires": {
+              "skillAtLeast": {
+                "skill": "occultism",
+                "value": 2
+              }
+            }
+          },
+          {
+            "text": "Get the team's line of fire clear.",
+            "goto": "clear"
+          },
+          {
+            "text": "Get out of the way.",
+            "goto": "clear"
+          }
+        ],
+        "speaker": "player"
+      },
+      "slumber": {
+        "text": "You say the words for slumber into the shape of the thing, and the pendulum goes so cold it burns, and forty feet of standing horror stops mid-motion the way a wave stops when the water leaves it.\n\nIt is not asleep. It is *nearly* asleep, and nearly is four seconds, and four seconds is what Daly Simone was waiting for.\n\nShe goes up. Not jumps — up, standing on nothing at all with her hands full of somebody else's night, and what comes out of them takes Ray Bieber apart along seams a body should not have.",
+        "effect": {
+          "spirituality": -8,
+          "digestion": 6,
+          "trust": {
+            "hermit": 12
+          },
+          "flags": [
+            "warehouse_slumber"
+          ]
+        },
+        "choices": [
+          {
+            "text": "Then the silence.",
+            "goto": "after"
+          }
+        ],
+        "speaker": "player"
+      },
+      "clear": {
+        "text": "You go flat behind a stack of grain sacks and shout the one useful thing you have, which is where its middle is.\n\nDaly Simone goes up — not jumps, up, standing on nothing at all with her hands full of somebody else's night — and what comes out of them takes Ray Bieber apart along seams a body should not have. Old Neil's sleeve is on fire. Smith is already walking forward with the lead case open.",
+        "effect": {
+          "sanity": -6,
+          "trust": {
+            "hermit": 4
+          }
+        },
+        "choices": [
+          {
+            "text": "Then the silence.",
+            "goto": "after"
+          }
+        ],
+        "speaker": "player"
+      },
+      "after": {
+        "text": "The notebook is lying in the middle of the chalk, unmarked, exactly as heavy as a book.\n\nNobody touches it. Old Neil is saying the words over it that mean it may be picked up, and Smith is holding the case, and it is at this moment that you become certain there is somebody else in the warehouse.",
+        "effect": {
+          "items": [
+            "antigonus_notebook"
+          ],
+          "clues": []
+        },
+        "choices": [
+          {
+            "text": "Turn around.",
+            "goto": "clown"
+          }
+        ],
+        "speaker": "player"
+      },
+      "clown": {
+        "text": "He is sitting on the crates by the counting house stair with his ankles crossed. White paint, a red mouth painted past the corners of it, and the manners of somebody's tutor.\n\n'Sequence 9,' he says, delighted. 'A Seer. And already so far out of his depth that he has stopped noticing the water. May I make you an offer, before the captain over there finishes his prayer?'\n\n'The book, for the name of the rung above you. Your Church will make you earn that name twice and tell you late. I will simply say it.'",
+        "choices": [
+          {
+            "text": "Shoot him.",
+            "goto": "shoot"
+          },
+          {
+            "text": "Take the trade.",
+            "goto": "trade"
+          },
+          {
+            "text": "Call the team.",
+            "goto": "call"
+          }
+        ],
+        "speaker": "clown"
+      },
+      "shoot": {
+        "text": "You shoot him in the throat, which is where a man who talks that much keeps his attention.\n\nThe wound closes. Not heals — *transfers*, sliding off him and onto something that is not in the warehouse and screams anyway, somewhere under the floor.\n\nSo you shoot him in the head, immediately, while he is still deciding to be amused about the first one. That one does not go anywhere.\n\nHe sits down against the crates, and the paint does not move, and the last thing he does is tell you the word — as a gift, or a joke, or a hook, and you will never be sure which.\n\n'*Clown*,' says the Clown. 'Sequence 8. Do give my regards to the ladder.'",
+        "effect": {
+          "flags": [
+            "knows_sequence_8",
+            "killed_the_clown"
+          ],
+          "sanity": -8,
+          "concealment": -6,
+          "trust": {
+            "hermit": 10
+          }
+        },
+        "choices": [
+          {
+            "text": "Say nothing about it. (Not yet.)",
+            "goto": "report"
+          }
+        ],
+        "speaker": "clown"
+      },
+      "trade": {
+        "text": "You put the notebook in his hands, and he says the word as though handing you a coat.\n\n'*Clown*. Sequence 8, of your own pathway, and worth rather more than the eight days of misery it cost you.'\n\nThen he is not there, and the chalk is empty, and Dunn Smith is still praying over a floor with nothing on it.\n\nYou will write a report tonight that is true in every particular and answers no question anybody asked.",
+        "effect": {
+          "flags": [
+            "knows_sequence_8",
+            "owes_the_order",
+            "notebook_traded"
+          ],
+          "removeItems": [
+            "antigonus_notebook"
+          ],
+          "pence": 900,
+          "concealment": -12,
+          "trust": {
+            "hermit": -20
+          },
+          "sanity": -6
+        },
+        "choices": [
+          {
+            "text": "Go back to the others.",
+            "goto": "report"
+          }
+        ],
+        "speaker": "clown"
+      },
+      "call": {
+        "text": "You say 'Captain' in a voice that does not sound like yours, and Old Neil stops praying mid-word.\n\nThe Clown is gone before anyone has turned around — not run, gone — and what he leaves is a sentence hanging in the air of an empty warehouse in a tone of enormous affection.\n\n'*Clown*, Sequence 8. Free of charge, Mr. Seer. I do so want you to climb.'",
+        "effect": {
+          "flags": [
+            "knows_sequence_8",
+            "the_order_knows_you"
+          ],
+          "sanity": -4,
+          "trust": {
+            "hermit": 2
+          }
+        },
+        "choices": [
+          {
+            "text": "Then the silence.",
+            "goto": "report"
+          }
+        ],
+        "speaker": "clown"
+      },
+      "report": {
+        "text": "Smith seals the bay himself and sends everyone home except Old Neil, who will be here until morning saying words over chalk.\n\nOn the tailboard, with the lead case between you, the captain asks the only question he actually wants answered: what did the man in the paint want.\n\nWhatever you tell him, he writes down two words and turns the notebook face down.\n\nSecret Order.",
+        "end": true,
+        "speaker": "hermit"
+      }
+    }
+  }
+]

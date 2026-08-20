@@ -27,7 +27,7 @@ const TABS: { id: Tab; label: string; short: string; icon: number }[] = [
   { id: 'board', label: 'Deductions', short: 'Board', icon: ICONS.clue },
   { id: 'powers', label: 'Powers', short: 'Power', icon: ICONS.spirituality },
   { id: 'effects', label: 'Effects', short: 'Kit', icon: ICONS.key },
-  { id: 'club', label: 'The Club', short: 'Club', icon: ICONS.card },
+  { id: 'club', label: 'The Company', short: 'Team', icon: ICONS.card },
 ];
 
 /**
@@ -285,7 +285,7 @@ export class JournalScene extends Phaser.Scene {
 
     if (!caseData) {
       this.content.add(
-        pixelText(this, bounds.x, bounds.y, 'No case is open.\n\nThe Club keeps a board of work in the parlour.', {
+        pixelText(this, bounds.x, bounds.y, 'No case is open.\n\nThe board at No. 36 Zouteland Street keeps the work.', {
           fontSize: '15px',
           color: CSS.muted,
         wrap: bounds.width,
@@ -605,7 +605,7 @@ export class JournalScene extends Phaser.Scene {
       const item = this.session.content.item(itemId);
       if (!item) continue;
       const label = `${item.name}${count > 1 ? ` ×${count}` : ''}`;
-      const detail = `${item.description}${item.sellPence ? `\nThe Club would pay ${format(item.sellPence)}.` : ''}`;
+      const detail = `${item.description}${item.sellPence ? `\nThe Company would pay ${format(item.sellPence)}.` : ''}`;
 
       if (!item.use) {
         rows.push(this.conclusionRow(label, detail, bounds.width));
@@ -649,7 +649,11 @@ export class JournalScene extends Phaser.Scene {
 
   private renderClub(): void {
     const bounds = this.bodyBounds();
-    const bodyY = this.header(bounds, 'The Tarot Club', 'Names are not used. Cards are.');
+    const bodyY = this.header(
+      bounds,
+      'The Seventh Unit',
+      'Blackthorn Security Company, No. 36 Zouteland Street.',
+    );
 
     const rows: Phaser.GameObjects.Container[] = [];
     for (const member of this.session.content.clubMembers()) {

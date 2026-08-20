@@ -2,47 +2,47 @@
   {
     "id": "player",
     "name": "Klein Moretti",
-    "title": "The Querent",
+    "title": "Tingen, 1349",
     "spriteRow": 0,
-    "clubMember": true,
-    "bio": "A history graduate of Tingen University who woke at his own desk on a crimson moon night with a revolver by his hand and no memory of firing it — and who is quietly certain he did not."
+    "bio": "A history graduate of Tingen University who woke at his own desk on the twenty-eighth of June in a body that had just shot itself, with somebody else's memories arriving a beat behind his own.",
+    "clubMember": false
   },
   {
     "id": "hermit",
     "name": "Dunn Smith",
-    "title": "Captain of the Tingen Nighthawks",
+    "title": "Captain, Seventh Unit",
     "spriteRow": 1,
-    "clubMember": true,
-    "bio": "Runs the team out of the second floor of No. 36 Zouteland Street, which the city knows as Blackthorn Security Company. Forgets names, dates and where he left his hat, and has never once forgotten an artifact’s grade."
+    "bio": "Runs the Tingen Nighthawks out of the second floor of No. 36 Zouteland Street, under a brass plate that says Blackthorn Security Company and a warrant card that says Seventh Unit, Special Operations Department, Awwa County Police. Forgets things, and knows he does.",
+    "clubMember": true
   },
   {
     "id": "star",
     "name": "Rozanne",
     "title": "Blackthorn’s receptionist",
     "spriteRow": 2,
-    "clubMember": true,
-    "bio": "Civilian, early twenties, and the only person in the building who knows where anything is filed. Books the appointments and countersigns the requisitions."
+    "bio": "Civilian, early twenties, and the only person in the building who knows where anything is filed. Books the appointments and countersigns the requisitions.",
+    "clubMember": true
   },
   {
     "id": "tower",
     "name": "Leonard Mitchell",
     "title": "Nighthawk",
     "spriteRow": 3,
-    "clubMember": true,
-    "bio": "Handsome, idle, and the fastest man on the team to notice a thing nobody wanted noticed. Owes everyone in the office money."
+    "bio": "Handsome, idle, and the fastest man on the team to notice a thing nobody wanted noticed. Owes everyone in the office money.",
+    "clubMember": true
   },
   {
     "id": "moon",
     "name": "Old Neil",
     "title": "Nighthawk",
     "spriteRow": 4,
-    "clubMember": true,
-    "bio": "Was a scholar before he was this, and explains the theory whether or not anybody asked, which is how the rest of the team learned any."
+    "bio": "Was a scholar before he was this, and explains the theory whether or not anybody asked, which is how the rest of the team learned any.",
+    "clubMember": true
   },
   {
     "id": "constable",
     "name": "Sergeant Gorman",
-    "title": "Tingen police",
+    "title": "Awwa County Police",
     "spriteRow": 5,
     "clubMember": false,
     "bio": "Wrote up three deaths in one week as unrelated because he was told to, and has been sleeping badly since."
@@ -50,10 +50,10 @@
   {
     "id": "widow",
     "name": "Mr. Franky",
-    "title": "Landlord",
+    "title": "Your landlord",
     "spriteRow": 6,
     "clubMember": false,
-    "bio": "Lets the terraces on Iron Cross Street and two more besides, collects on the day, and was the man who let the police into Welch McGovern’s rooms."
+    "bio": "Lets the terraces on Iron Cross Street. Wants the quarter on the day, is sorry about your friends, and would like the room repainted before anyone else has to look at it."
   },
   {
     "id": "apprentice",
@@ -102,5 +102,45 @@
     "spriteRow": 12,
     "clubMember": false,
     "bio": "Clerk at a shipping office and, since your father died, the reason this family still eats. He is the one who opened the door and found you."
+  },
+  {
+    "id": "bieber",
+    "name": "Ray Bieber",
+    "title": "Whoever has it now",
+    "spriteRow": 13,
+    "bio": "A name and an address on a parcel receipt in your own handwriting, posted on the night you do not remember. Whatever the notebook has been doing to him since, it has had eight days.",
+    "clubMember": false
+  },
+  {
+    "id": "clown",
+    "name": "The Clown",
+    "title": "Secret Order",
+    "spriteRow": 14,
+    "bio": "White paint, a red mouth, and manners. Wants the Antigonus family’s notebook, and is prepared to trade for it in the only currency you are short of: the name of the rung above you.",
+    "clubMember": false
+  },
+  {
+    "id": "justice",
+    "name": "Audrey Hall",
+    "title": "Miss Justice",
+    "spriteRow": 15,
+    "bio": "Answered a summons she had no way of receiving and behaved as though she had expected it. Very young, very well brought up, and taking notes.",
+    "clubMember": false
+  },
+  {
+    "id": "hanged_man",
+    "name": "Alger Wilson",
+    "title": "Mr. Hanged Man",
+    "spriteRow": 16,
+    "bio": "Salt, powder and a captain’s caution. Said less than anyone at the first gathering and worked out more, which is its own kind of tell.",
+    "clubMember": false
+  },
+  {
+    "id": "daly",
+    "name": "Daly Simone",
+    "title": "Nighthawk",
+    "spriteRow": 17,
+    "bio": "Seconded to Tingen for the notebook, and the reason the team walks towards the thing everyone else is running from.",
+    "clubMember": false
   }
 ]

@@ -6,7 +6,7 @@
     "seer"
   ],
   "cases": [
-    "case-01-ninth-bell"
+    "case-01-notebook"
   ],
   "maps": [
     "lodgings",
@@ -14,12 +14,15 @@
     "ashfen_row",
     "pawnshop",
     "cellar",
-    "crookback_alley"
+    "crookback_alley",
+    "warehouse"
   ],
   "dialogue": [
     "club",
     "case-01",
-    "prologue"
+    "prologue",
+    "fog",
+    "warehouse"
   ],
   "items": "items",
   "characters": "cast",

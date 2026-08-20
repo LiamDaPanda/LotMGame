@@ -3,14 +3,11 @@
     "id": "formula_clown",
     "name": "Clown Formula",
     "kind": "ritual",
-    "description": "Four ingredients and a method, copied in the Church clerk's hand. The Club sells these at cost and still makes a profit on what you must buy to fill them.",
+    "description": "Four ingredients and a method, in the Church clerk's hand — and, at the head of it, a word the Church did not have last week. Rozanne signs it out without meeting your eye.",
     "pricePence": 1440,
     "icon": 11,
     "requires": {
-      "caseState": {
-        "caseId": "case-01-ninth-bell",
-        "state": "resolved"
-      }
+      "flag": "knows_sequence_8"
     },
     "vendors": [
       "club"
@@ -193,7 +190,7 @@
       "description": "Gorman reads as far as the seal, which is the only part that is real, and hands over the key without finishing the sentence he had started.",
       "requires": {
         "caseState": {
-          "caseId": "case-01-ninth-bell",
+          "caseId": "case-01-notebook",
           "state": "active"
         },
         "notFlag": "warrant_burned"
@@ -243,5 +240,13 @@
         "concealment": -1
       }
     }
+  },
+  {
+    "id": "antigonus_notebook",
+    "name": "The Antigonus Family’s Notebook",
+    "kind": "evidence",
+    "description": "Black boards, no title, water-stained along the bottom edge. Exactly as heavy as a book. Everyone who has read it to the end has died in the same hour, and it does not look like anything at all.",
+    "sellPence": 0,
+    "icon": 11
   }
 ]
