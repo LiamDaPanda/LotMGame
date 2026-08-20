@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
-import { pixelText } from '@/ui/pixelFont';
+import { type PixelText, pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { bus } from '@/systems/EventBus';
+import { pad, padConsumes, padEvents } from '@/ui/gamepad';
 import { Actor } from '@/world/Actor';
 import { TileGrid, type Point } from '@/world/TileGrid';
 import {
@@ -39,6 +40,7 @@ export class WorldScene extends Phaser.Scene {
   private grid!: TileGrid;
   private player!: Actor;
   private npcs = new Map<string, Actor>();
+  private npcLabels = new Map<string, PixelText>();
   private hotspotMarkers = new Map<string, Phaser.GameObjects.Container>();
   private cursor!: Phaser.GameObjects.Graphics;
   private objectSprites: Phaser.GameObjects.Image[] = [];
@@ -52,6 +54,12 @@ export class WorldScene extends Phaser.Scene {
   };
   private pendingInteraction?: Interaction;
   private busy = false;
+  /** Doorway markers by tile, so the signpost can be re-coloured in place. */
+  private exitMarkers = new Map<string, Phaser.GameObjects.Container>();
+  /** The tile arrived on. Standing in a doorway must not bounce you back. */
+  private arrivalTile!: Point;
+  /** Last tile the player stood on, so per-step work runs once per step. */
+  private lastTile = { x: -1, y: -1 };
   private unsubscribe: Array<() => void> = [];
 
   constructor() {
@@ -73,6 +81,7 @@ export class WorldScene extends Phaser.Scene {
     this.buildExits();
 
     const spawn = data.spawn ?? map.spawn;
+    this.arrivalTile = { x: spawn.x, y: spawn.y };
     this.player = new Actor(this, this.playerSpriteRow(), spawn.x, spawn.y);
     this.player.sprite.setDepth(spawn.y * TILE_SIZE);
 
@@ -87,6 +96,9 @@ export class WorldScene extends Phaser.Scene {
     this.scene.bringToTop('Hud');
 
     this.session.cases.refreshObjectives();
+    this.session.story.refresh();
+    this.refreshSignposts();
+    this.refreshExitLabels();
     this.announceRoom();
 
     // Both of these pause this scene, and a paused scene's camera never
@@ -96,8 +108,14 @@ export class WorldScene extends Phaser.Scene {
       if (!this.playIntro()) this.maybeEncounter();
     });
 
+    // The A button is pressed on the HUD and acted on here.
+    const onAction = () => this.pressA();
+    padEvents.on('a', onAction);
+
     this.unsubscribe.push(
       bus.on('loss-of-control', ({ reason }) => this.playLossOfControl(reason)),
+      bus.on('story:advanced', () => this.refreshSignposts()),
+      () => padEvents.off('a', onAction),
     );
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const off of this.unsubscribe) off();
@@ -312,6 +330,7 @@ export class WorldScene extends Phaser.Scene {
       label.setShadow(0, 1, '#000000', 2);
 
       this.npcs.set(npc.id, actor);
+      this.npcLabels.set(npc.id, label);
     }
   }
 
@@ -335,6 +354,57 @@ export class WorldScene extends Phaser.Scene {
         repeat: -1,
         ease: 'Sine.easeInOut',
       });
+      // A doorway is somewhere you can stand. Most are drawn as part of the
+      // wall and so arrive blocked from the legend, which would make walking
+      // out of a room impossible — the one thing the controls are for.
+      this.grid.setBlocked(exit.x, exit.y, false);
+      this.exitMarkers.set(`${exit.x},${exit.y}`, marker);
+    }
+  }
+
+  /**
+   * Light the doorway that leads towards whatever the story is waiting for.
+   *
+   * The city stays open — every other door works exactly as before — but a
+   * player who put the game down last week should be able to glance at a street
+   * and see which way the plot went, without a map screen or a quest log.
+   */
+  private refreshSignposts(): void {
+    const route = this.session.story.routeFrom(this.map.id);
+    for (const exit of this.map.exits ?? []) {
+      const marker = this.exitMarkers.get(`${exit.x},${exit.y}`);
+      if (!marker) continue;
+      const arrow = marker.list[0] as Phaser.GameObjects.Triangle;
+      const label = marker.list[1] as PixelText;
+      const onRoute = route !== undefined && exit.toMap === route.toMap;
+      arrow.setFillStyle(onRoute ? COLORS.lamp : COLORS.brass, onRoute ? 1 : 0.75);
+      arrow.setScale(onRoute ? 1.4 : 1);
+      label.setColor(onRoute ? CSS.lamp : CSS.brass);
+      marker.setData('onRoute', onRoute);
+    }
+    this.refreshExitLabels();
+  }
+
+  /**
+   * A street with four doors and a stranger on it had five names floating over
+   * it at once, most of them half off the edge of the screen. Names show when
+   * you are close enough to read a sign — and on the door the story is pointing
+   * at, which is the one you want to see from the far end of the road.
+   */
+  private refreshExitLabels(): void {
+    if (!this.player) return;
+    const here = { x: this.player.tileX, y: this.player.tileY };
+    for (const exit of this.map.exits ?? []) {
+      const marker = this.exitMarkers.get(`${exit.x},${exit.y}`);
+      if (!marker) continue;
+      const label = marker.list[1] as PixelText;
+      const near = TileGrid.distance(here, exit) <= 5;
+      label.setVisible(near || marker.getData('onRoute') === true);
+    }
+    for (const [id, label] of this.npcLabels) {
+      const actor = this.npcs.get(id);
+      if (!actor) continue;
+      label.setVisible(TileGrid.distance(here, { x: actor.tileX, y: actor.tileY }) <= 5);
     }
   }
 
@@ -412,6 +482,10 @@ export class WorldScene extends Phaser.Scene {
       // arrives here, so check anyway.
       const view = mapRect();
       if (pointer.y < view.y || pointer.y > view.y + view.height) return;
+      // In landscape the pad floats over the foot of the map, and both scenes
+      // see the same press: without this, holding "left" also orders a walk to
+      // whatever tile is under the arrow.
+      if (padConsumes(pointer.x, pointer.y)) return;
       const world = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
       this.handleTap({
         x: Math.floor(world.x / TILE_SIZE),
@@ -562,6 +636,8 @@ export class WorldScene extends Phaser.Scene {
       this.busy = false;
       this.refreshHotspotMarkers();
       this.session.cases.refreshObjectives();
+      this.session.story.refresh();
+      this.refreshSignposts();
     });
   }
 
@@ -579,6 +655,8 @@ export class WorldScene extends Phaser.Scene {
       this.busy = false;
       this.refreshHotspotMarkers();
       this.session.cases.refreshObjectives();
+      this.session.story.refresh();
+      this.refreshSignposts();
     });
   }
 
@@ -599,6 +677,8 @@ export class WorldScene extends Phaser.Scene {
       this.busy = false;
       this.refreshHotspotMarkers();
       this.session.cases.refreshObjectives();
+      this.session.story.refresh();
+      this.refreshSignposts();
     });
   }
 
@@ -659,31 +739,75 @@ export class WorldScene extends Phaser.Scene {
 
   // -------------------------------------------------------------------------
 
+  /**
+   * The A button, and the space bar with it: act on whatever you are facing,
+   * and failing that on whatever you are standing on. Facing first, because a
+   * doorway you are standing in is usually one you just walked out of.
+   */
+  private pressA(): void {
+    if (this.busy || !this.player) return;
+    const interaction =
+      this.interactionAt(this.player.facingTile) ??
+      this.interactionAt({ x: this.player.tileX, y: this.player.tileY });
+    if (interaction) this.runInteraction(interaction);
+  }
+
+  /**
+   * Doors work by walking into them.
+   *
+   * Tapping a doorway still takes it, but a handheld's world is one you leave
+   * by walking off the edge of the room, and stopping to press a button at
+   * every threshold is what makes a connected city feel like a set of menus.
+   * The tile you arrived on is exempt, or every doorway would bounce you
+   * straight back where you came from.
+   */
+  private stepThroughDoor(): boolean {
+    if (this.busy || this.player.moving) return false;
+    const here = { x: this.player.tileX, y: this.player.tileY };
+    if (here.x === this.arrivalTile.x && here.y === this.arrivalTile.y) return false;
+    const exit = (this.map.exits ?? []).find((e) => e.x === here.x && e.y === here.y);
+    if (!exit) return false;
+    this.player.stop();
+    // Count this as an arrival before trying it: a door that turns you away
+    // must say so once, not once per frame while you stand in it.
+    this.arrivalTile = here;
+    this.takeExit(exit);
+    return true;
+  }
+
   override update(_time: number, delta: number): void {
     this.player.update(delta);
     this.player.sprite.setDepth(this.player.sprite.y);
     for (const npc of this.npcs.values()) npc.update(delta);
 
-    if (this.busy || !this.keys) return;
+    if (this.player.tileX !== this.lastTile.x || this.player.tileY !== this.lastTile.y) {
+      this.lastTile = { x: this.player.tileX, y: this.player.tileY };
+      this.refreshExitLabels();
+    }
 
-    // Keyboard walking, one tile per keypress-hold cycle.
+    if (this.busy) return;
+    if (this.stepThroughDoor()) return;
+
+    // Held B is a run, and the walk animation keeps up with it on its own
+    // because the sprite is driven by step progress rather than by a timer.
+    this.player.speedScale = pad.run ? 1.75 : 1;
+
     if (!this.player.moving) {
       const keyboard = this.input.keyboard;
-      const left = this.keys.left.isDown || keyboard?.checkDown(keyboard.addKey('LEFT'), 0);
-      const right = this.keys.right.isDown || keyboard?.checkDown(keyboard.addKey('RIGHT'), 0);
-      const up = this.keys.up.isDown || keyboard?.checkDown(keyboard.addKey('UP'), 0);
-      const down = this.keys.down.isDown || keyboard?.checkDown(keyboard.addKey('DOWN'), 0);
+      const left = pad.dir === 'left' || this.keys?.left.isDown || keyboard?.checkDown(keyboard.addKey('LEFT'), 0);
+      const right = pad.dir === 'right' || this.keys?.right.isDown || keyboard?.checkDown(keyboard.addKey('RIGHT'), 0);
+      const up = pad.dir === 'up' || this.keys?.up.isDown || keyboard?.checkDown(keyboard.addKey('UP'), 0);
+      const down = pad.dir === 'down' || this.keys?.down.isDown || keyboard?.checkDown(keyboard.addKey('DOWN'), 0);
 
-      if (left) this.player.stepTowards(-1, 0, (x, y) => this.grid.walkable(x, y));
-      else if (right) this.player.stepTowards(1, 0, (x, y) => this.grid.walkable(x, y));
-      else if (up) this.player.stepTowards(0, -1, (x, y) => this.grid.walkable(x, y));
-      else if (down) this.player.stepTowards(0, 1, (x, y) => this.grid.walkable(x, y));
+      // A held direction that is walled off still turns you to face that way,
+      // so you can talk to somebody by pressing towards them and then A.
+      const walkable = (x: number, y: number) => this.grid.walkable(x, y);
+      if (left) this.player.stepTowards(-1, 0, walkable);
+      else if (right) this.player.stepTowards(1, 0, walkable);
+      else if (up) this.player.stepTowards(0, -1, walkable);
+      else if (down) this.player.stepTowards(0, 1, walkable);
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.keys.interact)) {
-      const front = this.player.facingTile;
-      const interaction = this.interactionAt(front);
-      if (interaction) this.runInteraction(interaction);
-    }
+    if (this.keys && Phaser.Input.Keyboard.JustDown(this.keys.interact)) this.pressA();
   }
 }

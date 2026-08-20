@@ -25,6 +25,8 @@ export interface GameEvents {
   /** Sanity hit zero, or a botched advancement — the player loses control. */
   'loss-of-control': { reason: string };
   'day:advanced': { day: number };
+  /** The spine moved on: a new chapter is current. */
+  'story:advanced': { chapterId: string; objective: string };
 }
 
 type Handler<K extends keyof GameEvents> = (payload: GameEvents[K]) => void;

@@ -261,7 +261,169 @@ for (const button of hud) {
 }
 await checkAlignment('Hud');
 
-console.log('\n5. Overlays open and close by touch');
+console.log('\n5. The D-pad walks him, and doorways work by walking into them');
+// Real finger-holds: Playwright's tap is a press and a release in the same
+// frame, which sets a direction and drops it again before the world has looked.
+const cdp = await context.newCDPSession(page);
+const padGeom = await page.evaluate(() => {
+  const gamepad = window.__game.scene.getScene('Hud').gamepad;
+  if (!gamepad) return null;
+  return {
+    cx: gamepad.padCentre.x,
+    cy: gamepad.padCentre.y,
+    radius: gamepad.padRadius,
+    visible: gamepad.visible,
+    a: { x: gamepad.aButton.x, y: gamepad.aButton.y, r: gamepad.aButton.getData('radius') },
+    b: { x: gamepad.bButton.x, y: gamepad.bButton.y, r: gamepad.bButton.getData('radius') },
+  };
+});
+check('the controls are on the bottom screen', padGeom?.visible === true, JSON.stringify(padGeom));
+check(
+  `the D-pad is thumb-sized (${padGeom ? Math.round(padGeom.radius * 2 * scale) : 0}pt across)`,
+  padGeom !== null && padGeom.radius * 2 * scale >= 88,
+);
+
+const toPage = (gx, gy) => ({
+  x: geometry.rx + (gx / geometry.gw) * geometry.rw,
+  y: geometry.ry + (gy / geometry.gh) * geometry.rh,
+});
+const arrow = (dx, dy) =>
+  toPage(padGeom.cx + dx * padGeom.radius * 0.7, padGeom.cy + dy * padGeom.radius * 0.7);
+
+const holdPad = async (dx, dy, ms) => {
+  const point = arrow(dx, dy);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
+  await page.waitForTimeout(ms);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await page.waitForTimeout(200);
+};
+const pressButton = async (which) => {
+  const point = toPage(padGeom[which].x, padGeom[which].y);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
+  await page.waitForTimeout(80);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await page.waitForTimeout(450);
+};
+const player = () =>
+  page.evaluate(() => {
+    const world = window.__game.scene.getScene('World');
+    return {
+      x: world.player.tileX,
+      y: world.player.tileY,
+      facing: world.player.facing,
+      map: window.__game.registry.get('session').state.currentMap,
+    };
+  });
+
+const startTile = await player();
+await holdPad(-1, 0, 320);
+const afterLeft = await player();
+check(
+  'holding left walks him left',
+  afterLeft.x < startTile.x,
+  `${JSON.stringify(startTile)} -> ${JSON.stringify(afterLeft)}`,
+);
+
+// Two fingers: B held while a direction is held is a run, and the world reads
+// it as a speed rather than as a different kind of step.
+const bPoint = toPage(padGeom.b.x, padGeom.b.y);
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [bPoint] });
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [bPoint, arrow(-1, 0)] });
+await page.waitForTimeout(260);
+const running = await page.evaluate(() => window.__game.scene.getScene('World').player.speedScale);
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+await page.waitForTimeout(250);
+const walking = await page.evaluate(() => window.__game.scene.getScene('World').player.speedScale);
+check('B held is a run', running > 1.2, String(running));
+check('and letting go is a walk again', walking === 1, String(walking));
+
+// One press, one tile: releasing after the step has begun still finishes it,
+// which is what makes a D-pad feel precise rather than skiddy.
+const stepPad = async (dx, dy) => {
+  // Short enough that a second step cannot begin, long enough that the first
+  // one always does: releasing mid-step still finishes it.
+  await holdPad(dx, dy, 120);
+};
+const walkToTile = async (tx, ty) => {
+  const trail = [];
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const at = await player();
+    trail.push(`${at.x},${at.y}`);
+    if (at.x === tx && at.y === ty) return { ok: true, trail: trail.join(' -> ') };
+    if (at.x !== tx) await stepPad(Math.sign(tx - at.x), 0);
+    else await stepPad(0, Math.sign(ty - at.y));
+  }
+  return { ok: false, trail: trail.join(' -> ') };
+};
+
+// Benson is at (9,6) and stays there; stand on the tile above him.
+const trail = await walkToTile(9, 7);
+const beside = await player();
+check('he can be walked to a particular tile, a step at a time', trail.ok, `${trail.trail} | ${JSON.stringify(beside)}`);
+
+await stepPad(0, -1);
+const facing = await player();
+check(
+  'pressing into somebody turns him to face them without walking through them',
+  facing.facing === 'up' && facing.y === 7,
+  JSON.stringify(facing),
+);
+
+await pressButton('a');
+const talking = await scenes();
+check('A talks to whoever he is facing', talking.includes('Dialogue'), talking.join(','));
+const padDuringPanel = await page.evaluate(
+  () => window.__game.scene.getScene('Hud').gamepad.visible,
+);
+check('and the panel takes the controls with the screen', padDuringPanel === false);
+
+await page.evaluate(() => {
+  const game = window.__game;
+  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(500);
+check(
+  'and gives them back when it closes',
+  (await page.evaluate(() => window.__game.scene.getScene('Hud').gamepad.visible)) === true,
+);
+
+// Out of the door at the bottom of the room, on foot, without pressing a thing.
+await walkToTile(6, 9);
+await stepPad(0, 1);
+await page.waitForTimeout(800);
+const outside = await player();
+check('walking into the doorway takes him outside', outside.map === 'ashfen_row', JSON.stringify(outside));
+
+// The card on the bottom screen names the next thing, and the street lights the
+// door that leads to it.
+const quest = await page.evaluate(() => {
+  const game = window.__game;
+  const session = game.registry.get('session');
+  const hud = game.scene.getScene('Hud');
+  const world = game.scene.getScene('World');
+  const chapter = session.story.current();
+  return {
+    chapter: chapter?.id,
+    title: hud.questTitle.text,
+    line: hud.questLine.text,
+    where: hud.questWhere.text,
+    route: session.story.routeFrom(session.state.currentMap),
+    litExits: [...world.exitMarkers.entries()]
+      .filter(([, marker]) => marker.getData('onRoute') === true)
+      .map(([tile]) => tile),
+  };
+});
+check('the quest card names the chapter', quest.title.includes('THE COMPANY'), JSON.stringify(quest));
+check('and says where to go', quest.where.startsWith('Go to:'), quest.where);
+check(
+  'and exactly one doorway on the street is lit for it',
+  quest.litExits.length === 1,
+  JSON.stringify(quest.litExits),
+);
+
+console.log('\n6. Overlays open and close by touch');
 await tapStep('Notes opens', 'Hud', 'NOTES', (list) => list.includes('Journal'));
 await checkAlignment('Journal');
 await tapStep('Notes closes again', 'Hud', 'NOTES', (list) => !list.includes('Journal'));
@@ -269,7 +431,7 @@ await tapStep('Powers opens', 'Hud', 'POWER', (list) => list.includes('AbilityMe
 await checkAlignment('AbilityMenu');
 await tapStep('Powers closes again', 'Hud', 'POWER', (list) => !list.includes('AbilityMenu'));
 
-console.log('\n6. Text stays inside its box');
+console.log('\n7. Text stays inside its box');
 await checkTextFits('Hud', 'HUD');
 await tapWidget('Hud', 'NOTES');
 await page.waitForTimeout(400);
@@ -287,7 +449,7 @@ await checkTextFits('AbilityMenu', 'Powers');
 await tapWidget('Hud', 'POWER');
 await page.waitForTimeout(300);
 
-console.log('\n7. Every panel keeps its text inside the pane');
+console.log('\n8. Every panel keeps its text inside the pane');
 const fixtures = await page.evaluate(panelFixtures);
 for (const [key, data] of panelList(fixtures)) {
   await page.evaluate(openPanel, { key, data });
@@ -303,7 +465,7 @@ await page.evaluate(() => {
   }
 });
 
-console.log('\n8. Turning the phone sideways, and back');
+console.log('\n9. Turning the phone sideways, and back');
 const boardSize = () =>
   page.evaluate(() => [window.__game.scale.gameSize.width, window.__game.scale.gameSize.height]);
 const runState = () =>
@@ -351,7 +513,7 @@ await tapStep('a tab still works after rotating', 'Hud', 'NOTES', (list) => list
 await tapWidget('Hud', 'NOTES');
 await page.waitForTimeout(300);
 
-console.log('\n9. No runtime errors');
+console.log('\n10. No runtime errors');
 check('console clean', consoleErrors.length === 0, consoleErrors.join(' | '));
 
 await browser.close();

@@ -13,15 +13,19 @@ import {
 } from '@/ui/theme';
 import { SKILL_IDS, type ClueData } from '@/types/schema';
 
-type Tab = 'case' | 'board' | 'powers' | 'effects' | 'club';
+type Tab = 'story' | 'case' | 'board' | 'powers' | 'effects' | 'club';
 
-/** Gap between the portrait tab row's buttons. */
+/** Gap between the portrait tab grid's buttons. */
 const TAB_GAP = 5;
+/** Tabs per row in portrait. Six across a phone is six truncated words. */
+const TAB_COLUMNS = 3;
+const TAB_HEIGHT = 34;
 
 const TABS: { id: Tab; label: string; short: string; icon: number }[] = [
+  { id: 'story', label: 'Story', short: 'Story', icon: ICONS.candle },
   { id: 'case', label: 'Case', short: 'Case', icon: ICONS.document },
   { id: 'board', label: 'Deductions', short: 'Board', icon: ICONS.clue },
-  { id: 'powers', label: 'Powers', short: 'Powers', icon: ICONS.spirituality },
+  { id: 'powers', label: 'Powers', short: 'Power', icon: ICONS.spirituality },
   { id: 'effects', label: 'Effects', short: 'Kit', icon: ICONS.key },
   { id: 'club', label: 'The Club', short: 'Club', icon: ICONS.card },
 ];
@@ -37,7 +41,7 @@ const TABS: { id: Tab; label: string; short: string; icon: number }[] = [
  */
 export class JournalScene extends Phaser.Scene {
   private session!: Session;
-  private tab: Tab = 'case';
+  private tab: Tab = 'story';
   private content!: Phaser.GameObjects.Container;
   private list?: ScrollList;
   private selected = new Set<string>();
@@ -66,7 +70,9 @@ export class JournalScene extends Phaser.Scene {
     this.panelH = pane.height - 12;
     // A phone is too narrow for a column of tabs beside the text, so portrait
     // runs them along the top and gives the body the panel's whole width.
-    this.tabW = tall ? (this.panelW - 24 - (TABS.length - 1) * TAB_GAP) / TABS.length : 152;
+    this.tabW = tall
+      ? (this.panelW - 24 - (TAB_COLUMNS - 1) * TAB_GAP) / TAB_COLUMNS
+      : 152;
     this.bodyX = tall ? 12 : this.tabW + 58;
     this.session = Session.get(this);
 
@@ -96,13 +102,17 @@ export class JournalScene extends Phaser.Scene {
     TABS.forEach((tab, index) => {
       const button = new Button(
         this,
-        tall ? this.panelX + 12 + index * (this.tabW + TAB_GAP) : this.panelX + 24,
-        tall ? this.panelY + 30 : this.panelY + 84 + index * 44,
+        tall
+          ? this.panelX + 12 + (index % TAB_COLUMNS) * (this.tabW + TAB_GAP)
+          : this.panelX + 24,
+        tall
+          ? this.panelY + 30 + Math.floor(index / TAB_COLUMNS) * (TAB_HEIGHT + TAB_GAP)
+          : this.panelY + 84 + index * 44,
         tall ? tab.short : tab.label,
         () => this.setTab(tab.id),
         {
           width: this.tabW,
-          height: tall ? 36 : 38,
+          height: tall ? TAB_HEIGHT : 38,
           align: tall ? 'center' : 'left',
           fontSize: 14,
           iconFrame: tall ? undefined : tab.icon,
@@ -133,7 +143,8 @@ export class JournalScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-ESC', () => this.close());
     this.input.keyboard?.on('keydown-J', () => this.close());
 
-    this.setTab(this.session.cases.activeCase() ? 'case' : 'powers');
+    // With no case open, the story tab is the one that answers "what now?".
+    this.setTab(this.session.cases.activeCase() ? 'case' : 'story');
   }
 
   private setTab(tab: Tab): void {
@@ -184,15 +195,18 @@ export class JournalScene extends Phaser.Scene {
       x: this.panelX + this.bodyX,
       // Leave the scrollbar its own lane on the right, so a full line of text
       // never runs underneath it.
-      y: this.panelY + (tall ? 74 : 84),
+      y: this.panelY + (tall ? 30 + 2 * (TAB_HEIGHT + TAB_GAP) + 8 : 84),
       width: (tall ? this.panelW - 24 : this.panelW - this.bodyX - 40) - 10,
-      height: this.panelH - (tall ? 100 : 150),
+      height: this.panelH - (tall ? 138 : 150),
     };
   }
 
   private render(): void {
     this.clearBody();
     switch (this.tab) {
+      case 'story':
+        this.renderStory();
+        break;
       case 'case':
         this.renderCase();
         break;
@@ -209,6 +223,56 @@ export class JournalScene extends Phaser.Scene {
         this.renderClub();
         break;
     }
+  }
+
+  // -------------------------------------------------------------------------
+  // Story tab
+  // -------------------------------------------------------------------------
+
+  /**
+   * What has happened, and what is waiting. Chapters already behind you keep
+   * their recap; the current one keeps its instruction; the ones after it are
+   * not listed at all, because a spine you can read ahead in is a spoiler.
+   */
+  private renderStory(): void {
+    const bounds = this.bodyBounds();
+    const story = this.session.story;
+    const current = story.current();
+    const { index, total } = story.progress();
+
+    const bodyY = this.header(
+      bounds,
+      'The Story So Far',
+      current ? `Chapter ${index} of ${total}` : 'Every chapter behind you',
+    );
+
+    const rows: Phaser.GameObjects.Container[] = [];
+    for (const chapter of story.completed()) {
+      rows.push(
+        this.conclusionRow(chapter.title, chapter.recap ?? chapter.objective, bounds.width),
+      );
+    }
+
+    if (current) {
+      rows.push(this.headingRow('Now', bounds.width));
+      rows.push(this.bulletRow(current.title, bounds.width, CSS.brass));
+      rows.push(this.paragraphRow(current.objective, bounds.width));
+      const destination = story.destinationName();
+      if (destination) {
+        const here = this.session.state.currentMap === current.where;
+        rows.push(
+          this.bulletRow(here ? `You are at ${destination}.` : `Go to: ${destination}`, bounds.width, CSS.muted),
+        );
+      }
+    }
+
+    this.list = new ScrollList(this, bounds.x, bodyY, {
+      width: bounds.width,
+      height: bounds.height - (bodyY - bounds.y),
+      gap: 6,
+    });
+    this.list.setRows(rows);
+    this.list.refreshMask();
   }
 
   // -------------------------------------------------------------------------

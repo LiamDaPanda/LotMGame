@@ -42,6 +42,7 @@ export class PreloadScene extends Phaser.Scene {
     }
     this.load.json(`items/${this.index.items}`, `items/${this.index.items}.json`);
     this.load.json(`characters/${this.index.characters}`, `characters/${this.index.characters}.json`);
+    if (this.index.story) this.load.json(`story/${this.index.story}`, `story/${this.index.story}.json`);
   }
 
   create(): void {

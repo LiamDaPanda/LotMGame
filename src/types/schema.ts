@@ -562,6 +562,29 @@ export interface MapData {
 }
 
 // ---------------------------------------------------------------------------
+// Story
+// ---------------------------------------------------------------------------
+
+/**
+ * One beat of the spine. The world is open — every door that is not locked for
+ * a reason stays unlocked — but at any moment exactly one chapter is current,
+ * and it says in one line what the story is waiting for.
+ */
+export interface ChapterData {
+  id: string;
+  /** Act heading, e.g. "III. The Rooms Above the Shop". */
+  title: string;
+  /** What to do next, in the second person. */
+  objective: string;
+  /** Map the objective is at; the world signposts the way there. */
+  where?: string;
+  /** Chapter is behind you once this holds. Omitted means never — an ending. */
+  doneWhen?: Condition;
+  /** Shown in the journal once the chapter is behind you. */
+  recap?: string;
+}
+
+// ---------------------------------------------------------------------------
 // Content index
 // ---------------------------------------------------------------------------
 
@@ -574,4 +597,6 @@ export interface ContentIndex {
   encounters: string[];
   items: string;
   characters: string;
+  /** The chapter spine. Optional so a content set may have no story at all. */
+  story?: string;
 }

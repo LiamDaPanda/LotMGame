@@ -53,6 +53,7 @@ const encounterFiles = (index.encounters ?? [])
   .filter(Boolean);
 const items = read(`items/${index.items}.json`) ?? [];
 const characters = read(`characters/${index.characters}.json`) ?? [];
+const chapters = index.story ? (read(`story/${index.story}.json`) ?? []) : [];
 
 const abilities = abilityFiles.flat();
 const dialogues = dialogueFiles.flat();
@@ -622,6 +623,55 @@ for (const tree of dialogues) {
 }
 
 // ---------------------------------------------------------------------------
+// The story spine
+// ---------------------------------------------------------------------------
+
+const chapterIds = new Set();
+for (const [order, chapter] of chapters.entries()) {
+  const where = `Chapter "${chapter.id}"`;
+  if (!chapter.id) fail(`Chapter ${order}: missing id`);
+  if (chapterIds.has(chapter.id)) fail(`${where}: duplicate id`);
+  chapterIds.add(chapter.id);
+  if (!chapter.title) fail(`${where}: missing title`);
+  if (!chapter.objective) fail(`${where}: missing objective`);
+  if (chapter.where && !mapIds.has(chapter.where)) {
+    fail(`${where}: points at unknown map "${chapter.where}"`);
+  }
+  checkCondition(chapter.doneWhen, where);
+  // A chapter with no completion condition is an ending, and nothing can come
+  // after it — the spine would stop there for the rest of the run.
+  if (!chapter.doneWhen && order !== chapters.length - 1) {
+    fail(`${where}: has no doneWhen but is not the last chapter`);
+  }
+  for (const flag of [chapter.doneWhen?.flag, ...(chapter.doneWhen?.anyOf ?? []).map((c) => c.flag)]) {
+    if (flag && !settableFlags.has(flag)) {
+      fail(`${where}: waits on flag "${flag}", which nothing sets`);
+    }
+  }
+}
+
+// Every map named by a chapter must be reachable by walking, or the signpost
+// would point at a door that does not exist.
+if (chapters.length > 0) {
+  const graph = new Map(maps.map((m) => [m.id, (m.exits ?? []).map((e) => e.toMap)]));
+  const start = maps.find((m) => m.id === 'lodgings')?.id ?? maps[0]?.id;
+  const seen = new Set([start]);
+  const queue = [start];
+  while (queue.length > 0) {
+    for (const next of graph.get(queue.shift()) ?? []) {
+      if (seen.has(next)) continue;
+      seen.add(next);
+      queue.push(next);
+    }
+  }
+  for (const chapter of chapters) {
+    if (chapter.where && !seen.has(chapter.where)) {
+      fail(`Chapter "${chapter.id}": map "${chapter.where}" cannot be walked to from ${start}`);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 
 for (const message of warnings) console.warn(`  warn   ${message}`);
 for (const message of problems) console.error(`  ERROR  ${message}`);
@@ -630,7 +680,8 @@ const leadCount = cases.reduce((sum, c) => sum + (c.leads?.length ?? 0), 0);
 console.log(
   `\n${cases.length} case(s), ${maps.length} map(s), ${dialogues.length} dialogue tree(s), ` +
     `${encounters.length} encounter(s), ${leadCount} lead(s), ` +
-    `${abilities.length} abilities, ${items.length} items, ${characters.length} characters`,
+    `${abilities.length} abilities, ${items.length} items, ${characters.length} characters, ` +
+    `${chapters.length} chapter(s)`,
 );
 
 if (problems.length) {

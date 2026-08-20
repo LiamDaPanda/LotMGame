@@ -23,6 +23,7 @@
   ],
   "items": "items",
   "characters": "cast",
+  "story": "chapters",
   "encounters": [
     "street"
   ]

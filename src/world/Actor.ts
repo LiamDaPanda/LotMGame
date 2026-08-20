@@ -10,7 +10,7 @@ import type { Point } from '@/world/TileGrid';
 
 export type Facing = 'down' | 'left' | 'right' | 'up';
 
-/** Tiles per second. */
+/** Tiles per second at a walk. */
 const WALK_SPEED = 4.2;
 
 export class Actor {
@@ -18,6 +18,8 @@ export class Actor {
   tileX: number;
   tileY: number;
   facing: Facing = 'down';
+  /** Multiplier on the walk: the B button holds this above 1. */
+  speedScale = 1;
 
   private path: Point[] = [];
   private stepFrom?: Point;
@@ -151,7 +153,7 @@ export class Actor {
 
   update(deltaMs: number): void {
     if (!this.stepTo || !this.stepFrom) return;
-    this.stepProgress += (deltaMs / 1000) * WALK_SPEED;
+    this.stepProgress += (deltaMs / 1000) * WALK_SPEED * this.speedScale;
 
     if (this.stepProgress >= 1) {
       this.tileX = this.stepTo.x;

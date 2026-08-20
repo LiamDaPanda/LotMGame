@@ -10,6 +10,7 @@
 import type {
   AbilityData,
   CaseData,
+  ChapterData,
   CharacterData,
   ContentIndex,
   DialogueTree,
@@ -29,6 +30,8 @@ export class Content {
   readonly encounters = new Map<string, EncounterData>();
   readonly items = new Map<string, ItemData>();
   readonly characters = new Map<string, CharacterData>();
+  /** The story spine, in the order the file lists it. */
+  readonly chapters: ChapterData[] = [];
 
   /**
    * Read everything the index points at. `read` is supplied by the caller so
@@ -73,6 +76,9 @@ export class Content {
     for (const character of read('characters', index.characters) as CharacterData[]) {
       content.characters.set(character.id, character);
     }
+    if (index.story) {
+      content.chapters.push(...(read('story', index.story) as ChapterData[]));
+    }
 
     return content;
   }
@@ -111,6 +117,10 @@ export class Content {
 
   item(id: string): ItemData | undefined {
     return this.items.get(id);
+  }
+
+  chapter(id: string): ChapterData | undefined {
+    return this.chapters.find((chapter) => chapter.id === id);
   }
 
   character(id: string): CharacterData | undefined {

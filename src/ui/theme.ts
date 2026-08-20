@@ -132,6 +132,39 @@ export function menuRect(): Rect {
   return { x: 0, y: top, width: GAME_WIDTH, height: GAME_HEIGHT - top - PANES.tabs };
 }
 
+/**
+ * The quest card: what the story wants next, pinned above the controls.
+ *
+ * A handheld tells you where to go and then lets you ignore it. Keeping that
+ * line permanently on the bottom screen is what makes wandering off feel like a
+ * choice rather than like being lost.
+ */
+export function objectiveRect(): Rect {
+  // Tall enough for a heading, three wrapped lines of instruction and a
+  // destination — measured against the longest objective, so the card never has
+  // to truncate the one line the player most needs to read.
+  const height = 106;
+  if (!isPortrait()) return { x: 10, y: statusRect().height + 8, width: 380, height };
+  const menu = menuRect();
+  return { x: 8, y: menu.y + 6, width: menu.width - 16, height };
+}
+
+/**
+ * Where the D-pad and face buttons live.
+ *
+ * Portrait gives them the rest of the bottom screen. Landscape has no bottom
+ * screen to give, so they float over the foot of the map, which is the one
+ * band of a top-down room that is never the part you are looking at.
+ */
+export function padZoneRect(): Rect {
+  if (!isPortrait()) {
+    return { x: 0, y: GAME_HEIGHT - 196, width: GAME_WIDTH, height: 196 };
+  }
+  const menu = menuRect();
+  const top = objectiveRect().y + objectiveRect().height + 6;
+  return { x: 0, y: top, width: menu.width, height: menu.y + menu.height - top };
+}
+
 /** The always-on tab bar along the bottom. Portrait only. */
 export function tabBarRect(): Rect {
   if (!isPortrait()) return { x: 0, y: GAME_HEIGHT, width: GAME_WIDTH, height: 0 };

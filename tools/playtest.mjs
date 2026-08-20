@@ -79,6 +79,10 @@ const session = () =>
       pathway: s.state.pathwayId,
       sequenceTitle: s.state.sequenceTitle,
       awakened: s.state.awakened,
+      chapter: s.story.current()?.id ?? null,
+      chapterWhere: s.story.current()?.where ?? null,
+      chaptersDone: s.story.completed().length,
+      route: s.story.routeFrom(s.state.currentMap)?.toMap ?? null,
       rankLabel: s.state.rankLabel,
       abilities: s.state.knownAbilities(),
       digestion: s.state.digestion,
@@ -116,6 +120,7 @@ const loaded = await withGame((game) => {
     encounters: s.content.encounters.size,
     items: s.content.items.size,
     characters: s.content.characters.size,
+    chapters: s.content.chapters.length,
   };
 });
 check(
@@ -124,6 +129,7 @@ check(
     loaded.maps === 6 &&
     loaded.pathways === 1 &&
     loaded.abilities === 15 &&
+    loaded.chapters === 9 &&
     loaded.encounters === 6,
   JSON.stringify(loaded),
 );
@@ -148,6 +154,7 @@ check('starts with skills at 1', Object.values(state.skills).every((v) => v === 
 check('starts as a mortal, whatever the ladder says', state.awakened === false, String(state.awakened));
 check('and the chrome says so', state.rankLabel === 'No sequence - mortal', String(state.rankLabel));
 check('with no Beyonder powers to reach for', state.abilities.length === 0, JSON.stringify(state.abilities));
+check('and the story opens on its first chapter', state.chapter === 'ch_waking', String(state.chapter));
 
 // ---------------------------------------------------------------------------
 console.log('\n2b. The prologue chooses the pathway');
@@ -191,6 +198,21 @@ await page.waitForTimeout(200);
 await speak('Quietly');
 await page.waitForTimeout(300);
 state = await session();
+check(
+  'the prologue closes the first chapter',
+  state.chapter === 'ch_report' && state.chaptersDone === 1,
+  `${state.chapter} after ${state.chaptersDone}`,
+);
+check(
+  'and the next one points at the Company',
+  state.chapterWhere === 'club_hub',
+  String(state.chapterWhere),
+);
+check(
+  'and the way there is out of the front door',
+  state.route === 'ashfen_row',
+  String(state.route),
+);
 check(
   'the disposition option trained a skill',
   state.skills.streetwise === 2 && state.skills.occultism === 2,
@@ -239,6 +261,11 @@ await withGame((game) => {
 });
 state = await session();
 check('case accepted', state.activeCase === 'case-01-ninth-bell', String(state.activeCase));
+check(
+  'and taking it moves the story on to the rooms above the shop',
+  state.chapter === 'ch_scene' && state.chapterWhere === 'pawnshop',
+  `${state.chapter} at ${state.chapterWhere}`,
+);
 
 // ---------------------------------------------------------------------------
 console.log('\n4. Travel to the pawnshop and gather mundane clues');

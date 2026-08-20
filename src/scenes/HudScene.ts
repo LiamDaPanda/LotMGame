@@ -3,6 +3,7 @@ import { PixelText, pixelText } from '@/ui/pixelFont';
 import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
+import { GamePad, padEvents } from '@/ui/gamepad';
 import { Button, Meter, drawPanel } from '@/ui/widgets';
 import {
   COLORS,
@@ -15,6 +16,8 @@ import {
   landscapeRightStrip,
   mapRect,
   metersRect,
+  objectiveRect,
+  padZoneRect,
   statusRect,
   tabBarRect,
 } from '@/ui/theme';
@@ -47,7 +50,15 @@ export class HudScene extends Phaser.Scene {
   private rankText!: PixelText;
   private dayText!: PixelText;
   private noticeText!: PixelText;
+  private noticeBox!: Phaser.GameObjects.Container;
+  private noticePlate!: Phaser.GameObjects.Rectangle;
   private noticeTimer?: Phaser.Time.TimerEvent;
+  private gamepad!: GamePad;
+  private questCard!: Phaser.GameObjects.Container;
+  private questTitle!: PixelText;
+  private questLine!: PixelText;
+  private questWhere!: PixelText;
+  private controlsShown = true;
   private tabButtons: Button[] = [];
   private unsubscribe: Array<() => void> = [];
 
@@ -108,24 +119,87 @@ export class HudScene extends Phaser.Scene {
     if (tall) this.buildTabs(tabBarRect());
     else this.buildLandscapeButtons();
 
-    // Notices land over the map, where the player is looking when one fires.
-    this.noticeText = pixelText(this, GAME_WIDTH / 2, mapRect().y + 12, '', {
+    // Notices land at the foot of the map, where a handheld puts its messages —
+    // and, more to the point, where the room's own name banner is not. On its
+    // own plate, because the foot of a room is also where its doorways are, and
+    // a message printed across a signpost is two unreadable things.
+    this.noticePlate = this.add.rectangle(0, 0, 10, 10, COLORS.ink, 0.86).setOrigin(0.5, 1);
+    this.noticeText = pixelText(this, 0, 0, '', {
       size: 'md',
       color: CSS.parchment,
       align: 'center',
-      wrap: GAME_WIDTH - 40,
-    })
-      .setOrigin(0.5, 0)
+      wrap: GAME_WIDTH - 48,
+    }).setOrigin(0.5, 1);
+    this.noticeBox = this.add
+      .container(GAME_WIDTH / 2, this.noticeRestY(), [this.noticePlate, this.noticeText])
       .setAlpha(0);
 
+    this.buildQuestCard();
+    this.gamepad = new GamePad(this, padZoneRect());
+
     this.refreshAll();
+    this.refreshQuest();
     this.subscribe();
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const off of this.unsubscribe) off();
       this.unsubscribe = [];
       this.tabButtons = [];
+      this.gamepad.destroy();
     });
+  }
+
+  /**
+   * The quest card: chapter, the one line the story is waiting for, and where
+   * it is. It sits above the controls and is the first thing a thumb reads.
+   */
+  private buildQuestCard(): void {
+    const rect = objectiveRect();
+    this.questCard = this.add.container(0, 0);
+    const plate = drawPanel(this, rect.x, rect.y, rect.width, rect.height, { fillAlpha: 0.9 });
+
+    this.questTitle = pixelText(this, rect.x + 12, rect.y + 8, '', {
+      size: 'md',
+      color: CSS.brass,
+      wrap: rect.width - 24,
+      maxHeight: 16,
+    });
+    this.questLine = pixelText(this, rect.x + 12, rect.y + 28, '', {
+      size: 'md',
+      color: CSS.parchment,
+      wrap: rect.width - 24,
+      maxHeight: rect.height - 28 - 26,
+    });
+    this.questWhere = pixelText(this, rect.x + 12, rect.y + rect.height - 22, '', {
+      size: 'md',
+      color: CSS.muted,
+      wrap: rect.width - 24,
+      maxHeight: 16,
+    });
+
+    // Plate and text hide together, so the card is one container.
+    this.questCard.add([plate, this.questTitle, this.questLine, this.questWhere]);
+  }
+
+  private refreshQuest(): void {
+    this.session.story.refresh();
+    const chapter = this.session.story.current();
+    if (!chapter) {
+      this.questTitle.setText('THE LADDER');
+      this.questLine.setText('Nothing is waiting on you. That will not last.');
+      this.questWhere.setText('');
+      return;
+    }
+    const { index, total } = this.session.story.progress();
+    this.questTitle.setText(`${chapter.title.toUpperCase()}  (${index}/${total})`);
+    this.questLine.setText(chapter.objective);
+
+    const destination = this.session.story.destinationName();
+    if (!destination || this.session.state.currentMap === chapter.where) {
+      this.questWhere.setText(destination ? 'You are here.' : '');
+    } else {
+      this.questWhere.setText(`Go to: ${destination}`);
+    }
   }
 
   /** A flat soot band with a hairline under it — the chrome's only decoration. */
@@ -195,6 +269,22 @@ export class HudScene extends Phaser.Scene {
       bus.on('sequence:changed', () => this.refreshAll()),
       bus.on('day:advanced', () => this.refreshAll()),
       bus.on('notice', ({ text, tone }) => this.showNotice(text, tone)),
+      bus.on('story:advanced', ({ objective }) => {
+        this.refreshQuest();
+        this.showNotice(objective, 'good');
+      }),
+      // Anything that could satisfy a chapter's condition re-reads the card.
+      bus.on('clue:found', () => this.refreshQuest()),
+      bus.on('deduction:formed', () => this.refreshQuest()),
+      bus.on('flag:set', () => this.refreshQuest()),
+      bus.on('case:changed', () => this.refreshQuest()),
+      // A press of A is the world's business, but the world is not always the
+      // scene under the thumb: with a panel open the pad is hidden anyway.
+      (() => {
+        const relay = () => undefined;
+        padEvents.on('a', relay);
+        return () => padEvents.off('a', relay);
+      })(),
     );
   }
 
@@ -225,14 +315,22 @@ export class HudScene extends Phaser.Scene {
   private showNotice(text: string, tone: 'info' | 'good' | 'bad' | 'occult' = 'info'): void {
     const colors = { info: CSS.parchment, good: CSS.good, bad: CSS.bad, occult: CSS.occult };
     this.noticeTimer?.remove();
-    this.noticeText.setText(text).setColor(colors[tone]).setAlpha(1);
-    this.tweens.killTweensOf(this.noticeText);
-    const restY = mapRect().y + 12;
-    this.noticeText.y = restY - 6;
-    this.tweens.add({ targets: this.noticeText, y: restY, duration: 220, ease: 'Quad.easeOut' });
+    this.noticeText.setText(text).setColor(colors[tone]);
+    this.noticePlate.setSize(this.noticeText.width + 24, this.noticeText.height + 14);
+    this.noticeBox.setAlpha(1);
+    this.tweens.killTweensOf(this.noticeBox);
+    const restY = this.noticeRestY();
+    this.noticeBox.y = restY + 6;
+    this.tweens.add({ targets: this.noticeBox, y: restY, duration: 220, ease: 'Quad.easeOut' });
     this.noticeTimer = this.time.delayedCall(2600, () => {
-      this.tweens.add({ targets: this.noticeText, alpha: 0, duration: 500 });
+      this.tweens.add({ targets: this.noticeBox, alpha: 0, duration: 500 });
     });
+  }
+
+  /** Where a notice comes to rest: just inside the bottom of the map pane. */
+  private noticeRestY(): number {
+    const map = mapRect();
+    return map.y + map.height - 10;
   }
 
   private openOverlay(key: string): void {
@@ -261,6 +359,18 @@ export class HudScene extends Phaser.Scene {
   }
 
   override update(): void {
+    // The controls belong to the world. A panel over the bottom screen takes
+    // them away — and takes any held direction with them, or the player would
+    // still be walking when it closed.
+    const worldOwnsScreen = this.scene.isActive('World') && !this.scene.isPaused('World');
+    if (worldOwnsScreen !== this.controlsShown) {
+      this.controlsShown = worldOwnsScreen;
+      this.gamepad.setShown(worldOwnsScreen);
+      this.questCard.setVisible(worldOwnsScreen);
+      if (worldOwnsScreen) this.refreshQuest();
+    }
+
+    this.gamepad.tick();
     this.meters.sanity.tick();
     this.meters.spirituality.tick();
     this.meters.concealment.tick();
