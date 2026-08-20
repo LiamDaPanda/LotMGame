@@ -4,50 +4,63 @@
   "ambient": "#1a1620",
   "encounterChance": 0,
   "legend": {
-    "%": {
+    "#": {
       "floor": 9,
       "collide": true
     },
-    ",": {
+    ".": {
       "floor": 7
     },
-    "o": {
-      "floor": 14
+    "r": {
+      "floor": 5
     },
-    "K": {
+    "g": {
       "floor": 7,
-      "object": 19,
+      "object": 27,
       "collide": true
     },
-    "b": {
+    "a": {
+      "floor": 5,
+      "object": 16,
+      "collide": true
+    },
+    "c": {
       "floor": 7,
-      "object": 20,
+      "object": 24,
       "collide": true
     },
     "@": {
       "floor": 32
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
     }
   },
   "rows": [
-    "%%%%%%%%%%%%%%%%%%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%,,K,,,,,,,,,,K,,%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%,,,,,,,@,,,,,,,,%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%,,b,,,,,,,,,,b,,%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%%%%%%%%o%%%%%%%%%"
+    "####W#########W#####",
+    "#........rr........#",
+    "#.g......ra......g.#",
+    "#........rr........#",
+    "#.c...@..rr..@...c.#",
+    "#........rr........#",
+    "#.g......rr......g.#",
+    "#........rr........#",
+    "#........rr........#",
+    "#########oo#########"
   ],
   "spawn": {
-    "x": 8,
-    "y": 7
+    "x": 9,
+    "y": 8
   },
   "hotspots": [
     {
       "id": "cc_altar",
-      "x": 8,
-      "y": 4,
+      "x": 10,
+      "y": 2,
       "name": "The Altar, And The Arrangement",
       "description": "The ritual is complete except for the part where you die, which is the part the Genie was so pleased to be asked about.",
       "action": "dialogue",
@@ -56,8 +69,8 @@
     },
     {
       "id": "cc_zaratul",
-      "x": 3,
-      "y": 2,
+      "x": 6,
+      "y": 4,
       "name": "Something Waiting In The Aisle",
       "description": "The man who wrote the ritual that brought you here is still using it, and he has not once considered that it might have been read by anybody else.",
       "action": "dialogue",
@@ -72,8 +85,8 @@
     },
     {
       "id": "rite_corpse_cathedral",
-      "x": 12,
-      "y": 6,
+      "x": 13,
+      "y": 4,
       "name": "The Circle",
       "description": "The Corpse Cathedral was built for exactly this and has been waiting.",
       "action": "ritual",
@@ -83,12 +96,12 @@
   "npcs": [],
   "exits": [
     {
-      "x": 8,
-      "y": 8,
+      "x": 9,
+      "y": 9,
       "toMap": "forsaken",
-      "toX": 8,
-      "toY": 1,
-      "label": "Back to the Forsaken Land"
+      "toX": 9,
+      "toY": 8,
+      "label": "Forsaken Land"
     }
   ],
   "intro": {

@@ -243,205 +243,259 @@ function buildCharacterSheet() {
 /**
  * A 64x64 bust.
  *
- * Everyone used to be drawn with the same head and a different palette, which
- * on a 64px canvas reads as one person in nine coats. Each character now gets
- * a hair silhouette, an eye colour and whatever they are known by — Old Neil's
- * moustache, Audrey's fall of gold, the Clown's paint — because at this size
- * the silhouette is the whole of the likeness.
+ * Built the way a pixel portrait has to be built at this size: an explicit
+ * silhouette rather than stacked ellipses. The head is a per-row half-width
+ * table (temples widest, jaw tapering to a three-pixel chin), the hair is a
+ * mass plus individual strands with pointed tips, and the eye is mostly white
+ * with a small iris — the previous version's four-pixel lash line read as a
+ * bruise on every character at once.
  */
+
+/** Half-width of the head at a given row, measured from the centre line. */
+function headHalf(y) {
+  if (y < 11) return 0;
+  if (y <= 14) return 9 + (y - 11);        // crown
+  if (y <= 19) return 12 + (y - 15) * 0.5; // temple
+  if (y <= 31) return 14;                  // widest, through the eyes
+  if (y <= 36) return 14 - (y - 31) * 0.8; // cheek
+  if (y <= 41) return 10 - (y - 36) * 1.1; // jaw
+  if (y <= 44) return 5;                   // chin
+  return 0;
+}
+
+function fillHead(r, ox, oy, skin, shadow) {
+  for (let y = 11; y <= 44; y++) {
+    const half = Math.round(headHalf(y));
+    if (half <= 0) continue;
+    r.rect(ox + 32 - half, oy + y, half * 2, 1, skin);
+  }
+  // Form: a soft shadow down the right-hand side and under the jaw.
+  for (let y = 26; y <= 40; y++) {
+    const half = Math.round(headHalf(y));
+    if (half <= 3) continue;
+    r.rect(ox + 32 + half - 1, oy + y, 1, 1, shadow);
+  }
+  r.rect(ox + 27, oy + 42, 10, 1, shadow);
+}
+
+/** One lock of hair: a tapering strand with a pointed tip. */
+function strand(r, ox, oy, x, top, bottom, width, colour) {
+  const span = Math.max(1, bottom - top);
+  for (let y = top; y <= bottom; y++) {
+    const t = (y - top) / span;
+    const w = Math.max(1, Math.round(width * (1 - t * 0.8)));
+    r.rect(ox + x - Math.floor(w / 2), oy + y, w, 1, colour);
+  }
+}
+
 function drawPortrait(r, ox, oy, pal) {
   const painted = pal.face === 'paint';
-  const skin = rgba(painted ? '#f4eee9' : pal.skin);
+  const skin = rgba(painted ? '#f2ece7' : pal.skin);
+  const skinShade = shade(skin, -0.16);
   const hair = rgba(pal.hair);
-  // Subtle: on near-black hair a strong lift reads as a bald patch.
-  const hairLit = shade(hair, 0.14);
-  const hairDark = shade(hair, -0.3);
+  const hairLit = shade(hair, 0.16);
+  const hairDark = shade(hair, -0.35);
   const coat = rgba(pal.coat);
   const eye = rgba(pal.eyes ?? pal.accent);
   const style = pal.hairStyle ?? 'short';
   const extras = pal.extras ?? [];
+  const long = style === 'long' || style === 'ponytail' || style === 'bob';
 
-  // Vignette backdrop so portraits read against any panel colour.
+  // Background: a vertical wash with a halo behind the head, tinted towards
+  // the character's own colour so nine portraits do not share one backdrop.
   for (let y = 0; y < 64; y++) {
-    for (let x = 0; x < 64; x++) {
-      const d = Math.hypot(x - 32, y - 34) / 45;
-      r.px(ox + x, oy + y, shade(rgba('#2a2028'), Math.min(0.35, 0.35 - d * 0.5)));
+    const t = y / 63;
+    r.rect(ox, oy + y, 64, 1, shade(rgba('#2b2530'), -0.35 * t));
+  }
+  for (let ring = 24; ring > 12; ring -= 3) {
+    r.ellipse(ox + 32, oy + 30, ring, ring - 4, shade(eye, -0.62));
+  }
+
+  // Hair that falls behind the shoulders goes down first.
+  if (long) {
+    const drop = style === 'bob' ? 42 : 56;
+    for (let y = 16; y <= drop; y++) {
+      const spread = style === 'bob' ? 15 : 16 + Math.round((y - 16) / 8);
+      r.rect(ox + 32 - spread, oy + y, spread * 2, 1, hairDark);
     }
   }
 
-  // Layout budget for the frame: hair 6-40, head 10-46, neck 42-48,
-  // shoulders 48-64. Nothing may exceed it or the bust reads as cropped.
-
-  // Hair that falls behind the shoulders is laid down first.
-  if (style === 'long' || style === 'ponytail' || style === 'bob') {
-    const drop = style === 'bob' ? 44 : 58;
-    r.roundRect(ox + 12, oy + 18, 40, drop - 18, 10, hairDark);
+  // Shoulders: a trapezoid, not a pill, with a collar cut into it.
+  for (let y = 51; y < 64; y++) {
+    const half = Math.min(30, 12 + (y - 51) * 2.4);
+    r.rect(ox + 32 - Math.round(half), oy + y, Math.round(half) * 2, 1, coat);
   }
-
-  // Shoulders, neck, collar.
-  r.rect(ox + 27, oy + 40, 10, 9, shade(skin, -0.22));
-  r.roundRect(ox + 6, oy + 48, 52, 16, 7, coat);
-  r.roundRect(ox + 11, oy + 51, 42, 13, 5, shade(coat, 0.12));
-  if (pal.scarf) r.roundRect(ox + 20, oy + 46, 24, 6, 3, rgba(pal.scarf));
+  // Neck, with the jaw's shadow across the top of it.
+  r.rect(ox + 28, oy + 43, 8, 10, skinShade);
+  r.rect(ox + 28, oy + 43, 8, 2, shade(skin, -0.34));
+  r.rect(ox + 27, oy + 50, 10, 3, skinShade);
+  // Collar: two short lapels meeting at the throat.
+  for (let i = 0; i < 5; i++) {
+    r.rect(ox + 25 - i, oy + 54 + i, 4, 1, shade(coat, 0.2));
+    r.rect(ox + 35 + i, oy + 54 + i, 4, 1, shade(coat, 0.2));
+  }
+  if (pal.scarf) r.rect(ox + 27, oy + 53, 10, 3, rgba(pal.scarf));
   if (extras.includes('collar')) {
-    r.rect(ox + 25, oy + 48, 14, 5, WHITE);
-    r.rect(ox + 30, oy + 50, 4, 8, rgba(pal.accent));
+    r.rect(ox + 27, oy + 53, 10, 2, WHITE);
+    r.rect(ox + 30, oy + 55, 4, 5, rgba(pal.accent));
   }
 
-  // Head: a slim oval with a tapering jaw, rather than two stacked blobs.
-  r.ellipse(ox + 32, oy + 27, 15, 16, skin);
-  r.ellipse(ox + 32, oy + 34, 12, 9, skin);
-  r.ellipse(ox + 32, oy + 40, 7, 5, skin);
-  r.ellipse(ox + 32, oy + 30, 13, 12, shade(skin, 0.06));
+  fillHead(r, ox, oy, skin, skinShade);
+  // Ears.
+  r.rect(ox + 18, oy + 28, 2, 5, skinShade);
+  r.rect(ox + 44, oy + 28, 2, 5, skinShade);
 
-  // Hair, by silhouette.
+  // Hair mass over the skull, then the fringe, then side locks.
+  for (let y = 11; y <= 20; y++) {
+    const half = Math.round(headHalf(y)) + (y > 13 ? 1 : 0);
+    if (half <= 0) continue;
+    r.rect(ox + 32 - half, oy + y, half * 2, 1, hair);
+  }
+  r.rect(ox + 22, oy + 13, 9, 2, hairLit); // sheen
+
   switch (style) {
     case 'receding':
-      r.ellipse(ox + 32, oy + 18, 17, 8, hair);
-      r.ellipse(ox + 32, oy + 15, 11, 6, skin);
-      r.rect(ox + 15, oy + 18, 4, 14, hair);
-      r.rect(ox + 45, oy + 18, 4, 14, hair);
+      r.rect(ox + 24, oy + 14, 16, 5, skin);
+      strand(r, ox, oy, 20, 16, 30, 5, hair);
+      strand(r, ox, oy, 44, 16, 30, 5, hair);
       break;
     case 'parted':
-      r.ellipse(ox + 32, oy + 17, 18, 12, hair);
-      r.rect(ox + 14, oy + 16, 4, 16, hair);
-      r.rect(ox + 46, oy + 16, 4, 16, hair);
-      // A real parting: a line off-centre, with the heavy side swept over it.
-      for (let i = 0; i < 9; i++) r.px(ox + 26 + i, oy + 8 + i, hairDark);
-      r.ellipse(ox + 38, oy + 15, 11, 7, hair);
-      r.ellipse(ox + 40, oy + 13, 5, 2, hairLit);
+      // A parting off-centre: the heavy side sweeps across the brow.
+      for (let i = 0; i < 8; i++) r.rect(ox + 27 + i, oy + 14 + i, 1, 1, hairDark);
+      strand(r, ox, oy, 24, 18, 27, 6, hair);
+      strand(r, ox, oy, 30, 19, 25, 5, hair);
+      strand(r, ox, oy, 37, 18, 27, 7, hair);
+      strand(r, ox, oy, 19, 18, 32, 5, hair);
+      strand(r, ox, oy, 45, 18, 32, 5, hair);
       break;
     case 'swept':
-      r.ellipse(ox + 32, oy + 17, 18, 12, hair);
-      r.rect(ox + 14, oy + 16, 4, 18, hair);
-      r.rect(ox + 46, oy + 16, 4, 18, hair);
-      for (let i = 0; i < 5; i++) r.ellipse(ox + 21 + i * 5, oy + 19 - i, 4.5, 4.5, hair);
-      r.ellipse(ox + 39, oy + 12, 6, 2, hairLit);
+      for (let i = 0; i < 5; i++) {
+        strand(r, ox, oy, 22 + i * 5, 20 - i, 27 - i, 6, i % 2 ? hair : hairLit);
+      }
+      strand(r, ox, oy, 19, 18, 33, 5, hair);
+      strand(r, ox, oy, 45, 18, 30, 5, hair);
       break;
     case 'long':
-      r.ellipse(ox + 32, oy + 16, 19, 13, hair);
-      r.rect(ox + 12, oy + 16, 6, 30, hair);
-      r.rect(ox + 46, oy + 16, 6, 30, hair);
-      r.ellipse(ox + 25, oy + 11, 7, 2.5, hairLit);
-      for (let i = -12; i <= 12; i += 8) r.ellipse(ox + 32 + i, oy + 24, 4, 5, hair);
+      strand(r, ox, oy, 24, 18, 26, 7, hair);
+      strand(r, ox, oy, 32, 19, 24, 6, hairLit);
+      strand(r, ox, oy, 40, 18, 26, 7, hair);
+      strand(r, ox, oy, 17, 18, 46, 7, hair);
+      strand(r, ox, oy, 47, 18, 46, 7, hair);
       break;
     case 'ponytail':
-      r.ellipse(ox + 32, oy + 17, 18, 12, hair);
-      r.rect(ox + 14, oy + 16, 4, 16, hair);
-      r.rect(ox + 46, oy + 16, 4, 16, hair);
-      r.ellipse(ox + 52, oy + 30, 6, 12, hair);
-      r.ellipse(ox + 26, oy + 12, 6, 2.5, hairLit);
+      strand(r, ox, oy, 25, 18, 26, 7, hair);
+      strand(r, ox, oy, 38, 18, 26, 6, hair);
+      strand(r, ox, oy, 19, 18, 34, 5, hair);
+      strand(r, ox, oy, 45, 18, 34, 5, hair);
+      for (let y = 24; y < 44; y++) r.rect(ox + 48, oy + y, 5, 1, hair);
+      r.rect(ox + 47, oy + 22, 7, 3, hairDark);
       break;
     case 'bob':
-      r.ellipse(ox + 32, oy + 16, 19, 12, hair);
-      r.rect(ox + 12, oy + 16, 7, 26, hair);
-      r.rect(ox + 45, oy + 16, 7, 26, hair);
-      r.rect(ox + 18, oy + 22, 28, 4, hairDark); // blunt fringe
+      r.rect(ox + 19, oy + 20, 26, 3, hairDark); // blunt fringe
+      strand(r, ox, oy, 18, 18, 40, 7, hair);
+      strand(r, ox, oy, 46, 18, 40, 7, hair);
       break;
     default:
-      r.ellipse(ox + 32, oy + 17, 18, 12, hair);
-      r.rect(ox + 14, oy + 16, 4, 18, hair);
-      r.rect(ox + 46, oy + 16, 4, 18, hair);
-      r.ellipse(ox + 24, oy + 12, 5, 2.5, hairLit);
-      for (let i = -14; i <= 14; i += 6) {
-        r.ellipse(ox + 32 + i, oy + 22, 3, 3 + ((i + 14) % 3), hair);
-      }
+      strand(r, ox, oy, 23, 18, 27, 6, hair);
+      strand(r, ox, oy, 29, 19, 25, 5, hairLit);
+      strand(r, ox, oy, 35, 18, 26, 6, hair);
+      strand(r, ox, oy, 41, 19, 27, 5, hair);
+      strand(r, ox, oy, 19, 18, 31, 5, hair);
+      strand(r, ox, oy, 45, 18, 31, 5, hair);
   }
 
-  // Eyes: the anime's large iris with a hard highlight, in the character's
-  // own colour rather than the coat's accent.
+  // Eyes: mostly white, small dark rim, iris large enough to carry a colour.
   const brow = pal.brow ?? 0;
-  for (const [side, ex] of [[-1, ox + 24], [1, ox + 40]]) {
-    // Large, but taller than they are wide — the anime proportion. The old
-    // circles at this size read as spectacles on every character at once.
-    r.ellipse(ex, oy + 33, 3.4, 4.6, WHITE);
-    r.ellipse(ex, oy + 34, 2.9, 4.0, shade(eye, -0.5));
-    r.ellipse(ex, oy + 34.5, 2.2, 3.2, eye);
-    r.ellipse(ex, oy + 35.5, 1.1, 1.4, INK);
-    r.ellipse(ex - 1, oy + 31.8, 1.1, 1.4, WHITE);
-    // Upper lid, heavier at the outer corner, and a hint of a lower one.
-    r.rect(ex - 4, oy + 28, 8, 2, INK);
-    r.rect(ex + side * 3, oy + 29, 2, 2, INK);
-    r.rect(ex - 3, oy + 38, 6, 1, shade(skin, -0.35));
-    // Brows carry the expression: level by default, tilted for a temper.
+  for (const [side, ex] of [[-1, ox + 25], [1, ox + 39]]) {
+    r.rect(ex - 3, oy + 31, 7, 6, WHITE);
+    r.rect(ex - 3, oy + 31, 7, 1, INK);              // upper lash
+    r.rect(ex + side * 3, oy + 32, 1, 2, INK);        // outer corner
+    r.rect(ex - 2, oy + 32, 5, 5, shade(eye, -0.45)); // iris rim
+    r.rect(ex - 2, oy + 32, 5, 4, eye);               // iris
+    r.rect(ex - 1, oy + 34, 2, 2, INK);               // pupil
+    r.rect(ex - 2, oy + 32, 2, 1, WHITE);             // highlight
+    r.rect(ex - 3, oy + 37, 7, 1, skinShade);         // lower lid
     const lift = side * brow;
-    const browY = oy + 24 - Math.max(0, lift);
-    r.rect(ex - 4, browY, 5, 2, hairDark);
-    r.rect(ex, browY + Math.max(0, -lift), 5, 2, hairDark);
+    const browY = oy + 28 - Math.max(0, lift);
+    r.rect(ex - 3, browY, 4, 1, hair);
+    r.rect(ex + 1, browY + Math.max(0, -lift), 3, 1, hair);
   }
 
-  r.rect(ox + 31, oy + 40, 2, 1, shade(skin, -0.3));
+  // Nose and mouth: two or three pixels each. Anything more is a moustache.
+  r.rect(ox + 33, oy + 37, 1, 2, skinShade);
+  r.rect(ox + 32, oy + 38, 2, 1, skinShade);
   if (painted) {
-    r.rect(ox + 24, oy + 42, 16, 2, rgba('#b0202e'));
-    r.rect(ox + 22, oy + 41, 3, 4, rgba('#b0202e'));
-    r.rect(ox + 39, oy + 41, 3, 4, rgba('#b0202e'));
-    r.rect(ox + 22, oy + 30, 2, 10, rgba('#b0202e', 0.7));
-    r.rect(ox + 40, oy + 30, 2, 10, rgba('#b0202e', 0.7));
+    r.rect(ox + 27, oy + 40, 11, 2, rgba('#b0202e'));
+    r.rect(ox + 25, oy + 39, 2, 3, rgba('#b0202e'));
+    r.rect(ox + 38, oy + 39, 2, 3, rgba('#b0202e'));
+    r.rect(ox + 24, oy + 31, 1, 5, rgba('#b0202e', 0.8));
+    r.rect(ox + 40, oy + 31, 1, 5, rgba('#b0202e', 0.8));
   } else {
-    r.rect(ox + 30, oy + 44, 4, 1, shade(skin, -0.45));
-    r.px(ox + 29, oy + 43, shade(skin, -0.4));
-    r.px(ox + 34, oy + 43, shade(skin, -0.4));
-    r.ellipse(ox + 21, oy + 39, 3, 1.5, rgba('#e08a80', 0.32));
-    r.ellipse(ox + 43, oy + 39, 3, 1.5, rgba('#e08a80', 0.32));
+    r.rect(ox + 31, oy + 41, 3, 1, shade(skin, -0.5));
+    r.rect(ox + 30, oy + 41, 1, 1, shade(skin, -0.28));
+    r.rect(ox + 34, oy + 41, 1, 1, shade(skin, -0.28));
+    r.rect(ox + 31, oy + 42, 3, 1, shade(skin, -0.14));
   }
 
   if (extras.includes('moustache')) {
-    r.rect(ox + 26, oy + 41, 12, 2, hairDark);
-    r.px(ox + 25, oy + 42, hairDark);
-    r.px(ox + 38, oy + 42, hairDark);
+    r.rect(ox + 27, oy + 39, 10, 2, hairDark);
+    r.rect(ox + 26, oy + 40, 1, 1, hairDark);
+    r.rect(ox + 37, oy + 40, 1, 1, hairDark);
   }
   if (extras.includes('beard')) {
-    r.roundRect(ox + 24, oy + 40, 16, 8, 4, hairDark);
-    r.rect(ox + 29, oy + 43, 6, 1, shade(skin, -0.5));
+    for (let y = 38; y <= 46; y++) {
+      const half = Math.max(4, Math.round(headHalf(Math.min(y, 44))) + 1);
+      r.rect(ox + 32 - half, oy + y, half * 2, 1, hairDark);
+    }
+    r.rect(ox + 31, oy + 41, 3, 1, shade(skin, -0.42));
   }
   if (extras.includes('glasses')) {
-    const wire = rgba('#d8d2c4');
-    for (const ex of [ox + 23, ox + 41]) {
-      r.ellipse(ex, oy + 34, 7, 7, rgba('#9fd0e0', 0.16));
-      r.ellipseOutline?.(ex, oy + 34, 7, 7, wire);
-      r.rect(ex - 7, oy + 34, 1, 1, wire);
-      r.rect(ex + 6, oy + 34, 1, 1, wire);
-      r.rect(ex - 7, oy + 28, 14, 1, wire);
-      r.rect(ex - 7, oy + 40, 14, 1, wire);
-      r.rect(ex - 7, oy + 28, 1, 13, wire);
-      r.rect(ex + 6, oy + 28, 1, 13, wire);
+    const wire = rgba('#cfc8bb');
+    for (const ex of [ox + 25, ox + 39]) {
+      r.rect(ex - 5, oy + 30, 10, 1, wire);
+      r.rect(ex - 5, oy + 38, 10, 1, wire);
+      r.rect(ex - 5, oy + 30, 1, 9, wire);
+      r.rect(ex + 4, oy + 30, 1, 9, wire);
     }
     r.rect(ox + 30, oy + 33, 4, 1, wire);
+    r.rect(ox + 15, oy + 31, 5, 1, wire);
+    r.rect(ox + 44, oy + 31, 5, 1, wire);
   }
   if (extras.includes('monocle')) {
     const wire = rgba('#c9a227');
-    r.rect(ox + 34, oy + 27, 14, 1, wire);
-    r.rect(ox + 34, oy + 41, 14, 1, wire);
-    r.rect(ox + 34, oy + 27, 1, 15, wire);
-    r.rect(ox + 47, oy + 27, 1, 15, wire);
-    r.rect(ox + 47, oy + 42, 1, 8, wire);
+    r.rect(ox + 34, oy + 29, 11, 1, wire);
+    r.rect(ox + 34, oy + 39, 11, 1, wire);
+    r.rect(ox + 34, oy + 29, 1, 11, wire);
+    r.rect(ox + 44, oy + 29, 1, 11, wire);
+    r.rect(ox + 44, oy + 40, 1, 9, wire);
   }
 
   if (pal.hat) {
-    const dark = rgba('#20191a');
+    const dark = rgba('#1d181c');
     if (pal.hat === 'top') {
-      r.rect(ox + 7, oy + 11, 50, 4, dark);
-      r.roundRect(ox + 17, oy + 1, 30, 12, 3, dark);
-      r.rect(ox + 17, oy + 8, 30, 3, rgba(pal.accent));
+      r.rect(ox + 8, oy + 12, 48, 3, dark);
+      r.rect(ox + 17, oy + 1, 30, 12, dark);
+      r.rect(ox + 17, oy + 9, 30, 3, rgba(pal.accent));
     } else if (pal.hat === 'custodian') {
-      r.roundRect(ox + 15, oy, 34, 16, 8, rgba('#20242e'));
-      r.rect(ox + 10, oy + 12, 44, 4, rgba('#20242e'));
-      r.ellipse(ox + 32, oy + 6, 4, 4, rgba(pal.accent));
+      r.rect(ox + 18, oy + 2, 28, 12, rgba('#20242e'));
+      r.rect(ox + 16, oy + 6, 32, 8, rgba('#20242e'));
+      r.rect(ox + 12, oy + 13, 40, 3, rgba('#191d26'));
+      r.rect(ox + 30, oy + 4, 4, 4, rgba(pal.accent));
     } else if (pal.hat === 'veil') {
-      r.roundRect(ox + 14, oy + 3, 36, 12, 6, dark);
-      for (let y = 0; y < 26; y++)
-        for (let x = 0; x < 36; x++)
-          if ((x + y) % 2 === 0) r.px(ox + 14 + x, oy + 13 + y, rgba('#000000', 0.22));
+      r.rect(ox + 16, oy + 4, 32, 10, dark);
+      for (let y = 0; y < 24; y++)
+        for (let x = 0; x < 34; x++)
+          if ((x + y) % 2 === 0) r.px(ox + 15 + x, oy + 14 + y, rgba('#000000', 0.2));
     } else if (pal.hat === 'cap') {
-      r.roundRect(ox + 15, oy + 4, 34, 12, 5, dark);
-      r.rect(ox + 10, oy + 14, 44, 3, shade(dark, -0.2));
+      r.rect(ox + 17, oy + 6, 30, 9, dark);
+      r.rect(ox + 12, oy + 14, 40, 3, shade(dark, -0.25));
     } else if (pal.hat === 'flat') {
-      r.roundRect(ox + 14, oy + 6, 36, 10, 4, dark);
-      r.rect(ox + 12, oy + 14, 40, 3, shade(dark, -0.15));
+      r.rect(ox + 17, oy + 8, 30, 7, dark);
+      r.rect(ox + 13, oy + 14, 38, 3, shade(dark, -0.2));
     }
   }
 
-  // Frame border.
+  // Frame.
   r.rect(ox, oy, 64, 1, rgba('#c9a227', 0.7));
   r.rect(ox, oy + 63, 64, 1, rgba('#c9a227', 0.7));
   r.rect(ox, oy, 1, 64, rgba('#c9a227', 0.7));

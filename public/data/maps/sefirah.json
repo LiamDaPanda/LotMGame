@@ -4,49 +4,67 @@
   "ambient": "#2a2740",
   "encounterChance": 0,
   "legend": {
-    "%": {
+    "#": {
       "floor": 9,
       "collide": true
     },
-    ",": {
+    ".": {
       "floor": 7
     },
-    "o": {
-      "floor": 14
+    "t": {
+      "floor": 6
     },
-    "K": {
+    "@": {
+      "floor": 32
+    },
+    "T": {
+      "floor": 6,
+      "object": 16,
+      "collide": true
+    },
+    "c": {
+      "floor": 6,
+      "object": 17,
+      "collide": true
+    },
+    "l": {
       "floor": 7,
-      "object": 19,
+      "object": 24,
       "collide": true
     },
     "b": {
       "floor": 7,
-      "object": 20,
+      "object": 18,
       "collide": true
     },
-    "@": {
-      "floor": 32
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
     }
   },
   "rows": [
-    "%%%%%%%%%%%%%%%%%%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%,,K,,,,,,,,,,K,,%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%,,,,,,,@,,,,,,,,%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%,,b,,,,,,,,,,b,,%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%%%%%%%%o%%%%%%%%%"
+    "####W##########W####",
+    "#..................#",
+    "#.b..cccccccccc..b.#",
+    "#....TTTTTTTTTT....#",
+    "#....tttt@ttttt....#",
+    "#....cccccccccc....#",
+    "#..................#",
+    "#.l..............l.#",
+    "#..................#",
+    "#########oo#########"
   ],
   "spawn": {
-    "x": 8,
-    "y": 7
+    "x": 9,
+    "y": 8
   },
   "hotspots": [
     {
       "id": "sf_ladder",
-      "x": 8,
+      "x": 9,
       "y": 4,
       "name": "The Ladder Of Light",
       "description": "It goes down into the depth of the grey fog, which is a direction the fog did not have until you were high enough to be told about it.",
@@ -56,15 +74,15 @@
     },
     {
       "id": "sf_table",
-      "x": 3,
-      "y": 2,
+      "x": 6,
+      "y": 3,
       "name": "The Bronze Table",
       "description": "Twenty-two seats. Rather more of them are occupied these days, and the ones that are not have begun to feel like an appointment rather than an absence."
     },
     {
       "id": "sf_window",
-      "x": 14,
-      "y": 6,
+      "x": 15,
+      "y": 0,
       "name": "A Window Onto Backlund",
       "description": "The smog over the city has stopped behaving like weather. Somewhere under it, a mausoleum is being opened by people who have each decided they are the only one being careful.",
       "action": "dialogue",
@@ -73,8 +91,8 @@
     },
     {
       "id": "rite_sefirah",
-      "x": 12,
-      "y": 4,
+      "x": 3,
+      "y": 7,
       "name": "The Circle",
       "description": "The castle does not need chalk. It simply understands what you are about to do and makes room.",
       "action": "ritual",
@@ -84,20 +102,20 @@
   "npcs": [],
   "exits": [
     {
-      "x": 8,
-      "y": 8,
+      "x": 9,
+      "y": 9,
       "toMap": "cathedral",
-      "toX": 8,
-      "toY": 2,
-      "label": "Back down to Backlund"
+      "toX": 16,
+      "toY": 8,
+      "label": "Backlund"
     },
     {
-      "x": 8,
-      "y": 0,
+      "x": 10,
+      "y": 9,
       "toMap": "forsaken",
-      "toX": 8,
+      "toX": 9,
       "toY": 8,
-      "label": "The Forsaken Land of the Gods",
+      "label": "Forsaken Land",
       "requires": {
         "flag": "v5_mausoleum"
       }

@@ -626,6 +626,52 @@ for (const tree of dialogues) {
 }
 
 // ---------------------------------------------------------------------------
+// Every room has to be walkable: a hotspot behind a wall, or a doorway on the
+// far side of a table, is a dead end that only shows up when somebody plays it.
+// ---------------------------------------------------------------------------
+
+for (const map of maps) {
+  const rows = map.rows ?? [];
+  const walkable = (x, y) => {
+    const row = rows[y];
+    if (row === undefined || x < 0 || x >= row.length) return false;
+    const entry = map.legend[row[x]];
+    return Boolean(entry) && entry.collide !== true;
+  };
+  // Exit tiles are unblocked by the world as it builds them, so they count.
+  const exitKeys = new Set((map.exits ?? []).map((exit) => `${exit.x},${exit.y}`));
+  const start = [map.spawn?.x ?? 0, map.spawn?.y ?? 0];
+  if (!walkable(start[0], start[1])) {
+    fail(`Map ${map.id}: spawn ${start.join(',')} is not walkable`);
+  }
+  const seen = new Set([start.join(',')]);
+  const queue = [start];
+  while (queue.length > 0) {
+    const [x, y] = queue.shift();
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const next = [x + dx, y + dy];
+      const key = next.join(',');
+      if (seen.has(key)) continue;
+      if (!walkable(next[0], next[1]) && !exitKeys.has(key)) continue;
+      seen.add(key);
+      queue.push(next);
+    }
+  }
+  for (const hotspot of map.hotspots ?? []) {
+    const beside = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+      .some(([dx, dy]) => seen.has(`${hotspot.x + dx},${hotspot.y + dy}`));
+    if (!beside) {
+      fail(`Map ${map.id}: hotspot "${hotspot.id}" at ${hotspot.x},${hotspot.y} cannot be reached`);
+    }
+  }
+  for (const exit of map.exits ?? []) {
+    if (!seen.has(`${exit.x},${exit.y}`)) {
+      fail(`Map ${map.id}: the exit to ${exit.toMap} at ${exit.x},${exit.y} cannot be reached`);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // The story spine
 // ---------------------------------------------------------------------------
 

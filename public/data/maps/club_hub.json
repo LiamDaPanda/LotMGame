@@ -208,7 +208,7 @@
       "toMap": "ashfen_row",
       "toX": 9,
       "toY": 2,
-      "label": "Iron Cross Street"
+      "label": "Iron Cross St"
     },
     {
       "x": 10,
@@ -216,7 +216,7 @@
       "toMap": "backlund",
       "toX": 3,
       "toY": 7,
-      "label": "The train to Backlund",
+      "label": "Backlund",
       "requires": {
         "sequenceAtMost": 8
       }

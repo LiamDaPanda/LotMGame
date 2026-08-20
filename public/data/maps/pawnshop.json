@@ -239,7 +239,7 @@
       "toMap": "ashfen_row",
       "toX": 10,
       "toY": 7,
-      "label": "Iron Cross Street"
+      "label": "Iron Cross St"
     },
     {
       "x": 5,
@@ -247,7 +247,7 @@
       "toMap": "cellar",
       "toX": 6,
       "toY": 6,
-      "label": "Down to the cellar"
+      "label": "Cellar"
     }
   ]
 }

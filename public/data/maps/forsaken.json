@@ -4,50 +4,70 @@
   "ambient": "#241f22",
   "encounterChance": 0,
   "legend": {
-    "%": {
+    "#": {
       "floor": 9,
       "collide": true
+    },
+    "%": {
+      "floor": 10,
+      "collide": true
+    },
+    ".": {
+      "floor": 29
     },
     ",": {
       "floor": 7
     },
-    "o": {
-      "floor": 14
+    "g": {
+      "floor": 29,
+      "object": 27,
+      "collide": true
     },
-    "K": {
-      "floor": 7,
+    "k": {
+      "floor": 29,
       "object": 19,
       "collide": true
     },
-    "b": {
-      "floor": 7,
-      "object": 20,
+    "r": {
+      "floor": 29,
+      "object": 15,
       "collide": true
     },
-    "@": {
-      "floor": 32
+    "T": {
+      "floor": 7,
+      "object": 16,
+      "collide": true
+    },
+    "c": {
+      "floor": 7,
+      "object": 17,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
     }
   },
   "rows": [
-    "%%%%%%%%%%%%%%%%%%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%,,b,,,,,,,,,,b,,%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%,K,,,,,,,,,,,,K,%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%,,,,,,,,,,,,,,,,%",
-    "%%%%%%%%o%%%%%%%%%"
+    "%%%%%%%%%%%%%%%%%%%%",
+    "%..................%",
+    "%.g...,,,,,,,,...g.%",
+    "%.....,cTTTTc,.....%",
+    "%.....,,,,,,,,.....%",
+    "%..k...........k...%",
+    "%..................%",
+    "%.g..............g.%",
+    "%..................%",
+    "%%%%%%%%%oo%%%%%%%%%"
   ],
   "spawn": {
-    "x": 8,
-    "y": 7
+    "x": 9,
+    "y": 8
   },
   "hotspots": [
     {
       "id": "fk_court",
-      "x": 8,
-      "y": 2,
+      "x": 9,
+      "y": 3,
       "name": "The Giant King’s Court",
       "description": "A hall built for people forty feet tall, by people forty feet tall, and abandoned in the middle of an argument that has been over for two epochs.",
       "action": "dialogue",
@@ -56,7 +76,7 @@
     },
     {
       "id": "fk_sky",
-      "x": 14,
+      "x": 16,
       "y": 5,
       "name": "The Sky Over Backlund, Seen From Here",
       "description": "The war has reached the part where the gods are involved. From this side of the world it looks like weather; from the other side it is the end of the century.",
@@ -66,8 +86,8 @@
     },
     {
       "id": "rite_forsaken",
-      "x": 12,
-      "y": 2,
+      "x": 3,
+      "y": 5,
       "name": "The Circle",
       "description": "Scratched into stone that was old when the Second Epoch ended.",
       "action": "ritual",
@@ -77,20 +97,20 @@
   "npcs": [],
   "exits": [
     {
-      "x": 8,
-      "y": 8,
+      "x": 9,
+      "y": 9,
       "toMap": "sefirah",
-      "toX": 8,
-      "toY": 1,
-      "label": "Back up the ladder"
+      "toX": 9,
+      "toY": 8,
+      "label": "The Ladder"
     },
     {
-      "x": 8,
-      "y": 0,
+      "x": 10,
+      "y": 9,
       "toMap": "corpse_cathedral",
-      "toX": 8,
+      "toX": 9,
       "toY": 8,
-      "label": "The Corpse Cathedral",
+      "label": "Corpse Cathedral",
       "requires": {
         "flag": "v6_truth"
       }

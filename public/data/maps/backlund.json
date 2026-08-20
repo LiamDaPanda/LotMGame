@@ -8,26 +8,36 @@
       "floor": 8,
       "collide": true
     },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
     ":": {
       "floor": 1
     },
     "~": {
       "floor": 2
     },
-    "D": {
-      "floor": 13,
-      "collide": true
-    },
-    "W": {
-      "floor": 12,
-      "collide": true
-    },
     "L": {
       "floor": 1,
       "object": 24,
       "collide": true
     },
-    "K": {
+    "r": {
+      "floor": 1,
+      "object": 15,
+      "collide": true
+    },
+    "b": {
+      "floor": 1,
+      "object": 20,
+      "collide": true
+    },
+    "k": {
       "floor": 1,
       "object": 19,
       "collide": true
@@ -37,25 +47,26 @@
     }
   },
   "rows": [
-    "##################",
-    "#::::::::::::::::#",
-    "#:L::::::::::::L:#",
-    "#::::::::::::::::#",
-    "~~~~~~~~~~~~~~~~~~",
-    "#::::::::::::::::#",
-    "#:K::::::::::::K:#",
-    "#::::::::::::::::#",
-    "###D#########D####"
+    "####W##D#####W######",
+    "#::::::::::::::::::#",
+    "L::k:::::::::::::b:L",
+    "::::::::::::::::::::",
+    "~~~~~~~~~~~~~~~~~~~~",
+    "~~~~~~~~~~~~~~~~~~~~",
+    "::::::::::::::::::::",
+    "L:b:::::::::::::k::L",
+    "#::::::::::::::::::#",
+    "###D####W#####D#####"
   ],
   "spawn": {
-    "x": 8,
-    "y": 7
+    "x": 9,
+    "y": 8
   },
   "hotspots": [
     {
       "id": "bk_office",
-      "x": 3,
-      "y": 2,
+      "x": 7,
+      "y": 0,
       "name": "A Brass Plate On A Narrow Door",
       "description": "Sherlock Moriarty, Private Investigator. You screwed the plate on yourself, and the name is a joke nobody in this country is equipped to get.",
       "action": "dialogue",
@@ -64,8 +75,8 @@
     },
     {
       "id": "bk_alley",
-      "x": 14,
-      "y": 6,
+      "x": 17,
+      "y": 7,
       "name": "The Mouth Of An Alley",
       "description": "Backlund’s East District after dark: fog with soot in it, and a trade in people that the constabulary has agreed with itself is somebody else’s district.",
       "action": "dialogue",
@@ -74,8 +85,8 @@
     },
     {
       "id": "bk_chapel",
-      "x": 8,
-      "y": 1,
+      "x": 4,
+      "y": 0,
       "name": "A Chapel With Its Windows Bricked Up",
       "description": "The bricks are new and the mortar is wrong, and somebody has been carrying a great deal of water in here for a building with no font.",
       "action": "dialogue",
@@ -84,8 +95,8 @@
     },
     {
       "id": "rite_backlund",
-      "x": 8,
-      "y": 2,
+      "x": 2,
+      "y": 1,
       "name": "The Circle",
       "description": "Chalked on the boards of a rented room above a chandler’s shop, and swept up every morning before the landlady comes.",
       "action": "ritual",
@@ -93,8 +104,8 @@
     },
     {
       "id": "bk_requisition",
-      "x": 13,
-      "y": 5,
+      "x": 8,
+      "y": 9,
       "name": "The Backlund Requisition Office",
       "description": "A counter in a building with no sign, where the Church sells its own people what the Church has already decided they may have.",
       "action": "shop",
@@ -105,19 +116,19 @@
   "exits": [
     {
       "x": 3,
-      "y": 8,
+      "y": 9,
       "toMap": "club_hub",
       "toX": 9,
       "toY": 13,
-      "label": "The train to Tingen"
+      "label": "Tingen"
     },
     {
-      "x": 13,
-      "y": 8,
+      "x": 14,
+      "y": 9,
       "toMap": "bayam",
-      "toX": 8,
-      "toY": 7,
-      "label": "The Bayam packet",
+      "toX": 9,
+      "toY": 8,
+      "label": "Bayam",
       "requires": {
         "sequenceAtMost": 6
       }

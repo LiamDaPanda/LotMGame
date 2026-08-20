@@ -5,58 +5,68 @@
   "encounterChance": 0,
   "legend": {
     "#": {
-      "floor": 11,
+      "floor": 9,
+      "collide": true
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "D": {
+      "floor": 13,
       "collide": true
     },
     ".": {
-      "floor": 4
+      "floor": 7
     },
-    "=": {
+    "r": {
       "floor": 5
     },
-    "T": {
+    "p": {
+      "floor": 7,
+      "object": 17,
+      "collide": true
+    },
+    "a": {
       "floor": 5,
       "object": 16,
       "collide": true
     },
-    "B": {
-      "floor": 4,
-      "object": 18,
+    "c": {
+      "floor": 7,
+      "object": 24,
       "collide": true
     },
-    "C": {
-      "floor": 4,
-      "object": 21,
+    "g": {
+      "floor": 7,
+      "object": 27,
       "collide": true
     },
     "o": {
       "floor": 14
-    },
-    "@": {
-      "floor": 32
     }
   },
   "rows": [
-    "##################",
-    "#................#",
-    "#..T..........T..#",
-    "#................#",
-    "#....========....#",
-    "#....=......=....#",
-    "#....=..@...=....#",
-    "#................#",
-    "#........o.......#",
-    "##################"
+    "####W#########W#####",
+    "#........rr........#",
+    "#.c......ra......c.#",
+    "#........rr........#",
+    "#.pp.pp..rr..pp.pp.#",
+    "#.pp.pp..rr..pp.pp.#",
+    "#........rr........#",
+    "#.g......rr......g.#",
+    "#........rr........#",
+    "###D#####rr#####D###"
   ],
   "spawn": {
-    "x": 8,
-    "y": 8
+    "x": 9,
+    "y": 9
   },
   "hotspots": [
     {
       "id": "cd_gate",
-      "x": 8,
-      "y": 6,
+      "x": 10,
+      "y": 2,
       "name": "The Chanis Gate",
       "description": "Named for a saint nobody outside the Church has heard of, and behind it the cupboard where the Evernight Goddess keeps the things she does not trust anybody else to keep.\n\nThe notebook is in there.",
       "action": "dialogue",
@@ -65,15 +75,15 @@
     },
     {
       "id": "cd_pews",
-      "x": 4,
-      "y": 2,
+      "x": 3,
+      "y": 4,
       "name": "The Empty Pews",
       "description": "Six hundred seats and four occupied, all of them by people who came in out of the fog. Backlund prays the way it works: early, joylessly, and with an eye on the clock."
     },
     {
       "id": "rite_cathedral",
-      "x": 13,
-      "y": 2,
+      "x": 16,
+      "y": 7,
       "name": "The Circle",
       "description": "A side chapel nobody has used since the fire, and a diagram that would have its author burned.",
       "action": "ritual",
@@ -83,20 +93,20 @@
   "npcs": [],
   "exits": [
     {
-      "x": 8,
-      "y": 8,
+      "x": 3,
+      "y": 9,
       "toMap": "backlund",
-      "toX": 8,
-      "toY": 5,
-      "label": "Out into the fog"
+      "toX": 9,
+      "toY": 1,
+      "label": "Out"
     },
     {
-      "x": 8,
-      "y": 1,
+      "x": 16,
+      "y": 9,
       "toMap": "sefirah",
-      "toX": 8,
-      "toY": 8,
-      "label": "Down the ladder of light",
+      "toX": 9,
+      "toY": 9,
+      "label": "The Ladder",
       "requires": {
         "flag": "v4_undying"
       }
