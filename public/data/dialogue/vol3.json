@@ -1,0 +1,173 @@
+[
+  {
+    "id": "dlg_bayam",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Bayam, in the Rorsted Archipelago: a free port in the sense that nobody has yet worked out who to charge for it.\n\nFour flags on the roadstead and none of them meaning anything, a market that sells Beyonder characteristics beside the salt fish, and a Church of Storms deacon on every third corner pretending to be interested in the weather.",
+        "choices": [
+          {
+            "text": "And who came ashore?",
+            "goto": "name"
+          }
+        ]
+      },
+      "name": {
+        "text": "Gehrman Sparrow. Adventurer, bounty hunter, and — the port has decided on its own — a madman, on the grounds that he asks his questions in the tone of a man who has already been told the answer.\n\nThe madness is deliberate. A Faceless who is thought eccentric is a Faceless nobody looks at twice.",
+        "choices": [
+          {
+            "text": "Get to work.",
+            "goto": "close"
+          }
+        ]
+      },
+      "close": {
+        "text": "Above the fog, Mr. Hanged Man has gone very quiet about the Rorsted Archipelago, which is the most informative thing he has ever done.",
+        "effect": {
+          "flags": [
+            "v3_arrived"
+          ],
+          "skills": {
+            "streetwise": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_sparrow",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The tavern with no name is where a bounty is agreed in this port. Tonight’s is a pirate captain with eleven murders and a habit of taking the Church’s mail ships.\n\nFour men at the corner table have priced your coat. One of them has priced you, which is a different calculation and a worse one for him.",
+        "choices": [
+          {
+            "text": "Be the madman.",
+            "goto": "mad"
+          },
+          {
+            "text": "Be the professional.",
+            "goto": "pro"
+          }
+        ]
+      },
+      "mad": {
+        "text": "You do the whole performance: the flat stare, the questions in the wrong order, the pause held four seconds past comfortable. Gehrman Sparrow buys a round for a table that has just decided, quietly and unanimously, not to test him.\n\nBy morning the port has agreed he is dangerous, which is worth more than being dangerous and costs nothing.",
+        "effect": {
+          "skills": {
+            "rhetoric": 1
+          },
+          "digestion": 10
+        },
+        "choices": [
+          {
+            "text": "Take the bounty.",
+            "goto": "close"
+          }
+        ]
+      },
+      "pro": {
+        "text": "You take the bounty, the ship and the two hands who can be trusted, and you are back inside a week with the captain in irons and the mail recovered.\n\nThe Church of Storms pays without argument, which in this port is the same as a public commendation.",
+        "effect": {
+          "pence": 4800,
+          "trust": {
+            "hanged_man": 10
+          }
+        },
+        "choices": [
+          {
+            "text": "Take the bounty.",
+            "goto": "close"
+          }
+        ]
+      },
+      "close": {
+        "text": "Sea and pirates and a name that is worth something at four ports. It is, for about six weeks, almost a life.",
+        "effect": {
+          "flags": [
+            "v3_sparrow"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_bone_dagger",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The dagger is carved from a bone that never belonged to anything that walked, and the sailmaker wants a shilling for it because it came up in a net.\n\nThe moment your hand closes on it the tavern noise goes away, and something very old and very patient begins, politely, to move into your body.",
+        "choices": [
+          {
+            "text": "Fight it.",
+            "goto": "fight"
+          },
+          {
+            "text": "Let it come, and watch how it does it.",
+            "goto": "watch"
+          }
+        ]
+      },
+      "fight": {
+        "text": "You are Faceless, and the one thing a Faceless truly owns is the question of who is wearing the face. You put the whole weight of the role against the door and hold it shut.\n\nIt has done this to captains and to kings. It has not done it to a man who genuinely is not sure which of his names is the real one, and the ambiguity is, for once, load-bearing.",
+        "effect": {
+          "sanity": -12,
+          "spirituality": -30
+        },
+        "choices": [
+          {
+            "text": "Give it to the Church of Storms.",
+            "goto": "storms"
+          }
+        ]
+      },
+      "watch": {
+        "text": "You let it in as far as the hallway and take notes.\n\nKalvetua. A Sea God of an epoch that ended before Loen had a name, reduced to a splinter in a dagger, patiently repeating an intrusion that worked perfectly on everybody it worked on.\n\nThen you put it out, and you are ill for four days, and you know exactly how the trick is done.",
+        "effect": {
+          "sanity": -20,
+          "spirituality": -40,
+          "skills": {
+            "occultism": 2
+          }
+        },
+        "choices": [
+          {
+            "text": "Give it to the Church of Storms.",
+            "goto": "storms"
+          }
+        ]
+      },
+      "storms": {
+        "text": "You do the sensible thing, which is also the thing nobody in this port would believe of Gehrman Sparrow: you tell the Church of the Lord of Storms exactly what is in the dagger and exactly where it is.\n\nThey come with three demigods and a warship. What they leave of Kalvetua would not fill a matchbox.",
+        "effect": {
+          "trust": {
+            "hanged_man": 15
+          }
+        },
+        "choices": [
+          {
+            "text": "And on the altar afterwards.",
+            "goto": "scepter"
+          }
+        ]
+      },
+      "scepter": {
+        "text": "The Sea God’s scepter is on the altar, and the Church’s own people cannot pick it up, because it does not belong to a church. It belongs to whoever the sea will answer.\n\nIt comes off the stone into your hand like something being handed back.\n\nSomewhere a long way down, the water changes its mind about who it is listening to.",
+        "effect": {
+          "flags": [
+            "v3_scepter"
+          ],
+          "items": [],
+          "digestion": 45,
+          "spirituality": 20
+        },
+        "end": true
+      }
+    }
+  }
+]

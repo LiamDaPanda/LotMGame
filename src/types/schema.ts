@@ -574,8 +574,20 @@ export interface MapData {
  * a reason stays unlocked — but at any moment exactly one chapter is current,
  * and it says in one line what the story is waiting for.
  */
+export interface VolumeData {
+  /** 1-based, and the order they are played in. */
+  number: number;
+  id: string;
+  /** The book's own volume title: Clown, Faceless, Traveler… */
+  title: string;
+  /** One line for the journal's contents page. */
+  blurb: string;
+}
+
 export interface ChapterData {
   id: string;
+  /** Which volume of the book this beat belongs to. */
+  volume: number;
   /** Act heading, e.g. "III. The Rooms Above the Shop". */
   title: string;
   /** What to do next, in the second person. */
@@ -601,6 +613,6 @@ export interface ContentIndex {
   encounters: string[];
   items: string;
   characters: string;
-  /** The chapter spine. Optional so a content set may have no story at all. */
+  /** Volumes and their chapters. Optional: a content set may have no story. */
   story?: string;
 }

@@ -22,7 +22,7 @@
   },
   {
     "id": "augurs_glance",
-    "name": "Augur's Glance",
+    "name": "Augur’s Glance",
     "pathway": "seer",
     "sequence": 9,
     "tags": [
@@ -51,7 +51,7 @@
       "investigation",
       "utility"
     ],
-    "summary": "Locks, latches and other people's pockets open for you.",
+    "summary": "Locks, latches and other people’s pockets open for you.",
     "flavour": "Your fingers do something you did not instruct them to do, and the catch gives.",
     "spiritCost": 10,
     "sanityCost": 1,
@@ -151,7 +151,7 @@
   },
   {
     "id": "conjurers_reach",
-    "name": "Conjurer's Reach",
+    "name": "Conjurer’s Reach",
     "pathway": "seer",
     "sequence": 7,
     "tags": [
@@ -317,6 +317,281 @@
     ],
     "effect": {
       "kind": "disguise"
+    }
+  },
+  {
+    "id": "spirit_threads",
+    "name": "Spirit Threads",
+    "pathway": "seer",
+    "sequence": 5,
+    "tags": [
+      "social",
+      "control"
+    ],
+    "summary": "Take the strings of a thing that has none, and move it.",
+    "flavour": "The threads are already there. All a Marionettist does is decide to hold them.",
+    "spiritCost": 28,
+    "sanityCost": 3,
+    "exposure": 14,
+    "usableIn": [
+      "investigation",
+      "dialogue",
+      "encounter"
+    ],
+    "effect": {
+      "kind": "social_pressure"
+    }
+  },
+  {
+    "id": "puppet_double",
+    "name": "Puppet Double",
+    "pathway": "seer",
+    "sequence": 5,
+    "tags": [
+      "escape"
+    ],
+    "summary": "Leave something behind that walks and talks as you did.",
+    "flavour": "It is not a decoy. It is a rehearsal of you, and it does the part rather well.",
+    "spiritCost": 30,
+    "sanityCost": 4,
+    "exposure": 16,
+    "usableIn": [
+      "encounter",
+      "investigation"
+    ],
+    "effect": {
+      "kind": "escape"
+    }
+  },
+  {
+    "id": "hanged_thread",
+    "name": "Thread of the Hanged",
+    "pathway": "seer",
+    "sequence": 5,
+    "tags": [
+      "access"
+    ],
+    "summary": "A knot that opens what has been tied shut for a long time.",
+    "flavour": "Every lock is a knot somebody tied on purpose.",
+    "spiritCost": 24,
+    "sanityCost": 2,
+    "exposure": 10,
+    "usableIn": [
+      "investigation"
+    ],
+    "effect": {
+      "kind": "unlock_access"
+    }
+  },
+  {
+    "id": "mystery_swap",
+    "name": "Exchange of Places",
+    "pathway": "seer",
+    "sequence": 4,
+    "tags": [
+      "escape"
+    ],
+    "summary": "Trade where you are for where something else is.",
+    "flavour": "The world does not notice the substitution. It only notices afterwards, and by then it is polite about it.",
+    "spiritCost": 34,
+    "sanityCost": 4,
+    "exposure": 18,
+    "usableIn": [
+      "encounter",
+      "investigation"
+    ],
+    "effect": {
+      "kind": "escape"
+    }
+  },
+  {
+    "id": "bizarre_charm",
+    "name": "Bizarre Charm",
+    "pathway": "seer",
+    "sequence": 4,
+    "tags": [
+      "social"
+    ],
+    "summary": "Ask a question in a way that makes the truth the easiest answer.",
+    "flavour": "Nothing is compelled. Everything is simply arranged so that lying is more effort.",
+    "spiritCost": 30,
+    "sanityCost": 3,
+    "exposure": 16,
+    "usableIn": [
+      "dialogue",
+      "investigation"
+    ],
+    "effect": {
+      "kind": "reveal_truth"
+    }
+  },
+  {
+    "id": "dream_walk",
+    "name": "Walk In The Dream",
+    "pathway": "seer",
+    "sequence": 4,
+    "tags": [
+      "recovery"
+    ],
+    "summary": "Sleep where the dreaming is, and come back with your mind mended.",
+    "flavour": "You wake with the taste of somebody else’s afternoon in your mouth.",
+    "spiritCost": 26,
+    "sanityCost": 0,
+    "exposure": 6,
+    "usableIn": [
+      "hub",
+      "investigation"
+    ],
+    "effect": {
+      "kind": "restore_sanity"
+    }
+  },
+  {
+    "id": "hour_of_miracles",
+    "name": "Hour Of Miracles",
+    "pathway": "seer",
+    "sequence": 3,
+    "tags": [
+      "access"
+    ],
+    "summary": "Make a small impossibility, and pay for it in the ordinary way.",
+    "flavour": "A miracle is only a coincidence that has been asked for by name.",
+    "spiritCost": 40,
+    "sanityCost": 5,
+    "exposure": 22,
+    "usableIn": [
+      "investigation",
+      "encounter"
+    ],
+    "effect": {
+      "kind": "unlock_access"
+    }
+  },
+  {
+    "id": "sign_of_fortune",
+    "name": "Sign Of Fortune",
+    "pathway": "seer",
+    "sequence": 3,
+    "tags": [
+      "passive"
+    ],
+    "summary": "Read the luck in a room the way other people read the weather.",
+    "flavour": "It is not that you know what will happen. It is that you know which way to be standing.",
+    "spiritCost": 0,
+    "sanityCost": 0,
+    "exposure": 0,
+    "usableIn": [
+      "investigation",
+      "hub",
+      "encounter"
+    ],
+    "effect": {
+      "kind": "sense_danger"
+    }
+  },
+  {
+    "id": "borrowed_miracle",
+    "name": "Borrowed Miracle",
+    "pathway": "seer",
+    "sequence": 3,
+    "tags": [
+      "recovery"
+    ],
+    "summary": "Take back a night’s sleep you never had.",
+    "flavour": "Borrowed, not given. Something, somewhere, is keeping the account.",
+    "spiritCost": 34,
+    "sanityCost": 0,
+    "exposure": 8,
+    "usableIn": [
+      "hub",
+      "investigation"
+    ],
+    "effect": {
+      "kind": "restore_sanity"
+    }
+  },
+  {
+    "id": "attendants_answer",
+    "name": "The Attendant’s Answer",
+    "pathway": "seer",
+    "sequence": 2,
+    "tags": [
+      "investigation"
+    ],
+    "summary": "Ask the mysteries directly, and be answered directly.",
+    "flavour": "There is no pendulum any more. There is only the question, and the fact that it is already answered.",
+    "spiritCost": 44,
+    "sanityCost": 4,
+    "exposure": 20,
+    "usableIn": [
+      "investigation",
+      "dialogue"
+    ],
+    "effect": {
+      "kind": "reveal_truth"
+    }
+  },
+  {
+    "id": "ceremonial_door",
+    "name": "The Ceremonial Door",
+    "pathway": "seer",
+    "sequence": 2,
+    "tags": [
+      "escape"
+    ],
+    "summary": "Step out of a place that has no way out of it.",
+    "flavour": "You do not go through the wall. You go through the ceremony.",
+    "spiritCost": 46,
+    "sanityCost": 5,
+    "exposure": 24,
+    "usableIn": [
+      "encounter",
+      "investigation"
+    ],
+    "effect": {
+      "kind": "escape"
+    }
+  },
+  {
+    "id": "fools_hand",
+    "name": "The Fool’s Hand",
+    "pathway": "seer",
+    "sequence": 1,
+    "tags": [
+      "access"
+    ],
+    "summary": "Reach for a thing that is not in reach, in a way nothing in the world objects to.",
+    "flavour": "Above the fog, a hand comes down. It is your hand, and it has been for some time.",
+    "spiritCost": 50,
+    "sanityCost": 6,
+    "exposure": 26,
+    "usableIn": [
+      "investigation",
+      "encounter"
+    ],
+    "effect": {
+      "kind": "unlock_access"
+    }
+  },
+  {
+    "id": "above_the_fog",
+    "name": "Above The Fog",
+    "pathway": "seer",
+    "sequence": 1,
+    "tags": [
+      "investigation"
+    ],
+    "summary": "See a thing as it is, all the way down, including the part you would rather not.",
+    "flavour": "The seat at the head of the table was never a disguise. It was a vacancy, and you filled it.",
+    "spiritCost": 52,
+    "sanityCost": 8,
+    "exposure": 28,
+    "usableIn": [
+      "investigation",
+      "dialogue"
+    ],
+    "effect": {
+      "kind": "reveal_truth"
     }
   }
 ]

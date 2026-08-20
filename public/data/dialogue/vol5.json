@@ -1,0 +1,136 @@
+[
+  {
+    "id": "dlg_sefirah",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The palace above the fog has a name now, and you did not give it one.\n\nSefirah Castle. It was here before you sat down in it, it chose you the way a lock chooses a key, and since you became a demigod it has stopped pretending to be scenery.",
+        "choices": [
+          {
+            "text": "Walk it.",
+            "goto": "walk"
+          }
+        ]
+      },
+      "walk": {
+        "text": "Corridors that were not there last month. A library with one book in it. A window that shows Backlund whether or not you are looking at Backlund.\n\nAnd, in the depth of the grey fog, a ladder of light going down — which is the first direction the fog has ever admitted to having.",
+        "effect": {
+          "flags": [
+            "v5_arrived"
+          ],
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_door_of_light",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "You go down the ladder, which takes either four minutes or four hundred years depending on which part of you is counting.\n\nAt the bottom is a door of light, and behind the door is the answer to the question you have been carrying since the twenty-eighth of June, 1349: what a transmigrator is, and why there have been others.",
+        "choices": [
+          {
+            "text": "Open it.",
+            "goto": "truth"
+          }
+        ]
+      },
+      "truth": {
+        "text": "Roselle Gustav came through, and left a diary, and became an emperor.\n\nSomebody came through before him. Somebody came through before that.\n\nAnd the castle did not choose any of you for a virtue. It chose whoever happened to be performing a luck-enhancement ritual with the right materials at the right instant — a silver plate, a device from a world with no magic in it, a diagram copied out of a notebook — and it chose at random, and it has been choosing at random for a very long time.",
+        "choices": [
+          {
+            "text": "So the whole thing was an accident.",
+            "goto": "accident"
+          }
+        ]
+      },
+      "accident": {
+        "text": "‘An accident’ is a comfortable word for it. The uncomfortable word is that a thing which selects at random from an enormous number of candidates will, given enough time, select somebody who was *arranged* to be a candidate.\n\nAnd there is a notebook in a vault in Backlund that spent four hundred years arranging people.",
+        "effect": {
+          "flags": [
+            "v5_door"
+          ],
+          "sanity": -10,
+          "skills": {
+            "occultism": 2
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_mausoleum",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Backlund has been under smog for eleven days and it is not smog.\n\nUnderneath it, three separate people have each decided that they are the only one being careful: Bernadette Gustav with a wishing lamp, William Augustus I coming up out of a grave he was put in for good reason, and George III in the middle of an advancement he is not going to survive.",
+        "choices": [
+          {
+            "text": "Go down into the mausoleum.",
+            "goto": "down"
+          }
+        ]
+      },
+      "down": {
+        "text": "You go in as Dwayne Dantès, which is to say you go in through the front, invited, and are the only person there who is not planning to be an emperor by morning.\n\nBernadette burns the lamp to stand at Sequence 1 for four minutes. What answers her is older than the kingdom and does not consider four minutes a serious threat.",
+        "choices": [
+          {
+            "text": "Stay for the end of it.",
+            "goto": "collapse"
+          },
+          {
+            "text": "Get the living out.",
+            "goto": "rescue"
+          }
+        ]
+      },
+      "rescue": {
+        "text": "You spend the four minutes doing the only useful thing available to a Sequence 4 in a room where angels are arguing: you find the servants, the guards and the two clerks nobody thought about, and you put them outside.\n\nEleven people. It is not a heroic number. They are eleven people.",
+        "effect": {
+          "sanity": 4,
+          "trust": {
+            "justice": 10
+          }
+        },
+        "choices": [
+          {
+            "text": "Then the roof.",
+            "goto": "collapse"
+          }
+        ]
+      },
+      "collapse": {
+        "text": "The mausoleum comes down on top of an argument between things that should not be in the same county. George III fails his advancement in the middle of it and loses control, and then loses everything else, and the grave he was standing in becomes the grave he is in.\n\nWhen the dust settles, Backlund’s smog lifts as though somebody had opened a window.",
+        "effect": {
+          "sanity": -12,
+          "spirituality": -30
+        },
+        "choices": [
+          {
+            "text": "And above the fog.",
+            "goto": "watched"
+          }
+        ]
+      },
+      "watched": {
+        "text": "Sefirah Castle was visible from the mausoleum. Not to the crowd. To the three things in the world that were looking for it: Amon, who has been amused by you since the Chanis Gate; Pallez Zoroast, who is hunted by Amon and is therefore interested in anybody Amon finds funny; and the Mother Tree of Desire, which wants, as it always wants, simply to be wanted.\n\nThe seat at the head of the table is not a secret any more. It is a location.",
+        "effect": {
+          "flags": [
+            "v5_mausoleum"
+          ],
+          "digestion": 55,
+          "sanity": -6
+        },
+        "end": true
+      }
+    }
+  }
+]

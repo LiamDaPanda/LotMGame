@@ -22,6 +22,22 @@ import {
   tabBarRect,
 } from '@/ui/theme';
 
+/** Volume numbers are set the way the book sets them. */
+function roman(value: number): string {
+  const table: [number, string][] = [
+    [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I'],
+  ];
+  let left = value;
+  let out = '';
+  for (const [size, glyph] of table) {
+    while (left >= size) {
+      out += glyph;
+      left -= size;
+    }
+  }
+  return out;
+}
+
 /** The bottom-screen tabs, in the order a thumb meets them. */
 const TABS = [
   { key: 'CaseBoard', label: 'CASE' },
@@ -168,7 +184,7 @@ export class HudScene extends Phaser.Scene {
       size: 'md',
       color: CSS.parchment,
       wrap: rect.width - 24,
-      maxHeight: rect.height - 28 - 26,
+      maxHeight: rect.height - 28 - 24,
     });
     this.questWhere = pixelText(this, rect.x + 12, rect.y + rect.height - 22, '', {
       size: 'md',
@@ -185,13 +201,16 @@ export class HudScene extends Phaser.Scene {
     this.session.story.refresh();
     const chapter = this.session.story.current();
     if (!chapter) {
-      this.questTitle.setText('THE LADDER');
-      this.questLine.setText('Nothing is waiting on you. That will not last.');
+      this.questTitle.setText('THE FOOL');
+      this.questLine.setText('The book is finished. The seat above the fog is not.');
       this.questWhere.setText('');
       return;
     }
-    const { index, total } = this.session.story.progress();
-    this.questTitle.setText(`${chapter.title.toUpperCase()}  (${index}/${total})`);
+    const { volume, index, total } = this.session.story.progress();
+    // "II. FACELESS · 3/5" — the book's own shelf-mark, so a player who knows
+    // the novel knows exactly where the game has got to.
+    const mark = volume ? `${roman(volume.number)}. ${volume.title.toUpperCase()} · ` : '';
+    this.questTitle.setText(`${mark}${index}/${total}  ${chapter.title.toUpperCase()}`);
     this.questLine.setText(chapter.objective);
 
     const destination = this.session.story.destinationName();

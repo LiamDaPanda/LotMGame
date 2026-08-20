@@ -394,12 +394,27 @@ export class WorldScene extends Phaser.Scene {
   private refreshExitLabels(): void {
     if (!this.player) return;
     const here = { x: this.player.tileX, y: this.player.tileY };
+    // Visible labels are staggered where they would print over each other: two
+    // doors at the same end of a street is common, and two names in the same
+    // eight pixels is unreadable.
+    const shown: { label: PixelText; left: number; right: number; row: number }[] = [];
     for (const exit of this.map.exits ?? []) {
       const marker = this.exitMarkers.get(`${exit.x},${exit.y}`);
       if (!marker) continue;
       const label = marker.list[1] as PixelText;
       const near = TileGrid.distance(here, exit) <= 5;
       label.setVisible(near || marker.getData('onRoute') === true);
+      if (!label.visible) continue;
+
+      const centre = exit.x * TILE_SIZE + TILE_SIZE / 2;
+      const left = centre - label.width / 2;
+      const right = centre + label.width / 2;
+      let row = 0;
+      while (shown.some((other) => other.row === row && other.left < right && left < other.right)) {
+        row += 1;
+      }
+      label.y = 8 + row * 12;
+      shown.push({ label, left, right, row });
     }
     for (const [id, label] of this.npcLabels) {
       const actor = this.npcs.get(id);

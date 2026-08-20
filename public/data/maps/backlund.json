@@ -1,0 +1,130 @@
+{
+  "id": "backlund",
+  "name": "Backlund, the East District",
+  "ambient": "#232630",
+  "encounterChance": 0.2,
+  "legend": {
+    "#": {
+      "floor": 8,
+      "collide": true
+    },
+    ":": {
+      "floor": 1
+    },
+    "~": {
+      "floor": 2
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "L": {
+      "floor": 1,
+      "object": 24,
+      "collide": true
+    },
+    "K": {
+      "floor": 1,
+      "object": 19,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    }
+  },
+  "rows": [
+    "##################",
+    "#::::::::::::::::#",
+    "#:L::::::::::::L:#",
+    "#::::::::::::::::#",
+    "~~~~~~~~~~~~~~~~~~",
+    "#::::::::::::::::#",
+    "#:K::::::::::::K:#",
+    "#::::::::::::::::#",
+    "###D#########D####"
+  ],
+  "spawn": {
+    "x": 8,
+    "y": 7
+  },
+  "hotspots": [
+    {
+      "id": "bk_office",
+      "x": 3,
+      "y": 2,
+      "name": "A Brass Plate On A Narrow Door",
+      "description": "Sherlock Moriarty, Private Investigator. You screwed the plate on yourself, and the name is a joke nobody in this country is equipped to get.",
+      "action": "dialogue",
+      "dialogue": "dlg_moriarty",
+      "icon": 11
+    },
+    {
+      "id": "bk_alley",
+      "x": 14,
+      "y": 6,
+      "name": "The Mouth Of An Alley",
+      "description": "Backlund’s East District after dark: fog with soot in it, and a trade in people that the constabulary has agreed with itself is somebody else’s district.",
+      "action": "dialogue",
+      "dialogue": "dlg_black_emperor",
+      "icon": 12
+    },
+    {
+      "id": "bk_chapel",
+      "x": 8,
+      "y": 1,
+      "name": "A Chapel With Its Windows Bricked Up",
+      "description": "The bricks are new and the mortar is wrong, and somebody has been carrying a great deal of water in here for a building with no font.",
+      "action": "dialogue",
+      "dialogue": "dlg_descent",
+      "icon": 13
+    },
+    {
+      "id": "rite_backlund",
+      "x": 8,
+      "y": 2,
+      "name": "The Circle",
+      "description": "Chalked on the boards of a rented room above a chandler’s shop, and swept up every morning before the landlady comes.",
+      "action": "ritual",
+      "icon": 13
+    },
+    {
+      "id": "bk_requisition",
+      "x": 13,
+      "y": 5,
+      "name": "The Backlund Requisition Office",
+      "description": "A counter in a building with no sign, where the Church sells its own people what the Church has already decided they may have.",
+      "action": "shop",
+      "icon": 11
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 3,
+      "y": 8,
+      "toMap": "club_hub",
+      "toX": 9,
+      "toY": 13,
+      "label": "The train to Tingen"
+    },
+    {
+      "x": 13,
+      "y": 8,
+      "toMap": "bayam",
+      "toX": 8,
+      "toY": 7,
+      "label": "The Bayam packet",
+      "requires": {
+        "sequenceAtMost": 6
+      }
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_backlund",
+    "flag": "v2_arrived"
+  }
+}

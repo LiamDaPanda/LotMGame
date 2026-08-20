@@ -140,10 +140,10 @@ export function menuRect(): Rect {
  * choice rather than like being lost.
  */
 export function objectiveRect(): Rect {
-  // Tall enough for a heading, three wrapped lines of instruction and a
+  // Tall enough for a heading, four wrapped lines of instruction and a
   // destination — measured against the longest objective, so the card never has
   // to truncate the one line the player most needs to read.
-  const height = 106;
+  const height = 124;
   if (!isPortrait()) return { x: 10, y: statusRect().height + 8, width: 380, height };
   const menu = menuRect();
   return { x: 8, y: menu.y + 6, width: menu.width - 16, height };

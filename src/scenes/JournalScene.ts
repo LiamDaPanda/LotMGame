@@ -238,31 +238,45 @@ export class JournalScene extends Phaser.Scene {
     const bounds = this.bodyBounds();
     const story = this.session.story;
     const current = story.current();
-    const { index, total } = story.progress();
+    const { volume, index, total } = story.progress();
 
     const bodyY = this.header(
       bounds,
       'The Story So Far',
-      current ? `Chapter ${index} of ${total}` : 'Every chapter behind you',
+      volume
+        ? `Volume ${volume.number}: ${volume.title}  ·  ${index} of ${total}`
+        : 'Every chapter behind you',
     );
 
     const rows: Phaser.GameObjects.Container[] = [];
-    for (const chapter of story.completed()) {
-      rows.push(
-        this.conclusionRow(chapter.title, chapter.recap ?? chapter.objective, bounds.width),
-      );
-    }
+    const done = new Set(story.completed().map((chapter) => chapter.id));
 
-    if (current) {
-      rows.push(this.headingRow('Now', bounds.width));
-      rows.push(this.bulletRow(current.title, bounds.width, CSS.brass));
-      rows.push(this.paragraphRow(current.objective, bounds.width));
-      const destination = story.destinationName();
-      if (destination) {
-        const here = this.session.state.currentMap === current.where;
-        rows.push(
-          this.bulletRow(here ? `You are at ${destination}.` : `Go to: ${destination}`, bounds.width, CSS.muted),
-        );
+    // Shelved by volume, and the volumes you have not reached are not listed —
+    // a spine you can read ahead in is a table of spoilers.
+    for (const shelf of story.volumesSeen()) {
+      rows.push(this.headingRow(`Volume ${shelf.number} — ${shelf.title}`, bounds.width));
+      rows.push(this.bulletRow(shelf.blurb, bounds.width, CSS.muted));
+      for (const chapter of this.session.content.chaptersIn(shelf.number)) {
+        if (done.has(chapter.id)) {
+          rows.push(
+            this.conclusionRow(chapter.title, chapter.recap ?? chapter.objective, bounds.width),
+          );
+        } else if (chapter.id === current?.id) {
+          rows.push(this.bulletRow(`Now: ${chapter.title}`, bounds.width, CSS.brass));
+          rows.push(this.paragraphRow(chapter.objective, bounds.width));
+          const destination = story.destinationName();
+          if (destination) {
+            const here = this.session.state.currentMap === chapter.where;
+            rows.push(
+              this.bulletRow(
+                here ? `You are at ${destination}.` : `Go to: ${destination}`,
+                bounds.width,
+                CSS.muted,
+              ),
+            );
+          }
+          break;
+        }
       }
     }
 

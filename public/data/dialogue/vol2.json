@@ -1,0 +1,244 @@
+[
+  {
+    "id": "dlg_backlund",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Tingen is behind you, and so is the man who signed you on.\n\nDunn Smith went into the ground with the rest of the Seventh Unit’s dead, and you went into a coffin of your own and came out of it — which is a sentence you have not tried saying aloud, because there is nobody left in that city you could say it to.",
+        "choices": [
+          {
+            "text": "Look out of the window.",
+            "goto": "city"
+          }
+        ]
+      },
+      "city": {
+        "text": "Backlund, from a third-class carriage: four hundred thousand chimneys and one river the colour of a wet coin. The capital does not notice a man arriving. That is the entire reason to come here.\n\nBenson has a post at the Church’s shipping office. Melissa has a place at a school that will take her. Both of them believe you died and got better, and neither has asked how.",
+        "choices": [
+          {
+            "text": "So who are you, this time?",
+            "goto": "name"
+          }
+        ]
+      },
+      "name": {
+        "text": "The papers say Sherlock Moriarty, private investigator, lately of the colonies. It is two names off a book you read in a world that has no idea this one exists, and the joke is entirely for your own benefit.\n\nThere is a room above a chandler’s shop in the East District with a brass plate waiting for a name, and a notebook in a cathedral across the river that you intend, eventually, to steal.",
+        "choices": [
+          {
+            "text": "Get to work.",
+            "goto": "close"
+          }
+        ]
+      },
+      "close": {
+        "text": "Somewhere above the fog, three chairs at a bronze table are becoming a habit. Miss Justice has begun bringing questions written down in advance. Mr. Hanged Man has begun bringing prices.",
+        "effect": {
+          "flags": [
+            "v2_arrived"
+          ],
+          "skills": {
+            "rhetoric": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_moriarty",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The first client up the stairs is a woman with a missing brother and eight shillings, and the case takes an afternoon and a spirit-thread divination she does not see you perform.\n\nThe second brings a friend. The friend brings a newspaper man. By the end of the month there is a queue on the landing.",
+        "choices": [
+          {
+            "text": "Be the detective they want.",
+            "goto": "detective"
+          },
+          {
+            "text": "Be the detective who is never quite there.",
+            "goto": "faceless"
+          }
+        ]
+      },
+      "detective": {
+        "text": "You give them the pipe, the deductions delivered a beat late for effect, and the small theatrical cruelty of being right in front of a client’s husband.\n\nIt is acting, which is the whole of the pathway. The Church’s own manual calls it the acting method and then declines to explain why the men who are best at it end up unable to say which face they started with.",
+        "effect": {
+          "skills": {
+            "rhetoric": 1
+          },
+          "concealment": -4
+        },
+        "choices": [
+          {
+            "text": "Take the work.",
+            "goto": "close"
+          }
+        ]
+      },
+      "faceless": {
+        "text": "You take the cases that can be closed without anybody remembering who closed them, and you leave the credit on the doorstep of whichever constable was standing nearest.\n\nIt is slower. It is also how a man with a second identity, a third face and a seat above the fog stays alive in a city with an Angel in it.",
+        "effect": {
+          "skills": {
+            "streetwise": 1
+          },
+          "concealment": 6
+        },
+        "choices": [
+          {
+            "text": "Take the work.",
+            "goto": "close"
+          }
+        ]
+      },
+      "close": {
+        "text": "Sherlock Moriarty is a real man in Backlund now: he has a landlord, a laundry, and an opinion printed in the Backlund Post about the intelligence of the constabulary.\n\nKlein Moretti is a name on a headstone in Tingen, which is exactly where you would like it to stay.",
+        "effect": {
+          "flags": [
+            "v2_detective"
+          ],
+          "pence": 1200
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_black_emperor",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The trade in this alley is people. Capim runs it: forty a month out of Backlund and into whatever the Southern Continent will pay for, with a docket for each one and a clerk keeping the docket neat.\n\nThe constabulary has been paid. The Church has bigger things this month. There is nobody at all coming.",
+        "choices": [
+          {
+            "text": "Go in as somebody else.",
+            "goto": "mask"
+          },
+          {
+            "text": "Go in as nobody.",
+            "goto": "nobody"
+          }
+        ]
+      },
+      "mask": {
+        "text": "A borrowed face, a coat too good for the district, and a name that means something on the docks. Capim’s clerk lets you as far as the ledger before the arithmetic in his eyes stops working.\n\nAfterwards there are forty people in the yard who do not know who let them out, and one man face down in his own ledger who will not be trading again.",
+        "effect": {
+          "concealment": -6,
+          "sanity": -4
+        },
+        "choices": [
+          {
+            "text": "And then the newspapers.",
+            "goto": "papers"
+          }
+        ]
+      },
+      "nobody": {
+        "text": "You do it in the dark, in the fog, in a black coat, using a Marionettist’s trick you have not earned yet and a Clown’s trick you have.\n\nCapim dies badly and is not the worst thing that happens in this alley tonight. Forty people walk out and none of them can describe you.",
+        "effect": {
+          "concealment": -10,
+          "sanity": -6,
+          "spirituality": -20
+        },
+        "choices": [
+          {
+            "text": "And then the newspapers.",
+            "goto": "papers"
+          }
+        ]
+      },
+      "papers": {
+        "text": "The Backlund Post gives it a name because a headline needs one, and the name it gives is the Hero Bandit — the Black Emperor.\n\nYou read it at breakfast in a boarding house, with Sherlock Moriarty’s face on and Klein Moretti’s coffee going cold, and think: three names, and not one of them mine.\n\nThe role settles a rung deeper. That is not a metaphor; it is how the ladder works.",
+        "effect": {
+          "flags": [
+            "v2_black_emperor"
+          ],
+          "digestion": 25,
+          "trust": {
+            "justice": 10
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_descent",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The bricked-up chapel is a Demoness Sect house, and what they have been carrying in is not water.\n\nIn the nave, chalked over the flagstones and gone over in blood that is still tacky, is a descent ritual: an invitation written to be answered by something that is not in this world and would very much like to be.\n\nThe man tending it is a priest called Ince Zangwill, and he is not a man.",
+        "choices": [
+          {
+            "text": "An Angel.",
+            "goto": "angel"
+          }
+        ]
+      },
+      "angel": {
+        "text": "Sequence 1 of a pathway the Church will not name in writing, standing in a Backlund chapel in a wet coat, finishing a summons for the True Creator.\n\nYou are Sequence 7. The arithmetic here is not close enough to be called arithmetic.",
+        "choices": [
+          {
+            "text": "Break the ritual and run.",
+            "goto": "break"
+          },
+          {
+            "text": "Break the ritual and do not run.",
+            "goto": "stay"
+          }
+        ]
+      },
+      "break": {
+        "text": "You do the only thing a Seer is actually for: you find the one thread in the diagram that is carrying the weight, and you cut it, and the whole invitation comes down like a marquee in a gale.\n\nWhat arrives instead of a god is Mr. A’s attention, which is worse in every way that matters. The chapel is on its way to not existing when a hand you did not ask for takes your shoulder — an old man, a black coat, a manner from four hundred years ago.",
+        "effect": {
+          "sanity": -10,
+          "spirituality": -30
+        },
+        "choices": [
+          {
+            "text": "Mr. Azik.",
+            "goto": "azik"
+          }
+        ]
+      },
+      "stay": {
+        "text": "You cut the thread and then you make the mistake every Seer eventually makes, which is to look at what you have interrupted.\n\nIt looks back. Something goes out of you that you will spend two volumes getting back, and the only reason there is anything left to get back is the hand that closes on your shoulder — an old man, a black coat, a manner from four hundred years ago.",
+        "effect": {
+          "sanity": -18,
+          "spirituality": -40,
+          "concealment": -8
+        },
+        "choices": [
+          {
+            "text": "Mr. Azik.",
+            "goto": "azik"
+          }
+        ]
+      },
+      "azik": {
+        "text": "He does not explain. He walks you out through a door that was not in the wall, past an Angel who cannot see either of you, and lets go of your shoulder in a street four miles away.\n\n‘0-17,’ he says, as though naming a horse. ‘Angel of Concealment. You will want to know that word later.’\n\nThen he is gone, and Backlund is Backlund again, and the fog smells of soot rather than of the inside of somebody’s mouth.",
+        "choices": [
+          {
+            "text": "Go home and be nobody for a week.",
+            "goto": "close"
+          }
+        ]
+      },
+      "close": {
+        "text": "The Demoness Sect loses a chapel. The Church loses a week to a house-to-house it will not explain. Sherlock Moriarty takes no clients.\n\nAnd the last of the Magician comes off you like a coat: you have acted the part, in front of an Angel, with your life on it. What is underneath is Faceless.",
+        "effect": {
+          "flags": [
+            "v2_descent",
+            "act_magician_public"
+          ],
+          "digestion": 40
+        },
+        "end": true
+      }
+    }
+  }
+]

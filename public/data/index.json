@@ -15,14 +15,26 @@
     "pawnshop",
     "cellar",
     "crookback_alley",
-    "warehouse"
+    "warehouse",
+    "backlund",
+    "bayam",
+    "cathedral",
+    "sefirah",
+    "forsaken",
+    "corpse_cathedral"
   ],
   "dialogue": [
     "club",
     "case-01",
     "prologue",
     "fog",
-    "warehouse"
+    "warehouse",
+    "vol2",
+    "vol3",
+    "vol4",
+    "vol5",
+    "vol6",
+    "vol7"
   ],
   "items": "items",
   "characters": "cast",

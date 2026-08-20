@@ -1,0 +1,144 @@
+[
+  {
+    "id": "dlg_corpse_cathedral",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The Corpse Cathedral is built out of what a god was, which is a sentence the Church of the Evernight Goddess would prefer nobody said out loud.\n\nYou are here because the advancement to Sequence 2 requires a death, and because you have spent seven years becoming the sort of man who reads that requirement as an instruction rather than a warning.",
+        "choices": [
+          {
+            "text": "Set it out.",
+            "goto": "set"
+          }
+        ]
+      },
+      "set": {
+        "text": "The ritual is complete except for the dying. Everything else — the place, the hour, the ceremony, the four names that must be said and the one that must not — is chalked and waiting.\n\nAnd in the aisle, patient, is the Genie: a thing that grants wishes exactly as they are worded, and enjoys the exactly.",
+        "effect": {
+          "flags": [
+            "v7_arrived"
+          ],
+          "sanity": -6
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_genie",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "‘A wish,’ says the Genie, delighted. ‘Anything at all. I am renowned for my generosity and for my sense of humour, and I regret to say that the two are the same faculty.’\n\nEvery wish it has ever granted has been granted in the worst true reading of the words. That is not a risk. That is the mechanism, and mechanisms can be aimed.",
+        "choices": [
+          {
+            "text": "Word it so that the worst reading is the one you want.",
+            "goto": "wish"
+          },
+          {
+            "text": "Refuse, and do it the hard way.",
+            "goto": "refuse"
+          }
+        ]
+      },
+      "refuse": {
+        "text": "There is no hard way. That is what a Sequence 2 advancement means: the requirement is a death, and a death that is merely brave is a death.\n\nYou go back to the Genie. It has not moved, and its delight has not gone off in the slightest.",
+        "effect": {
+          "sanity": -6
+        },
+        "choices": [
+          {
+            "text": "Word it carefully.",
+            "goto": "wish"
+          }
+        ]
+      },
+      "wish": {
+        "text": "So you make a wish that is a trap for a thing that cannot help springing traps: you ask for something whose cruellest possible fulfilment is you, dead, in this cathedral, at this hour, in the middle of a completed ritual.\n\nThe Genie thinks about it for a long moment and then laughs — genuinely, the way a colleague laughs — and grants it in full.",
+        "choices": [
+          {
+            "text": "And so you die.",
+            "goto": "die"
+          }
+        ]
+      },
+      "die": {
+        "text": "You die on the flagstones of the Corpse Cathedral with the ceremony finished around you, and the potion goes down a throat that has already stopped working, and the advancement takes.\n\nAttendant of Mysteries. Sequence 2. There is no longer any part of the ladder above you that has a name you have not been told.",
+        "effect": {
+          "flags": [
+            "v7_wish"
+          ],
+          "sanity": -20,
+          "digestion": 70
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_zaratul",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Zaratul wrote the ritual.\n\nNot the one in the Corpse Cathedral — the one in a notebook in Tingen, copied by a history student on a wet Tuesday, that put a man from another world into a body that had just shot itself. He has been steering this since before your grandfather’s grandfather, and he has never once considered that the material might read back.",
+        "choices": [
+          {
+            "text": "Let him talk.",
+            "goto": "talk"
+          }
+        ]
+      },
+      "talk": {
+        "text": "He is generous with it, the way people are when they have decided you are furniture. The plan, the centuries, the use he intends to make of the seat above the fog.\n\nAnd behind him, being used as a tool because Zaratul cannot conceive of it as anything else, is a historical projection of Roselle Gustav — a transmigrator, like you, who wrote a diary and became an emperor and has been waiting a very long time to be asked.",
+        "choices": [
+          {
+            "text": "Ask him.",
+            "goto": "roselle"
+          }
+        ]
+      },
+      "roselle": {
+        "text": "You ask. In a language neither of you has spoken aloud in this world, with a reference no one born here could possibly get, you ask a dead emperor’s projection whose side he is on.\n\nRoselle betrays Zaratul at the precise moment Zaratul is explaining why nothing could betray him.",
+        "effect": {
+          "trust": {
+            "justice": 10,
+            "hanged_man": 10
+          }
+        },
+        "choices": [
+          {
+            "text": "Finish it.",
+            "goto": "kill"
+          }
+        ]
+      },
+      "kill": {
+        "text": "The Law of Convergence is the Fool pathway’s last honest trick: everything that is going to happen to a man, arriving at once.\n\nZaratul gets all of it. Then you take the Beyonder Characteristic out of what is left, because leaving it would be sentimental and you stopped being sentimental somewhere around the Forsaken Land.",
+        "effect": {
+          "sanity": -18,
+          "spirituality": -80
+        },
+        "choices": [
+          {
+            "text": "And afterwards.",
+            "goto": "king"
+          }
+        ]
+      },
+      "king": {
+        "text": "Sequence 1.\n\nThe seat at the head of the bronze table was a joke told by a frightened clerk in a rented room in Tingen, to two strangers he had summoned by accident, because he could not think of anything else to say.\n\nIt is not a joke now. Above the fog, the Fool sits where the Fool has always sat, and the Kings of Angels have a new one, and the notebook that arranged all of it is still in a vault in Backlund with somebody else’s patience inside it.\n\nAmon will keep. You have the time now. That is rather the point of the seat.",
+        "effect": {
+          "flags": [
+            "v7_zaratul",
+            "v7_king"
+          ],
+          "digestion": 100
+        },
+        "end": true
+      }
+    }
+  }
+]

@@ -5,7 +5,7 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Sergeant Gorman is standing where he has evidently been standing for some time, which is in the doorway and not past it.\n\n'You are the one who lived,' he says, without any particular feeling about it. 'I have written it up. Three misadventures in one week and no connection between them, because the connection is not a thing this office has a form for.'",
+        "text": "Sergeant Gorman is standing where he has evidently been standing for some time, which is in the doorway and not past it.\n\n‘You are the one who lived,’ he says, without any particular feeling about it. ‘I have written it up. Three misadventures in one week and no connection between them, because the connection is not a thing this office has a form for.’",
         "choices": [
           {
             "text": "Ask what the morning looked like.",
@@ -26,7 +26,7 @@
         ]
       },
       "morning": {
-        "text": "'Half seven. Door fast, shutters up, and the landlord downstairs with a hatchet he had not decided how to use yet. We took the frame off. The bolt was thrown and the bolt was in its housing, and I will say that in front of anyone who asks.'\n\n'The surgeon put it near midnight and did not enjoy writing why.'",
+        "text": "‘Half seven. Door fast, shutters up, and the landlord downstairs with a hatchet he had not decided how to use yet. We took the frame off. The bolt was thrown and the bolt was in its housing, and I will say that in front of anyone who asks.’\n\n‘The surgeon put it near midnight and did not enjoy writing why.’",
         "effect": {
           "clues": [
             "clue_constable_time"
@@ -40,7 +40,7 @@
         ]
       },
       "night": {
-        "text": "'Two neighbours heard the bell go eleven and both say his lamp was still lit after it. Both say he was reading aloud. Neither can tell me in what, and one of them crossed himself when I asked, which is not evidence and is not nothing.'",
+        "text": "‘Two neighbours heard the bell go eleven and both say his lamp was still lit after it. Both say he was reading aloud. Neither can tell me in what, and one of them crossed himself when I asked, which is not evidence and is not nothing.’",
         "effect": {
           "clues": [
             "clue_bell_time"
@@ -54,7 +54,7 @@
         ]
       },
       "keys_ask": {
-        "text": "'The box stays sealed until the estate's settled. That is the rule and I like the rule.'\n\nHe looks at your coat, and then at the letter from Zouteland Street in your hand, and decides he does not want to know which of the two is doing the talking.",
+        "text": "‘The box stays sealed until the estate’s settled. That is the rule and I like the rule.’\n\nHe looks at your coat, and then at the letter from Zouteland Street in your hand, and decides he does not want to know which of the two is doing the talking.",
         "choices": [
           {
             "text": "Put something in his glove. (2s)",
@@ -89,7 +89,7 @@
         ]
       },
       "keys_paid": {
-        "text": "The coins go into his glove without either of you looking at them. The keys come out of his pocket the same way.\n\n'Lock it after you. I have enough to write.'",
+        "text": "The coins go into his glove without either of you looking at them. The keys come out of his pocket the same way.\n\n‘Lock it after you. I have enough to write.’",
         "choices": [
           {
             "text": "Back.",
@@ -98,7 +98,7 @@
         ]
       },
       "keys_pressed": {
-        "text": "He hands it over before he has finished deciding to, and is annoyed with himself about it for the rest of the afternoon.\n\n'In writing,' he says. 'Tomorrow.'",
+        "text": "He hands it over before he has finished deciding to, and is annoyed with himself about it for the rest of the afternoon.\n\n‘In writing,’ he says. ‘Tomorrow.’",
         "choices": [
           {
             "text": "Back.",
@@ -107,7 +107,7 @@
         ]
       },
       "bye": {
-        "text": "'Mind where you put your feet.'",
+        "text": "‘Mind where you put your feet.’",
         "end": true
       }
     }
@@ -118,10 +118,10 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Mr. Franky has his hat in both hands and has not put it back on since the police left, which was six days ago.\n\n'Two of my tenants in one week,' he says. 'One of them yours, if you take my meaning, and you standing there asking me questions about it in a coat you did not own in May.'",
+        "text": "Mr. Franky has his hat in both hands and has not put it back on since the police left, which was six days ago.\n\n‘Two of my tenants in one week,’ he says. ‘One of them yours, if you take my meaning, and you standing there asking me questions about it in a coat you did not own in May.’",
         "choices": [
           {
-            "text": "Ask what McGovern's last week was like.",
+            "text": "Ask what McGovern’s last week was like.",
             "goto": "week"
           },
           {
@@ -139,7 +139,7 @@
         ]
       },
       "week": {
-        "text": "'He stopped going out. He nailed the shutters himself — I heard him do it and I sent up about the damage and got no answer. He was reading at all hours and he had stopped eating what his landlady sent up.'\n\nHe turns the hat around once. 'The last two days he would not have the lamp lit after dark, and then on the last one he had it lit all night.'",
+        "text": "‘He stopped going out. He nailed the shutters himself — I heard him do it and I sent up about the damage and got no answer. He was reading at all hours and he had stopped eating what his landlady sent up.’\n\nHe turns the hat around once. ‘The last two days he would not have the lamp lit after dark, and then on the last one he had it lit all night.’",
         "choices": [
           {
             "text": "Back.",
@@ -148,7 +148,7 @@
         ]
       },
       "pledge": {
-        "text": "'A book. Black boards, no title, and he carried it about the house like it was a baby.' He hesitates. 'He showed it to me once, to be kind, and I could not look at the page. Not would not. Could not. My eyes went off it the way they go off the sun.'",
+        "text": "‘A book. Black boards, no title, and he carried it about the house like it was a baby.’ He hesitates. ‘He showed it to me once, to be kind, and I could not look at the page. Not would not. Could not. My eyes went off it the way they go off the sun.’",
         "choices": [
           {
             "text": "Back.",
@@ -157,7 +157,7 @@
         ]
       },
       "night": {
-        "text": "He is quiet for long enough that you know the answer before it comes, and then he says it apologetically, as though you might be embarrassed.\n\n'You did, sir. Half past five in the morning, before it was light. I was up with a tooth. Your door, your step, no lamp, and a parcel under your arm — brown paper, string, done up neat. Back inside in a quarter of an hour.'\n\n'I did not think anything of it. A man who had just lost his friends, posting a letter.'",
+        "text": "He is quiet for long enough that you know the answer before it comes, and then he says it apologetically, as though you might be embarrassed.\n\n‘You did, sir. Half past five in the morning, before it was light. I was up with a tooth. Your door, your step, no lamp, and a parcel under your arm — brown paper, string, done up neat. Back inside in a quarter of an hour.’\n\n‘I did not think anything of it. A man who had just lost his friends, posting a letter.’",
         "effect": {
           "clues": [
             "clue_franky_saw"
@@ -171,7 +171,7 @@
         ]
       },
       "bye": {
-        "text": "'Find me something I can tell the other tenants.'",
+        "text": "‘Find me something I can tell the other tenants.’",
         "end": true
       }
     }
@@ -182,7 +182,7 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Hanass is calm in the way that takes practice, and he has been practising for six days.\n\n'Four pounds, in May, and a receipt if you want to see it. I sell books. Sometimes the books are old.'",
+        "text": "Hanass is calm in the way that takes practice, and he has been practising for six days.\n\n‘Four pounds, in May, and a receipt if you want to see it. I sell books. Sometimes the books are old.’",
         "choices": [
           {
             "text": "Ask about the sale.",
@@ -207,7 +207,7 @@
         ]
       },
       "sale": {
-        "text": "'The fourteenth. Raining. He came in for a Feysac grammar and left with something I had priced at four pounds because I did not know what else to price it at.'\n\n'He asked me whether it was complete. I said the binding was original. That is not the same answer and we both knew it.'",
+        "text": "‘The fourteenth. Raining. He came in for a Feysac grammar and left with something I had priced at four pounds because I did not know what else to price it at.’\n\n‘He asked me whether it was complete. I said the binding was original. That is not the same answer and we both knew it.’",
         "effect": {
           "clues": [
             "clue_hanass_sale"
@@ -221,7 +221,7 @@
         ]
       },
       "consignor": {
-        "text": "He becomes extremely interested in a shelf.\n\n'It came in with a lot. Estates come in with lots.'\n\nYou notice, while he is being interested in the shelf, that the shop has a new bolt on the inside of the door and that he has stopped keeping it open after dark.",
+        "text": "He becomes extremely interested in a shelf.\n\n‘It came in with a lot. Estates come in with lots.’\n\nYou notice, while he is being interested in the shelf, that the shop has a new bolt on the inside of the door and that he has stopped keeping it open after dark.",
         "choices": [
           {
             "text": "Press him.",
@@ -235,7 +235,7 @@
         ]
       },
       "pressed": {
-        "text": "'A man who does not give a name and does not need to,' he says, to the shelf. 'Paint on his face. Not a costume, an occupation. He put it in with the lot himself and he was polite about it, and I have been sick every night since I took his money.'",
+        "text": "‘A man who does not give a name and does not need to,’ he says, to the shelf. ‘Paint on his face. Not a costume, an occupation. He put it in with the lot himself and he was polite about it, and I have been sick every night since I took his money.’",
         "effect": {
           "clues": [
             "clue_order_watching"
@@ -250,7 +250,7 @@
         ]
       },
       "read": {
-        "text": "'I think a man read something aloud that was written to be read aloud,' he says. 'And I think the book did not care which man.'",
+        "text": "‘I think a man read something aloud that was written to be read aloud,’ he says. ‘And I think the book did not care which man.’",
         "choices": [
           {
             "text": "Back.",
@@ -259,7 +259,7 @@
         ]
       },
       "ledger": {
-        "text": "'He was copying it. He told me so, proudly, as though it were scholarship.' He shakes his head. 'A leaf has been taken out of that copy, and I did not take it, and he would not have. Ask yourself who else was in the room.'",
+        "text": "‘He was copying it. He told me so, proudly, as though it were scholarship.’ He shakes his head. ‘A leaf has been taken out of that copy, and I did not take it, and he would not have. Ask yourself who else was in the room.’",
         "effect": {
           "clues": [
             "clue_ledger_gap"
@@ -284,7 +284,7 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Sil Mowbray is coiling a wet rope badly and in no hurry to finish.\n\n'You want the yard, the water, or the gentlemen who have been standing about looking at both?'",
+        "text": "Sil Mowbray is coiling a wet rope badly and in no hurry to finish.\n\n‘You want the yard, the water, or the gentlemen who have been standing about looking at both?’",
         "choices": [
           {
             "text": "Ask about Cobble Yard. (3s)",
@@ -311,7 +311,7 @@
         ]
       },
       "yard": {
-        "text": "The coins vanish into the rope coil.\n\n'Clerk at number nine signed for a parcel a week Tuesday and has not been to work since. Sent word he was ill. Nobody has heard him move about in four days and his landlady has stopped knocking.'\n\n'She says the room has gone quiet in a way a quiet room does not. I did not ask her what she meant by it and I am not going to.'",
+        "text": "The coins vanish into the rope coil.\n\n‘Clerk at number nine signed for a parcel a week Tuesday and has not been to work since. Sent word he was ill. Nobody has heard him move about in four days and his landlady has stopped knocking.’\n\n‘She says the room has gone quiet in a way a quiet room does not. I did not ask her what she meant by it and I am not going to.’",
         "effect": {
           "clues": [
             "clue_bieber_changed"
@@ -325,7 +325,7 @@
         ]
       },
       "paint": {
-        "text": "'There's a gentleman does his buying through other people — Alzuhod, calls himself, and never touches a thing himself. He has money out for a black book.'\n\nHe lowers his voice without seeming to notice he has done it.\n\n'And there is one with white paint on his face been down here twice this week, looking at the one warehouse both times, and smiling at nothing the whole while.'",
+        "text": "‘There’s a gentleman does his buying through other people — Alzuhod, calls himself, and never touches a thing himself. He has money out for a black book.’\n\nHe lowers his voice without seeming to notice he has done it.\n\n‘And there is one with white paint on his face been down here twice this week, looking at the one warehouse both times, and smiling at nothing the whole while.’",
         "effect": {
           "clues": [
             "clue_order_watching"
@@ -339,7 +339,7 @@
         ]
       },
       "warehouse": {
-        "text": "'Cobble Yard, off the Tussock. Grain and bonded spirits, and a counting house over the bay with a clerk's room behind it.' He spits into the water. 'The dogs will not go down that end of the yard now, and the dogs down here will go anywhere.'",
+        "text": "‘Cobble Yard, off the Tussock. Grain and bonded spirits, and a counting house over the bay with a clerk’s room behind it.’ He spits into the water. ‘The dogs will not go down that end of the yard now, and the dogs down here will go anywhere.’",
         "choices": [
           {
             "text": "Back.",

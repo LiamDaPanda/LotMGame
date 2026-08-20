@@ -16,7 +16,7 @@
 import { bus } from '@/systems/EventBus';
 import type { Content } from '@/systems/Content';
 import type { GameState } from '@/systems/GameState';
-import type { ChapterData } from '@/types/schema';
+import type { ChapterData, VolumeData } from '@/types/schema';
 
 export class StorySystem {
   private lastAnnounced?: string;
@@ -57,11 +57,44 @@ export class StorySystem {
     return this.content.chapters.slice(0, index).filter((chapter) => this.isDone(chapter));
   }
 
-  /** 1-based position of the current chapter, for "3 of 9". */
-  progress(): { index: number; total: number } {
-    const total = this.content.chapters.length;
+  /**
+   * Where you are in the book: which volume, and which chapter of it.
+   *
+   * Counted within the volume rather than across the whole spine, because that
+   * is how the book is shelved and how a reader keeps their place — "Faceless,
+   * chapter 3 of 5" locates you; "chapter 14 of 36" does not.
+   */
+  progress(): { volume?: VolumeData; index: number; total: number } {
     const current = this.current();
-    return { index: current ? this.content.chapters.indexOf(current) + 1 : total, total };
+    if (!current) {
+      const last = this.content.volumes[this.content.volumes.length - 1];
+      const total = last ? this.content.chaptersIn(last.number).length : 0;
+      return { volume: last, index: total, total };
+    }
+    const siblings = this.content.chaptersIn(current.volume);
+    return {
+      volume: this.content.volume(current.volume),
+      index: siblings.indexOf(current) + 1,
+      total: siblings.length,
+    };
+  }
+
+  /** The volume being played, or the last one once the book is finished. */
+  currentVolume(): VolumeData | undefined {
+    return this.progress().volume;
+  }
+
+  /** Volumes with at least one chapter behind you, for the journal. */
+  volumesSeen(): VolumeData[] {
+    const current = this.current();
+    return this.content.volumes.filter(
+      (volume) => !current || volume.number <= current.volume,
+    );
+  }
+
+  /** True once every chapter of the spine is behind you. */
+  finished(): boolean {
+    return this.current() === undefined;
   }
 
   /**

@@ -1,0 +1,98 @@
+{
+  "id": "corpse_cathedral",
+  "name": "The Corpse Cathedral",
+  "ambient": "#1a1620",
+  "encounterChance": 0,
+  "legend": {
+    "%": {
+      "floor": 9,
+      "collide": true
+    },
+    ",": {
+      "floor": 7
+    },
+    "o": {
+      "floor": 14
+    },
+    "K": {
+      "floor": 7,
+      "object": 19,
+      "collide": true
+    },
+    "b": {
+      "floor": 7,
+      "object": 20,
+      "collide": true
+    },
+    "@": {
+      "floor": 32
+    }
+  },
+  "rows": [
+    "%%%%%%%%%%%%%%%%%%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,,K,,,,,,,,,,K,,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,,,,,,,@,,,,,,,,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,,b,,,,,,,,,,b,,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%%%%%%%%o%%%%%%%%%"
+  ],
+  "spawn": {
+    "x": 8,
+    "y": 7
+  },
+  "hotspots": [
+    {
+      "id": "cc_altar",
+      "x": 8,
+      "y": 4,
+      "name": "The Altar, And The Arrangement",
+      "description": "The ritual is complete except for the part where you die, which is the part the Genie was so pleased to be asked about.",
+      "action": "dialogue",
+      "dialogue": "dlg_genie",
+      "icon": 8
+    },
+    {
+      "id": "cc_zaratul",
+      "x": 3,
+      "y": 2,
+      "name": "Something Waiting In The Aisle",
+      "description": "The man who wrote the ritual that brought you here is still using it, and he has not once considered that it might have been read by anybody else.",
+      "action": "dialogue",
+      "dialogue": "dlg_zaratul",
+      "icon": 13,
+      "locked": {
+        "reason": "Not until the arrangement at the altar is finished.",
+        "bypass": {
+          "flag": "v7_wish"
+        }
+      }
+    },
+    {
+      "id": "rite_corpse_cathedral",
+      "x": 12,
+      "y": 6,
+      "name": "The Circle",
+      "description": "The Corpse Cathedral was built for exactly this and has been waiting.",
+      "action": "ritual",
+      "icon": 13
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 8,
+      "y": 8,
+      "toMap": "forsaken",
+      "toX": 8,
+      "toY": 1,
+      "label": "Back to the Forsaken Land"
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_corpse_cathedral",
+    "flag": "v7_arrived"
+  }
+}

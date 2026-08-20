@@ -1,0 +1,110 @@
+{
+  "id": "sefirah",
+  "name": "Sefirah Castle, above the fog",
+  "ambient": "#2a2740",
+  "encounterChance": 0,
+  "legend": {
+    "%": {
+      "floor": 9,
+      "collide": true
+    },
+    ",": {
+      "floor": 7
+    },
+    "o": {
+      "floor": 14
+    },
+    "K": {
+      "floor": 7,
+      "object": 19,
+      "collide": true
+    },
+    "b": {
+      "floor": 7,
+      "object": 20,
+      "collide": true
+    },
+    "@": {
+      "floor": 32
+    }
+  },
+  "rows": [
+    "%%%%%%%%%%%%%%%%%%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,,K,,,,,,,,,,K,,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,,,,,,,@,,,,,,,,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,,b,,,,,,,,,,b,,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%%%%%%%%o%%%%%%%%%"
+  ],
+  "spawn": {
+    "x": 8,
+    "y": 7
+  },
+  "hotspots": [
+    {
+      "id": "sf_ladder",
+      "x": 8,
+      "y": 4,
+      "name": "The Ladder Of Light",
+      "description": "It goes down into the depth of the grey fog, which is a direction the fog did not have until you were high enough to be told about it.",
+      "action": "dialogue",
+      "dialogue": "dlg_door_of_light",
+      "icon": 13
+    },
+    {
+      "id": "sf_table",
+      "x": 3,
+      "y": 2,
+      "name": "The Bronze Table",
+      "description": "Twenty-two seats. Rather more of them are occupied these days, and the ones that are not have begun to feel like an appointment rather than an absence."
+    },
+    {
+      "id": "sf_window",
+      "x": 14,
+      "y": 6,
+      "name": "A Window Onto Backlund",
+      "description": "The smog over the city has stopped behaving like weather. Somewhere under it, a mausoleum is being opened by people who have each decided they are the only one being careful.",
+      "action": "dialogue",
+      "dialogue": "dlg_mausoleum",
+      "icon": 12
+    },
+    {
+      "id": "rite_sefirah",
+      "x": 12,
+      "y": 4,
+      "name": "The Circle",
+      "description": "The castle does not need chalk. It simply understands what you are about to do and makes room.",
+      "action": "ritual",
+      "icon": 13
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 8,
+      "y": 8,
+      "toMap": "cathedral",
+      "toX": 8,
+      "toY": 2,
+      "label": "Back down to Backlund"
+    },
+    {
+      "x": 8,
+      "y": 0,
+      "toMap": "forsaken",
+      "toX": 8,
+      "toY": 8,
+      "label": "The Forsaken Land of the Gods",
+      "requires": {
+        "flag": "v5_mausoleum"
+      }
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_sefirah",
+    "flag": "v5_arrived"
+  }
+}

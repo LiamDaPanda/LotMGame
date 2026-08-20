@@ -3,7 +3,7 @@
     "id": "formula_clown",
     "name": "Clown Formula",
     "kind": "ritual",
-    "description": "Four ingredients and a method, in the Church clerk's hand — and, at the head of it, a word the Church did not have last week. Rozanne signs it out without meeting your eye.",
+    "description": "Four ingredients and a method, in the Church clerk’s hand — and, at the head of it, a word the Church did not have last week. Rozanne signs it out without meeting your eye.",
     "pricePence": 1440,
     "icon": 11,
     "requires": {
@@ -17,7 +17,7 @@
     "id": "potion_clown",
     "name": "Clown Potion",
     "kind": "potion",
-    "description": "Brewed to the formula by the Church's own dispensary. Drinking it is the easy part.",
+    "description": "Brewed to the formula by the Church’s own dispensary. Drinking it is the easy part.",
     "pricePence": 2880,
     "icon": 8,
     "requires": {
@@ -107,7 +107,7 @@
     "id": "sealed_watch",
     "name": "Copper Plumb and Thread",
     "kind": "evidence",
-    "description": "A diviner's weight on waxed thread, taken off Welch McGovern's floor. It is warm, it has not stopped pointing, and the Church has a number for it.",
+    "description": "A diviner’s weight on waxed thread, taken off Welch McGovern’s floor. It is warm, it has not stopped pointing, and the Church has a number for it.",
     "sellPence": 960,
     "icon": 9
   },
@@ -131,21 +131,21 @@
     "id": "shop_keys",
     "name": "Sergeant’s Key",
     "kind": "mundane",
-    "description": "Gorman's key to the sealed rooms off Iron Cross Street, lent for the afternoon on the understanding that you were never given it.",
+    "description": "Gorman’s key to the sealed rooms off Iron Cross Street, lent for the afternoon on the understanding that you were never given it.",
     "icon": 9
   },
   {
     "id": "grey_formula_clown",
     "name": "Clown Formula (copied)",
     "kind": "ritual",
-    "description": "The same four ingredients in a stranger's hand, on paper that has been folded too many times. Cheaper. Counts for the rite, and the captain will know.",
+    "description": "The same four ingredients in a stranger’s hand, on paper that has been folded too many times. Cheaper. Counts for the rite, and the captain will know.",
     "pricePence": 900,
     "icon": 11,
     "vendors": [
       "market"
     ],
     "heat": 4,
-    "patter": "'Same words,' he says. 'Different penmanship. You're paying for the words.'"
+    "patter": "‘Same words,’ he says. ‘Different penmanship. You’re paying for the words.’"
   },
   {
     "id": "cheap_reagents",
@@ -184,7 +184,7 @@
       "market"
     ],
     "heat": 8,
-    "patter": "'The seal's genuine,' he says, which is not the same as the warrant being genuine, and he knows you noticed.",
+    "patter": "‘The seal’s genuine,’ he says, which is not the same as the warrant being genuine, and he knows you noticed.",
     "use": {
       "label": "Present it to the constable",
       "description": "Gorman reads as far as the seal, which is the only part that is real, and hands over the key without finishing the sentence he had started.",
@@ -248,5 +248,145 @@
     "description": "Black boards, no title, water-stained along the bottom edge. Exactly as heavy as a book. Everyone who has read it to the end has died in the same hour, and it does not look like anything at all.",
     "sellPence": 0,
     "icon": 11
+  },
+  {
+    "id": "formula_marionettist",
+    "name": "Marionettist Formula",
+    "kind": "ritual",
+    "description": "The Marionettist rung, written out. Above Sequence 5 the Church stops calling these formulas and starts calling them arrangements.",
+    "pricePence": 25920,
+    "icon": 11,
+    "requires": {
+      "flag": "v3_scepter"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_marionettist",
+    "name": "Marionettist Potion",
+    "kind": "potion",
+    "description": "Made up to the Marionettist formula. Nobody signs for these.",
+    "pricePence": 38880,
+    "icon": 8,
+    "requires": {
+      "flag": "v3_scepter"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_bizarro",
+    "name": "Bizarro Sorcerer Formula",
+    "kind": "ritual",
+    "description": "The Bizarro Sorcerer rung, written out. Above Sequence 5 the Church stops calling these formulas and starts calling them arrangements.",
+    "pricePence": 51840,
+    "icon": 11,
+    "requires": {
+      "flag": "v4_undying"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_bizarro",
+    "name": "Bizarro Sorcerer Potion",
+    "kind": "potion",
+    "description": "Made up to the Bizarro Sorcerer formula. Nobody signs for these.",
+    "pricePence": 77760,
+    "icon": 8,
+    "requires": {
+      "flag": "v4_undying"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_miracle",
+    "name": "Miracle Invoker Formula",
+    "kind": "ritual",
+    "description": "The Miracle Invoker rung, written out. Above Sequence 5 the Church stops calling these formulas and starts calling them arrangements.",
+    "pricePence": 103680,
+    "icon": 11,
+    "requires": {
+      "flag": "v5_mausoleum"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_miracle",
+    "name": "Miracle Invoker Potion",
+    "kind": "potion",
+    "description": "Made up to the Miracle Invoker formula. Nobody signs for these.",
+    "pricePence": 155520,
+    "icon": 8,
+    "requires": {
+      "flag": "v5_mausoleum"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_attendant",
+    "name": "Attendant of Mysteries Formula",
+    "kind": "ritual",
+    "description": "The Attendant of Mysteries rung, written out. Above Sequence 5 the Church stops calling these formulas and starts calling them arrangements.",
+    "pricePence": 207360,
+    "icon": 11,
+    "requires": {
+      "flag": "v7_wish"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_attendant",
+    "name": "Attendant of Mysteries Potion",
+    "kind": "potion",
+    "description": "Made up to the Attendant of Mysteries formula. Nobody signs for these.",
+    "pricePence": 311040,
+    "icon": 8,
+    "requires": {
+      "flag": "v7_wish"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_fool",
+    "name": "The Fool Formula",
+    "kind": "ritual",
+    "description": "The Fool rung, written out. Above Sequence 5 the Church stops calling these formulas and starts calling them arrangements.",
+    "pricePence": 414720,
+    "icon": 11,
+    "requires": {
+      "flag": "v7_zaratul"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_fool",
+    "name": "The Fool Potion",
+    "kind": "potion",
+    "description": "Made up to The Fool formula. Nobody signs for these.",
+    "pricePence": 622080,
+    "icon": 8,
+    "requires": {
+      "flag": "v7_zaratul"
+    },
+    "vendors": [
+      "club"
+    ]
   }
 ]

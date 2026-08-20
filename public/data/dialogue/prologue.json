@@ -36,7 +36,7 @@
         ]
       },
       "moon": {
-        "text": "The moon over the West Borough is red. Not the ordinary red of mill smoke — a full, arterial red filling Iron Cross Street, and nobody down there is looking up at it.\n\nAnd then the rest of him arrives, out of order: a brother, a sister, a father who is dead, a landlord called Franky who wants the week's rent, an associate professor named Cohen. And Welch McGovern, who bought a black hardcover notebook in May from two men he should not have been dealing with, and asked two friends to help him read it.\n\nOne of them was Naya. The other was the man whose hands these are.",
+        "text": "The moon over the West Borough is red. Not the ordinary red of mill smoke — a full, arterial red filling Iron Cross Street, and nobody down there is looking up at it.\n\nAnd then the rest of him arrives, out of order: a brother, a sister, a father who is dead, a landlord called Franky who wants the week’s rent, an associate professor named Cohen. And Welch McGovern, who bought a black hardcover notebook in May from two men he should not have been dealing with, and asked two friends to help him read it.\n\nOne of them was Naya. The other was the man whose hands these are.",
         "choices": [
           {
             "text": "Think it through properly before you move.",
@@ -80,7 +80,7 @@
         ]
       },
       "smith": {
-        "text": "Eight days. Long enough to learn that Welch McGovern died the same night you did, at his own desk with the door bolted on the inside, and that Naya drowned herself in a basin of water in a locked room across the city — and that all three of you are one paragraph in a police file that ends with the word *coincidence*.\n\nAnd now a tired man in an unpressed coat on the landing at Iron Cross Street, who says he is with the Blackthorn Security Company of Zouteland Street, and who names the diagram on your desk before he has been asked, and its grade, and the family whose notebook it was copied out of.\n\n'Dunn Smith,' he says. 'Captain, of a sort. You can forget all of this, and I will help you forget it properly. You can be a witness, which lasts exactly as long as it takes whoever wants that notebook to decide you are a loose end.'\n\nHe puts two sheets of paper on the table by the door. 'Or you sign these, and you come in as civilian staff, and you find out what happened in this room from the inside of the only office in Tingen that believes you.'",
+        "text": "Eight days. Long enough to learn that Welch McGovern died the same night you did, at his own desk with the door bolted on the inside, and that Naya drowned herself in a basin of water in a locked room across the city — and that all three of you are one paragraph in a police file that ends with the word *coincidence*.\n\nAnd now a tired man in an unpressed coat on the landing at Iron Cross Street, who says he is with the Blackthorn Security Company of Zouteland Street, and who names the diagram on your desk before he has been asked, and its grade, and the family whose notebook it was copied out of.\n\n‘Dunn Smith,’ he says. ‘Captain, of a sort. You can forget all of this, and I will help you forget it properly. You can be a witness, which lasts exactly as long as it takes whoever wants that notebook to decide you are a loose end.’\n\nHe puts two sheets of paper on the table by the door. ‘Or you sign these, and you come in as civilian staff, and you find out what happened in this room from the inside of the only office in Tingen that believes you.’",
         "choices": [
           {
             "text": "Read what you are signing.",
@@ -89,7 +89,7 @@
         ]
       },
       "intent": {
-        "text": "He countersigns without reading, folds the sheets into a coat that has never once been pressed, and then asks the only question he seems to actually care about.\n\n'You have a brother who took a revolver off a table for you and a sister still at her schooling. So. How do you mean to carry this?'",
+        "text": "He countersigns without reading, folds the sheets into a coat that has never once been pressed, and then asks the only question he seems to actually care about.\n\n‘You have a brother who took a revolver off a table for you and a sister still at her schooling. So. How do you mean to carry this?’",
         "choices": [
           {
             "text": "Carefully. I want to be able to explain every step of it, to myself if to nobody else.",
@@ -136,11 +136,11 @@
         ]
       },
       "after": {
-        "text": "A week goes by. Nobody explains anything, which you come to understand is the explanation.\n\nBenson has stopped watching your door at night, which took six days. Melissa has started leaving the lamp lit on the landing, which she has not mentioned and neither have you. Mr. Franky wants the quarter on the day, as ever.\n\nAnd there is a file at No. 36 Zouteland Street with three deaths in it, one black hardcover notebook missing from Welch McGovern's rooms, and your own name written twice.\n\nYou put on the good coat.",
+        "text": "A week goes by. Nobody explains anything, which you come to understand is the explanation.\n\nBenson has stopped watching your door at night, which took six days. Melissa has started leaving the lamp lit on the landing, which she has not mentioned and neither have you. Mr. Franky wants the quarter on the day, as ever.\n\nAnd there is a file at No. 36 Zouteland Street with three deaths in it, one black hardcover notebook missing from Welch McGovern’s rooms, and your own name written twice.\n\nYou put on the good coat.",
         "end": true
       },
       "sign": {
-        "text": "The first sheet is an employment contract with the Blackthorn Security Company: security consultancy, records and correspondence, one pound eight a week, which is more than Benson makes and considerably more than a man with your prospects should be offered by anybody.\n\nThe second is the Seventh Unit, Special Operations Department, Awwa County Police, Kingdom of Loen — and a paragraph about what is done to people who talk, written in a tone that suggests it has been done.\n\n'You are not a Nighthawk,' says Smith, while you read. 'You are a clerk who has been in a room where something happened. What you become after that is a conversation for when I have seen you work.'",
+        "text": "The first sheet is an employment contract with the Blackthorn Security Company: security consultancy, records and correspondence, one pound eight a week, which is more than Benson makes and considerably more than a man with your prospects should be offered by anybody.\n\nThe second is the Seventh Unit, Special Operations Department, Awwa County Police, Kingdom of Loen — and a paragraph about what is done to people who talk, written in a tone that suggests it has been done.\n\n‘You are not a Nighthawk,’ says Smith, while you read. ‘You are a clerk who has been in a room where something happened. What you become after that is a conversation for when I have seen you work.’",
         "effect": {
           "flags": [
             "signed_on"
@@ -165,7 +165,7 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Melissa is at the kitchen table with the household book open and a pencil she has been holding without writing.\n\n'The quarter was due on Tuesday. Benson has been paying it out of the Sunday overtime and telling me he is not, and I can add.'\n\nShe does not look up. 'I am not asking where your money comes from. I am asking you to notice that I could.'",
+        "text": "Melissa is at the kitchen table with the household book open and a pencil she has been holding without writing.\n\n‘The quarter was due on Tuesday. Benson has been paying it out of the Sunday overtime and telling me he is not, and I can add.’\n\nShe does not look up. ‘I am not asking where your money comes from. I am asking you to notice that I could.’",
         "choices": [
           {
             "text": "Settle the quarter now.",
@@ -197,7 +197,7 @@
         ]
       },
       "paid": {
-        "text": "She counts it once, which is not distrust but arithmetic, and writes the line in a hand far better than yours.\n\n'There. Now neither of us is thinking about it.' At the door she stops. 'A man came asking for you on Monday. Not a client sort of man. He asked whether you had been ill in the spring, and I said you had not, and afterwards I could not remember his face at all.'",
+        "text": "She counts it once, which is not distrust but arithmetic, and writes the line in a hand far better than yours.\n\n‘There. Now neither of us is thinking about it.’ At the door she stops. ‘A man came asking for you on Monday. Not a client sort of man. He asked whether you had been ill in the spring, and I said you had not, and afterwards I could not remember his face at all.’",
         "effect": {
           "flags": [
             "asked_after_by_stranger"
@@ -206,7 +206,7 @@
         "end": true
       },
       "grace": {
-        "text": "'The week,' she agrees, and writes that down too, which is worse than an argument.\n\n'Klein. You have been different since the fifteenth, and Benson has decided not to see it, and I have decided to wait.' The pencil goes down. 'I would rather be waiting for something than for nothing. Tell me which it is, eventually.'",
+        "text": "‘The week,’ she agrees, and writes that down too, which is worse than an argument.\n\n‘Klein. You have been different since the fifteenth, and Benson has decided not to see it, and I have decided to wait.’ The pencil goes down. ‘I would rather be waiting for something than for nothing. Tell me which it is, eventually.’",
         "end": true
       },
       "bye": {
@@ -221,7 +221,7 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Benson has his coat off and his collar still on, which means he has been home under an hour and intends to go out again.\n\n'You are up.' He says it the way he has said it every evening since the fifteenth: as a fact he is checking rather than a greeting.",
+        "text": "Benson has his coat off and his collar still on, which means he has been home under an hour and intends to go out again.\n\n‘You are up.’ He says it the way he has said it every evening since the fifteenth: as a fact he is checking rather than a greeting.",
         "choices": [
           {
             "text": "Ask how the office was.",
@@ -242,7 +242,7 @@
         ]
       },
       "office": {
-        "text": "'Manifests. A ship that is late and a clerk senior to me who has decided it is my fault.' He shrugs it off with practice. 'It pays the quarter and it will pay Melissa's next term, and I would rather you did not do the sum out loud where she can hear it.'",
+        "text": "‘Manifests. A ship that is late and a clerk senior to me who has decided it is my fault.’ He shrugs it off with practice. ‘It pays the quarter and it will pay Melissa’s next term, and I would rather you did not do the sum out loud where she can hear it.’",
         "choices": [
           {
             "text": "Back.",
@@ -251,7 +251,7 @@
         ]
       },
       "police": {
-        "text": "He takes slightly too long over the buttons on the collar.\n\n'That I found you at the desk and that you had been unwell. That is all I said and all I am going to say.' He looks up. 'I know what was on the table, Klein. I know what I put in my pocket. I have not asked you a single question about it and I am not going to, and I would like you to understand that as a thing I am doing on purpose.'",
+        "text": "He takes slightly too long over the buttons on the collar.\n\n‘That I found you at the desk and that you had been unwell. That is all I said and all I am going to say.’ He looks up. ‘I know what was on the table, Klein. I know what I put in my pocket. I have not asked you a single question about it and I am not going to, and I would like you to understand that as a thing I am doing on purpose.’",
         "effect": {
           "trust": {
             "hermit": 0
@@ -265,7 +265,7 @@
         ]
       },
       "father": {
-        "text": "'He would have said the same as me. Eat something, do not be clever at people who can have you dismissed, and keep the door shut after dark.'\n\nA pause. 'He also went out on a night he had said he would not, and did not come back, so take the advice in the order I gave it.'",
+        "text": "‘He would have said the same as me. Eat something, do not be clever at people who can have you dismissed, and keep the door shut after dark.’\n\nA pause. ‘He also went out on a night he had said he would not, and did not come back, so take the advice in the order I gave it.’",
         "choices": [
           {
             "text": "Back.",
@@ -274,7 +274,7 @@
         ]
       },
       "bye": {
-        "text": "'There is bread in the crock and Melissa has hidden the good jam somewhere I am not clever enough to find.' He gets his coat. 'Shut the door after me.'",
+        "text": "‘There is bread in the crock and Melissa has hidden the good jam somewhere I am not clever enough to find.’ He gets his coat. ‘Shut the door after me.’",
         "end": true
       }
     }

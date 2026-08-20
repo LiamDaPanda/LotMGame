@@ -1,0 +1,126 @@
+[
+  {
+    "id": "dlg_forsaken",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The Forsaken Land of the Gods is where the Second Epoch was put when it was over.\n\nNo sky worth the name. Ruins built for people forty feet tall. And nothing living except the things that were left behind on purpose, which have had two epochs to become bitter about it.",
+        "choices": [
+          {
+            "text": "How did you get here?",
+            "goto": "how"
+          }
+        ]
+      },
+      "how": {
+        "text": "Badly, and on purpose, and with the door shutting behind you.\n\nThere is a way out through the Giant King’s Court, if the court still has a court in it. There is a war on the other side of the wall of the world that has just reached the part where the gods take an interest. And there is, somewhere in this dark, a thing that has been waiting to see what you do when there is nobody watching you act.",
+        "effect": {
+          "flags": [
+            "v6_arrived"
+          ],
+          "sanity": -6
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_giant_court",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The court is a hall the size of a cathedral district, and the throne at the end of it is occupied by four hundred years of dust in the shape of a king.\n\nWhat opens a way out of the Forsaken Land is not a key. It is a claim: somebody has to sit in the chair and be believed.",
+        "choices": [
+          {
+            "text": "Sit in the chair.",
+            "goto": "sit"
+          },
+          {
+            "text": "Find another way.",
+            "goto": "other"
+          }
+        ]
+      },
+      "other": {
+        "text": "There is no other way, and you spend eleven days establishing it with the thoroughness of a man who does not want to sit in that chair.\n\nThen you sit in the chair.",
+        "effect": {
+          "sanity": -8
+        },
+        "choices": [
+          {
+            "text": "And be believed.",
+            "goto": "sit"
+          }
+        ]
+      },
+      "sit": {
+        "text": "You have been Sherlock Moriarty, Gehrman Sparrow, Dwayne Dantès and the Black Emperor. You have acted a role in front of an Angel with your life on it and been believed.\n\nSo you sit in a dead king’s chair in a hall built for giants and you *are* the man who is allowed to, entirely and without reservation, for as long as it takes the door at the far end to agree.\n\nIt takes nine seconds. It is the hardest nine seconds of your life.",
+        "effect": {
+          "flags": [
+            "v6_court"
+          ],
+          "digestion": 60,
+          "spirituality": -40,
+          "skills": {
+            "rhetoric": 2
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_battle",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "From the Forsaken Land you can see the other side of the world the way a man in a cellar can hear a house being demolished.\n\nThe war has gone from armies to nations to churches, and over Backlund the gods themselves have come down to finish the argument. Four hundred thousand chimneys, and something standing over them with its hand out.",
+        "choices": [
+          {
+            "text": "Your family is under that.",
+            "goto": "family"
+          }
+        ]
+      },
+      "family": {
+        "text": "Benson is in the shipping office. Melissa is at her school. Neither of them has ever known what you are, which was the entire point, and it is worth precisely nothing to them tonight.\n\nYou are on the wrong side of the wall of the world, at Sequence 3, watching.",
+        "choices": [
+          {
+            "text": "Do the unthinkable thing.",
+            "goto": "die"
+          }
+        ]
+      },
+      "die": {
+        "text": "So you kill yourself.\n\nNot as despair — as arithmetic. A Miracle Invoker who dies in the right arrangement does not stop; he arrives somewhere, and the Evernight Goddess has been waiting a very long time for somebody to arrive there on purpose.\n\nShe lets you look back. All the way back: to a reading room in a world with no gods in it, a silver plate, a mutated telephone, and a diagram copied out of a notebook.",
+        "effect": {
+          "sanity": -25,
+          "spirituality": -60
+        },
+        "choices": [
+          {
+            "text": "And there it is.",
+            "goto": "truth"
+          }
+        ]
+      },
+      "truth": {
+        "text": "Sefirah Castle chose at random — but only from among those who had done the procedure exactly: the luck-enhancement ritual, the silver plate, the device from a world without magic.\n\nAnd the diagram for that ritual, copied out by three students in Tingen in the summer of 1349, came out of the Antigonus family’s notebook.\n\nAmon did not choose you. Amon simply made sure that whoever was chosen would be somebody he had handled.",
+        "effect": {
+          "flags": [
+            "v6_battle",
+            "v6_truth"
+          ],
+          "sanity": -10,
+          "skills": {
+            "occultism": 2
+          }
+        },
+        "end": true
+      }
+    }
+  }
+]

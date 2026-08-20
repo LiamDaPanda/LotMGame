@@ -1,0 +1,103 @@
+{
+  "id": "forsaken",
+  "name": "The Forsaken Land of the Gods",
+  "ambient": "#241f22",
+  "encounterChance": 0,
+  "legend": {
+    "%": {
+      "floor": 9,
+      "collide": true
+    },
+    ",": {
+      "floor": 7
+    },
+    "o": {
+      "floor": 14
+    },
+    "K": {
+      "floor": 7,
+      "object": 19,
+      "collide": true
+    },
+    "b": {
+      "floor": 7,
+      "object": 20,
+      "collide": true
+    },
+    "@": {
+      "floor": 32
+    }
+  },
+  "rows": [
+    "%%%%%%%%%%%%%%%%%%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,,b,,,,,,,,,,b,,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,K,,,,,,,,,,,,K,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%,,,,,,,,,,,,,,,,%",
+    "%%%%%%%%o%%%%%%%%%"
+  ],
+  "spawn": {
+    "x": 8,
+    "y": 7
+  },
+  "hotspots": [
+    {
+      "id": "fk_court",
+      "x": 8,
+      "y": 2,
+      "name": "The Giant King’s Court",
+      "description": "A hall built for people forty feet tall, by people forty feet tall, and abandoned in the middle of an argument that has been over for two epochs.",
+      "action": "dialogue",
+      "dialogue": "dlg_giant_court",
+      "icon": 15
+    },
+    {
+      "id": "fk_sky",
+      "x": 14,
+      "y": 5,
+      "name": "The Sky Over Backlund, Seen From Here",
+      "description": "The war has reached the part where the gods are involved. From this side of the world it looks like weather; from the other side it is the end of the century.",
+      "action": "dialogue",
+      "dialogue": "dlg_battle",
+      "icon": 12
+    },
+    {
+      "id": "rite_forsaken",
+      "x": 12,
+      "y": 2,
+      "name": "The Circle",
+      "description": "Scratched into stone that was old when the Second Epoch ended.",
+      "action": "ritual",
+      "icon": 13
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 8,
+      "y": 8,
+      "toMap": "sefirah",
+      "toX": 8,
+      "toY": 1,
+      "label": "Back up the ladder"
+    },
+    {
+      "x": 8,
+      "y": 0,
+      "toMap": "corpse_cathedral",
+      "toX": 8,
+      "toY": 8,
+      "label": "The Corpse Cathedral",
+      "requires": {
+        "flag": "v6_truth"
+      }
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_forsaken",
+    "flag": "v6_arrived"
+  }
+}

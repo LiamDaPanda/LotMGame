@@ -53,7 +53,10 @@ const encounterFiles = (index.encounters ?? [])
   .filter(Boolean);
 const items = read(`items/${index.items}.json`) ?? [];
 const characters = read(`characters/${index.characters}.json`) ?? [];
-const chapters = index.story ? (read(`story/${index.story}.json`) ?? []) : [];
+const story = index.story ? (read(`story/${index.story}.json`) ?? []) : [];
+// The story file is either a bare list of chapters or a shelf of volumes.
+const volumes = Array.isArray(story) ? [] : (story.volumes ?? []);
+const chapters = Array.isArray(story) ? story : (story.chapters ?? []);
 
 const abilities = abilityFiles.flat();
 const dialogues = dialogueFiles.flat();
@@ -626,6 +629,19 @@ for (const tree of dialogues) {
 // The story spine
 // ---------------------------------------------------------------------------
 
+const volumeNumbers = new Set();
+for (const volume of volumes) {
+  const where = `Volume ${volume.number}`;
+  if (typeof volume.number !== 'number') fail(`${where}: missing number`);
+  if (volumeNumbers.has(volume.number)) fail(`${where}: duplicate number`);
+  volumeNumbers.add(volume.number);
+  if (!volume.title) fail(`${where}: missing title`);
+  if (!volume.blurb) fail(`${where}: missing blurb`);
+  if (!chapters.some((c) => c.volume === volume.number)) {
+    fail(`${where} "${volume.title}": has no chapters`);
+  }
+}
+
 const chapterIds = new Set();
 for (const [order, chapter] of chapters.entries()) {
   const where = `Chapter "${chapter.id}"`;
@@ -634,6 +650,9 @@ for (const [order, chapter] of chapters.entries()) {
   chapterIds.add(chapter.id);
   if (!chapter.title) fail(`${where}: missing title`);
   if (!chapter.objective) fail(`${where}: missing objective`);
+  if (volumes.length > 0 && !volumeNumbers.has(chapter.volume)) {
+    fail(`${where}: is in volume ${chapter.volume}, which does not exist`);
+  }
   if (chapter.where && !mapIds.has(chapter.where)) {
     fail(`${where}: points at unknown map "${chapter.where}"`);
   }
@@ -681,7 +700,7 @@ console.log(
   `\n${cases.length} case(s), ${maps.length} map(s), ${dialogues.length} dialogue tree(s), ` +
     `${encounters.length} encounter(s), ${leadCount} lead(s), ` +
     `${abilities.length} abilities, ${items.length} items, ${characters.length} characters, ` +
-    `${chapters.length} chapter(s)`,
+    `${volumes.length} volume(s), ${chapters.length} chapter(s)`,
 );
 
 if (problems.length) {

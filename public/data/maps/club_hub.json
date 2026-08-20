@@ -160,7 +160,7 @@
       "x": 3,
       "y": 12,
       "name": "The Cellar Room",
-      "description": "A drain in the floor and a chair bolted beside it. This is where the Church's phials are drunk.",
+      "description": "A drain in the floor and a chair bolted beside it. This is where the Church’s phials are drunk.",
       "action": "dialogue",
       "dialogue": "dlg_potion",
       "locked": {
@@ -209,6 +209,17 @@
       "toX": 9,
       "toY": 2,
       "label": "Iron Cross Street"
+    },
+    {
+      "x": 10,
+      "y": 14,
+      "toMap": "backlund",
+      "toX": 3,
+      "toY": 7,
+      "label": "The train to Backlund",
+      "requires": {
+        "sequenceAtMost": 8
+      }
     }
   ]
 }

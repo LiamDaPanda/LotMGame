@@ -156,12 +156,12 @@
     "requires": {
       "notFlag": "knows_crookback"
     },
-    "text": "A small man detaches himself from a doorway and falls into step with you, matching your pace exactly, which takes practice.\n\n'You've the look of somebody who buys the sort of thing that isn't on a shelf,' he says, to the street rather than to you. 'There's an yard off the market road. the lower market. Third door, no sign. Ask for nothing in particular and you'll be shown it.'",
+    "text": "A small man detaches himself from a doorway and falls into step with you, matching your pace exactly, which takes practice.\n\n‘You’ve the look of somebody who buys the sort of thing that isn’t on a shelf,’ he says, to the street rather than to you. ‘There’s a yard off the market road. The Lower Market. Third door, no sign. Ask for nothing in particular and you’ll be shown it.’",
     "options": [
       {
         "text": "Say nothing and remember the name.",
         "success": {
-          "text": "He peels off at the next corner without waiting for an answer, which is its own kind of professionalism. the lower market. Third door. No sign.",
+          "text": "He peels off at the next corner without waiting for an answer, which is its own kind of professionalism. The Lower Market. Third door. No sign.",
           "effect": {
             "flags": [
               "knows_crookback"
@@ -177,7 +177,7 @@
           "perPoint": 0.08
         },
         "success": {
-          "text": "'A penny a head, and the man in the third door likes a customer who asks that first.' He looks at you properly for the first time. 'Tell him Sil sent you and he'll not start you at the tourist price.'",
+          "text": "‘A penny a head, and the man in the third door likes a customer who asks that first.’ He looks at you properly for the first time. ‘Tell him Sil sent you and he’ll not start you at the tourist price.’",
           "effect": {
             "flags": [
               "knows_crookback",
@@ -186,7 +186,7 @@
           }
         },
         "failure": {
-          "text": "'A penny a head,' he says, and loses interest in you so completely that you check your pockets afterwards. Everything is still there, which somehow makes it worse.",
+          "text": "‘A penny a head,’ he says, and loses interest in you so completely that you check your pockets afterwards. Everything is still there, which somehow makes it worse.",
           "effect": {
             "flags": [
               "knows_crookback"
@@ -204,7 +204,7 @@
     "maps": [
       "ashfen_row"
     ],
-    "text": "She has been waiting outside the chandler's for somebody who looks the part, and today that is apparently you. Her husband's ship is nine days overdue and she will pay a penny to be told something, and you can see in her face exactly which something she wants.",
+    "text": "She has been waiting outside the chandler’s for somebody who looks the part, and today that is apparently you. Her husband’s ship is nine days overdue and she will pay a penny to be told something, and you can see in her face exactly which something she wants.",
     "options": [
       {
         "text": "Read them properly, and tell her what is actually there.",

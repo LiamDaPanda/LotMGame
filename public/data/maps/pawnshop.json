@@ -136,7 +136,7 @@
       "x": 7,
       "y": 4,
       "name": "The Desk",
-      "description": "Two cups, both poured. One is empty and one is cold and full. His inkwell is open and his blotter has one clean corner where a second man's elbow rested.",
+      "description": "Two cups, both poured. One is empty and one is cold and full. His inkwell is open and his blotter has one clean corner where a second man’s elbow rested.",
       "clues": [
         "clue_two_cups"
       ]
@@ -201,7 +201,7 @@
       "x": 13,
       "y": 2,
       "name": "The Coat On The Door",
-      "description": "His good coat, still on the hook, and in the pocket a slip of paper that has no business being in it: a Tingen postal receipt, book rate, paid in coin, dated the twenty-eighth of June.\n\nIt is not McGovern's handwriting.",
+      "description": "His good coat, still on the hook, and in the pocket a slip of paper that has no business being in it: a Tingen postal receipt, book rate, paid in coin, dated the twenty-eighth of June.\n\nIt is not McGovern’s handwriting.",
       "clues": [
         "clue_parcel_receipt"
       ],

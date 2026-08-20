@@ -121,15 +121,17 @@ const loaded = await withGame((game) => {
     items: s.content.items.size,
     characters: s.content.characters.size,
     chapters: s.content.chapters.length,
+    volumes: s.content.volumes.length,
   };
 });
 check(
   'content loaded from JSON',
   loaded.cases === 1 &&
-    loaded.maps === 7 &&
+    loaded.maps === 13 &&
     loaded.pathways === 1 &&
-    loaded.abilities === 15 &&
-    loaded.chapters === 11 &&
+    loaded.abilities === 28 &&
+    loaded.chapters === 36 &&
+    loaded.volumes === 7 &&
     loaded.encounters === 6,
   JSON.stringify(loaded),
 );
@@ -1087,6 +1089,191 @@ const advanced = await withGame((game) => {
 check('advanced cleanly to Sequence 7', advanced.sequence === 7, JSON.stringify(advanced.result));
 check('Magician abilities granted', advanced.abilities.includes('paper_mask') && advanced.abilities.includes('stage_presence'),
   advanced.abilities.join(','));
+
+
+// ---------------------------------------------------------------------------
+console.log('\n19b. The rest of the book: volumes II to VII, to the last page');
+
+/** Play a scene at a hotspot and take every choice named, in order. */
+const scene = async (mapId, hotspotId, choices) => {
+  await withGame(
+    (game, arg) => {
+      const world = game.scene.getScene('World');
+      const hotspot = world.map.hotspots.find((h) => h.id === arg);
+      if (hotspot) world.runHotspotAction(hotspot);
+    },
+    hotspotId,
+  );
+  await page.waitForTimeout(400);
+  for (const needle of choices) await pickChoice(needle);
+  await withGame((game) => {
+    if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+    const world = game.scene.getScene('World');
+    if (world.scene.isPaused()) world.scene.resume();
+  });
+  await page.waitForTimeout(300);
+};
+
+/** Buy the next rung's kit and take the rite, the way a funded player would. */
+const climb = async (formula, potion, toSequence) => {
+  const result = await withGame(
+    (game, arg) => {
+      const s = game.scene.getScenes(true)[0].registry.get('session');
+      s.state.addPence(2000000);
+      s.state.addItem(arg.formula, 1);
+      s.state.addItem(arg.potion, 1);
+      s.state.digestion = 100;
+      const outcome = s.progression.advance(false);
+      return { outcome, sequence: s.state.sequence, title: s.state.sequenceTitle };
+    },
+    { formula, potion },
+  );
+  check(
+    `advanced to Sequence ${toSequence} — ${result.title}`,
+    result.sequence === toSequence,
+    JSON.stringify(result.outcome),
+  );
+  return result;
+};
+
+const storyAt = () =>
+  withGame((game) => {
+    const s = game.scene.getScenes(true)[0].registry.get('session');
+    const p = s.story.progress();
+    return {
+      chapter: s.story.current()?.id ?? null,
+      volume: p.volume?.number ?? null,
+      volumeTitle: p.volume?.title ?? null,
+      index: p.index,
+      total: p.total,
+      finished: s.story.finished(),
+    };
+  });
+
+// --- Volume II: Faceless ----------------------------------------------------
+await goTo('backlund', 8, 7);
+await page.waitForTimeout(400);
+for (const needle of ['Look out of the window', 'So who are you', 'Get to work']) await pickChoice(needle);
+await withGame((game) => {
+  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(300);
+let where = await storyAt();
+check('Volume II opens in Backlund', where.volume === 2, JSON.stringify(where));
+await shot('21-backlund');
+
+await scene('backlund', 'bk_office', ['Be the detective they want', 'Take the work']);
+await scene('backlund', 'bk_alley', ['Go in as somebody else', 'And then the newspapers']);
+await scene('backlund', 'bk_chapel', ['An Angel', 'Break the ritual and run', 'Mr. Azik', 'Go home and be nobody']);
+where = await storyAt();
+check('the Faceless chapters are behind him', where.chapter === 'ch_faceless', JSON.stringify(where));
+await climb('formula_faceless', 'potion_faceless', 6);
+
+// --- Volume III: Traveler ---------------------------------------------------
+await goTo('bayam', 8, 7);
+await page.waitForTimeout(400);
+for (const needle of ['And who came ashore', 'Get to work']) await pickChoice(needle);
+await withGame((game) => {
+  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(300);
+await scene('bayam', 'by_tavern', ['Be the madman', 'Take the bounty']);
+await scene('bayam', 'by_dagger', ['Fight it', 'Give it to the Church of Storms', 'And on the altar']);
+where = await storyAt();
+check('Volume III ends with the scepter', where.volume === 3 && where.chapter === 'ch_marionettist', JSON.stringify(where));
+await shot('22-bayam');
+await climb('formula_marionettist', 'potion_marionettist', 5);
+
+// --- Volume IV: Undying -----------------------------------------------------
+await goTo('cathedral', 8, 8);
+await page.waitForTimeout(400);
+for (const needle of ['Why come back at all', 'Go and look at it']) await pickChoice(needle);
+await withGame((game) => {
+  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(300);
+await scene('cathedral', 'cd_gate', [
+  'Just look, and think', 'Take it anyway', 'Get out', 'Say the name',
+  'And the other thing', 'Take the next rung anyway',
+]);
+const amon = await withGame((game) => {
+  const s = game.scene.getScenes(true)[0].registry.get('session');
+  return [...s.state.flags];
+});
+check('the notebook turns out to be a hand of Amon', amon.includes('knows_amon'), amon.slice(-4).join(','));
+await shot('23-cathedral');
+await climb('formula_bizarro', 'potion_bizarro', 4);
+
+// --- Volume V: Red Priest ---------------------------------------------------
+await goTo('sefirah', 8, 7);
+await page.waitForTimeout(400);
+await pickChoice('Walk it');
+await withGame((game) => {
+  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(300);
+await scene('sefirah', 'sf_ladder', ['Open it', 'So the whole thing was an accident']);
+await scene('sefirah', 'sf_window', ['Go down into the mausoleum', 'Get the living out', 'Then the roof', 'And above the fog']);
+where = await storyAt();
+check('Volume V ends under the mausoleum', where.volume === 5 && where.chapter === 'ch_miracle', JSON.stringify(where));
+await shot('24-sefirah');
+await climb('formula_miracle', 'potion_miracle', 3);
+
+// --- Volume VI: Lightseeker -------------------------------------------------
+await goTo('forsaken', 8, 7);
+await page.waitForTimeout(400);
+await pickChoice('How did you get here');
+await withGame((game) => {
+  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(300);
+await scene('forsaken', 'fk_court', ['Sit in the chair']);
+await scene('forsaken', 'fk_sky', ['Your family is under that', 'Do the unthinkable thing', 'And there it is']);
+where = await storyAt();
+check('Volume VI ends with the look back', where.volume === 7, JSON.stringify(where));
+await shot('25-forsaken');
+
+// --- Volume VII: The Hanged Man ---------------------------------------------
+await goTo('corpse_cathedral', 8, 7);
+await page.waitForTimeout(400);
+await pickChoice('Set it out');
+await withGame((game) => {
+  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(300);
+await scene('corpse_cathedral', 'cc_altar', ['Word it so that the worst reading', 'And so you die']);
+await climb('formula_attendant', 'potion_attendant', 2);
+await scene('corpse_cathedral', 'cc_zaratul', ['Let him talk', 'Ask him', 'Finish it', 'And afterwards']);
+await shot('26-corpse-cathedral');
+await climb('formula_fool', 'potion_fool', 1);
+
+where = await storyAt();
+check('the book is finished', where.finished === true, JSON.stringify(where));
+const ending = await withGame((game) => {
+  const s = game.scene.getScenes(true)[0].registry.get('session');
+  return {
+    sequence: s.state.sequence,
+    title: s.state.sequenceTitle,
+    abilities: s.state.knownAbilities(),
+    flags: [...s.state.flags],
+  };
+});
+check('and he is Sequence 1, The Fool', ending.sequence === 1 && ending.title === 'The Fool',
+  `${ending.sequence} ${ending.title}`);
+check('with the Fool’s own powers', ending.abilities.includes('above_the_fog'), ending.abilities.join(','));
+check('and Amon still keeping', ending.flags.includes('v7_king'), ending.flags.slice(-3).join(','));
 
 // ---------------------------------------------------------------------------
 console.log('\n20. No runtime errors');

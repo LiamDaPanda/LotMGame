@@ -1,6 +1,6 @@
 {
   "id": "case-01-notebook",
-  "title": "The Antigonus Family's Notebook",
+  "title": "The Antigonus Family’s Notebook",
   "client": "Dunn Smith",
   "recommendedSequence": 9,
   "briefing": "Three people read a black hardcover notebook and three people died in the small hours of the twenty-eighth of June. Naya, drowned in a basin of water in a locked room. Welch McGovern, at his own desk with the door bolted on the inside and no mark on him anywhere.\n\nAnd you, who put a revolver against your own head, wrote that everyone dies including me, and got up again.\n\nMcGovern bought the notebook in May — Ancient Feysac, a family hand, and a grade the Church does not put in writing — and asked two friends to help him read it. It is not in his rooms now.\n\nCaptain Smith wants it back before whoever else is looking for it finds it. He is giving the file to the civilian staffer whose own name is already in it.",
@@ -64,7 +64,7 @@
       "id": "clue_stopped_watch",
       "title": "His watch stopped at 11:47",
       "category": "scene",
-      "text": "Wound, undamaged, and stopped — not run down. The mainspring still has a day in it. Naya's clock stopped in the same hour, three streets away, and so did the one on your own shelf."
+      "text": "Wound, undamaged, and stopped — not run down. The mainspring still has a day in it. Naya’s clock stopped in the same hour, three streets away, and so did the one on your own shelf."
     },
     {
       "id": "clue_two_cups",
@@ -80,7 +80,7 @@
     },
     {
       "id": "clue_empty_shelf",
-      "title": "The book's place on the shelf is empty",
+      "title": "The book’s place on the shelf is empty",
       "category": "scene",
       "text": "A gap the width of a hardcover, and no dust in it, on a shelf that has dust everywhere else. Whatever stood there stood there until very recently."
     },
@@ -95,7 +95,7 @@
       "title": "The receipt is in your own hand",
       "category": "document",
       "hidden": false,
-      "text": "The loops on the address are yours. Not the dead man's, not a clerk's — yours, from the hand of a body you have been wearing for eight days and did not have that morning.\n\nYou were awake before dawn on the twenty-eighth, and you have no memory of it whatsoever."
+      "text": "The loops on the address are yours. Not the dead man’s, not a clerk’s — yours, from the hand of a body you have been wearing for eight days and did not have that morning.\n\nYou were awake before dawn on the twenty-eighth, and you have no memory of it whatsoever."
     },
     {
       "id": "clue_strongbox_intact",
@@ -127,13 +127,13 @@
       "id": "clue_constable_time",
       "title": "The police put it at midnight",
       "category": "witness",
-      "text": "Sergeant Gorman's report has the surgeon putting death near midnight and the file closed as three unconnected misadventures, because the alternative is a form the Awwa County Police do not keep."
+      "text": "Sergeant Gorman’s report has the surgeon putting death near midnight and the file closed as three unconnected misadventures, because the alternative is a form the Awwa County Police do not keep."
     },
     {
       "id": "clue_bell_time",
       "title": "The bell rang eleven",
       "category": "witness",
-      "text": "Two neighbours heard it from the landing and both are certain, and both say McGovern's lamp was still lit after it, and that he was reading aloud in a language neither of them has ever heard."
+      "text": "Two neighbours heard it from the landing and both are certain, and both say McGovern’s lamp was still lit after it, and that he was reading aloud in a language neither of them has ever heard."
     },
     {
       "id": "clue_hanass_sale",
@@ -259,7 +259,7 @@
           "notebook_secured"
         ]
       },
-      "epilogue": "You lay it out for Dunn Smith in the order a report wants it, and he listens with his eyes shut and does not write a word. At the end he says the notebook's grade before you have finished describing the binding.\n\nOld Neil seals it in lead and lime and signs it into the Church's cupboard, and is quiet for the rest of the evening, which nobody here has seen before. Leonard says something about a drink and nobody answers him.\n\nOn the stairs, not looking at you, Smith says that three people read that book and three people died, and that the file has four names in it. Then he says goodnight."
+      "epilogue": "You lay it out for Dunn Smith in the order a report wants it, and he listens with his eyes shut and does not write a word. At the end he says the notebook’s grade before you have finished describing the binding.\n\nOld Neil seals it in lead and lime and signs it into the Church’s cupboard, and is quiet for the rest of the evening, which nobody here has seen before. Leonard says something about a drink and nobody answers him.\n\nOn the stairs, not looking at you, Smith says that three people read that book and three people died, and that the file has four names in it. Then he says goodnight."
     },
     {
       "id": "res_messy",
@@ -280,7 +280,7 @@
           "notebook_secured"
         ]
       },
-      "epilogue": "It is done in eleven minutes and two of them are spent on the door. What comes up off the warehouse floor is not a clerk any more, and the thing that stops it is Daly Simone, standing in the air with her hands full of somebody else's night.\n\nThe notebook is under the wreckage, unmarked, exactly as heavy as a book. Smith takes it in a lead case without looking at it and tells you to write the report at home, tomorrow, when you have slept."
+      "epilogue": "It is done in eleven minutes and two of them are spent on the door. What comes up off the warehouse floor is not a clerk any more, and the thing that stops it is Daly Simone, standing in the air with her hands full of somebody else’s night.\n\nThe notebook is under the wreckage, unmarked, exactly as heavy as a book. Smith takes it in a lead case without looking at it and tells you to write the report at home, tomorrow, when you have slept."
     },
     {
       "id": "res_partial",
@@ -363,7 +363,7 @@
         "clue_bieber_address"
       ],
       "successText": "The ledger has it in two lines: book rate, paid in coin, half past five, addressed to R. Bieber, nine Cobble Yard. The clerk remembers the customer because he did not say a word, not even good morning.",
-      "failureText": "The counter clerk has been asked for other people's post before and has a speech about it, which you hear twice.",
+      "failureText": "The counter clerk has been asked for other people’s post before and has a speech about it, which you hear twice.",
       "failureEffect": {
         "sanity": -1
       }

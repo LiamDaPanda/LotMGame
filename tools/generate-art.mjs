@@ -32,28 +32,28 @@ const WHITE = rgba('#fdf6e8');
 // ---------------------------------------------------------------------------
 const CAST = [
   // The player: a young investigator in a long charcoal greatcoat.
-  { id: 'player', skin: '#f2c9a8', hair: '#3a2b22', coat: '#3d4451', accent: '#7fb2c8', trouser: '#2c3038', hat: null, scarf: '#8c3b40' },
+  { id: 'player', skin: '#f0c8a6', hair: '#2b211c', coat: '#3d4451', accent: '#7fb2c8', trouser: '#2c3038', hat: null, scarf: '#8c3b40' , hairStyle: 'parted', eyes: '#5b86b0', extras: ['collar'] },
   // Tarot Club members.
-  { id: 'hermit', skin: '#e8bb95', hair: '#c9c3b6', coat: '#4a3d5c', accent: '#c9a227', trouser: '#3a3040', hat: 'top', scarf: null },
-  { id: 'star', skin: '#c98f63', hair: '#241b18', coat: '#7a4a2c', accent: '#e0b060', trouser: '#4a3020', hat: null, scarf: '#d9c27a' },
-  { id: 'tower', skin: '#dda87c', hair: '#5a3320', coat: '#2f4636', accent: '#9fbf8a', trouser: '#28352a', hat: 'cap', scarf: null },
-  { id: 'moon', skin: '#f4d4bb', hair: '#6b3f6e', coat: '#2b2f4a', accent: '#b39ddb', trouser: '#23263a', hat: null, scarf: '#4a4f7a' },
+  { id: 'hermit', skin: '#e6bb95', hair: '#b8a67e', coat: '#4a3d5c', accent: '#c9a227', trouser: '#3a3040', hat: 'top', scarf: null , hairStyle: 'short', eyes: '#7d8a6a', brow: 1, extras: ['collar'] },
+  { id: 'star', skin: '#e8b48a', hair: '#8a4326', coat: '#7a4a2c', accent: '#e0b060', trouser: '#4a3020', hat: null, scarf: '#d9c27a' , hairStyle: 'ponytail', eyes: '#7a4a2c' },
+  { id: 'tower', skin: '#e4ad84', hair: '#6a4a2a', coat: '#2f4636', accent: '#9fbf8a', trouser: '#28352a', hat: 'cap', scarf: null , hairStyle: 'swept', eyes: '#7fae6a', brow: -1 },
+  { id: 'moon', skin: '#e8c5a4', hair: '#b9b3a6', coat: '#2b2f4a', accent: '#b39ddb', trouser: '#23263a', hat: null, scarf: '#4a4f7a' , hairStyle: 'receding', eyes: '#6f6250', extras: ['moustache', 'glasses'] },
   // Case cast.
-  { id: 'constable', skin: '#e3b48d', hair: '#2b2622', coat: '#1f2b44', accent: '#c0c6d0', trouser: '#1a2236', hat: 'custodian', scarf: null },
-  { id: 'widow', skin: '#f0cdb0', hair: '#1e1a18', coat: '#22201f', accent: '#6e6a66', trouser: '#1a1817', hat: 'veil', scarf: null },
-  { id: 'apprentice', skin: '#eec39c', hair: '#8a5a2b', coat: '#6b6250', accent: '#a89a76', trouser: '#4a453a', hat: 'flat', scarf: null },
-  { id: 'landlady', skin: '#e9bd97', hair: '#7a6a58', coat: '#6a3350', accent: '#d6a0b8', trouser: '#4a2438', hat: null, scarf: '#e2d2c0' },
-  { id: 'rival', skin: '#d9a67e', hair: '#141210', coat: '#2a1f2c', accent: '#a03a4a', trouser: '#1e1620', hat: 'top', scarf: '#5c1f28' },
-  { id: 'pawnbroker', skin: '#dfb894', hair: '#4a4238', coat: '#4a3b2a', accent: '#b09060', trouser: '#3a2f22', hat: null, scarf: null },
-  { id: 'dockhand', skin: '#c08a5e', hair: '#2a2018', coat: '#40514f', accent: '#8aa8a2', trouser: '#2c3a38', hat: 'cap', scarf: null },
+  { id: 'constable', skin: '#e3b48d', hair: '#2b2622', coat: '#1f2b44', accent: '#c0c6d0', trouser: '#1a2236', hat: 'custodian', scarf: null , hairStyle: 'short', eyes: '#5a6472', extras: ['moustache'] },
+  { id: 'widow', skin: '#f0cdb0', hair: '#9a938c', coat: '#22201f', accent: '#6e6a66', trouser: '#1a1817', hat: null, scarf: null , hairStyle: 'receding', eyes: '#6b6560', extras: ['moustache'] },
+  { id: 'apprentice', skin: '#eec39c', hair: '#8a5a2b', coat: '#6b6250', accent: '#a89a76', trouser: '#4a453a', hat: 'flat', scarf: null , hairStyle: 'short', eyes: '#8a7a4a', brow: 1 },
+  { id: 'landlady', skin: '#f2cdad', hair: '#8c7454', coat: '#6a3350', accent: '#d6a0b8', trouser: '#4a2438', hat: null, scarf: '#e2d2c0' , hairStyle: 'long', eyes: '#5b86b0' },
+  { id: 'rival', skin: '#d9a67e', hair: '#141210', coat: '#2a1f2c', accent: '#a03a4a', trouser: '#1e1620', hat: 'top', scarf: '#5c1f28' , hairStyle: 'swept', eyes: '#a03a4a', brow: -1, extras: ['monocle'] },
+  { id: 'pawnbroker', skin: '#cfae94', hair: '#5a4a38', coat: '#4a3b2a', accent: '#b09060', trouser: '#3a2f22', hat: null, scarf: null , hairStyle: 'short', eyes: '#8a8272', brow: 1 },
+  { id: 'dockhand', skin: '#c08a5e', hair: '#2a2018', coat: '#40514f', accent: '#8aa8a2', trouser: '#2c3a38', hat: 'cap', scarf: null , hairStyle: 'short', eyes: '#6d8a86' },
   // Family. Appended, not inserted: the index is the frame number.
-  { id: 'benson', skin: '#f0c5a2', hair: '#33251d', coat: '#4a4034', accent: '#b9a37c', trouser: '#332c24', hat: 'flat', scarf: null },
+  { id: 'benson', skin: '#f0c5a2', hair: '#33251d', coat: '#4a4034', accent: '#b9a37c', trouser: '#332c24', hat: null, scarf: null , hairStyle: 'parted', eyes: '#5b86b0', extras: ['collar'] },
   // The notebook's trail, and the two who answer above the grey fog.
-  { id: 'bieber', skin: '#cbb9a4', hair: '#2e2a26', coat: '#3b3a30', accent: '#7d8a5a', trouser: '#2a2a22', hat: null, scarf: null },
-  { id: 'clown', skin: '#efe6df', hair: '#6a2030', coat: '#5a2338', accent: '#e8dcc8', trouser: '#2a1620', hat: 'top', scarf: '#c9a227' },
-  { id: 'justice', skin: '#f6d6bd', hair: '#c8a24a', coat: '#5a4b7a', accent: '#e6d7a8', trouser: '#3c3254', hat: null, scarf: '#dcc7e0' },
-  { id: 'hanged_man', skin: '#b98b60', hair: '#241d18', coat: '#2c3f4a', accent: '#8fb0bd', trouser: '#22303a', hat: 'cap', scarf: '#6a7f88' },
-  { id: 'daly', skin: '#e6b992', hair: '#1f1a17', coat: '#33323f', accent: '#9d86c9', trouser: '#26252f', hat: null, scarf: '#4a4560' },
+  { id: 'bieber', skin: '#c9bba8', hair: '#2e2a26', coat: '#3b3a30', accent: '#7d8a5a', trouser: '#2a2a22', hat: null, scarf: null , hairStyle: 'swept', eyes: '#8a9a6a', brow: 1 },
+  { id: 'clown', skin: '#efe6df', hair: '#6a2030', coat: '#5a2338', accent: '#e8dcc8', trouser: '#2a1620', hat: 'top', scarf: '#c9a227' , hairStyle: 'swept', eyes: '#c9a227', face: 'paint' },
+  { id: 'justice', skin: '#f7d8bf', hair: '#d9b45a', coat: '#5a4b7a', accent: '#e6d7a8', trouser: '#3c3254', hat: null, scarf: '#dcc7e0' , hairStyle: 'long', eyes: '#6aa8d8' },
+  { id: 'hanged_man', skin: '#b98b60', hair: '#241d18', coat: '#2c3f4a', accent: '#8fb0bd', trouser: '#22303a', hat: 'cap', scarf: '#6a7f88' , hairStyle: 'short', eyes: '#8fb0bd', brow: 1, extras: ['beard'] },
+  { id: 'daly', skin: '#e6b992', hair: '#1f1a17', coat: '#33323f', accent: '#9d86c9', trouser: '#26252f', hat: null, scarf: '#4a4560' , hairStyle: 'bob', eyes: '#9d86c9', brow: -1 },
 ];
 
 // ---------------------------------------------------------------------------
@@ -240,11 +240,26 @@ function buildCharacterSheet() {
 // Dialogue portraits — 64x64 chibi busts, one per cast member.
 // ---------------------------------------------------------------------------
 
+/**
+ * A 64x64 bust.
+ *
+ * Everyone used to be drawn with the same head and a different palette, which
+ * on a 64px canvas reads as one person in nine coats. Each character now gets
+ * a hair silhouette, an eye colour and whatever they are known by — Old Neil's
+ * moustache, Audrey's fall of gold, the Clown's paint — because at this size
+ * the silhouette is the whole of the likeness.
+ */
 function drawPortrait(r, ox, oy, pal) {
-  const skin = rgba(pal.skin);
+  const painted = pal.face === 'paint';
+  const skin = rgba(painted ? '#f4eee9' : pal.skin);
   const hair = rgba(pal.hair);
-  const hairLit = shade(hair, 0.25);
+  // Subtle: on near-black hair a strong lift reads as a bald patch.
+  const hairLit = shade(hair, 0.14);
+  const hairDark = shade(hair, -0.3);
   const coat = rgba(pal.coat);
+  const eye = rgba(pal.eyes ?? pal.accent);
+  const style = pal.hairStyle ?? 'short';
+  const extras = pal.extras ?? [];
 
   // Vignette backdrop so portraits read against any panel colour.
   for (let y = 0; y < 64; y++) {
@@ -254,53 +269,160 @@ function drawPortrait(r, ox, oy, pal) {
     }
   }
 
-  // Layout budget for the 64px frame: hat 0-14, head 10-42, neck 42-48,
+  // Layout budget for the frame: hair 6-40, head 10-46, neck 42-48,
   // shoulders 48-64. Nothing may exceed it or the bust reads as cropped.
 
-  // Shoulders / coat.
-  r.rect(ox + 27, oy + 40, 10, 9, shade(skin, -0.22)); // neck
+  // Hair that falls behind the shoulders is laid down first.
+  if (style === 'long' || style === 'ponytail' || style === 'bob') {
+    const drop = style === 'bob' ? 44 : 58;
+    r.roundRect(ox + 12, oy + 18, 40, drop - 18, 10, hairDark);
+  }
+
+  // Shoulders, neck, collar.
+  r.rect(ox + 27, oy + 40, 10, 9, shade(skin, -0.22));
   r.roundRect(ox + 6, oy + 48, 52, 16, 7, coat);
   r.roundRect(ox + 11, oy + 51, 42, 13, 5, shade(coat, 0.12));
   if (pal.scarf) r.roundRect(ox + 20, oy + 46, 24, 6, 3, rgba(pal.scarf));
-
-  // Head.
-  r.ellipse(ox + 32, oy + 26, 17, 16, skin);
-  r.ellipse(ox + 32, oy + 33, 14, 10, skin);
-
-  // Hair — cap sits above the eye line, fringe points stop at y+30.
-  r.ellipse(ox + 32, oy + 17, 18, 12, hair);
-  r.rect(ox + 14, oy + 16, 4, 20, hair);
-  r.rect(ox + 46, oy + 16, 4, 20, hair);
-  r.ellipse(ox + 23, oy + 11, 7, 3.5, hairLit);
-  for (let i = -15; i <= 15; i += 6) {
-    r.ellipse(ox + 32 + i, oy + 25, 3, 4 + ((i + 15) % 4), hair);
+  if (extras.includes('collar')) {
+    r.rect(ox + 25, oy + 48, 14, 5, WHITE);
+    r.rect(ox + 30, oy + 50, 4, 8, rgba(pal.accent));
   }
 
-  // Big anime eyes, seated just below the fringe.
-  for (const ex of [ox + 23, ox + 41]) {
-    r.ellipse(ex, oy + 33, 4.6, 5.8, WHITE);
-    r.ellipse(ex, oy + 34, 3.6, 4.8, shade(rgba(pal.accent), -0.45));
-    r.ellipse(ex, oy + 35, 2.7, 3.6, rgba(pal.accent));
-    r.ellipse(ex, oy + 36.5, 1.4, 1.6, INK); // pupil
-    r.ellipse(ex - 1.4, oy + 31.5, 1.5, 1.9, WHITE); // highlight
-    r.px(ex + 2, oy + 37, WHITE);
-    r.rect(ex - 5, oy + 27, 10, 2, INK); // lash line
-    r.rect(ex - 5, oy + 26, 3, 1, INK);
+  // Head: a slim oval with a tapering jaw, rather than two stacked blobs.
+  r.ellipse(ox + 32, oy + 27, 15, 16, skin);
+  r.ellipse(ox + 32, oy + 34, 12, 9, skin);
+  r.ellipse(ox + 32, oy + 40, 7, 5, skin);
+  r.ellipse(ox + 32, oy + 30, 13, 12, shade(skin, 0.06));
+
+  // Hair, by silhouette.
+  switch (style) {
+    case 'receding':
+      r.ellipse(ox + 32, oy + 18, 17, 8, hair);
+      r.ellipse(ox + 32, oy + 15, 11, 6, skin);
+      r.rect(ox + 15, oy + 18, 4, 14, hair);
+      r.rect(ox + 45, oy + 18, 4, 14, hair);
+      break;
+    case 'parted':
+      r.ellipse(ox + 32, oy + 17, 18, 12, hair);
+      r.rect(ox + 14, oy + 16, 4, 16, hair);
+      r.rect(ox + 46, oy + 16, 4, 16, hair);
+      // A real parting: a line off-centre, with the heavy side swept over it.
+      for (let i = 0; i < 9; i++) r.px(ox + 26 + i, oy + 8 + i, hairDark);
+      r.ellipse(ox + 38, oy + 15, 11, 7, hair);
+      r.ellipse(ox + 40, oy + 13, 5, 2, hairLit);
+      break;
+    case 'swept':
+      r.ellipse(ox + 32, oy + 17, 18, 12, hair);
+      r.rect(ox + 14, oy + 16, 4, 18, hair);
+      r.rect(ox + 46, oy + 16, 4, 18, hair);
+      for (let i = 0; i < 5; i++) r.ellipse(ox + 21 + i * 5, oy + 19 - i, 4.5, 4.5, hair);
+      r.ellipse(ox + 39, oy + 12, 6, 2, hairLit);
+      break;
+    case 'long':
+      r.ellipse(ox + 32, oy + 16, 19, 13, hair);
+      r.rect(ox + 12, oy + 16, 6, 30, hair);
+      r.rect(ox + 46, oy + 16, 6, 30, hair);
+      r.ellipse(ox + 25, oy + 11, 7, 2.5, hairLit);
+      for (let i = -12; i <= 12; i += 8) r.ellipse(ox + 32 + i, oy + 24, 4, 5, hair);
+      break;
+    case 'ponytail':
+      r.ellipse(ox + 32, oy + 17, 18, 12, hair);
+      r.rect(ox + 14, oy + 16, 4, 16, hair);
+      r.rect(ox + 46, oy + 16, 4, 16, hair);
+      r.ellipse(ox + 52, oy + 30, 6, 12, hair);
+      r.ellipse(ox + 26, oy + 12, 6, 2.5, hairLit);
+      break;
+    case 'bob':
+      r.ellipse(ox + 32, oy + 16, 19, 12, hair);
+      r.rect(ox + 12, oy + 16, 7, 26, hair);
+      r.rect(ox + 45, oy + 16, 7, 26, hair);
+      r.rect(ox + 18, oy + 22, 28, 4, hairDark); // blunt fringe
+      break;
+    default:
+      r.ellipse(ox + 32, oy + 17, 18, 12, hair);
+      r.rect(ox + 14, oy + 16, 4, 18, hair);
+      r.rect(ox + 46, oy + 16, 4, 18, hair);
+      r.ellipse(ox + 24, oy + 12, 5, 2.5, hairLit);
+      for (let i = -14; i <= 14; i += 6) {
+        r.ellipse(ox + 32 + i, oy + 22, 3, 3 + ((i + 14) % 3), hair);
+      }
   }
 
-  r.rect(ox + 31, oy + 39, 2, 1, shade(skin, -0.3)); // nose
-  r.rect(ox + 29, oy + 43, 6, 1, shade(skin, -0.45)); // mouth
-  r.px(ox + 28, oy + 42, shade(skin, -0.45));
-  r.px(ox + 35, oy + 42, shade(skin, -0.45));
-  r.ellipse(ox + 17, oy + 39, 4, 2, rgba('#e08a80', 0.4)); // blush
-  r.ellipse(ox + 47, oy + 39, 4, 2, rgba('#e08a80', 0.4));
+  // Eyes: the anime's large iris with a hard highlight, in the character's
+  // own colour rather than the coat's accent.
+  const brow = pal.brow ?? 0;
+  for (const [side, ex] of [[-1, ox + 24], [1, ox + 40]]) {
+    // Large, but taller than they are wide — the anime proportion. The old
+    // circles at this size read as spectacles on every character at once.
+    r.ellipse(ex, oy + 33, 3.4, 4.6, WHITE);
+    r.ellipse(ex, oy + 34, 2.9, 4.0, shade(eye, -0.5));
+    r.ellipse(ex, oy + 34.5, 2.2, 3.2, eye);
+    r.ellipse(ex, oy + 35.5, 1.1, 1.4, INK);
+    r.ellipse(ex - 1, oy + 31.8, 1.1, 1.4, WHITE);
+    // Upper lid, heavier at the outer corner, and a hint of a lower one.
+    r.rect(ex - 4, oy + 28, 8, 2, INK);
+    r.rect(ex + side * 3, oy + 29, 2, 2, INK);
+    r.rect(ex - 3, oy + 38, 6, 1, shade(skin, -0.35));
+    // Brows carry the expression: level by default, tilted for a temper.
+    const lift = side * brow;
+    const browY = oy + 24 - Math.max(0, lift);
+    r.rect(ex - 4, browY, 5, 2, hairDark);
+    r.rect(ex, browY + Math.max(0, -lift), 5, 2, hairDark);
+  }
+
+  r.rect(ox + 31, oy + 40, 2, 1, shade(skin, -0.3));
+  if (painted) {
+    r.rect(ox + 24, oy + 42, 16, 2, rgba('#b0202e'));
+    r.rect(ox + 22, oy + 41, 3, 4, rgba('#b0202e'));
+    r.rect(ox + 39, oy + 41, 3, 4, rgba('#b0202e'));
+    r.rect(ox + 22, oy + 30, 2, 10, rgba('#b0202e', 0.7));
+    r.rect(ox + 40, oy + 30, 2, 10, rgba('#b0202e', 0.7));
+  } else {
+    r.rect(ox + 30, oy + 44, 4, 1, shade(skin, -0.45));
+    r.px(ox + 29, oy + 43, shade(skin, -0.4));
+    r.px(ox + 34, oy + 43, shade(skin, -0.4));
+    r.ellipse(ox + 21, oy + 39, 3, 1.5, rgba('#e08a80', 0.32));
+    r.ellipse(ox + 43, oy + 39, 3, 1.5, rgba('#e08a80', 0.32));
+  }
+
+  if (extras.includes('moustache')) {
+    r.rect(ox + 26, oy + 41, 12, 2, hairDark);
+    r.px(ox + 25, oy + 42, hairDark);
+    r.px(ox + 38, oy + 42, hairDark);
+  }
+  if (extras.includes('beard')) {
+    r.roundRect(ox + 24, oy + 40, 16, 8, 4, hairDark);
+    r.rect(ox + 29, oy + 43, 6, 1, shade(skin, -0.5));
+  }
+  if (extras.includes('glasses')) {
+    const wire = rgba('#d8d2c4');
+    for (const ex of [ox + 23, ox + 41]) {
+      r.ellipse(ex, oy + 34, 7, 7, rgba('#9fd0e0', 0.16));
+      r.ellipseOutline?.(ex, oy + 34, 7, 7, wire);
+      r.rect(ex - 7, oy + 34, 1, 1, wire);
+      r.rect(ex + 6, oy + 34, 1, 1, wire);
+      r.rect(ex - 7, oy + 28, 14, 1, wire);
+      r.rect(ex - 7, oy + 40, 14, 1, wire);
+      r.rect(ex - 7, oy + 28, 1, 13, wire);
+      r.rect(ex + 6, oy + 28, 1, 13, wire);
+    }
+    r.rect(ox + 30, oy + 33, 4, 1, wire);
+  }
+  if (extras.includes('monocle')) {
+    const wire = rgba('#c9a227');
+    r.rect(ox + 34, oy + 27, 14, 1, wire);
+    r.rect(ox + 34, oy + 41, 14, 1, wire);
+    r.rect(ox + 34, oy + 27, 1, 15, wire);
+    r.rect(ox + 47, oy + 27, 1, 15, wire);
+    r.rect(ox + 47, oy + 42, 1, 8, wire);
+  }
 
   if (pal.hat) {
     const dark = rgba('#20191a');
     if (pal.hat === 'top') {
-      r.rect(ox + 7, oy + 11, 50, 4, dark); // brim
+      r.rect(ox + 7, oy + 11, 50, 4, dark);
       r.roundRect(ox + 17, oy + 1, 30, 12, 3, dark);
-      r.rect(ox + 17, oy + 8, 30, 3, rgba(pal.accent)); // band
+      r.rect(ox + 17, oy + 8, 30, 3, rgba(pal.accent));
     } else if (pal.hat === 'custodian') {
       r.roundRect(ox + 15, oy, 34, 16, 8, rgba('#20242e'));
       r.rect(ox + 10, oy + 12, 44, 4, rgba('#20242e'));
@@ -310,9 +432,12 @@ function drawPortrait(r, ox, oy, pal) {
       for (let y = 0; y < 26; y++)
         for (let x = 0; x < 36; x++)
           if ((x + y) % 2 === 0) r.px(ox + 14 + x, oy + 13 + y, rgba('#000000', 0.22));
-    } else {
-      r.roundRect(ox + 15, oy + 4, 34, 11, 5, dark);
-      r.rect(ox + 10, oy + 12, 22, 3, shade(dark, 0.12)); // peak
+    } else if (pal.hat === 'cap') {
+      r.roundRect(ox + 15, oy + 4, 34, 12, 5, dark);
+      r.rect(ox + 10, oy + 14, 44, 3, shade(dark, -0.2));
+    } else if (pal.hat === 'flat') {
+      r.roundRect(ox + 14, oy + 6, 36, 10, 4, dark);
+      r.rect(ox + 12, oy + 14, 40, 3, shade(dark, -0.15));
     }
   }
 

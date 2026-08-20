@@ -1,0 +1,109 @@
+{
+  "id": "cathedral",
+  "name": "Saint Samuel Cathedral, Backlund",
+  "ambient": "#20202e",
+  "encounterChance": 0,
+  "legend": {
+    "#": {
+      "floor": 11,
+      "collide": true
+    },
+    ".": {
+      "floor": 4
+    },
+    "=": {
+      "floor": 5
+    },
+    "T": {
+      "floor": 5,
+      "object": 16,
+      "collide": true
+    },
+    "B": {
+      "floor": 4,
+      "object": 18,
+      "collide": true
+    },
+    "C": {
+      "floor": 4,
+      "object": 21,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    },
+    "@": {
+      "floor": 32
+    }
+  },
+  "rows": [
+    "##################",
+    "#................#",
+    "#..T..........T..#",
+    "#................#",
+    "#....========....#",
+    "#....=......=....#",
+    "#....=..@...=....#",
+    "#................#",
+    "#........o.......#",
+    "##################"
+  ],
+  "spawn": {
+    "x": 8,
+    "y": 8
+  },
+  "hotspots": [
+    {
+      "id": "cd_gate",
+      "x": 8,
+      "y": 6,
+      "name": "The Chanis Gate",
+      "description": "Named for a saint nobody outside the Church has heard of, and behind it the cupboard where the Evernight Goddess keeps the things she does not trust anybody else to keep.\n\nThe notebook is in there.",
+      "action": "dialogue",
+      "dialogue": "dlg_chanis_gate",
+      "icon": 15
+    },
+    {
+      "id": "cd_pews",
+      "x": 4,
+      "y": 2,
+      "name": "The Empty Pews",
+      "description": "Six hundred seats and four occupied, all of them by people who came in out of the fog. Backlund prays the way it works: early, joylessly, and with an eye on the clock."
+    },
+    {
+      "id": "rite_cathedral",
+      "x": 13,
+      "y": 2,
+      "name": "The Circle",
+      "description": "A side chapel nobody has used since the fire, and a diagram that would have its author burned.",
+      "action": "ritual",
+      "icon": 13
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 8,
+      "y": 8,
+      "toMap": "backlund",
+      "toX": 8,
+      "toY": 5,
+      "label": "Out into the fog"
+    },
+    {
+      "x": 8,
+      "y": 1,
+      "toMap": "sefirah",
+      "toX": 8,
+      "toY": 8,
+      "label": "Down the ladder of light",
+      "requires": {
+        "flag": "v4_undying"
+      }
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_dantes",
+    "flag": "v4_arrived"
+  }
+}

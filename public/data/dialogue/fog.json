@@ -5,7 +5,7 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "You copied the ritual out of McGovern's transcription before you handed it in, which is either diligence or the first symptom, and you have not decided which.\n\nA circle on your own floor in chalk. Your own blood at four points, which the notes are matter-of-fact about. The words spoken aloud in a language you could not read in May.\n\nIt is meant to be a rite for luck. You are doing it because a man who wakes up in somebody else's body wants, more than anything, to go home.",
+        "text": "You copied the ritual out of McGovern’s transcription before you handed it in, which is either diligence or the first symptom, and you have not decided which.\n\nA circle on your own floor in chalk. Your own blood at four points, which the notes are matter-of-fact about. The words spoken aloud in a language you could not read in May.\n\nIt is meant to be a rite for luck. You are doing it because a man who wakes up in somebody else’s body wants, more than anything, to go home.",
         "choices": [
           {
             "text": "Say the last line.",
@@ -41,14 +41,14 @@
         ]
       },
       "summon": {
-        "text": "Two of the seats fill.\n\nA girl in a riding habit that cost more than your street, sitting very straight and clearly deciding to be delighted rather than frightened. A weathered man in a sea officer's coat who does not sit back in his chair once.\n\nThey can see the fog. They cannot see you — only where you are, which they have both already worked out is the head of the table.\n\n'Am I,' the girl says carefully, 'addressing a god?'",
+        "text": "Two of the seats fill.\n\nA girl in a riding habit that cost more than your street, sitting very straight and clearly deciding to be delighted rather than frightened. A weathered man in a sea officer’s coat who does not sit back in his chair once.\n\nThey can see the fog. They cannot see you — only where you are, which they have both already worked out is the head of the table.\n\n‘Am I,’ the girl says carefully, ‘addressing a god?’",
         "choices": [
           {
             "text": "Say nothing. Let the silence do it.",
             "goto": "fool_silence"
           },
           {
-            "text": "'You may call me the Fool.'",
+            "text": "‘You may call me the Fool.’",
             "goto": "fool_named"
           }
         ],
@@ -67,7 +67,7 @@
         ]
       },
       "fool_named": {
-        "text": "'You may call me the Fool,' you say, in a voice you borrowed from a lecturer who frightened you at nineteen. 'That is not a name. It is a seat.'\n\nThe girl writes it down. The sailor does not, and remembers it anyway.",
+        "text": "‘You may call me the Fool,’ you say, in a voice you borrowed from a lecturer who frightened you at nineteen. ‘That is not a name. It is a seat.’\n\nThe girl writes it down. The sailor does not, and remembers it anyway.",
         "effect": {
           "skills": {
             "rhetoric": 1
@@ -81,7 +81,7 @@
         ]
       },
       "names": {
-        "text": "'Justice,' you tell the girl, because the chair she took has a scale worn into the arm of it. 'Hanged Man,' you tell the sailor, and he takes it without any expression whatsoever, which tells you he has been called worse and by people who meant it.\n\nAudrey Hall. Alger Wilson. You will not be given those names for a long time yet, and you will pretend not to have wanted them.\n\nWhat is agreed, in the end, is very small and entirely unprecedented: they will come when called. They will trade what they know. Nobody will ask anybody where they are sitting when they answer.",
+        "text": "‘Justice,’ you tell the girl, because the chair she took has a scale worn into the arm of it. ‘Hanged Man,’ you tell the sailor, and he takes it without any expression whatsoever, which tells you he has been called worse and by people who meant it.\n\nAudrey Hall. Alger Wilson. You will not be given those names for a long time yet, and you will pretend not to have wanted them.\n\nWhat is agreed, in the end, is very small and entirely unprecedented: they will come when called. They will trade what they know. Nobody will ask anybody where they are sitting when they answer.",
         "effect": {
           "flags": [
             "tarot_club_founded"
@@ -100,7 +100,7 @@
         "speaker": "player"
       },
       "close": {
-        "text": "The fog takes them back. The chairs are empty, the table is bronze and very cold, and you are on your own floor in Iron Cross Street with a nosebleed and four minutes gone off the clock.\n\nSomewhere over the fog there is now a club with three members, one of whom is a nineteen-year-old civilian clerk of the Seventh Unit who cannot pay the quarter's rent without thinking about it.\n\nYou put the chalk back in the drawer.",
+        "text": "The fog takes them back. The chairs are empty, the table is bronze and very cold, and you are on your own floor in Iron Cross Street with a nosebleed and four minutes gone off the clock.\n\nSomewhere over the fog there is now a club with three members, one of whom is a nineteen-year-old civilian clerk of the Seventh Unit who cannot pay the quarter’s rent without thinking about it.\n\nYou put the chalk back in the drawer.",
         "effect": {
           "sanity": -4,
           "spirituality": -6

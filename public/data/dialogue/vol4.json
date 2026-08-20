@@ -1,0 +1,128 @@
+[
+  {
+    "id": "dlg_dantes",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Backlund again, and a third man comes ashore with you: Dwayne Dantès, who has money, no history anybody can check, and a habit of being generous in public.\n\nSherlock Moriarty still has the room above the chandler’s. Gehrman Sparrow is still a name in four ports. Klein Moretti is still dead. You are beginning to keep a list.",
+        "choices": [
+          {
+            "text": "Why come back at all?",
+            "goto": "why"
+          }
+        ]
+      },
+      "why": {
+        "text": "Because the Antigonus family’s notebook is in this city, in the Church of the Evernight Goddess’s own vault behind the Chanis Gate of Saint Samuel Cathedral — and because you have finally worked out what has been bothering you about it for two years.\n\nIt did not corrupt Welch McGovern. It did not corrupt Ray Bieber. It *arranged* them, one after another, each handing it on to the next, all the way to a member of its own family.\n\nBooks do not do that. Somebody does that.",
+        "choices": [
+          {
+            "text": "Go and look at it.",
+            "goto": "close"
+          }
+        ]
+      },
+      "close": {
+        "text": "Dwayne Dantès takes a house in the West End, gives to two charities, and is invited to dine with people who will one day be very surprised.\n\nIn a drawer, under the invitations, is a plan of a cathedral.",
+        "effect": {
+          "flags": [
+            "v4_arrived"
+          ],
+          "pence": 6000
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_chanis_gate",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The Chanis Gate is not locked, which is the first thing that tells you how serious it is. It is sealed — by four Sequence 4 rituals and a goddess’s attention, and by the plain fact that everything behind it was put there because it could not be destroyed.\n\nThe notebook is nine feet away.",
+        "choices": [
+          {
+            "text": "Take it.",
+            "goto": "attempt"
+          },
+          {
+            "text": "Just look, and think.",
+            "goto": "look"
+          }
+        ]
+      },
+      "look": {
+        "text": "You stand in an empty cathedral at four in the morning and look at a door, and think about a postal receipt written in your own hand.\n\nA thing that moves itself from owner to owner, choosing each one, over four hundred years, is not an artefact with a curse on it. It is a hand. And a hand belongs to somebody.",
+        "effect": {
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Take it anyway.",
+            "goto": "attempt"
+          }
+        ]
+      },
+      "attempt": {
+        "text": "You are Sequence 5, you have prepared for eleven weeks, and the attempt lasts four seconds.\n\nThe seals do not resist you. They *notice* you — which is a different verb and a much worse one — and then the whole cathedral is awake, and you are running through a side chapel wearing a face that will be in every constabulary office in Backlund by morning.",
+        "choices": [
+          {
+            "text": "Get out.",
+            "goto": "fail"
+          }
+        ]
+      },
+      "fail": {
+        "text": "You get out. You do not get the notebook.\n\nWhat you get instead is thirty seconds, in the dark of the vault doorway, when the thing on the other side of the seals turns its attention on you like a man looking up from a book — and is *amused*.\n\nNot the goddess. Not the Church. Something that has been in that notebook the whole time, that arranged McGovern and Bieber the way a player arranges pieces, and that has just recognised you.",
+        "effect": {
+          "sanity": -14,
+          "concealment": -10
+        },
+        "choices": [
+          {
+            "text": "Say the name.",
+            "goto": "amon"
+          }
+        ]
+      },
+      "amon": {
+        "text": "You do not have the name yet. You have the shape of it, and it will be another year before Mr. Azik gives you the word and does not enjoy giving it.\n\nAmon. Angel of Time, of the Error pathway, child of the Ancient Sun God, who leaves threads of himself in things and lets those threads do the living. The notebook is one of his hands. It has been one of his hands since the Fourth Epoch.\n\nYour name went into his ledger on the twenty-eighth of June, 1349, in a bolted room on Iron Cross Street.",
+        "effect": {
+          "flags": [
+            "knows_amon"
+          ],
+          "sanity": -8
+        },
+        "choices": [
+          {
+            "text": "And the other thing you learned in Backlund.",
+            "goto": "undying"
+          }
+        ]
+      },
+      "undying": {
+        "text": "Mr. Azik has been walking around Backlund for four hundred years wearing the manner of a man from the year he stopped. Leonard Mitchell, who was a Nighthawk in Tingen and is a great deal worse off than dead. Anderson, who cannot die and has stopped pretending that this is a gift.\n\nThe volume’s word is undying, and everybody carrying it will tell you, plainly, that it is a sentence and not a reward.",
+        "choices": [
+          {
+            "text": "Take the next rung anyway.",
+            "goto": "close"
+          }
+        ]
+      },
+      "close": {
+        "text": "You do not get the notebook. You get a name for what is holding it, and the beginning of a very long habit of not being where Amon expects.\n\nThat is worth a rung. The Marionettist comes off you in the same week.",
+        "effect": {
+          "flags": [
+            "v4_theft_failed",
+            "v4_undying"
+          ],
+          "digestion": 50
+        },
+        "end": true
+      }
+    }
+  }
+]
