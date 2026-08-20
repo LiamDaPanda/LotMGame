@@ -128,9 +128,6 @@ function drawChibi(r, ox, oy, dir, step, pal) {
   const legA = step === 1 ? 1 : step === 2 ? -1 : 0;
   const legB = -legA;
 
-  // Ground shadow (never bobs).
-  r.ellipse(ox + 16, oy + 37, 8, 2.4, rgba('#000000', 0.3));
-
   const bodyTop = oy + 23 + bob;
   const narrow = dir === 1 || dir === 2;
   const bx = narrow ? ox + 11 : ox + 10;
@@ -223,13 +220,42 @@ function drawChibi(r, ox, oy, dir, step, pal) {
   if (pal.hat) drawHat(r, ox, oy, pal.hat, pal, dir, bob);
 }
 
+/**
+ * Trace a dark line around whatever has been drawn in a frame.
+ *
+ * A 32x40 figure on a 32px tiled floor has almost no silhouette of its own —
+ * the coat is one brown among several. One pixel of outline is the difference
+ * between a character standing in a room and a decal on the boards.
+ */
+function outlineFrame(r, ox, oy, w, h, colour) {
+  const filled = [];
+  for (let y = 0; y < h; y++) {
+    filled[y] = [];
+    for (let x = 0; x < w; x++) filled[y][x] = r.get(ox + x, oy + y)[3] > 40;
+  }
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (filled[y][x]) continue;
+      const touching =
+        (y > 0 && filled[y - 1][x]) ||
+        (y < h - 1 && filled[y + 1][x]) ||
+        (x > 0 && filled[y][x - 1]) ||
+        (x < w - 1 && filled[y][x + 1]);
+      if (touching) r.px(ox + x, oy + y, colour);
+    }
+  }
+}
+
 function buildCharacterSheet() {
   const cols = DIRS.length * STEPS;
   const sheet = new Raster(cols * FRAME_W, CAST.length * FRAME_H);
   CAST.forEach((pal, row) => {
     for (let d = 0; d < DIRS.length; d++) {
       for (let s = 0; s < STEPS; s++) {
-        drawChibi(sheet, (d * STEPS + s) * FRAME_W, row * FRAME_H, d, s, pal);
+        const ox = (d * STEPS + s) * FRAME_W;
+        const oy = row * FRAME_H;
+        drawChibi(sheet, ox, oy, d, s, pal);
+        outlineFrame(sheet, ox, oy, FRAME_W, FRAME_H, rgba('#120e12', 0.85));
       }
     }
   });

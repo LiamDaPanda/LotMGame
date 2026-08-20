@@ -248,6 +248,20 @@ export class Button extends Phaser.GameObjects.Container {
     this.icon?.setAlpha(this.isEnabled ? 1 : 0.4);
   }
 
+  /**
+   * Stop taking touches without looking disabled — used while a choice is on
+   * screen but the line it answers is still being typed.
+   *
+   * Toggles the input flag rather than calling setInteractive() again: a bare
+   * setInteractive() throws away the hit rectangle this widget was built with
+   * and falls back to Phaser's container default, which is offset by half the
+   * plate — the original "nothing is pressable" bug, reintroduced.
+   */
+  disableTouch(off: boolean): this {
+    if (this.input) this.input.enabled = !off && this.isEnabled;
+    return this;
+  }
+
   setEnabled(enabled: boolean): this {
     this.isEnabled = enabled;
     this.redraw(false);

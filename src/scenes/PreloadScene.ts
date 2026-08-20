@@ -53,9 +53,33 @@ export class PreloadScene extends Phaser.Scene {
       return data;
     });
 
+    this.buildGlowTexture();
     this.registry.set(Session.KEY, new Session(content));
     this.buildAnimations(content.characters.size);
     this.scene.start('MainMenu');
+  }
+
+  /**
+   * A soft radial falloff, painted once and tinted per lamp.
+   *
+   * Phaser's Graphics has no radial gradient, and a gaslit room is mostly the
+   * business of light falling off — so the falloff is a texture and every lamp
+   * in the world is one additive image of it.
+   */
+  private buildGlowTexture(): void {
+    if (this.textures.exists('glow')) return;
+    const size = 128;
+    const canvas = this.textures.createCanvas('glow', size, size);
+    const ctx = canvas?.getContext();
+    if (!canvas || !ctx) return;
+    const gradient = ctx.createRadialGradient(size / 2, size / 2, 2, size / 2, size / 2, size / 2);
+    gradient.addColorStop(0, 'rgba(255,255,255,0.95)');
+    gradient.addColorStop(0.35, 'rgba(255,255,255,0.4)');
+    gradient.addColorStop(0.7, 'rgba(255,255,255,0.12)');
+    gradient.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+    canvas.refresh();
   }
 
   /**

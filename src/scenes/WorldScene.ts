@@ -15,6 +15,16 @@ import {
 } from '@/ui/theme';
 import type { HotspotData, MapData, MapExitData, MapNpcData } from '@/types/schema';
 
+/**
+ * Tile frames that give off light, and how far it carries in pixels. The
+ * indices are the tileset's own slots — see tools/import-tiles.mjs.
+ */
+const LIGHT_SOURCES: Record<number, number> = {
+  22: 150, // fireplace
+  24: 128, // gas lamp
+  32: 116, // tarot sigil
+};
+
 interface WorldSceneData {
   mapId: string;
   spawn?: Point;
@@ -149,25 +159,58 @@ export class WorldScene extends Phaser.Scene {
     for (let y = 0; y < this.grid.height; y++) {
       for (let x = 0; x < this.grid.width; x++) {
         stamp.setFrame(this.grid.floor[y]?.[x] ?? 0);
+        // A deterministic wobble in brightness per tile. A forty-tile floor of
+        // one identical stamp reads as wallpaper; this reads as boards.
+        const noise = ((x * 73856093) ^ (y * 19349663)) % 7;
+        const lift = 1 - noise * 0.018;
+        stamp.setTint(Phaser.Display.Color.GetColor(255 * lift, 253 * lift, 250 * lift));
         texture.draw(stamp, x * TILE_SIZE, y * TILE_SIZE);
       }
     }
     stamp.destroy();
   }
 
-  /** Props are separate sprites so the player can walk behind them. */
+  /**
+   * Props are separate sprites so the player can walk behind them — each with a
+   * shadow at its foot, because a thing with no shadow is a sticker on a floor.
+   * Anything that burns also gets a pool of light.
+   */
   private drawObjects(): void {
     for (let y = 0; y < this.grid.height; y++) {
       for (let x = 0; x < this.grid.width; x++) {
         const frame = this.grid.object[y]?.[x] ?? -1;
         if (frame < 0) continue;
+        const shadow = this.add
+          .ellipse(x * TILE_SIZE + TILE_SIZE / 2, y * TILE_SIZE + TILE_SIZE - 4, TILE_SIZE - 8, 9, COLORS.ink, 0.34)
+          .setDepth(y * TILE_SIZE + TILE_SIZE * 0.4);
+        this.objectSprites.push(shadow as unknown as Phaser.GameObjects.Image);
         const image = this.add
           .image(x * TILE_SIZE, y * TILE_SIZE, 'tiles', frame)
           .setOrigin(0, 0)
           .setDepth(y * TILE_SIZE + TILE_SIZE * 0.5);
         this.objectSprites.push(image);
+        if (LIGHT_SOURCES[frame] !== undefined) this.addLight(x, y, LIGHT_SOURCES[frame] as number);
       }
     }
+  }
+
+  /** One additive pool of lamplight, with a slow flicker on it. */
+  private addLight(tileX: number, tileY: number, radius: number): void {
+    const glow = this.add
+      .image(tileX * TILE_SIZE + TILE_SIZE / 2, tileY * TILE_SIZE + TILE_SIZE / 2, 'glow')
+      .setDisplaySize(radius, radius)
+      .setTint(COLORS.lamp)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setAlpha(0.34)
+      .setDepth(4500);
+    this.tweens.add({
+      targets: glow,
+      alpha: { from: 0.28, to: 0.42 },
+      duration: Phaser.Math.Between(1700, 2600),
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
   }
 
   /**

@@ -182,6 +182,11 @@ export class DialogueScene extends Phaser.Scene {
     });
 
     this.typewriter = new Typewriter(this, this.bodyText, 2, 14);
+    // Choices are drawn with the node, dimmed, rather than after the line has
+    // finished typing. They reserve their space either way, and an empty band
+    // of black above the speech panel is the ugliest thing on the screen.
+    this.renderChoices();
+    this.setChoicesLit(false);
     this.playPage();
   }
 
@@ -191,7 +196,7 @@ export class DialogueScene extends Phaser.Scene {
     this.continueHint.setAlpha(0);
     this.typewriter?.play(text, () => {
       if (this.page < this.pages.length - 1) this.continueHint.setAlpha(1);
-      else this.renderChoices();
+      else this.setChoicesLit(true);
     });
   }
 
@@ -203,14 +208,21 @@ export class DialogueScene extends Phaser.Scene {
     return true;
   }
 
+  /** Dim while the line is still arriving; live once it has. */
+  private setChoicesLit(lit: boolean): void {
+    for (const button of this.choiceButtons) {
+      button.setAlpha(lit ? 1 : 0.45);
+      button.setActive(lit);
+      button.disableTouch(!lit);
+    }
+    if (lit && this.node && this.node.choices.length === 0) this.continueHint.setAlpha(1);
+  }
+
   private renderChoices(): void {
     const node = this.node;
     if (!node || this.choiceButtons.length > 0 || this.choiceList) return;
 
-    if (node.choices.length === 0) {
-      this.continueHint.setAlpha(1);
-      return;
-    }
+    if (node.choices.length === 0) return;
 
     const area = this.choiceArea;
     const heights = node.choices.map((choice) => this.choiceHeight(choice, area.width));
@@ -286,7 +298,7 @@ export class DialogueScene extends Phaser.Scene {
     if (this.typewriter?.running) {
       this.typewriter.finish();
       if (this.page < this.pages.length - 1) this.continueHint.setAlpha(1);
-      else this.renderChoices();
+      else this.setChoicesLit(true);
       return;
     }
     if (this.nextPage()) return;

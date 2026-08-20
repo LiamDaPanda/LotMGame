@@ -215,15 +215,30 @@ const finishTyping = async () => {
   await page.waitForTimeout(350);
 };
 
+const dialogueText = () =>
+  page.evaluate(() => {
+    const scene = window.__game.scene.getScene('Dialogue');
+    return scene && scene.scene.isActive() ? (scene.node?.text ?? null) : null;
+  });
+
 const say = async (label, match) => {
-  // A long line is read a page at a time now, so keep tapping the panel until
-  // the choices actually appear — which is what a player does.
+  // A long line is read a page at a time, and the choices under it stay dim
+  // until the last page has landed. So tap the panel, try the choice, and keep
+  // going until the node actually changes — finding the widget is not the same
+  // as having pressed it.
+  const before = await dialogueText();
   let result = { found: false, have: [] };
-  for (let taps = 0; taps < 6 && !result.found; taps++) {
+  for (let taps = 0; taps < 8; taps++) {
     await finishTyping();
     result = await tapWidget('Dialogue', match);
+    const now = await dialogueText();
+    if (now !== before) return check(label, true);
   }
-  check(label, result.found, result.found ? '' : `have: ${(result.have ?? []).join(' | ')}`);
+  check(
+    label,
+    false,
+    result.found ? 'the choice was there but the tap did nothing' : `have: ${(result.have ?? []).join(' | ')}`,
+  );
 };
 
 await checkTextFits('Dialogue', 'Prologue');
