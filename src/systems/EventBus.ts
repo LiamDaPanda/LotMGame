@@ -63,7 +63,8 @@ export class EventBus {
     for (const handler of [...set]) (handler as Handler<K>)(payload);
   }
 
-  /** Drop every subscription — used when returning to the main menu. */
+  /** Drop every subscription. Scenes unsubscribe on shutdown; this is the
+   *  blunt instrument for tearing a whole run down at once. */
   clear(): void {
     this.handlers.clear();
   }

@@ -17,8 +17,15 @@ const OPENING_MAP = 'lodgings';
  * that much should be a scene rather than a row of buttons.
  */
 export class MainMenuScene extends Phaser.Scene {
+  /** Set when the menu is re-entered to explain why Continue did nothing. */
+  private warning?: string;
+
   constructor() {
     super('MainMenu');
+  }
+
+  init(data: { warning?: string }): void {
+    this.warning = data.warning;
   }
 
   create(): void {
@@ -124,20 +131,27 @@ export class MainMenuScene extends Phaser.Scene {
       });
     }
 
-    if (!SaveManager.available()) {
-      pixelText(
-        this,
-        GAME_WIDTH / 2,
-        disclaimer.y - disclaimer.height - 6,
-        'Storage is unavailable - progress will not be saved.',
-        { size: 'md', color: CSS.bad, align: 'center', wrap: GAME_WIDTH - 40 },
-      ).setOrigin(0.5, 1);
+    const alert = this.warning ?? (SaveManager.available() ? undefined : 'Storage is unavailable - progress will not be saved.');
+    if (alert) {
+      pixelText(this, GAME_WIDTH / 2, disclaimer.y - disclaimer.height - 6, alert, {
+        size: 'md',
+        color: CSS.bad,
+        align: 'center',
+        wrap: GAME_WIDTH - 40,
+      }).setOrigin(0.5, 1);
     }
   }
 
   private continueGame(): void {
     const session = Session.get(this);
-    SaveManager.load(session.state);
+    if (!SaveManager.load(session.state)) {
+      // The save was unreadable and has now been discarded. Starting this
+      // session's map anyway would drop the player into a half-built run, and
+      // silently beginning a new one looks like the button is broken — so come
+      // back to the menu and say what happened.
+      this.scene.restart({ warning: 'That save could not be read, and has been discarded.' });
+      return;
+    }
     this.startWorld(session.state.currentMap);
   }
 

@@ -36,16 +36,14 @@ export class Actor {
   ) {
     this.tileX = tileX;
     this.tileY = tileY;
-    this.shadow = scene.add
-      .ellipse(
-        tileX * TILE_SIZE + TILE_SIZE / 2,
-        tileY * TILE_SIZE + TILE_SIZE / 2 + 6,
-        20,
-        8,
-        0x14100d,
-        0.38,
-      )
-      .setDepth(-5);
+    this.shadow = scene.add.ellipse(
+      tileX * TILE_SIZE + TILE_SIZE / 2,
+      tileY * TILE_SIZE + TILE_SIZE / 2 + 6,
+      20,
+      8,
+      0x14100d,
+      0.38,
+    );
     this.sprite = scene.add.sprite(
       tileX * TILE_SIZE + TILE_SIZE / 2,
       tileY * TILE_SIZE + TILE_SIZE / 2,
@@ -54,6 +52,7 @@ export class Actor {
     );
     // Feet sit on the tile centre; the tall chibi head overhangs upward.
     this.sprite.setOrigin(0.5, 0.78);
+    this.followShadow();
     this.playIdle();
   }
 

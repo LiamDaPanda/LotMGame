@@ -188,7 +188,9 @@ export function paginate(
     }
   }
   if (page.length > 0) pages.push(page.join('\n'));
-  return pages;
+  // Text that is nothing but blank lines skips every one of them and would
+  // otherwise leave a node with no pages at all to show.
+  return pages.length > 0 ? pages : [text];
 }
 
 export function textHeight(text: string, width: number, scale: number): number {

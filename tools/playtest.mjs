@@ -276,16 +276,35 @@ const talk = async (treeId, speaker) => {
   );
   await page.waitForTimeout(400);
 };
+/**
+ * Take a named choice.
+ *
+ * Polls for it rather than sleeping a fixed time and hoping. A choice that had
+ * not been laid out yet used to be skipped in silence, which turned one slow
+ * frame into a cascade of unrelated failures several hundred lines further
+ * down — the run would climb no rungs and report the wrong Sequence six times.
+ */
 const pickChoice = async (needle) => {
-  await withGame(
-    (game, arg) => {
-      const scene = game.scene.getScene('Dialogue');
-      const choice = scene.node.choices.find((c) => c.text.includes(arg));
-      if (choice) scene.choose(choice.index);
-    },
-    needle,
-  );
-  await page.waitForTimeout(250);
+  const deadline = Date.now() + 6000;
+  while (Date.now() < deadline) {
+    const taken = await withGame(
+      (game, arg) => {
+        if (!game.scene.isActive('Dialogue')) return false;
+        const scene = game.scene.getScene('Dialogue');
+        const choice = scene.node?.choices?.find((c) => c.text.includes(arg));
+        if (!choice) return false;
+        scene.choose(choice.index);
+        return true;
+      },
+      needle,
+    );
+    if (taken) {
+      await page.waitForTimeout(250);
+      return;
+    }
+    await page.waitForTimeout(120);
+  }
+  check(`choice offered: “${needle}”`, false, 'never appeared while the dialogue was open');
 };
 
 await withGame((game) => {
@@ -318,6 +337,7 @@ check(
 
 // ---------------------------------------------------------------------------
 console.log('\n3c. Above the grey fog');
+const roomLeaks = [];
 const goTo = async (mapId, x, y) => {
   await withGame(
     (game, arg) => {
@@ -329,6 +349,27 @@ const goTo = async (mapId, x, y) => {
   // Long enough for the scene restart plus the camera fade-in, so screenshots
   // show the room rather than the transition.
   await page.waitForTimeout(1200);
+
+  // Walking through a door restarts the scene on the same instance, so
+  // anything it keeps in a field has to be emptied with it. Someone left over
+  // from the last room is invisible but still counts as a witness, and using a
+  // power in front of a witness is what costs concealment.
+  const stale = await withGame((game) => {
+    const world = game.scene.getScene('World');
+    const npcIds = (world.map.npcs ?? []).map((npc) => npc.id);
+    const hotspotIds = (world.map.hotspots ?? []).map((hotspot) => hotspot.id);
+    const exitKeys = (world.map.exits ?? []).map((exit) => `${exit.x},${exit.y}`);
+    const extra = (keys, allowed) => [...keys].filter((key) => !allowed.includes(key));
+    return {
+      npcs: extra(world.npcs.keys(), npcIds),
+      labels: extra(world.npcLabels.keys(), npcIds),
+      hotspots: extra(world.hotspotMarkers.keys(), hotspotIds),
+      exits: extra(world.exitMarkers.keys(), exitKeys),
+    };
+  });
+  for (const [kind, ids] of Object.entries(stale)) {
+    if (ids.length > 0) roomLeaks.push(`${mapId} kept ${kind}: ${ids.join(',')}`);
+  }
 };
 await goTo('lodgings', 6, 8);
 await withGame((game) => {
@@ -1104,7 +1145,8 @@ const scene = async (mapId, hotspotId, choices) => {
     },
     hotspotId,
   );
-  await page.waitForTimeout(400);
+  if (choices.length > 0) check(`${hotspotId} opens a scene`, await waitForScene('Dialogue'));
+  await page.waitForTimeout(250);
   for (const needle of choices) await pickChoice(needle);
   await withGame((game) => {
     if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
@@ -1278,6 +1320,7 @@ check('and Amon still keeping', ending.flags.includes('v7_king'), ending.flags.s
 // ---------------------------------------------------------------------------
 console.log('\n20. No runtime errors');
 check('console clean', consoleErrors.length === 0, consoleErrors.slice(0, 5).join(' || '));
+check('no room left its cast behind', roomLeaks.length === 0, roomLeaks.slice(0, 4).join(' || '));
 
 await browser.close();
 

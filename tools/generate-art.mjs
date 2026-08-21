@@ -323,19 +323,49 @@ function outlineFrame(r, ox, oy, w, h, colour) {
   }
 }
 
-function buildCharacterSheet() {
-  const cols = DIRS.length * STEPS;
-  const sheet = new Raster(cols * FRAME_W, CAST.length * FRAME_H);
-  CAST.forEach((pal, row) => {
-    for (let d = 0; d < DIRS.length; d++) {
-      for (let s = 0; s < STEPS; s++) {
-        const ox = (d * STEPS + s) * FRAME_W;
-        const oy = row * FRAME_H;
-        drawChibi(sheet, ox, oy, d, s, pal);
-        outlineFrame(sheet, ox, oy, FRAME_W, FRAME_H, rgba('#120e12', 0.85));
+/**
+ * Every frame has to be drawable on its own.
+ *
+ * A sheet is one big raster, so a draw call that reaches past a frame's edge
+ * lands on the neighbour instead of being clipped — which is how the
+ * constable's helmet ended up under Old Neil's boots. Redraw each frame alone
+ * and compare against the packed sheet: any difference is a spill.
+ */
+function assertNoFrameBleed(label, sheet, w, h, cols, rows, draw) {
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const solo = new Raster(w, h);
+      draw(solo, 0, 0, col, row);
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const packed = sheet.get(col * w + x, row * h + y);
+          const alone = solo.get(x, y);
+          for (let c = 0; c < 4; c++) {
+            if (packed[c] === alone[c]) continue;
+            throw new Error(
+              `${label}: frame (${col}, ${row}) differs from its isolated render at ` +
+                `${x},${y} — a draw call is reaching outside the frame`,
+            );
+          }
+        }
       }
     }
-  });
+  }
+}
+
+function buildCharacterSheet() {
+  const cols = DIRS.length * STEPS;
+  const frame = (target, ox, oy, col, row) => {
+    const pal = CAST[row];
+    if (!pal) return;
+    drawChibi(target, ox, oy, Math.floor(col / STEPS), col % STEPS, pal);
+    outlineFrame(target, ox, oy, FRAME_W, FRAME_H, rgba('#120e12', 0.85));
+  };
+  const sheet = new Raster(cols * FRAME_W, CAST.length * FRAME_H);
+  for (let row = 0; row < CAST.length; row++) {
+    for (let col = 0; col < cols; col++) frame(sheet, col * FRAME_W, row * FRAME_H, col, row);
+  }
+  assertNoFrameBleed('characters', sheet, FRAME_W, FRAME_H, cols, CAST.length, frame);
   return sheet;
 }
 
@@ -359,37 +389,60 @@ function buildCharacterSheet() {
  * hair — the description wins over anything that would have looked tidier.
  */
 
+/**
+ * Vertical layout of the face, in rows of the 64x64 frame.
+ *
+ * One place, because the proportions only work as a set: the crown, the eye
+ * line and the chin have to move together, or the head turns into a forehead
+ * with a face hanging off the bottom of it. Everything below is measured from
+ * these three numbers — hair from the crown, brows and ears from the eye line,
+ * nose, mouth, beard and neck from the chin — so the whole cast keeps its
+ * proportions when any one of them is tuned.
+ *
+ * The eye line sits a little under halfway down the skull: lower than life,
+ * which is what makes a face read as drawn rather than measured, but not so
+ * low that there is no room left underneath for a nose, a mouth and a jaw.
+ */
+const HEAD_TOP = 10;
+const EYE_LINE = 28; // top of the eye opening for a level eye
+const SHOULDER_TOP = 49;
+
 /** How far down the chin reaches, per face shape. */
 const CHIN = { oval: 44, long: 46, round: 44, square: 45, gaunt: 45, soft: 43 };
 
-/** Half-width of the head at a given row, measured from the centre line. */
+/**
+ * Half-width of the head at a given row, measured from the centre line.
+ *
+ * The bands below the temples are measured back from the chin rather than
+ * fixed, so a long face lengthens the jaw instead of stretching the skull.
+ */
 function headHalf(y, shape = 'oval') {
   const chin = CHIN[shape] ?? 44;
-  if (y < 11 || y > chin) return 0;
+  if (y < HEAD_TOP || y > chin) return 0;
   let half;
-  if (y <= 14) half = 9 + (y - 11);          // crown
-  else if (y <= 19) half = 12 + (y - 15) * 0.75; // temple
-  else if (y <= 31) half = 15;                    // widest, through the eyes
-  else if (y <= 36) half = 15 - (y - 31) * 0.9;   // cheek
-  else if (y <= 41) half = 10.5 - (y - 36) * 1.2; // jaw
-  else half = 5;                                // chin
+  if (y <= 14) half = 8 + (y - HEAD_TOP);                      // crown
+  else if (y <= 19) half = 12 + (y - 15) * 0.5;                // temple
+  else if (y <= chin - 15) half = 14;                          // widest, at the eyes
+  else if (y <= chin - 9) half = 14 - (y - (chin - 15)) * 0.7; // cheek
+  else if (y <= chin - 3) half = 9.8 - (y - (chin - 9)) * 0.8; // jaw
+  else half = 5;                                               // chin
   switch (shape) {
     case 'round':
-      half *= y >= 28 ? 1.12 : 1.05;
+      half *= y >= chin - 18 ? 1.12 : 1.05;
       break;
     case 'long':
       half *= 0.9;
-      if (y >= 37) half += 1.6;
+      if (y >= chin - 9) half += 1.4;
       break;
     case 'square':
-      if (y >= 33) half = Math.max(half, y <= 42 ? 11 : 8);
+      if (y >= chin - 13) half = Math.max(half, y <= chin - 4 ? 11 : 8);
       break;
     case 'gaunt':
-      half *= y >= 29 && y <= 39 ? 0.84 : 0.94;
+      half *= y >= chin - 17 && y <= chin - 7 ? 0.84 : 0.94;
       break;
     case 'soft':
       half *= 0.95;
-      if (y >= 37) half *= 0.86;
+      if (y >= chin - 9) half *= 0.86;
       break;
     default:
       break;
@@ -399,18 +452,19 @@ function headHalf(y, shape = 'oval') {
 
 function fillHead(r, ox, oy, shape, skin, shadow) {
   const chin = CHIN[shape] ?? 44;
-  for (let y = 11; y <= chin; y++) {
+  for (let y = HEAD_TOP; y <= chin; y++) {
     const half = Math.round(headHalf(y, shape));
     if (half <= 0) continue;
     r.rect(ox + 32 - half, oy + y, half * 2, 1, skin);
   }
   // Form: a soft shadow down the right-hand side and under the jaw.
-  for (let y = 26; y <= chin - 4; y++) {
+  for (let y = EYE_LINE - 3; y <= chin - 4; y++) {
     const half = Math.round(headHalf(y, shape));
     if (half <= 3) continue;
     r.rect(ox + 32 + half - 1, oy + y, 1, 1, shadow);
   }
-  r.rect(ox + 27, oy + chin - 2, 10, 1, shadow);
+  const jaw = Math.round(headHalf(chin - 2, shape));
+  r.rect(ox + 32 - jaw, oy + chin - 2, jaw * 2, 1, shadow);
 }
 
 /** One lock of hair: a tapering strand with a pointed tip. */
@@ -425,7 +479,7 @@ function strand(r, ox, oy, x, top, bottom, width, colour) {
 
 /** The skull cap of hair, following whichever face shape is underneath. */
 function hairCap(r, ox, oy, shape, top, bottom, grow, colour) {
-  for (let y = top; y <= bottom; y++) {
+  for (let y = Math.max(top, HEAD_TOP); y <= bottom; y++) {
     const half = Math.round(headHalf(y, shape)) + (y > top + 2 ? grow : 0);
     if (half <= 0) continue;
     r.rect(ox + 32 - half, oy + y, half * 2, 1, colour);
@@ -439,8 +493,8 @@ function hairCap(r, ox, oy, shape, top, bottom, grow, colour) {
  * hair has to be a shape with an edge, not a gradient.
  */
 function fringe(r, ox, oy, shape, bottom, colour, teeth = 3) {
-  for (let y = 10; y <= bottom; y++) {
-    const half = Math.round(headHalf(Math.max(y, 11), shape)) + (y > 13 ? 1 : 0);
+  for (let y = HEAD_TOP; y <= bottom; y++) {
+    const half = Math.round(headHalf(y, shape)) + (y > HEAD_TOP + 3 ? 1 : 0);
     if (half > 0) r.rect(ox + 32 - half, oy + y, half * 2, 1, colour);
   }
   if (teeth <= 0) return;
@@ -460,14 +514,14 @@ function circleRing(r, ox, oy, cx, cy, radius, colour) {
 
 /** Eye geometry per shape: where the opening starts, how tall, how heavy the lid. */
 const EYE_GEOM = {
-  level: { top: 31, h: 6, lash: 1 },
-  wide: { top: 30, h: 7, lash: 1 },
-  narrow: { top: 32, h: 4, lash: 2 },
-  sunken: { top: 32, h: 5, lash: 1 },
-  soft: { top: 31, h: 6, lash: 2 },
-  sharp: { top: 31, h: 5, lash: 2 },
-  weary: { top: 32, h: 5, lash: 1 },
-  old: { top: 32, h: 4, lash: 2 },
+  level: { top: EYE_LINE, h: 6, lash: 1 },
+  wide: { top: EYE_LINE - 1, h: 7, lash: 1 },
+  narrow: { top: EYE_LINE + 1, h: 4, lash: 2 },
+  sunken: { top: EYE_LINE + 1, h: 5, lash: 1 },
+  soft: { top: EYE_LINE, h: 6, lash: 2 },
+  sharp: { top: EYE_LINE, h: 5, lash: 2 },
+  weary: { top: EYE_LINE + 1, h: 5, lash: 1 },
+  old: { top: EYE_LINE + 1, h: 4, lash: 2 },
 };
 
 function drawPortraitEyes(r, ox, oy, pal, skin, skinShade, hair, eye) {
@@ -558,6 +612,21 @@ const MOUTHS = {
   },
 };
 
+/**
+ * A 64x64 bust.
+ *
+ * Eighteen people have to be told apart from a thumbnail on a phone, which is
+ * a harder problem than drawing any one of them well. So nothing here is
+ * shared by default: the skull is a per-row half-width table that varies by
+ * face shape, the hair is a named silhouette rather than a colour swap, and
+ * the eyes, brows, mouth, facial hair and headgear are all separate axes. Two
+ * characters may collide on any one of them; none collide on all of them.
+ *
+ * Where the book gives a description — Klein's slightly long black hair and
+ * brown eyes, Dunn Smith's receding hairline and grey eyes, Old Neil's white
+ * beard and dark red pupils, Audrey's emerald eyes, Alger's near-black blue
+ * hair — the description wins over anything that would have looked tidier.
+ */
 function drawPortrait(r, ox, oy, pal) {
   const painted = pal.face === 'paint';
   const skin = rgba(painted ? '#f2ece7' : pal.skin);
@@ -581,13 +650,13 @@ function drawPortrait(r, ox, oy, pal) {
     r.rect(ox, oy + y, 64, 1, shade(rgba('#2b2530'), -0.35 * t));
   }
   for (let ring = 24; ring > 12; ring -= 3) {
-    r.ellipse(ox + 32, oy + 30, ring, ring - 4, shade(back, -0.15));
+    r.ellipse(ox + 32, oy + 28, ring, ring - 4, shade(back, -0.15));
   }
 
   // A hood is a shape behind everything, including the hair.
   if (extras.includes('hood')) {
-    for (let y = 6; y < 64; y++) {
-      const half = Math.min(29, 14 + Math.round((y - 6) * 0.72));
+    for (let y = 5; y < 64; y++) {
+      const half = Math.min(29, 14 + Math.round((y - 5) * 0.72));
       r.rect(ox + 32 - half, oy + y, half * 2, 1, shade(coat, -0.5));
     }
   }
@@ -595,157 +664,166 @@ function drawPortrait(r, ox, oy, pal) {
   // Hair that falls behind the shoulders goes down before them.
   if (behind) {
     const drop = style === 'halfup' ? 54 : 60;
-    for (let y = 16; y <= drop; y++) {
-      const spread = Math.min(19, 15 + Math.round((y - 16) / 7));
+    for (let y = 15; y <= drop; y++) {
+      const spread = Math.min(19, 15 + Math.round((y - 15) / 7));
       r.rect(ox + 32 - spread, oy + y, spread * 2, 1, hairDark);
     }
   }
 
-  // Neck, with the jaw's shadow across the top of it. Short and thick: a long
-  // thin one turns every bust into a bird.
-  r.rect(ox + 26, oy + chin - 2, 12, 55 - chin, skinShade);
-  r.rect(ox + 26, oy + chin - 2, 12, 2, shade(skin, -0.34));
-  for (let i = 0; i < 3; i++) r.rect(ox + 25 - i, oy + 51 + i, 14 + i * 2, 1, skinShade);
+  // Neck: about half the width of the head, and short — a long thin one turns
+  // every bust into a bird. Lit like the face, so it reads as part of the same
+  // person rather than a dark column holding the head up.
+  // It leaves the head as wide as the jaw and spreads as it goes, so there is
+  // no step where the two meet; a straight column reads as a plinth with a
+  // head balanced on it. The row just below the chin is in its shadow.
+  for (let y = chin - 2; y <= SHOULDER_TOP + 1; y++) {
+    const half = Math.round(Math.min(7, 5 + (y - (chin - 2)) * 0.35));
+    const x = ox + 32 - half;
+    r.rect(x, oy + y, half * 2, 1, y <= chin ? shade(skin, -0.28) : skin);
+    r.px(x, oy + y, skinShade);
+    r.px(x + half * 2 - 1, oy + y, shade(skin, -0.26));
+  }
+
   // Shoulders: a trapezoid, not a pill, with a collar cut into it.
-  for (let y = 52; y < 64; y++) {
-    const half = Math.min(30, 14 + (y - 52) * 2.6);
+  for (let y = SHOULDER_TOP; y < 64; y++) {
+    const half = Math.min(30, 13 + (y - SHOULDER_TOP) * 2.4);
     r.rect(ox + 32 - Math.round(half), oy + y, Math.round(half) * 2, 1, coat);
   }
   // Collar: two short lapels meeting at the throat.
   for (let i = 0; i < 5; i++) {
-    r.rect(ox + 24 - i, oy + 55 + i, 5, 1, shade(coat, 0.2));
-    r.rect(ox + 35 + i, oy + 55 + i, 5, 1, shade(coat, 0.2));
+    r.rect(ox + 24 - i, oy + SHOULDER_TOP + 3 + i, 5, 1, shade(coat, 0.2));
+    r.rect(ox + 35 + i, oy + SHOULDER_TOP + 3 + i, 5, 1, shade(coat, 0.2));
   }
-  if (pal.scarf) r.rect(ox + 27, oy + 53, 10, 3, rgba(pal.scarf));
+  if (pal.scarf) r.rect(ox + 26, oy + SHOULDER_TOP + 1, 12, 3, rgba(pal.scarf));
   if (extras.includes('collar')) {
-    r.rect(ox + 27, oy + 53, 10, 2, WHITE);
-    r.rect(ox + 30, oy + 55, 4, 5, rgba(pal.accent));
+    r.rect(ox + 26, oy + SHOULDER_TOP + 1, 12, 2, WHITE);
+    r.rect(ox + 30, oy + SHOULDER_TOP + 3, 4, 5, rgba(pal.accent));
   }
   if (extras.includes('cravat')) {
-    r.rect(ox + 26, oy + 53, 12, 4, WHITE);
-    r.rect(ox + 29, oy + 54, 6, 6, rgba(pal.accent));
-    r.px(ox + 32, oy + 56, shade(rgba(pal.accent), -0.4));
+    r.rect(ox + 25, oy + SHOULDER_TOP + 1, 14, 4, WHITE);
+    r.rect(ox + 29, oy + SHOULDER_TOP + 2, 6, 6, rgba(pal.accent));
+    r.px(ox + 32, oy + SHOULDER_TOP + 4, shade(rgba(pal.accent), -0.4));
   }
   if (extras.includes('lace')) {
-    r.rect(ox + 25, oy + 54, 14, 1, rgba('#efe6d6'));
+    r.rect(ox + 25, oy + SHOULDER_TOP + 2, 14, 1, rgba('#efe6d6'));
     for (let x = 25; x < 39; x += 3) {
-      r.rect(ox + x, oy + 55, 2, 1, rgba('#efe6d6'));
-      r.px(ox + x + 2, oy + 55, rgba('#c0b5a2'));
+      r.rect(ox + x, oy + SHOULDER_TOP + 3, 2, 1, rgba('#efe6d6'));
+      r.px(ox + x + 2, oy + SHOULDER_TOP + 3, rgba('#c0b5a2'));
     }
   }
 
   fillHead(r, ox, oy, shape, skin, skinShade);
-  // Ears.
-  const earHalf = Math.round(headHalf(30, shape));
-  r.rect(ox + 32 - earHalf - 2, oy + 28, 2, 5, skinShade);
-  r.rect(ox + 32 + earHalf, oy + 28, 2, 5, skinShade);
+  // Ears, straddling the eye line.
+  const earHalf = Math.round(headHalf(EYE_LINE + 2, shape));
+  r.rect(ox + 32 - earHalf - 2, oy + EYE_LINE - 1, 2, 6, skinShade);
+  r.rect(ox + 32 + earHalf, oy + EYE_LINE - 1, 2, 6, skinShade);
   if (extras.includes('earring')) {
-    r.px(ox + 32 + earHalf + 1, oy + 33, rgba('#e0c060'));
-    r.px(ox + 32 + earHalf + 1, oy + 34, rgba('#c9a227'));
+    r.px(ox + 32 + earHalf + 1, oy + EYE_LINE + 5, rgba('#e0c060'));
+    r.px(ox + 32 + earHalf + 1, oy + EYE_LINE + 6, rgba('#c9a227'));
   }
 
   // Hair. Each style is a silhouette, not a recolour of the same one.
   switch (style) {
     case 'curtain': {
       // Centre part, sweeping longer toward the temples; long at the sides.
-      fringe(r, ox, oy, shape, 20, hair, 0);
+      fringe(r, ox, oy, shape, 19, hair, 0);
       for (const side of [-1, 1]) {
         for (let d = 4; d <= 16; d++) {
           const drop = Math.round((d - 4) * 0.55);
-          r.rect(ox + 32 + side * d - (side < 0 ? 0 : 1), oy + 21, 1, 1 + drop, hair);
+          r.rect(ox + 32 + side * d - (side < 0 ? 0 : 1), oy + 20, 1, 1 + drop, hair);
         }
       }
-      r.rect(ox + 31, oy + 11, 2, 8, hairDark); // the parting
-      r.rect(ox + 22, oy + 13, 8, 2, hairLit);
-      r.rect(ox + 16, oy + 18, 4, 19, hair); // long at the sides
-      r.rect(ox + 44, oy + 18, 4, 19, hair);
-      r.rect(ox + 16, oy + 35, 4, 2, hairDark);
-      r.rect(ox + 44, oy + 35, 4, 2, hairDark);
+      r.rect(ox + 31, oy + HEAD_TOP, 2, 9, hairDark); // the parting
+      r.rect(ox + 22, oy + 12, 8, 2, hairLit);
+      r.rect(ox + 16, oy + 17, 4, 19, hair); // long at the sides
+      r.rect(ox + 44, oy + 17, 4, 19, hair);
+      r.rect(ox + 16, oy + 34, 4, 2, hairDark);
+      r.rect(ox + 44, oy + 34, 4, 2, hairDark);
       break;
     }
     case 'receding': {
-      hairCap(r, ox, oy, shape, 10, 20, 1, hair);
+      hairCap(r, ox, oy, shape, HEAD_TOP, 18, 1, hair);
       // The hairline has retreated: bare temples and a high, rounded forehead.
-      r.ellipse(ox + 32, oy + 17, 13, 5, skin);
-      r.rect(ox + 24, oy + 11, 16, 3, hair);
-      r.rect(ox + 26, oy + 12, 8, 1, hairLit);
-      r.rect(ox + 16, oy + 15, 4, 16, hair);
-      r.rect(ox + 44, oy + 15, 4, 16, hair);
-      r.rect(ox + 19, oy + 16, 1, 15, hairDark); // edge against the temple
-      r.rect(ox + 44, oy + 16, 1, 15, hairDark);
+      r.ellipse(ox + 32, oy + 15, 12, 4, skin);
+      r.rect(ox + 24, oy + HEAD_TOP, 16, 3, hair);
+      r.rect(ox + 26, oy + 11, 8, 1, hairLit);
+      r.rect(ox + 16, oy + 14, 4, 16, hair);
+      r.rect(ox + 44, oy + 14, 4, 16, hair);
+      r.rect(ox + 19, oy + 15, 1, 15, hairDark); // edge against the temple
+      r.rect(ox + 44, oy + 15, 1, 15, hairDark);
       break;
     }
     case 'balding': {
       // Bare crown, hair only round the sides and back.
-      r.rect(ox + 16, oy + 19, 4, 14, hair);
-      r.rect(ox + 44, oy + 19, 4, 14, hair);
-      r.rect(ox + 18, oy + 18, 4, 2, hairDark);
-      r.rect(ox + 42, oy + 18, 4, 2, hairDark);
-      r.rect(ox + 16, oy + 31, 4, 2, hairDark);
-      r.rect(ox + 44, oy + 31, 4, 2, hairDark);
-      r.ellipse(ox + 29, oy + 15, 6, 3, shade(skin, 0.12)); // shine on the scalp
+      r.rect(ox + 16, oy + 18, 4, 14, hair);
+      r.rect(ox + 44, oy + 18, 4, 14, hair);
+      r.rect(ox + 19, oy + 17, 4, 2, hairDark);
+      r.rect(ox + 41, oy + 17, 4, 2, hairDark);
+      r.rect(ox + 16, oy + 30, 4, 2, hairDark);
+      r.rect(ox + 44, oy + 30, 4, 2, hairDark);
+      r.ellipse(ox + 29, oy + 14, 6, 3, shade(skin, 0.12)); // shine on the scalp
       break;
     }
     case 'wispy': {
       // Thin, and there is less of it every year: nothing over the forehead.
-      hairCap(r, ox, oy, shape, 11, 16, 0, shade(hair, -0.06));
+      hairCap(r, ox, oy, shape, HEAD_TOP, 15, 0, shade(hair, -0.06));
       for (let x = 18; x <= 46; x += 4) {
-        r.rect(ox + x, oy + 11, 2, 4 + ((x * 5) % 4), x % 8 === 2 ? hairLit : hair);
+        r.rect(ox + x, oy + HEAD_TOP, 2, 4 + ((x * 5) % 4), x % 8 === 2 ? hairLit : hair);
       }
       for (const side of [-1, 1]) {
-        for (let y = 14; y <= 32; y++) {
+        for (let y = 13; y <= 31; y++) {
           const w = 3 + ((y * 3) % 3);
           r.rect(ox + 32 + side * 17 - (side < 0 ? 0 : w), oy + y, w, 1, y % 5 === 0 ? hairLit : hair);
         }
-        r.rect(ox + 32 + side * 17 - (side < 0 ? 0 : 4), oy + 32, 4, 1, shade(hair, -0.3));
+        r.rect(ox + 32 + side * 17 - (side < 0 ? 0 : 4), oy + 31, 4, 1, shade(hair, -0.3));
       }
       break;
     }
     case 'crop': {
       // Regulation short: a flat hairline and nothing over the ears.
-      fringe(r, ox, oy, shape, 21, hair, 0);
-      r.rect(ox + 17, oy + 21, 30, 1, hairDark);
-      r.rect(ox + 22, oy + 13, 9, 2, hairLit);
-      r.rect(ox + 16, oy + 22, 3, 7, hair);
-      r.rect(ox + 45, oy + 22, 3, 7, hair);
+      fringe(r, ox, oy, shape, 19, hair, 0);
+      r.rect(ox + 17, oy + 19, 30, 1, hairDark);
+      r.rect(ox + 22, oy + 12, 9, 2, hairLit);
+      r.rect(ox + 16, oy + 20, 3, 7, hair);
+      r.rect(ox + 45, oy + 20, 3, 7, hair);
       break;
     }
     case 'short': {
-      fringe(r, ox, oy, shape, 22, hair, 3);
-      r.rect(ox + 22, oy + 13, 9, 2, hairLit);
-      r.rect(ox + 16, oy + 19, 3, 12, hair);
-      r.rect(ox + 45, oy + 19, 3, 12, hair);
+      fringe(r, ox, oy, shape, 20, hair, 3);
+      r.rect(ox + 22, oy + 12, 9, 2, hairLit);
+      r.rect(ox + 16, oy + 18, 3, 12, hair);
+      r.rect(ox + 45, oy + 18, 3, 12, hair);
       break;
     }
     case 'messy': {
       // Uncombed for days: tufts going in four directions at once.
-      fringe(r, ox, oy, shape, 21, hair, 4);
-      for (const [x, top] of [[19, 6], [24, 4], [30, 7], [36, 3], [42, 6]]) {
-        r.rect(ox + x, oy + top, 4, 12 - top, hair);
+      fringe(r, ox, oy, shape, 19, hair, 4);
+      for (const [x, top] of [[19, 5], [24, 3], [30, 6], [36, 2], [42, 5]]) {
+        r.rect(ox + x, oy + top, 4, 11 - top, hair);
         r.px(ox + x + 1, oy + top - 1, hair);
       }
-      r.rect(ox + 16, oy + 18, 3, 14, hairDark);
-      r.rect(ox + 45, oy + 18, 3, 12, hairDark);
-      r.rect(ox + 24, oy + 13, 6, 1, hairLit);
+      r.rect(ox + 16, oy + 17, 3, 14, hairDark);
+      r.rect(ox + 45, oy + 17, 3, 12, hairDark);
+      r.rect(ox + 24, oy + 12, 6, 1, hairLit);
       break;
     }
     case 'slick': {
       // Combed straight back with something out of a jar; the sheen is the point.
-      hairCap(r, ox, oy, shape, 10, 20, 0, hair);
-      for (let x = 18; x <= 46; x += 3) r.rect(ox + x, oy + 10, 1, 10, hairDark);
-      r.rect(ox + 20, oy + 13, 24, 1, hairLit);
-      r.rect(ox + 17, oy + 20, 30, 1, hairDark);
-      r.rect(ox + 16, oy + 19, 3, 10, hair);
-      r.rect(ox + 45, oy + 19, 3, 10, hair);
+      hairCap(r, ox, oy, shape, HEAD_TOP, 18, 0, hair);
+      for (let x = 18; x <= 46; x += 3) r.rect(ox + x, oy + HEAD_TOP, 1, 9, hairDark);
+      r.rect(ox + 20, oy + 12, 24, 1, hairLit);
+      r.rect(ox + 17, oy + 18, 30, 1, hairDark);
+      r.rect(ox + 16, oy + 17, 3, 10, hair);
+      r.rect(ox + 45, oy + 17, 3, 10, hair);
       break;
     }
     case 'wavy': {
       // A poet's hair: a soft fringe and S-curves down past the ear.
-      fringe(r, ox, oy, shape, 21, hair, 3);
-      r.rect(ox + 23, oy + 12, 9, 2, hairLit);
+      fringe(r, ox, oy, shape, 19, hair, 3);
+      r.rect(ox + 23, oy + 11, 9, 2, hairLit);
       for (const side of [-1, 1]) {
-        for (let y = 16; y <= 36; y++) {
-          const wob = Math.round(Math.sin((y - 16) / 3.4) * 2);
+        for (let y = 15; y <= 34; y++) {
+          const wob = Math.round(Math.sin((y - 15) / 3.4) * 2);
           r.rect(ox + 32 + side * 15 - 2 + side * wob, oy + y, 5, 1, y % 5 === 0 ? shade(hair, 0.12) : hair);
         }
       }
@@ -755,90 +833,90 @@ function drawPortrait(r, ox, oy, pal) {
       // Tight curls: overlapping bumps, no straight edge anywhere.
       for (let i = 0; i < 10; i++) {
         const a = (i / 9) * Math.PI;
-        r.ellipse(ox + 32 - Math.round(Math.cos(a) * 16), oy + 17 - Math.round(Math.sin(a) * 7), 5, 5, hair);
+        r.ellipse(ox + 32 - Math.round(Math.cos(a) * 16), oy + 15 - Math.round(Math.sin(a) * 7), 5, 5, hair);
       }
-      fringe(r, ox, oy, shape, 20, hair, 0);
-      for (let i = 0; i < 5; i++) r.ellipse(ox + 19 + i * 6, oy + 21, 4, 3, hair);
-      r.ellipse(ox + 17, oy + 26, 4, 4, hair);
-      r.ellipse(ox + 47, oy + 26, 4, 4, hair);
-      r.ellipse(ox + 26, oy + 14, 3, 2, hairLit);
-      r.ellipse(ox + 40, oy + 21, 2, 2, hairLit);
+      fringe(r, ox, oy, shape, 18, hair, 0);
+      for (let i = 0; i < 5; i++) r.ellipse(ox + 19 + i * 6, oy + 19, 4, 3, hair);
+      r.ellipse(ox + 17, oy + 25, 4, 4, hair);
+      r.ellipse(ox + 47, oy + 25, 4, 4, hair);
+      r.ellipse(ox + 26, oy + 13, 3, 2, hairLit);
+      r.ellipse(ox + 40, oy + 20, 2, 2, hairLit);
       break;
     }
     case 'bun': {
       // Swept up and wound at the back, with two tendrils left loose.
-      r.ellipse(ox + 32, oy + 7, 9, 6, hairDark);
-      r.ellipse(ox + 32, oy + 6, 6, 4, hair);
-      hairCap(r, ox, oy, shape, 10, 19, 1, hair);
-      for (let x = 19; x <= 45; x += 4) r.rect(ox + x, oy + 11, 1, 8, hairDark);
-      r.rect(ox + 24, oy + 13, 7, 1, hairLit);
-      r.rect(ox + 16, oy + 19, 3, 13, hair);
-      r.rect(ox + 46, oy + 19, 3, 11, hair);
+      r.ellipse(ox + 32, oy + 6, 9, 6, hairDark);
+      r.ellipse(ox + 32, oy + 5, 6, 4, hair);
+      hairCap(r, ox, oy, shape, HEAD_TOP, 17, 1, hair);
+      for (let x = 19; x <= 45; x += 4) r.rect(ox + x, oy + HEAD_TOP, 1, 8, hairDark);
+      r.rect(ox + 24, oy + 12, 7, 1, hairLit);
+      r.rect(ox + 16, oy + 18, 3, 13, hair);
+      r.rect(ox + 46, oy + 18, 3, 11, hair);
       break;
     }
     case 'halfup': {
       // Long, with the top half drawn back off the face.
-      fringe(r, ox, oy, shape, 22, hair, 2);
-      for (let i = 0; i < 8; i++) r.rect(ox + 25 + i, oy + 12 + Math.floor(i / 3), 2, 1, hairDark);
-      r.rect(ox + 15, oy + 18, 5, 33, hair);
-      r.rect(ox + 44, oy + 18, 5, 33, hair);
-      r.rect(ox + 22, oy + 12, 8, 2, hairLit);
+      fringe(r, ox, oy, shape, 20, hair, 2);
+      for (let i = 0; i < 8; i++) r.rect(ox + 25 + i, oy + 11 + Math.floor(i / 3), 2, 1, hairDark);
+      r.rect(ox + 15, oy + 17, 5, 33, hair);
+      r.rect(ox + 44, oy + 17, 5, 33, hair);
+      r.rect(ox + 22, oy + 11, 8, 2, hairLit);
       break;
     }
     case 'long': {
       // Smooth, with a soft wave in it near the ends.
-      fringe(r, ox, oy, shape, 22, hair, 3);
+      fringe(r, ox, oy, shape, 20, hair, 3);
       for (const side of [-1, 1]) {
-        for (let y = 16; y <= 56; y++) {
-          const wob = Math.round(Math.sin((y - 16) / 8) * 2);
+        for (let y = 15; y <= 56; y++) {
+          const wob = Math.round(Math.sin((y - 15) / 8) * 2);
           r.rect(ox + 32 + side * 17 - 3 + side * wob, oy + y, 6, 1, y % 6 === 0 ? hairLit : hair);
         }
       }
-      r.rect(ox + 23, oy + 12, 10, 2, hairLit);
+      r.rect(ox + 23, oy + 11, 10, 2, hairLit);
       break;
     }
     case 'straightLong': {
       // Dead straight, parted centre, no wave at all.
-      fringe(r, ox, oy, shape, 21, hair, 0);
-      r.rect(ox + 31, oy + 10, 2, 11, hairDark);
+      fringe(r, ox, oy, shape, 19, hair, 0);
+      r.rect(ox + 31, oy + HEAD_TOP, 2, 10, hairDark);
       for (const side of [-1, 1]) {
-        r.rect(ox + 32 + side * 19 - (side < 0 ? 0 : 5), oy + 16, 5, 40, hair);
+        r.rect(ox + 32 + side * 19 - (side < 0 ? 0 : 5), oy + 15, 5, 40, hair);
       }
-      r.rect(ox + 24, oy + 13, 6, 1, hairLit);
+      r.rect(ox + 24, oy + 12, 6, 1, hairLit);
       break;
     }
     case 'swept': {
       // Back and up, theatrically: a high forehead and a raised crest.
-      hairCap(r, ox, oy, shape, 8, 19, 1, hair);
+      hairCap(r, ox, oy, shape, 7, 17, 1, hair);
       for (let i = 0; i < 6; i++) {
         const x = 19 + i * 5;
-        r.rect(ox + x, oy + 8 + i, 4, 12 - i, i % 2 ? hair : hairLit);
+        r.rect(ox + x, oy + 7 + i, 4, 11 - i, i % 2 ? hair : hairLit);
       }
-      r.rect(ox + 17, oy + 19, 4, 14, hair);
-      r.rect(ox + 43, oy + 19, 4, 11, hair);
-      r.rect(ox + 17, oy + 18, 30, 2, hairDark);
+      r.rect(ox + 17, oy + 17, 4, 14, hair);
+      r.rect(ox + 43, oy + 17, 4, 11, hair);
+      r.rect(ox + 17, oy + 16, 30, 2, hairDark);
       break;
     }
     default: {
-      fringe(r, ox, oy, shape, 22, hair, 3);
-      r.rect(ox + 16, oy + 18, 3, 13, hair);
-      r.rect(ox + 45, oy + 18, 3, 13, hair);
+      fringe(r, ox, oy, shape, 20, hair, 3);
+      r.rect(ox + 16, oy + 17, 3, 13, hair);
+      r.rect(ox + 45, oy + 17, 3, 13, hair);
     }
   }
 
   if (extras.includes('sideburns')) {
     for (const side of [-1, 1]) {
-      const x = 32 + side * (Math.round(headHalf(24, shape)) - 1) - (side < 0 ? 0 : 2);
-      r.rect(ox + x, oy + 20, 3, 13, hair);
-      r.rect(ox + x + (side < 0 ? 0 : 1), oy + 32, 2, 3, hairDark);
+      const x = 32 + side * (Math.round(headHalf(EYE_LINE - 4, shape)) - 1) - (side < 0 ? 0 : 2);
+      r.rect(ox + x, oy + EYE_LINE - 8, 3, 13, hair);
+      r.rect(ox + x + (side < 0 ? 0 : 1), oy + EYE_LINE + 5, 2, 3, hairDark);
     }
   }
   if (extras.includes('ribbon')) {
     const band = rgba(pal.accent);
-    r.rect(ox + 22, oy + 14, 20, 1, band);
-    r.rect(ox + 41, oy + 11, 5, 5, band);
-    r.rect(ox + 44, oy + 14, 4, 4, shade(band, -0.22)); // trailing tail
-    r.px(ox + 43, oy + 13, shade(band, -0.45));
+    r.rect(ox + 22, oy + 13, 20, 1, band);
+    r.rect(ox + 41, oy + 10, 5, 5, band);
+    r.rect(ox + 44, oy + 13, 4, 4, shade(band, -0.22)); // trailing tail
+    r.px(ox + 43, oy + 12, shade(band, -0.45));
   }
 
   drawPortraitEyes(r, ox, oy, pal, skin, skinShade, hair, eye);
@@ -855,8 +933,8 @@ function drawPortrait(r, ox, oy, pal) {
     r.rect(ox + 27, oy + chin - 4, 11, 2, rgba('#b0202e'));
     r.rect(ox + 25, oy + chin - 5, 2, 3, rgba('#b0202e'));
     r.rect(ox + 38, oy + chin - 5, 2, 3, rgba('#b0202e'));
-    r.rect(ox + 24, oy + 31, 1, 5, rgba('#b0202e', 0.8));
-    r.rect(ox + 40, oy + 31, 1, 5, rgba('#b0202e', 0.8));
+    r.rect(ox + 24, oy + EYE_LINE, 1, 5, rgba('#b0202e', 0.8));
+    r.rect(ox + 40, oy + EYE_LINE, 1, 5, rgba('#b0202e', 0.8));
   } else {
     const draw = MOUTHS[pal.mouth ?? 'set'] ?? MOUTHS.set;
     draw(r, ox, mouthY, shade(skin, -0.5), shade(skin, -0.28));
@@ -865,8 +943,8 @@ function drawPortrait(r, ox, oy, pal) {
   // Age, wear and marks.
   if (extras.includes('age')) {
     const line = shade(skin, -0.24);
-    r.rect(ox + 25, oy + 24, 14, 1, line);
-    r.rect(ox + 27, oy + 26, 10, 1, line);
+    r.rect(ox + 25, oy + EYE_LINE - 6, 14, 1, line);
+    r.rect(ox + 27, oy + EYE_LINE - 4, 10, 1, line);
     for (let i = 0; i < 3; i++) { // nasolabial folds
       r.px(ox + 28 - i, oy + chin - 6 + i, line);
       r.px(ox + 36 + i, oy + chin - 6 + i, line);
@@ -874,13 +952,13 @@ function drawPortrait(r, ox, oy, pal) {
   }
   if (extras.includes('scar')) {
     const line = shade(skin, -0.42);
-    for (let i = 0; i < 8; i++) r.px(ox + 23 + i, oy + 21 + Math.floor(i / 2), line);
-    r.px(ox + 25, oy + 20, shade(skin, -0.2));
+    for (let i = 0; i < 8; i++) r.px(ox + 23 + i, oy + EYE_LINE - 8 + Math.floor(i / 2), line);
+    r.px(ox + 25, oy + EYE_LINE - 9, shade(skin, -0.2));
   }
   if (extras.includes('freckles')) {
     const dot = shade(skin, -0.3);
-    for (const [x, y] of [[23, 36], [26, 38], [21, 39], [40, 36], [43, 38], [38, 39], [30, 38], [35, 39]]) {
-      r.px(ox + x, oy + y, dot);
+    for (const [dx, dy] of [[-9, -8], [-6, -6], [-11, -5], [8, -8], [11, -6], [6, -5], [-2, -6], [3, -5]]) {
+      r.px(ox + 32 + dx, oy + chin + dy, dot);
     }
   }
   if (extras.includes('mole')) r.px(ox + 37, oy + chin - 5, shade(skin, -0.55));
@@ -901,9 +979,9 @@ function drawPortrait(r, ox, oy, pal) {
     }
   }
   if (extras.includes('moustache')) {
-    r.rect(ox + 27, oy + chin - 5, 10, 2, hairDark);
-    r.px(ox + 26, oy + chin - 4, hairDark);
-    r.px(ox + 37, oy + chin - 4, hairDark);
+    r.rect(ox + 27, oy + chin - 6, 10, 2, hairDark);
+    r.px(ox + 26, oy + chin - 5, hairDark);
+    r.px(ox + 37, oy + chin - 5, hairDark);
   }
   if (extras.includes('goatee')) {
     r.rect(ox + 28, oy + chin - 6, 8, 1, hairDark);
@@ -912,16 +990,16 @@ function drawPortrait(r, ox, oy, pal) {
   }
   if (extras.includes('mutton')) {
     for (const side of [-1, 1]) {
-      for (let y = 21; y <= chin - 5; y++) {
+      for (let y = EYE_LINE - 7; y <= chin - 5; y++) {
         const half = Math.round(headHalf(y, shape));
-        const w = y < 30 ? 2 : Math.min(5, 2 + Math.round((y - 30) * 0.6));
+        const w = y < EYE_LINE + 2 ? 2 : Math.min(5, 2 + Math.round((y - EYE_LINE - 2) * 0.6));
         const x = 32 + side * half - (side < 0 ? 0 : w);
         r.rect(ox + x, oy + y, w, 1, y % 3 === 0 ? hairDark : hair);
       }
     }
   }
   if (extras.includes('beard')) {
-    // A trimmed beard: three pixels along the jaw, closing under the chin.
+    // A trimmed beard: it hugs the jaw and closes under the chin.
     for (let y = chin - 6; y <= chin + 1; y++) {
       const half = Math.max(4, Math.round(headHalf(Math.min(y, chin), shape)));
       const depth = Math.min(half, 2 + (y - (chin - 6)) * 2);
@@ -953,100 +1031,103 @@ function drawPortrait(r, ox, oy, pal) {
   }
 
   // Eyewear, over the face and under the hat.
+  const lensY = EYE_LINE + 3;
   if (extras.includes('glasses')) {
     const wire = rgba('#cfc8bb');
     for (const ex of [ox + 25, ox + 39]) {
-      r.rect(ex - 5, oy + 30, 10, 1, wire);
-      r.rect(ex - 5, oy + 38, 10, 1, wire);
-      r.rect(ex - 5, oy + 30, 1, 9, wire);
-      r.rect(ex + 4, oy + 30, 1, 9, wire);
+      r.rect(ex - 5, oy + lensY - 4, 10, 1, wire);
+      r.rect(ex - 5, oy + lensY + 4, 10, 1, wire);
+      r.rect(ex - 5, oy + lensY - 4, 1, 9, wire);
+      r.rect(ex + 4, oy + lensY - 4, 1, 9, wire);
     }
-    r.rect(ox + 30, oy + 33, 4, 1, wire);
-    r.rect(ox + 15, oy + 31, 5, 1, wire);
-    r.rect(ox + 44, oy + 31, 5, 1, wire);
+    r.rect(ox + 30, oy + lensY - 1, 4, 1, wire);
+    r.rect(ox + 15, oy + lensY - 3, 5, 1, wire);
+    r.rect(ox + 44, oy + lensY - 3, 5, 1, wire);
   }
   if (extras.includes('roundGlasses')) {
     const wire = rgba('#d8cfae');
     for (const ex of [25, 39]) {
-      circleRing(r, ox, oy, ex, 34, 5, wire);
-      r.px(ox + ex - 3, oy + 31, rgba('#ffffff', 0.55)); // glare
+      circleRing(r, ox, oy, ex, lensY, 5, wire);
+      r.px(ox + ex - 3, oy + lensY - 3, rgba('#ffffff', 0.55)); // glare
     }
-    r.rect(ox + 30, oy + 34, 4, 1, wire);
-    r.rect(ox + 15, oy + 32, 5, 1, wire);
-    r.rect(ox + 44, oy + 32, 5, 1, wire);
+    r.rect(ox + 30, oy + lensY, 4, 1, wire);
+    r.rect(ox + 15, oy + lensY - 2, 5, 1, wire);
+    r.rect(ox + 44, oy + lensY - 2, 5, 1, wire);
   }
   if (extras.includes('monocle')) {
     const wire = rgba('#c9a227');
-    r.rect(ox + 34, oy + 29, 11, 1, wire);
-    r.rect(ox + 34, oy + 39, 11, 1, wire);
-    r.rect(ox + 34, oy + 29, 1, 11, wire);
-    r.rect(ox + 44, oy + 29, 1, 11, wire);
-    r.rect(ox + 44, oy + 40, 1, 9, wire);
+    r.rect(ox + 34, oy + lensY - 5, 11, 1, wire);
+    r.rect(ox + 34, oy + lensY + 5, 11, 1, wire);
+    r.rect(ox + 34, oy + lensY - 5, 1, 11, wire);
+    r.rect(ox + 44, oy + lensY - 5, 1, 11, wire);
+    r.rect(ox + 44, oy + lensY + 6, 1, 9, wire);
   }
 
   // A hood closes over the hair.
   if (extras.includes('hood')) {
     const cloth = shade(coat, -0.32);
-    for (let y = 4; y <= 24; y++) {
-      const half = Math.min(22, 10 + Math.round((y - 4) * 0.86));
-      const inner = Math.round(headHalf(Math.max(y, 12), shape)) + 2;
+    for (let y = 3; y <= 23; y++) {
+      const half = Math.min(22, 10 + Math.round((y - 3) * 0.86));
+      const inner = Math.round(headHalf(Math.max(y, HEAD_TOP + 1), shape)) + 2;
       r.rect(ox + 32 - half, oy + y, Math.max(0, half - inner), 1, cloth);
       r.rect(ox + 32 + inner, oy + y, Math.max(0, half - inner), 1, cloth);
-      if (y < 12) r.rect(ox + 32 - half, oy + y, half * 2, 1, cloth);
+      if (y < HEAD_TOP + 1) r.rect(ox + 32 - half, oy + y, half * 2, 1, cloth);
     }
-    r.rect(ox + 20, oy + 8, 8, 1, shade(cloth, 0.2));
+    r.rect(ox + 20, oy + 7, 8, 1, shade(cloth, 0.2));
   }
 
   if (pal.hat) {
     const dark = rgba('#1d181c');
     if (pal.hat === 'top') {
-      r.rect(ox + 8, oy + 12, 48, 3, dark);
-      r.rect(ox + 17, oy + 1, 30, 12, dark);
-      r.rect(ox + 17, oy + 9, 30, 3, rgba(pal.accent));
+      r.rect(ox + 8, oy + 11, 48, 3, dark);
+      r.rect(ox + 17, oy + 1, 30, 11, dark);
+      r.rect(ox + 17, oy + 8, 30, 3, rgba(pal.accent));
     } else if (pal.hat === 'bowler') {
-      r.rect(ox + 12, oy + 13, 40, 3, dark);
-      r.rect(ox + 10, oy + 14, 44, 1, shade(dark, 0.3)); // curled brim
-      r.roundRect(ox + 19, oy + 4, 26, 11, 6, dark);
-      r.rect(ox + 19, oy + 11, 26, 2, rgba(pal.accent));
+      r.rect(ox + 12, oy + 12, 40, 3, dark);
+      r.rect(ox + 10, oy + 13, 44, 1, shade(dark, 0.3)); // curled brim
+      r.roundRect(ox + 19, oy + 3, 26, 11, 6, dark);
+      r.rect(ox + 19, oy + 10, 26, 2, rgba(pal.accent));
     } else if (pal.hat === 'custodian') {
-      r.rect(ox + 18, oy + 2, 28, 12, rgba('#20242e'));
-      r.rect(ox + 16, oy + 6, 32, 8, rgba('#20242e'));
-      r.rect(ox + 12, oy + 13, 40, 3, rgba('#191d26'));
-      r.rect(ox + 30, oy + 4, 4, 4, rgba(pal.accent));
+      r.rect(ox + 18, oy + 1, 28, 12, rgba('#20242e'));
+      r.rect(ox + 16, oy + 5, 32, 8, rgba('#20242e'));
+      r.rect(ox + 12, oy + 12, 40, 3, rgba('#191d26'));
+      r.rect(ox + 30, oy + 3, 4, 4, rgba(pal.accent));
     } else if (pal.hat === 'deerstalker') {
-      r.roundRect(ox + 16, oy + 3, 32, 13, 5, dark);
-      for (let y = 3; y < 16; y++) {
+      r.roundRect(ox + 16, oy + 2, 32, 13, 5, dark);
+      for (let y = 2; y < 15; y++) {
         for (let x = 16; x < 48; x++) {
           if ((x + y) % 4 === 0) r.px(ox + x, oy + y, shade(dark, 0.35)); // tweed
         }
       }
-      r.rect(ox + 12, oy + 14, 40, 3, shade(dark, -0.2)); // front peak
-      r.roundRect(ox + 10, oy + 6, 7, 9, 3, dark); // ear flaps
-      r.roundRect(ox + 47, oy + 6, 7, 9, 3, dark);
+      r.rect(ox + 12, oy + 13, 40, 3, shade(dark, -0.2)); // front peak
+      r.roundRect(ox + 10, oy + 5, 7, 9, 3, dark); // ear flaps
+      r.roundRect(ox + 47, oy + 5, 7, 9, 3, dark);
     } else if (pal.hat === 'captain') {
-      r.rect(ox + 17, oy + 5, 30, 8, dark);
-      r.rect(ox + 15, oy + 11, 34, 4, shade(dark, 0.18)); // band
-      r.rect(ox + 10, oy + 15, 44, 3, shade(dark, -0.3)); // peak
-      r.rect(ox + 29, oy + 6, 6, 5, rgba(pal.accent)); // badge
-      r.px(ox + 32, oy + 8, shade(rgba(pal.accent), -0.5));
+      r.rect(ox + 17, oy + 4, 30, 8, dark);
+      r.rect(ox + 15, oy + 10, 34, 4, shade(dark, 0.18)); // band
+      r.rect(ox + 10, oy + 14, 44, 3, shade(dark, -0.3)); // peak
+      r.rect(ox + 29, oy + 5, 6, 5, rgba(pal.accent)); // badge
+      r.px(ox + 32, oy + 7, shade(rgba(pal.accent), -0.5));
     } else if (pal.hat === 'bonnet') {
-      r.roundRect(ox + 14, oy + 4, 36, 12, 6, dark);
-      r.rect(ox + 14, oy + 13, 36, 3, rgba(pal.accent));
-      r.rect(ox + 44, oy + 14, 6, 8, rgba(pal.accent)); // trailing ribbon
+      r.roundRect(ox + 14, oy + 3, 36, 12, 6, dark);
+      r.rect(ox + 14, oy + 12, 36, 3, rgba(pal.accent));
+      r.rect(ox + 44, oy + 13, 6, 8, rgba(pal.accent)); // trailing ribbon
     } else if (pal.hat === 'veil') {
-      r.rect(ox + 16, oy + 4, 32, 10, dark);
-      for (let y = 0; y < 24; y++)
-        for (let x = 0; x < 34; x++)
-          if ((x + y) % 2 === 0) r.px(ox + 15 + x, oy + 14 + y, rgba('#000000', 0.2));
+      r.rect(ox + 16, oy + 3, 32, 10, dark);
+      for (let y = 0; y < 24; y++) {
+        for (let x = 0; x < 34; x++) {
+          if ((x + y) % 2 === 0) r.px(ox + 15 + x, oy + 13 + y, rgba('#000000', 0.2));
+        }
+      }
     } else if (pal.hat === 'cap') {
       // Knitted watch cap: sits low, turned up at the edge, no peak.
-      r.roundRect(ox + 16, oy + 4, 32, 12, 5, dark);
-      r.rect(ox + 21, oy + 6, 10, 2, shade(dark, 0.28)); // sheen on the wool
-      r.rect(ox + 15, oy + 14, 34, 4, shade(dark, 0.16)); // turn-up
-      r.rect(ox + 15, oy + 14, 34, 1, shade(dark, 0.34));
+      r.roundRect(ox + 16, oy + 3, 32, 12, 5, dark);
+      r.rect(ox + 21, oy + 5, 10, 2, shade(dark, 0.28)); // sheen on the wool
+      r.rect(ox + 15, oy + 13, 34, 4, shade(dark, 0.16)); // turn-up
+      r.rect(ox + 15, oy + 13, 34, 1, shade(dark, 0.34));
     } else if (pal.hat === 'flat') {
-      r.rect(ox + 17, oy + 8, 30, 7, dark);
-      r.rect(ox + 13, oy + 14, 38, 3, shade(dark, -0.2));
+      r.rect(ox + 17, oy + 7, 30, 7, dark);
+      r.rect(ox + 13, oy + 13, 38, 3, shade(dark, -0.2));
     }
   }
 
@@ -1058,8 +1139,13 @@ function drawPortrait(r, ox, oy, pal) {
 }
 
 function buildPortraitSheet() {
+  const frame = (target, ox, oy, col) => {
+    const pal = CAST[col];
+    if (pal) drawPortrait(target, ox, oy, pal);
+  };
   const sheet = new Raster(64 * CAST.length, 64);
-  CAST.forEach((pal, i) => drawPortrait(sheet, i * 64, 0, pal));
+  for (let i = 0; i < CAST.length; i++) frame(sheet, i * 64, 0, i);
+  assertNoFrameBleed('portraits', sheet, 64, 64, CAST.length, 1, frame);
   return sheet;
 }
 // ---------------------------------------------------------------------------

@@ -53,12 +53,15 @@ export class WorldScene extends Phaser.Scene {
   private npcLabels = new Map<string, PixelText>();
   private hotspotMarkers = new Map<string, Phaser.GameObjects.Container>();
   private cursor!: Phaser.GameObjects.Graphics;
-  private objectSprites: Phaser.GameObjects.Image[] = [];
   private keys!: {
     up: Phaser.Input.Keyboard.Key;
     down: Phaser.Input.Keyboard.Key;
     left: Phaser.Input.Keyboard.Key;
     right: Phaser.Input.Keyboard.Key;
+    arrowUp: Phaser.Input.Keyboard.Key;
+    arrowDown: Phaser.Input.Keyboard.Key;
+    arrowLeft: Phaser.Input.Keyboard.Key;
+    arrowRight: Phaser.Input.Keyboard.Key;
     interact: Phaser.Input.Keyboard.Key;
     journal: Phaser.Input.Keyboard.Key;
   };
@@ -130,6 +133,15 @@ export class WorldScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const off of this.unsubscribe) off();
       this.unsubscribe = [];
+      // Walking through a door restarts this scene on the same instance, so
+      // anything held in a field outlives the room it belongs to. Phaser has
+      // already destroyed the objects; keeping the references would leave the
+      // last room's cast standing invisibly in the next one — and they count
+      // as witnesses, which is what a Beyonder power costs concealment for.
+      this.npcs.clear();
+      this.npcLabels.clear();
+      this.hotspotMarkers.clear();
+      this.exitMarkers.clear();
     });
   }
 
@@ -180,16 +192,15 @@ export class WorldScene extends Phaser.Scene {
       for (let x = 0; x < this.grid.width; x++) {
         const frame = this.grid.object[y]?.[x] ?? -1;
         if (frame < 0) continue;
-        const shadow = this.add
+        this.add
           .ellipse(x * TILE_SIZE + TILE_SIZE / 2, y * TILE_SIZE + TILE_SIZE - 4, TILE_SIZE - 8, 9, COLORS.ink, 0.34)
           .setDepth(y * TILE_SIZE + TILE_SIZE * 0.4);
-        this.objectSprites.push(shadow as unknown as Phaser.GameObjects.Image);
-        const image = this.add
+        this.add
           .image(x * TILE_SIZE, y * TILE_SIZE, 'tiles', frame)
           .setOrigin(0, 0)
           .setDepth(y * TILE_SIZE + TILE_SIZE * 0.5);
-        this.objectSprites.push(image);
-        if (LIGHT_SOURCES[frame] !== undefined) this.addLight(x, y, LIGHT_SOURCES[frame] as number);
+        const light = LIGHT_SOURCES[frame];
+        if (light !== undefined) this.addLight(x, y, light);
       }
     }
   }
@@ -514,6 +525,10 @@ export class WorldScene extends Phaser.Scene {
         down: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S),
         left: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
         right: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D),
+        arrowUp: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
+        arrowDown: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
+        arrowLeft: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
+        arrowRight: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
         interact: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
         journal: keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J),
       };
@@ -858,11 +873,11 @@ export class WorldScene extends Phaser.Scene {
     this.player.speedScale = pad.run ? 1.75 : 1;
 
     if (!this.player.moving) {
-      const keyboard = this.input.keyboard;
-      const left = pad.dir === 'left' || this.keys?.left.isDown || keyboard?.checkDown(keyboard.addKey('LEFT'), 0);
-      const right = pad.dir === 'right' || this.keys?.right.isDown || keyboard?.checkDown(keyboard.addKey('RIGHT'), 0);
-      const up = pad.dir === 'up' || this.keys?.up.isDown || keyboard?.checkDown(keyboard.addKey('UP'), 0);
-      const down = pad.dir === 'down' || this.keys?.down.isDown || keyboard?.checkDown(keyboard.addKey('DOWN'), 0);
+      const keys = this.keys;
+      const left = pad.dir === 'left' || keys?.left.isDown || keys?.arrowLeft.isDown;
+      const right = pad.dir === 'right' || keys?.right.isDown || keys?.arrowRight.isDown;
+      const up = pad.dir === 'up' || keys?.up.isDown || keys?.arrowUp.isDown;
+      const down = pad.dir === 'down' || keys?.down.isDown || keys?.arrowDown.isDown;
 
       // A held direction that is walled off still turns you to face that way,
       // so you can talk to somebody by pressing towards them and then A.

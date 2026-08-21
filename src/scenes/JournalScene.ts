@@ -61,6 +61,9 @@ export class JournalScene extends Phaser.Scene {
   }
 
   create(): void {
+    // The scene instance is reused every time the journal is opened, so the
+    // tab map still holds the last visit's buttons until they are overwritten.
+    this.tabButtons.clear();
     // Layout is read here, not in a field: instances outlive a rotation.
     const tall = isPortrait();
     const pane = menuRect();

@@ -83,11 +83,14 @@ export class TouchControls extends Phaser.GameObjects.Container {
   private anchor: { x: number; y: number };
   private stickPointer?: number;
   private handlers: Array<[string, (pointer: Phaser.Input.Pointer) => void]> = [];
+  /** This instance's entry in `live`, so it only ever clears its own. */
+  private readonly claim: { zone: Rect; visible: boolean };
 
   constructor(scene: Phaser.Scene, private zone: Rect) {
     super(scene, 0, 0);
     scene.add.existing(this);
-    live = { zone, visible: true };
+    this.claim = { zone, visible: true };
+    live = this.claim;
 
     // Stick and button as one centred cluster, with the stick on the side most
     // thumbs steer with and the button close enough that the other one reaches
@@ -214,7 +217,10 @@ export class TouchControls extends Phaser.GameObjects.Container {
     for (const [event, handler] of this.handlers) this.scene.input.on(event, handler);
     this.once(Phaser.GameObjects.Events.DESTROY, () => {
       for (const [event, handler] of this.handlers) this.scene.input.off(event, handler);
-      live = undefined;
+      // Only disown the claim if it is still ours: on a rotation the new pad
+      // can be built before the old one is torn down, and clearing blindly
+      // would leave the live controls invisible to `padConsumes`.
+      if (live === this.claim) live = undefined;
       releasePad();
     });
   }
@@ -269,6 +275,8 @@ export class TouchControls extends Phaser.GameObjects.Container {
     disc.setFillStyle(COLORS.brass, 0.35);
     this.setAlpha(1);
     this.scene.time.delayedCall(140, () => {
+      // The pad can be torn down within the flash — a rotation is enough.
+      if (!this.active || !disc.active) return;
       disc.setFillStyle(COLORS.soot, 0.95);
       if (this.stickPointer === undefined) this.setAlpha(IDLE_ALPHA);
     });
@@ -294,7 +302,7 @@ export class TouchControls extends Phaser.GameObjects.Container {
   setShown(shown: boolean): this {
     if (this.visible === shown) return this;
     this.setVisible(shown);
-    if (live) live.visible = shown;
+    this.claim.visible = shown;
     if (!shown) {
       this.stickPointer = undefined;
       this.recentre();
