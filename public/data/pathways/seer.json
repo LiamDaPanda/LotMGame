@@ -204,7 +204,15 @@
             "value": 100,
             "label": "Digest the potion you are already carrying"
           }
-        ]
+        ],
+        "ritualText": "The faces you have worn are laid out like a hand of cards, and you pick the one that is least you. The potion goes down while you are wearing it, so that whatever it changes, it changes somebody else.",
+        "temptation": {
+          "label": "Wear a face you have not earned",
+          "description": "Take the rite half-digested, in a borrowed face. It will hold. It is holding it afterwards that costs.",
+          "sanityCost": 18,
+          "concealmentCost": 14,
+          "lossOfControlChance": 0.3
+        }
       }
     },
     {
@@ -244,7 +252,15 @@
             "value": 100,
             "label": "Digest the potion you are already carrying"
           }
-        ]
+        ],
+        "ritualText": "Threads first, then the potion. A Marionettist who drinks before he has hold of his own strings finds out whose hand is on them, and it is a short discovery.",
+        "temptation": {
+          "label": "Drink before the threads are set",
+          "description": "Faster, and it works, and for a week you will not be certain which of your own movements you decided on.",
+          "sanityCost": 20,
+          "concealmentCost": 12,
+          "lossOfControlChance": 0.34
+        }
       }
     },
     {
@@ -262,12 +278,60 @@
       "narrative": "Somewhere between the third exchange and the fourth, you stop asking whether the world minds.",
       "advancement": {
         "toSequence": 3,
+        "toTitle": "Scholar of Yore",
+        "requirements": [
+          {
+            "type": "flag",
+            "flag": "v4_ashes_recovered",
+            "label": "Take Saint Selena’s ashes back off the man who took them"
+          },
+          {
+            "type": "item",
+            "itemId": "formula_scholar",
+            "label": "Obtain the Scholar of Yore formula"
+          },
+          {
+            "type": "item",
+            "itemId": "potion_scholar",
+            "label": "Obtain the Scholar of Yore potion"
+          },
+          {
+            "type": "digestion",
+            "value": 100,
+            "label": "Digest the potion you are already carrying"
+          }
+        ],
+        "ritualText": "Two mysteries are laid side by side and told to change places. One of them is you. The rite is over when the swap does not swap back.",
+        "temptation": {
+          "label": "Swap without a second mystery",
+          "description": "Use your own two halves as the pair. It saves a fortnight of hunting and costs something you will not be able to name afterwards.",
+          "sanityCost": 22,
+          "concealmentCost": 16,
+          "lossOfControlChance": 0.38
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "title": "Scholar of Yore",
+      "potionName": "Scholar of Yore Potion",
+      "description": "History stops being a thing that happened and becomes a room you may enter, provided you knock. Ask a wall what it stood through and it will tell you, at the usual price: what you are told, you were also there for.",
+      "spiritualityMax": 260,
+      "sanityMax": 220,
+      "grantsAbilities": [
+        "witness_of_yore",
+        "the_long_record",
+        "borrowed_epoch"
+      ],
+      "narrative": "You woke knowing the name of the mason who cut the step outside your door, and how he died, and that he had been thinking about his daughter at the time. None of it was any use. All of it was true.",
+      "advancement": {
+        "toSequence": 2,
         "toTitle": "Miracle Invoker",
         "requirements": [
           {
             "type": "flag",
-            "flag": "v5_mausoleum",
-            "label": "Stand in the mausoleum while the angels finish their argument"
+            "flag": "v6_truth",
+            "label": "Look back at the man who performed the ritual"
           },
           {
             "type": "item",
@@ -282,32 +346,40 @@
           {
             "type": "digestion",
             "value": 100,
-            "label": "Digest the potion you are already carrying"
+            "label": "Digest the Scholar of Yore potion"
           }
-        ]
+        ],
+        "ritualText": "The rite is read out of a book that was read out of another book, back and back until the first hand is a rumour. That is the whole of it: the Scholar of Yore does not learn the past. He is admitted to it.",
+        "temptation": {
+          "label": "Read it out of the wrong book",
+          "description": "A copy of a copy, and the errors in it are load-bearing. It will still admit you. It will admit other things at the same time.",
+          "sanityCost": 24,
+          "concealmentCost": 14,
+          "lossOfControlChance": 0.4
+        }
       }
     },
     {
-      "sequence": 3,
+      "sequence": 2,
       "title": "Miracle Invoker",
       "potionName": "Miracle Invoker Potion",
-      "description": "The luck of a city, asked for by name. Miracles at this rung are small, exact and paid for by somebody, and part of the role is knowing that the somebody is not always you.",
-      "spiritualityMax": 260,
-      "sanityMax": 220,
+      "description": "You may ask for a thing to be otherwise, and sometimes it is. Not often, never twice the same way, and never without a bill arriving later made out to somebody — occasionally you.",
+      "spiritualityMax": 340,
+      "sanityMax": 280,
       "grantsAbilities": [
         "hour_of_miracles",
         "sign_of_fortune",
         "borrowed_miracle"
       ],
-      "narrative": "You ask for a coincidence, politely, and it arrives on time. It is the politeness that frightens Old Neil’s ghost in your memory.",
+      "narrative": "You asked, out loud, in an empty room, for one small impossible thing. It happened. You sat down afterwards and did not ask for anything else for a fortnight.",
       "advancement": {
-        "toSequence": 2,
+        "toSequence": 1,
         "toTitle": "Attendant of Mysteries",
         "requirements": [
           {
             "type": "flag",
             "flag": "v7_wish",
-            "label": "Die on purpose, in the right place, by the right arrangement"
+            "label": "Die in the Corpse Cathedral, by arrangement"
           },
           {
             "type": "item",
@@ -322,62 +394,43 @@
           {
             "type": "digestion",
             "value": 100,
-            "label": "Digest the potion you are already carrying"
+            "label": "Digest the Miracle Invoker potion"
           }
-        ]
-      }
-    },
-    {
-      "sequence": 2,
-      "title": "Attendant of Mysteries",
-      "potionName": "Attendant of Mysteries Potion",
-      "description": "Not a god, and no longer anything a mortal has a word for. The mysteries are answered rather than asked, and the seat above the fog is no longer a joke you are telling.",
-      "spiritualityMax": 340,
-      "sanityMax": 280,
-      "grantsAbilities": [
-        "attendants_answer",
-        "ceremonial_door"
-      ],
-      "narrative": "The grey fog is not a place you visit any more. It is the room you were always standing in, seen from inside.",
-      "advancement": {
-        "toSequence": 1,
-        "toTitle": "The Fool",
-        "requirements": [
-          {
-            "type": "flag",
-            "flag": "v7_zaratul",
-            "label": "Take back what was taken from the man who wrote the ritual"
-          },
-          {
-            "type": "item",
-            "itemId": "formula_fool",
-            "label": "Obtain The Fool formula"
-          },
-          {
-            "type": "item",
-            "itemId": "potion_fool",
-            "label": "Obtain The Fool potion"
-          },
-          {
-            "type": "digestion",
-            "value": 100,
-            "label": "Digest the potion you are already carrying"
-          }
-        ]
+        ],
+        "ritualText": "A miracle is a thing asked for and granted, and the asking is the difficult half. You lay out the circle, and for the first time the circle is not a formality: something on the other side of it is listening for the request.",
+        "temptation": {
+          "label": "Ask before the circle is closed",
+          "description": "The request goes out through a gap. Something answers it that was not the thing you addressed.",
+          "sanityCost": 26,
+          "concealmentCost": 18,
+          "lossOfControlChance": 0.44
+        }
       }
     },
     {
       "sequence": 1,
-      "title": "The Fool",
-      "potionName": "The Fool",
-      "description": "The seat at the head of the bronze table, filled by the man who sat down in it by accident and never once admitted to the accident.",
+      "title": "Attendant of Mysteries",
+      "potionName": "Attendant of Mysteries Potion",
+      "description": "The King of Angels. Every mystery on this pathway attends on you now, which sounds like service and is in fact surveillance: you are the thing they gather around, and you cannot put them down.",
       "spiritualityMax": 500,
       "sanityMax": 400,
       "grantsAbilities": [
+        "attendants_answer",
+        "ceremonial_door",
         "fools_hand",
         "above_the_fog"
       ],
-      "narrative": "Mr. Fool, who does not lie — because at this height there is nothing left that a lie would be useful for."
+      "narrative": "Sequence 1. The King of Angels, with a chair above the fog and a name four people say aloud on Sunday nights, and underneath it a man from Tingen who still counts his change."
+    },
+    {
+      "sequence": 0,
+      "title": "The Fool",
+      "potionName": "None. There is no potion for a uniqueness",
+      "description": "Sequence 0 is not a rank but a seat, and it is already occupied, and the occupant is a story people tell about a grey fog and a bronze long table. Book One does not reach it.",
+      "spiritualityMax": 500,
+      "sanityMax": 400,
+      "grantsAbilities": [],
+      "narrative": "Not in this book."
     }
   ]
 }

@@ -195,6 +195,17 @@
       "toX": 3,
       "toY": 7,
       "label": "Iron Cross St"
+    },
+    {
+      "x": 4,
+      "y": 5,
+      "toMap": "grey_fog",
+      "toX": 9,
+      "toY": 8,
+      "label": "Above the fog",
+      "requires": {
+        "flag": "tarot_club_founded"
+      }
     }
   ]
 }

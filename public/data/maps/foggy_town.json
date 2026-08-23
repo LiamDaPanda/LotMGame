@@ -1,0 +1,130 @@
+{
+  "id": "foggy_town",
+  "name": "The Foggy Town",
+  "ambient": "#585868",
+  "encounterChance": 0.3,
+  "legend": {
+    " ": {
+      "floor": 0,
+      "collide": true
+    },
+    ".": {
+      "floor": 1
+    },
+    ",": {
+      "floor": 2
+    },
+    "#": {
+      "floor": 8,
+      "collide": true
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    },
+    "L": {
+      "floor": 1,
+      "object": 24,
+      "collide": true
+    },
+    "k": {
+      "floor": 1,
+      "object": 19,
+      "collide": true
+    },
+    "g": {
+      "floor": 1,
+      "object": 27,
+      "collide": true
+    },
+    "c": {
+      "floor": 1,
+      "object": 21,
+      "collide": true
+    },
+    "K": {
+      "floor": 1,
+      "object": 31,
+      "collide": true
+    }
+  },
+  "rows": [
+    "                    ",
+    "  ####D######D####  ",
+    "  #..............#  ",
+    "  #.L..,,,,,,..L.#  ",
+    "  #....,,,,,,....#  ",
+    " ##.k..,,,,,,..k.## ",
+    " #......,,,,......# ",
+    " #.c..............# ",
+    " #.....K....g.....# ",
+    " ##..............## ",
+    "  ####..oo..####    ",
+    "        ..          "
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 9
+  },
+  "hotspots": [
+    {
+      "id": "ft_clock",
+      "x": 7,
+      "y": 8,
+      "name": "The Town Clock",
+      "description": "Stopped, and stopped at a time that is not on any dial you have seen. It has been stopped for four hundred years and it is still warm.",
+      "action": "dialogue",
+      "dialogue": "dlg_foggy",
+      "icon": 12
+    },
+    {
+      "id": "ft_mister_a",
+      "x": 3,
+      "y": 7,
+      "name": "The Shuttered Shop",
+      "description": "A gentleman is standing behind the counter of a shop that has had no stock since 1348, waiting with the patience of a man who has been told you are coming.",
+      "action": "dialogue",
+      "dialogue": "dlg_mister_a",
+      "icon": 13
+    },
+    {
+      "id": "ft_zaratul",
+      "x": 12,
+      "y": 8,
+      "name": "The Marker With No Name",
+      "description": "Not a grave. A seal, cut in the shape of a grave, by somebody who wanted the difference to go unremarked for as long as possible.",
+      "action": "dialogue",
+      "dialogue": "dlg_zaratul",
+      "icon": 13
+    }
+  ],
+  "npcs": [
+    {
+      "id": "mister_a",
+      "x": 4,
+      "y": 7,
+      "dialogue": "dlg_mister_a",
+      "wander": 0
+    }
+  ],
+  "exits": [
+    {
+      "x": 9,
+      "y": 11,
+      "toMap": "cathedral",
+      "toX": 9,
+      "toY": 9,
+      "label": "The way out",
+      "requires": {
+        "flag": "v4_zaratul_freed"
+      }
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_foggy_arrive",
+    "flag": "v4_foggy"
+  }
+}

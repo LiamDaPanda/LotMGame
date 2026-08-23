@@ -1,0 +1,145 @@
+{
+  "id": "oravi",
+  "name": "Oravi Island",
+  "ambient": "#2f4a3a",
+  "encounterChance": 0.2,
+  "legend": {
+    " ": {
+      "floor": 28,
+      "collide": true
+    },
+    ".": {
+      "floor": 30
+    },
+    ":": {
+      "floor": 1
+    },
+    "m": {
+      "floor": 29
+    },
+    "#": {
+      "floor": 9,
+      "collide": true
+    },
+    "T": {
+      "floor": 1,
+      "object": 16,
+      "collide": true
+    },
+    "c": {
+      "floor": 1,
+      "object": 17,
+      "collide": true
+    },
+    "k": {
+      "floor": 30,
+      "object": 19,
+      "collide": true
+    },
+    "b": {
+      "floor": 1,
+      "object": 20,
+      "collide": true
+    },
+    "L": {
+      "floor": 1,
+      "object": 24,
+      "collide": true
+    },
+    "g": {
+      "floor": 30,
+      "object": 27,
+      "collide": true
+    },
+    "r": {
+      "floor": 1,
+      "object": 15,
+      "collide": true
+    }
+  },
+  "rows": [
+    "     ..........     ",
+    "   ....g.....k....  ",
+    "  ...............L. ",
+    " ..:::::::::::::... ",
+    " ..:cTc:::::cTc:..  ",
+    " ..:::::::::::::..  ",
+    "  .:b:::::::::b:.   ",
+    "  ..::::::::::::..  ",
+    "   ..rr::::::rr..   ",
+    "      ::::::::      ",
+    "       ::::::       ",
+    "        ::::        "
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 10
+  },
+  "hotspots": [
+    {
+      "id": "or_governor",
+      "x": 5,
+      "y": 4,
+      "name": "The Governor’s Table",
+      "description": "Set for a man who is not coming, by people who have been told he is, and who will be executed if he is not.",
+      "action": "dialogue",
+      "dialogue": "dlg_rieveldt",
+      "icon": 13
+    },
+    {
+      "id": "or_die",
+      "x": 13,
+      "y": 4,
+      "name": "The Case On The Far Table",
+      "description": "Lead-lined, sealed twice, and the reason a merchant prince is paying a madman a captain’s wage to sit next to it.",
+      "action": "dialogue",
+      "dialogue": "dlg_die",
+      "icon": 12
+    },
+    {
+      "id": "or_grove",
+      "x": 7,
+      "y": 1,
+      "name": "The Grove Above The Town",
+      "description": "Every tree on this island leans the same way, and it is not the way the wind comes from.",
+      "action": "dialogue",
+      "dialogue": "dlg_mother_tree",
+      "icon": 7
+    },
+    {
+      "id": "rite_oravi",
+      "x": 3,
+      "y": 2,
+      "name": "A Circle Above The Tideline",
+      "description": "Drawn at low water on rock that will be under the sea in four hours, which is as private as this island gets.",
+      "action": "ritual",
+      "icon": 13
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 9,
+      "y": 11,
+      "toMap": "bayam",
+      "toX": 9,
+      "toY": 8,
+      "label": "Back to Bayam"
+    },
+    {
+      "x": 10,
+      "y": 11,
+      "toMap": "sea_of_ruins",
+      "toX": 9,
+      "toY": 9,
+      "label": "The Sea of Ruins",
+      "requires": {
+        "flag": "v3_rieveldt"
+      }
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_oravi_arrive",
+    "flag": "v3_oravi"
+  }
+}

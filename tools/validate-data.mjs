@@ -586,6 +586,17 @@ for (const map of maps) {
 // Dialogue
 // ---------------------------------------------------------------------------
 
+// Ids are the only handle a map has on a tree, and the loader keeps the last
+// one it read. A duplicate is therefore silent: the map opens a scene, the
+// wrong scene plays, and nothing anywhere says so.
+const treeIds = new Map();
+for (const tree of dialogues) {
+  if (treeIds.has(tree.id)) {
+    fail(`Dialogue "${tree.id}" is defined twice; the second one silently replaces the first.`);
+  }
+  treeIds.set(tree.id, tree);
+}
+
 for (const tree of dialogues) {
   if (!characterIds.has(tree.speaker)) {
     fail(`Dialogue ${tree.id}: unknown speaker "${tree.speaker}"`);

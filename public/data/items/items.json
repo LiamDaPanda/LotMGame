@@ -306,6 +306,34 @@
     ]
   },
   {
+    "id": "formula_scholar",
+    "name": "Scholar of Yore Formula",
+    "kind": "ritual",
+    "description": "Four main ingredients and a procedure that reads like a citation: every step names the step it was copied from, back past the point where anybody was signing their work.",
+    "pricePence": 103680,
+    "icon": 11,
+    "requires": {
+      "flag": "v5_mausoleum"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_scholar",
+    "name": "Scholar of Yore Potion",
+    "kind": "potion",
+    "description": "Colourless, and older than it can possibly be. Held up to a lamp it shows the lamp, and behind the lamp a room that has not existed for two hundred years.",
+    "pricePence": 155520,
+    "icon": 8,
+    "requires": {
+      "flag": "v5_mausoleum"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
     "id": "formula_miracle",
     "name": "Miracle Invoker Formula",
     "kind": "ritual",
@@ -356,34 +384,6 @@
     "icon": 8,
     "requires": {
       "flag": "v7_wish"
-    },
-    "vendors": [
-      "club"
-    ]
-  },
-  {
-    "id": "formula_fool",
-    "name": "The Fool Formula",
-    "kind": "ritual",
-    "description": "The Fool rung, written out. Above Sequence 5 the Church stops calling these formulas and starts calling them arrangements.",
-    "pricePence": 414720,
-    "icon": 11,
-    "requires": {
-      "flag": "v7_zaratul"
-    },
-    "vendors": [
-      "club"
-    ]
-  },
-  {
-    "id": "potion_fool",
-    "name": "The Fool Potion",
-    "kind": "potion",
-    "description": "Made up to The Fool formula. Nobody signs for these.",
-    "pricePence": 622080,
-    "icon": 8,
-    "requires": {
-      "flag": "v7_zaratul"
     },
     "vendors": [
       "club"

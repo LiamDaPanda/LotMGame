@@ -1,0 +1,122 @@
+{
+  "id": "chernobyl",
+  "name": "A City With No Name On Any Map",
+  "ambient": "#3a4a3a",
+  "encounterChance": 0.2,
+  "legend": {
+    " ": {
+      "floor": 0,
+      "collide": true
+    },
+    ".": {
+      "floor": 1
+    },
+    "m": {
+      "floor": 29
+    },
+    "g": {
+      "floor": 30
+    },
+    "#": {
+      "floor": 8,
+      "collide": true
+    },
+    "k": {
+      "floor": 1,
+      "object": 19,
+      "collide": true
+    },
+    "L": {
+      "floor": 1,
+      "object": 24,
+      "collide": true
+    },
+    "K": {
+      "floor": 1,
+      "object": 31,
+      "collide": true
+    },
+    "r": {
+      "floor": 1,
+      "object": 15,
+      "collide": true
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    }
+  },
+  "rows": [
+    "  ####W##W####      ",
+    "  #..........#      ",
+    "  #.k......k.#      ",
+    "  #..........####   ",
+    "  #.....K.......#   ",
+    "  #.............#   ",
+    "  ###.......#####   ",
+    "    r.......r       ",
+    "    g.......g       ",
+    "    ggmm.mmgg       ",
+    "     ...g...        ",
+    "      .....         "
+  ],
+  "spawn": {
+    "x": 7,
+    "y": 10
+  },
+  "hotspots": [
+    {
+      "id": "ch_amon",
+      "x": 5,
+      "y": 5,
+      "name": "The Man Who Did Not Use A Door",
+      "description": "A crystal monocle he does not need, over an eye that is pure black from lid to lid, and the manner of somebody who has been delighted to meet you for four hundred years.",
+      "action": "dialogue",
+      "dialogue": "dlg_amon",
+      "icon": 13
+    },
+    {
+      "id": "ch_clock",
+      "x": 8,
+      "y": 4,
+      "name": "A Clock On A Wall",
+      "description": "Stopped at twenty-three minutes past one, in a script you can read, on a building that is not in any style this world has ever built in.",
+      "action": "dialogue",
+      "dialogue": "dlg_chernobyl",
+      "icon": 12
+    },
+    {
+      "id": "ch_park",
+      "x": 8,
+      "y": 9,
+      "name": "The Fairground",
+      "description": "A wheel that was never ridden, in a park laid out for a town that was evacuated in an afternoon, in a year that has not happened here.",
+      "action": "dialogue",
+      "dialogue": "dlg_earth",
+      "icon": 2
+    }
+  ],
+  "npcs": [
+    {
+      "id": "amon",
+      "x": 7,
+      "y": 5,
+      "dialogue": "dlg_amon",
+      "wander": 0
+    }
+  ],
+  "exits": [
+    {
+      "x": 7,
+      "y": 11,
+      "toMap": "forsaken",
+      "toX": 9,
+      "toY": 8,
+      "label": "On, then"
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_v6_arrive",
+    "flag": "v6_taken"
+  }
+}

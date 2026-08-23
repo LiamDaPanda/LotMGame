@@ -59,7 +59,7 @@
     "L::::::::::::::::::L",
     ":::c::::::::::::c:::",
     "#::::::::::::::::::#",
-    "##D#####W####W###D##"
+    "##D#####D####W###D##"
   ],
   "spawn": {
     "x": 9,
@@ -94,6 +94,16 @@
       "description": "Drawn on the deck of a hired sloop, at anchor, with two hands paid to be somewhere else.",
       "action": "ritual",
       "icon": 13
+    },
+    {
+      "id": "by_die",
+      "x": 6,
+      "y": 4,
+      "name": "Darkwill’s Sealed Case",
+      "description": "Lead-lined, sealed twice, and guarded by a merchant prince’s superstition, which turns out not to be one.",
+      "action": "dialogue",
+      "dialogue": "dlg_die",
+      "icon": 12
     }
   ],
   "npcs": [],
@@ -115,6 +125,17 @@
       "label": "Saint Samuel",
       "requires": {
         "flag": "v3_scepter"
+      }
+    },
+    {
+      "x": 8,
+      "y": 9,
+      "toMap": "oravi",
+      "toX": 9,
+      "toY": 10,
+      "label": "Oravi Island",
+      "requires": {
+        "flag": "v3_sparrow"
       }
     }
   ],

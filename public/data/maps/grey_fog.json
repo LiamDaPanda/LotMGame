@@ -1,0 +1,125 @@
+{
+  "id": "grey_fog",
+  "name": "Above the Grey Fog",
+  "ambient": "#4a4a58",
+  "encounterChance": 0,
+  "legend": {
+    " ": {
+      "floor": 0,
+      "collide": true
+    },
+    ".": {
+      "floor": 7
+    },
+    "*": {
+      "floor": 6
+    },
+    "@": {
+      "floor": 32
+    },
+    "T": {
+      "floor": 6,
+      "object": 16,
+      "collide": true
+    },
+    "c": {
+      "floor": 7,
+      "object": 17,
+      "collide": true
+    },
+    "r": {
+      "floor": 7,
+      "object": 15,
+      "collide": true
+    },
+    "L": {
+      "floor": 7,
+      "object": 24,
+      "collide": true
+    }
+  },
+  "rows": [
+    "                    ",
+    "    rrrrrrrrrrrr    ",
+    "    r..........r    ",
+    "   r..c.c.c.c...r   ",
+    "   r..TTTTTTTT..r   ",
+    "   L....****....L   ",
+    "   r..c.c.c.c...r   ",
+    "   r....@.......r   ",
+    "    r..........r    ",
+    "    rrrr..rrrrr     ",
+    "        ..          ",
+    "        ..          "
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 8
+  },
+  "hotspots": [
+    {
+      "id": "fog_seat",
+      "x": 8,
+      "y": 7,
+      "name": "The Chair At The Head",
+      "description": "Yours by an accident you have stopped trying to explain. Sitting in it is how a gathering is called.",
+      "action": "dialogue",
+      "dialogue": "dlg_fog_gathering",
+      "icon": 13
+    },
+    {
+      "id": "fog_table",
+      "x": 9,
+      "y": 4,
+      "name": "The Bronze Long Table",
+      "description": "Twenty-two seats. Anything set down on the bronze can be taken up by whoever is seated, which is the whole of the Club’s business.",
+      "action": "dialogue",
+      "dialogue": "dlg_fog_table",
+      "icon": 7
+    },
+    {
+      "id": "fog_justice",
+      "x": 6,
+      "y": 3,
+      "name": "Miss Justice’s Chair",
+      "description": "A scale is worn into the arm of it. She sits very straight and writes everything down.",
+      "action": "dialogue",
+      "dialogue": "dlg_fog_justice",
+      "icon": 12
+    },
+    {
+      "id": "fog_hanged",
+      "x": 10,
+      "y": 3,
+      "name": "Mr. Hanged Man’s Chair",
+      "description": "He has never once sat back in it. Everything he offers is priced before he opens his mouth.",
+      "action": "dialogue",
+      "dialogue": "dlg_fog_hanged",
+      "icon": 12
+    },
+    {
+      "id": "fog_edge",
+      "x": 14,
+      "y": 7,
+      "name": "The Parapet",
+      "description": "Grey fog to every horizon, and under it, a very long way under it, the world going about its evening.",
+      "clues": [],
+      "icon": 2
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 9,
+      "y": 11,
+      "toMap": "lodgings",
+      "toX": 6,
+      "toY": 8,
+      "label": "Come back down"
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_fog_arrival",
+    "flag": "v1_fog_seat"
+  }
+}

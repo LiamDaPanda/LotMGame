@@ -1,0 +1,683 @@
+[
+  {
+    "id": "dlg_fog_arrival",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The room is not there and then the palace is, the way it always is: no falling, no door, only the fact of grey fog to every horizon and crumbling stone underfoot at a height that has no business existing.\n\nThe bronze long table. Twenty-two seats. Yours at the head of it.",
+        "choices": [
+          {
+            "text": "Sit.",
+            "goto": "sit"
+          }
+        ]
+      },
+      "sit": {
+        "text": "You do not have to walk to the chair. You are simply in it, and the chair has been waiting, and you have stopped finding that remarkable, which is itself worth noticing.\n\nFrom up here Tingen is a smudge of gaslight under weather. Backlund is a brighter smudge, four days away by train, and getting brighter.",
+        "effect": {
+          "flags": [
+            "v1_fog_seat"
+          ],
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_fog_gathering",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "You take the chair at the head and think, deliberately, of two people.\n\nTwo of the twenty-two seats fill with grey mist that decides, after a moment, on a shape. A girl in a riding habit. A weathered man in a sea officer’s coat who does not sit back.",
+        "choices": [
+          {
+            "text": "Open the meeting.",
+            "goto": "open"
+          },
+          {
+            "text": "Say nothing, and let them work.",
+            "goto": "silence"
+          }
+        ]
+      },
+      "silence": {
+        "text": "You hold the silence for six seconds. Miss Justice decides it is composure. Mr. Hanged Man decides it is a test he has already failed, and begins, unprompted, to offer more than he meant to.\n\nThe most reliable thing you own is other people’s certainty that you are not bluffing.",
+        "effect": {
+          "concealment": 4,
+          "trust": {
+            "hanged_man": 5
+          }
+        },
+        "choices": [
+          {
+            "text": "Now open the meeting.",
+            "goto": "open"
+          }
+        ]
+      },
+      "open": {
+        "text": "‘The Club is open,’ you say. ‘Bring what you have.’\n\nMiss Justice has a name out of a Backlund drawing room that she should not have. Mr. Hanged Man has a shipping schedule and a formula he is not entitled to and a price he has clearly rehearsed.\n\nNeither of them has ever asked what you are. Both of them have decided, and the two decisions do not agree, and that suits you.",
+        "choices": [
+          {
+            "text": "Trade the Hanged Man’s formula for the Justice’s name.",
+            "goto": "broker"
+          },
+          {
+            "text": "Buy both, and let them wonder what with.",
+            "goto": "buy"
+          }
+        ]
+      },
+      "broker": {
+        "text": "You put one on the bronze and take the other off it, and neither of them touches the other, and neither of them learns a thing about the other beyond a tarot title.\n\nThat is the business. The Fool holds the middle of it and takes a cut of everything that crosses.",
+        "effect": {
+          "flags": [
+            "club_trading"
+          ],
+          "skills": {
+            "rhetoric": 1
+          },
+          "trust": {
+            "justice": 6,
+            "hanged_man": 6
+          },
+          "pence": 900
+        },
+        "choices": [
+          {
+            "text": "Close the meeting.",
+            "goto": "close"
+          }
+        ]
+      },
+      "buy": {
+        "text": "You pay for both, in coin that arrives on the bronze from a direction neither of them can follow, and they take it, and each privately revises upward what the Fool is.\n\nIt is an expensive way to be mysterious. It is also the only kind of mystery that compounds.",
+        "effect": {
+          "flags": [
+            "club_trading"
+          ],
+          "pence": -1400,
+          "trust": {
+            "justice": 10,
+            "hanged_man": 10
+          },
+          "concealment": 4
+        },
+        "choices": [
+          {
+            "text": "Close the meeting.",
+            "goto": "close"
+          }
+        ]
+      },
+      "close": {
+        "text": "The fog takes them back mid-sentence, which is a thing you do on purpose and they have both stopped remarking on.\n\nThe chairs are empty. The bronze is very cold. Somewhere below the fog a nineteen-year-old is writing up her notes and a sailor is rowing back to a ship, and neither of them will say your name aloud where anyone can hear it.",
+        "effect": {
+          "sanity": -3,
+          "spirituality": -8
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_fog_table",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The bronze holds whatever is set on it until somebody seated takes it up. It is the only honest counter in the world: nothing crosses it that both parties have not agreed to.",
+        "choices": [
+          {
+            "text": "Leave a divination out for the Justice.",
+            "goto": "leave"
+          },
+          {
+            "text": "Take up what the Hanged Man left.",
+            "goto": "take",
+            "requires": {
+              "flag": "club_trading"
+            }
+          },
+          {
+            "text": "Just look at it.",
+            "goto": "look"
+          }
+        ]
+      },
+      "leave": {
+        "text": "You write the reading out in a hand that is not yours, in a phrasing borrowed from a lecturer who frightened you at nineteen, and set it on the bronze.\n\nIt will be gone by the time the fog next opens, and a girl in Backlund will spend a week being right about something in a way she cannot explain to her mother.",
+        "effect": {
+          "trust": {
+            "justice": 8
+          },
+          "spirituality": -6,
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "end": true
+      },
+      "take": {
+        "text": "A folded paper, sea-damp at one corner. Ingredients, a route, and the name of a port that four flags are pretending not to be interested in.\n\nHe has priced it fairly. That is what worries you about him: a man who prices fairly to something he cannot see is a man building toward a request.",
+        "effect": {
+          "trust": {
+            "hanged_man": 6
+          },
+          "skills": {
+            "streetwise": 1
+          },
+          "pence": -600
+        },
+        "end": true
+      },
+      "look": {
+        "text": "Twenty-two seats and two of them spoken for. You have not decided whether the other twenty are a plan or a warning, and the table is not going to tell you.",
+        "effect": {
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_fog_justice",
+    "speaker": "justice",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "‘Mr. Fool.’ She has her notebook open before the mist has finished deciding on her. ‘I have been to four dinners this week and I have written down everything anyone said about Tingen, which is nothing, which I thought you would want to know is nothing.’",
+        "choices": [
+          {
+            "text": "Nothing is a reading too.",
+            "goto": "nothing"
+          },
+          {
+            "text": "Ask what the Church is saying.",
+            "goto": "church"
+          }
+        ]
+      },
+      "nothing": {
+        "text": "‘That is what my father says about the Exchange.’ She writes that down as well, apparently in case you want it back later.\n\nShe is nineteen and the most dangerous person at any table she sits at, and has not worked that out yet, and you would rather she took her time.",
+        "effect": {
+          "trust": {
+            "justice": 5
+          }
+        },
+        "end": true
+      },
+      "church": {
+        "text": "‘That the Aurora Order is finished, and has been since spring.’ A pause. ‘They say it the way people say a fire is out. I have noticed that people only say a fire is out in rooms that are still warm.’",
+        "effect": {
+          "trust": {
+            "justice": 6
+          },
+          "flags": [
+            "heard_aurora_warm"
+          ],
+          "skills": {
+            "rhetoric": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_fog_hanged",
+    "speaker": "hanged_man",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "He does not sit back. He never sits back.\n\n‘Mr. Fool. Two items. A shipping schedule that is worth what I am asking, and a piece of advice that is worth more and which I will give you for nothing, because I would like you to owe me nothing.’",
+        "choices": [
+          {
+            "text": "The advice.",
+            "goto": "advice"
+          },
+          {
+            "text": "The schedule.",
+            "goto": "schedule"
+          }
+        ]
+      },
+      "advice": {
+        "text": "‘A church that has been declared finished is a church with no register, no visits, and no one counting its deacons.’ A pause exactly as long as he intends. ‘If I wanted to become something, I would do it inside a dead organisation. Nobody audits a corpse.’",
+        "effect": {
+          "trust": {
+            "hanged_man": 4
+          },
+          "flags": [
+            "heard_aurora_warm"
+          ],
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "end": true
+      },
+      "schedule": {
+        "text": "‘Four sailings out of Pritz Harbour that the Church of Storms has not been told about.’ He names his price without any expression at all. ‘I am not asking what you want it for. That is the service.’",
+        "effect": {
+          "trust": {
+            "hanged_man": 6
+          },
+          "pence": -800,
+          "skills": {
+            "streetwise": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_acting",
+    "speaker": "moon",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Old Neil takes his glasses off to say it, which is how you know it is the lesson and not the preamble.\n\n‘A potion is not a drink. It is a role. You have swallowed a Seer and the Seer has not swallowed you yet, and until one of you wins, you are two men in one coat.’",
+        "choices": [
+          {
+            "text": "So how does one of us win?",
+            "goto": "how"
+          }
+        ]
+      },
+      "how": {
+        "text": "‘You act it. Not in the theatre. In the street, in the office, in front of people who have no idea they are the audience. You do the thing a Seer would do because you are a Seer, and not because it is useful, and you keep doing it until the doing stops being a decision.’\n\nHe puts his glasses back on. ‘Half the Beyonders who lose their minds lose them because they were waiting to feel ready.’",
+        "choices": [
+          {
+            "text": "Practise it here, in front of him.",
+            "goto": "practise"
+          },
+          {
+            "text": "Write it down and practise it alone.",
+            "goto": "alone"
+          }
+        ]
+      },
+      "practise": {
+        "text": "You do a reading for a man who has forgotten more mysticism than you will learn this year, and you do it in the manner of somebody who has never doubted a card in his life.\n\nHe watches the whole performance without helping. At the end he says, ‘Again,’ and you do it again, and the second time it is a little less like lying.",
+        "effect": {
+          "flags": [
+            "learned_acting"
+          ],
+          "digestion": 18,
+          "skills": {
+            "rhetoric": 1
+          },
+          "trust": {
+            "moon": 8
+          }
+        },
+        "end": true
+      },
+      "alone": {
+        "text": "You take the lesson home and practise it on the landlord, the milk boy, and a woman at the tram stop who wanted to know if it would rain.\n\nIt works. It works better than it did in front of Old Neil, because nobody in the street is checking, and that is precisely the thing that makes it worth less.",
+        "effect": {
+          "flags": [
+            "learned_acting"
+          ],
+          "digestion": 12,
+          "concealment": -4
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_church_arrival",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The Chapel of the Evernight Goddess on a Thursday afternoon: cold, half-lit, and holding the ash of a saint in a silver box that four people in this city know the true weight of.\n\nDunn Smith asked for the whole unit. Dunn Smith does not ask for the whole unit.",
+        "choices": [
+          {
+            "text": "Find out why.",
+            "goto": "why"
+          }
+        ]
+      },
+      "why": {
+        "text": "Something got into the crypt on Tuesday. The sexton has not been seen since Tuesday. The Church has decided both facts are the same fact, and has asked the Nighthawks to go down and confirm it.\n\nOn any ordinary reading that is a job. On the reading you are not saying aloud, it is a shape: someone has arranged for every Beyonder in Tingen to be in this building, looking downward, at the same hour.",
+        "effect": {
+          "flags": [
+            "v1_church"
+          ],
+          "skills": {
+            "occultism": 1
+          },
+          "sanity": -3
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_smith_church",
+    "speaker": "hermit",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "‘Everyone downstairs in ten minutes.’ Captain Smith is checking a revolver he has already checked. ‘Old Neil on the stair, Leonard with me, you behind Leonard.’\n\nHe pauses. ‘And Klein. If it goes badly, it goes badly upward. Get out of the building, not deeper into it.’",
+        "choices": [
+          {
+            "text": "Ask who called us here.",
+            "goto": "who"
+          },
+          {
+            "text": "Say yes, Captain.",
+            "goto": "yes"
+          }
+        ]
+      },
+      "who": {
+        "text": "‘The Church.’ He says it, hears it, and stops. ‘A letter from the Church. Signed by a deacon I have not met, of an Order the Church put down eight years ago, on paper I did not think to check.’\n\nHe is a man who forgets things and knows he does. You watch him decide, in real time, that this is not one of the things he forgot.",
+        "effect": {
+          "flags": [
+            "smith_doubts_letter"
+          ],
+          "trust": {
+            "hermit": 6
+          },
+          "skills": {
+            "observation": 1
+          }
+        },
+        "end": true
+      },
+      "yes": {
+        "text": "‘Good man.’ He almost smiles. It is the last uncomplicated thing that will happen this afternoon, and you will remember it in a lot of detail later, for a long time.",
+        "effect": {
+          "trust": {
+            "hermit": 4
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_leonard_church",
+    "speaker": "tower",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Leonard Mitchell is looking at the reliquary the way other men look at a horse they are thinking of betting on.\n\n‘Saint Selena. Burned in 1213 and still worth stealing in 1349. Somebody has done the arithmetic on that, and it was not us.’",
+        "choices": [
+          {
+            "text": "Ask what the ash is worth.",
+            "goto": "worth"
+          },
+          {
+            "text": "Tell him to watch the vestry.",
+            "goto": "vestry"
+          }
+        ]
+      },
+      "worth": {
+        "text": "‘Not money.’ He taps the rail. ‘A demigod, if you have the rest of the recipe. That is what the ash of a saint is: the last ingredient of something that only gets made once.’\n\nHe says it lightly. He owes everyone in the office money and he has never once been wrong about a thing that mattered.",
+        "effect": {
+          "flags": [
+            "knows_ashes_worth"
+          ],
+          "skills": {
+            "occultism": 1
+          },
+          "trust": {
+            "tower": 5
+          }
+        },
+        "end": true
+      },
+      "vestry": {
+        "text": "‘The vestry.’ He looks at it, then at you, and something in his face resets. ‘It has been ajar the whole time we have been standing here and none of us has said so.’\n\nHe does not go and look. He is the fastest man on the team at noticing a thing nobody wanted noticed, and he has just noticed that he does not want to.",
+        "effect": {
+          "flags": [
+            "vestry_noticed"
+          ],
+          "trust": {
+            "tower": 6
+          },
+          "sanity": -2
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_selena",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The casket is blackened silver, the cloth over it is Friday-clean, and the seal is intact in the way a seal is intact when somebody has been extremely careful.\n\nThere is ash inside. There has been ash inside since 1213. You are, at this moment, one of perhaps six people alive who could say what it is for.",
+        "choices": [
+          {
+            "text": "Read the seal properly.",
+            "goto": "seal"
+          },
+          {
+            "text": "Leave it alone.",
+            "goto": "leave"
+          }
+        ]
+      },
+      "seal": {
+        "text": "Wax over lead over a knot of hair, and under all of it, faint, a second impression: the same seal pressed twice, four days apart, by two different hands.\n\nSomebody has already opened this and closed it again. They did not take the ash. They came to be certain it was here, and to find out how long the Church would take to notice — which is a thing you do when you intend to come back at a particular hour with a particular audience.",
+        "effect": {
+          "flags": [
+            "seal_opened_twice"
+          ],
+          "clues": [],
+          "skills": {
+            "observation": 1
+          },
+          "sanity": -4
+        },
+        "choices": [
+          {
+            "text": "Go and tell the Captain.",
+            "goto": "tell"
+          }
+        ]
+      },
+      "leave": {
+        "text": "You put the cloth back the way the sexton leaves it, and step away, and are aware of doing something careful and useless.",
+        "end": true
+      },
+      "tell": {
+        "text": "You get as far as the aisle.\n\nBelow the floor, in the crypt, something that has been getting louder since Tuesday stops being quiet.",
+        "effect": {
+          "flags": [
+            "v1_ashes_read"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_spawn",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The crypt stair goes down further than the chapel is tall. At the bottom of it the air stops being air and starts being an opinion about air, held by something that has been assembling itself out of the parish dead since Tuesday.\n\nIt is not a ghost. Ghosts are people. This has been made, out of a template, by somebody working from a book.",
+        "choices": [
+          {
+            "text": "Fight it with the unit.",
+            "goto": "fight"
+          },
+          {
+            "text": "Read it first.",
+            "goto": "read",
+            "useAbilityEffect": "reveal_clue"
+          }
+        ]
+      },
+      "read": {
+        "text": "A Seer’s glance, held four seconds longer than is comfortable, and the shape resolves: a spawn of the True Creator, grown from a seed that was planted, watered, and left where the Nighthawks would certainly find it.\n\nIt is not here to kill anyone. It is here to be fought, loudly, on the ground floor of a building where the ash of a saint is kept.",
+        "effect": {
+          "flags": [
+            "knows_spawn_is_bait"
+          ],
+          "skills": {
+            "occultism": 1
+          },
+          "sanity": -5
+        },
+        "choices": [
+          {
+            "text": "Say so. Now.",
+            "goto": "fight"
+          }
+        ]
+      },
+      "fight": {
+        "text": "It takes eleven minutes. Old Neil holds the stair, Leonard is faster than the thing is, and Captain Smith ends it with the sixth shot and a word that costs him something he does not explain.\n\nEleven minutes with every Beyonder in Tingen underground, facing the same direction, making a great deal of noise.\n\nUpstairs, the chapel is quiet.",
+        "effect": {
+          "flags": [
+            "v1_spawn"
+          ],
+          "sanity": -8,
+          "spirituality": -20,
+          "days": 0
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_zangwill",
+    "speaker": "zangwill",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "He is standing at the altar with the cloth folded neatly beside him, because he is the sort of man who folds the cloth.\n\nDark blonde. A face like a sculpture that has never learned to frown. One eye that stopped working a long time ago and has not been replaced with anything kinder.\n\nThe casket is open. The casket is empty.",
+        "choices": [
+          {
+            "text": "‘Aurora Order.’",
+            "goto": "order"
+          },
+          {
+            "text": "Put yourself between him and the door.",
+            "goto": "door"
+          }
+        ]
+      },
+      "order": {
+        "text": "‘Ince Zangwill.’ He says his own name the way a man reads a label. ‘The Order is finished. Everyone agrees. There is no register, no visitation, and no one at all counting its deacons.’\n\nHe lifts the empty casket slightly, as if showing you the receipt.\n\n‘Your captain read a letter he did not check, and took his unit downstairs to fight something I grew for the purpose. I would like you to understand that none of this was aimed at you. You are simply the one who came back up the stairs first.’",
+        "choices": [
+          {
+            "text": "Keep him talking.",
+            "goto": "talk"
+          },
+          {
+            "text": "Shout for the stair.",
+            "goto": "shout"
+          }
+        ]
+      },
+      "door": {
+        "text": "You move. He watches you move with the mild interest of a man watching weather through a window.\n\n‘That is the door I came in by,’ he says. ‘It is not the door I am leaving by.’",
+        "choices": [
+          {
+            "text": "Keep him talking.",
+            "goto": "talk"
+          },
+          {
+            "text": "Shout for the stair.",
+            "goto": "shout"
+          }
+        ]
+      },
+      "talk": {
+        "text": "You get four sentences out of him. Later — much later, and from a chair above the fog — you will realise that three of them were true, that he had no reason at all to give you three true sentences, and that men only pay for information with information when they have decided the audience will not be repeating it.",
+        "effect": {
+          "flags": [
+            "zangwill_named"
+          ],
+          "skills": {
+            "rhetoric": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "…",
+            "goto": "shot"
+          }
+        ]
+      },
+      "shout": {
+        "text": "You shout. The stair is eleven minutes and forty feet of stone away, and your voice is very loud in a chapel, and none of that matters in the slightest.",
+        "effect": {
+          "flags": [
+            "zangwill_named"
+          ]
+        },
+        "choices": [
+          {
+            "text": "…",
+            "goto": "shot"
+          }
+        ]
+      },
+      "shot": {
+        "text": "He shoots you through the heart.\n\nIt is not dramatic. He does it the way he folded the cloth: neatly, at the correct moment, without any appetite for it. The chapel floor arrives. The silver casket is under his arm. The last thing in the world is the vestry door closing, and it closes quietly, because he is careful.\n\nKlein Moretti dies on the eleventh of September, 1349, in the Chapel of the Evernight Goddess, aged twenty-two.",
+        "effect": {
+          "flags": [
+            "v1_death"
+          ],
+          "sanity": -20,
+          "concealment": 20
+        },
+        "choices": [
+          {
+            "text": "And then.",
+            "goto": "fog"
+          }
+        ]
+      },
+      "fog": {
+        "text": "And then grey fog, to every horizon, and a palace of crumbling stone, and a bronze long table with twenty-two seats.\n\nYou are sitting at the head of it.\n\nYou did not sit down. You have not sat down for some time. It occurs to you, with the calm of a man reading his own handwriting in a book he does not remember writing, that the seat is not somewhere you go.\n\nIt is where you have been kept.",
+        "effect": {
+          "flags": [
+            "v1_survived_above_fog"
+          ],
+          "spirituality": 40,
+          "skills": {
+            "occultism": 2
+          }
+        },
+        "choices": [
+          {
+            "text": "Volume I ends here.",
+            "goto": "close"
+          }
+        ]
+      },
+      "close": {
+        "text": "Tingen will bury an empty coffin in a fortnight, because there is a body and the Church would rather there were not.\n\nMiss Justice will write in her notebook that Mr. Fool did not answer on Sunday. Mr. Hanged Man will not write anything down at all.\n\nAnd four days south by train, Backlund is a brighter smudge, and getting brighter.",
+        "effect": {
+          "flags": [
+            "v1_complete"
+          ],
+          "days": 14
+        },
+        "end": true
+      }
+    }
+  }
+]

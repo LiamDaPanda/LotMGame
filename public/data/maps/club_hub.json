@@ -106,7 +106,7 @@
     "#......................#",
     "#..kl....xxxxxx....l...#",
     "#......................#",
-    "#########oo#############"
+    "########ooo#############"
   ],
   "spawn": {
     "x": 11,
@@ -201,6 +201,16 @@
         }
       },
       "icon": 8
+    },
+    {
+      "id": "club_rehearsal",
+      "x": 12,
+      "y": 12,
+      "name": "The Back Room",
+      "description": "A cleared floor, a cheval glass with a crack across the corner, and Old Neil in the one chair, waiting to be performed at.",
+      "action": "dialogue",
+      "dialogue": "dlg_acting",
+      "icon": 7
     }
   ],
   "npcs": [
@@ -245,6 +255,17 @@
       "toX": 3,
       "toY": 7,
       "label": "Backlund",
+      "requires": {
+        "sequenceAtMost": 8
+      }
+    },
+    {
+      "x": 8,
+      "y": 14,
+      "toMap": "tingen_church",
+      "toX": 9,
+      "toY": 10,
+      "label": "The Chapel",
       "requires": {
         "sequenceAtMost": 8
       }

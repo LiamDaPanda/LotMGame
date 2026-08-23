@@ -103,6 +103,54 @@ const session = () =>
     };
   });
 
+/**
+ * Play a scene at a hotspot and take every choice named, in order.
+ *
+ * Clears whatever is already on screen first: a room with an `intro` plays it
+ * on arrival, and a scene opened on top of that would be aimed at the intro.
+ */
+const clearDialogue = async () => {
+  for (let step = 0; step < 12; step++) {
+    const more = await withGame((game) => {
+      if (!game.scene.isActive('Dialogue')) return false;
+      const dialogue = game.scene.getScene('Dialogue');
+      const open = dialogue.node?.choices ?? [];
+      if (open.length === 0) return false;
+      dialogue.choose(open[0].index);
+      return true;
+    });
+    if (!more) break;
+    await page.waitForTimeout(160);
+  }
+  await withGame((game) => {
+    if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+    const world = game.scene.getScene('World');
+    if (world.scene.isPaused()) world.scene.resume();
+  });
+  await page.waitForTimeout(220);
+};
+
+const scene = async (mapId, hotspotId, choices) => {
+  await clearDialogue();
+  await withGame(
+    (game, arg) => {
+      const world = game.scene.getScene('World');
+      const hotspot = world.map.hotspots.find((h) => h.id === arg);
+      if (hotspot) world.runHotspotAction(hotspot);
+    },
+    hotspotId,
+  );
+  if (choices.length > 0) check(`${hotspotId} opens a scene`, await waitForScene('Dialogue'));
+  await page.waitForTimeout(250);
+  for (const needle of choices) await pickChoice(needle);
+  await withGame((game) => {
+    if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+    const world = game.scene.getScene('World');
+    if (world.scene.isPaused()) world.scene.resume();
+  });
+  await page.waitForTimeout(300);
+};
+
 console.log(`\nPlaytest against ${BASE}\n`);
 
 // ---------------------------------------------------------------------------
@@ -124,16 +172,24 @@ const loaded = await withGame((game) => {
     volumes: s.content.volumes.length,
   };
 });
+// Counts, not magic numbers: pinning the exact totals meant every chapter
+// added to the book broke a test that was not about chapters.
 check(
   'content loaded from JSON',
-  loaded.cases === 1 &&
-    loaded.maps === 13 &&
-    loaded.pathways === 1 &&
-    loaded.abilities === 28 &&
-    loaded.chapters === 36 &&
-    loaded.volumes === 7 &&
-    loaded.encounters === 6,
+  Object.values(loaded).every((n) => n > 0),
   JSON.stringify(loaded),
+);
+check('Book One is seven volumes', loaded.volumes === 7, String(loaded.volumes));
+const spine = await withGame((game) => {
+  const s = game.scene.getScenes(true)[0].registry.get('session');
+  const counts = {};
+  for (const chapter of s.content.chapters) counts[chapter.volume] = (counts[chapter.volume] ?? 0) + 1;
+  return counts;
+});
+check(
+  'and every volume of it has chapters',
+  [1, 2, 3, 4, 5, 6, 7].every((v) => (spine[v] ?? 0) > 0),
+  JSON.stringify(spine),
 );
 
 // ---------------------------------------------------------------------------
@@ -394,12 +450,22 @@ await page.waitForTimeout(400);
 state = await session();
 check('the Tarot Club is founded', state.flags.includes('tarot_club_founded'), state.flags.join(','));
 check(
+  'and the story turns to the lesson',
+  state.chapter === 'ch_acting' && state.chapterWhere === 'club_hub',
+  `${state.chapter} at ${state.chapterWhere}`,
+);
+
+// --- The Acting Method: a potion is a role, acted until it stops being one ---
+await goTo('club_hub', 11, 8);
+await scene('club_hub', 'club_rehearsal', ['So how does one of us win', 'Practise it here']);
+state = await session();
+check('the acting method is learned', state.flags.includes('learned_acting'), state.flags.slice(-3).join(','));
+check(
   'and the story goes back to the rooms above the shop',
   state.chapter === 'ch_rooms' && state.chapterWhere === 'pawnshop',
   `${state.chapter} at ${state.chapterWhere}`,
 );
 
-// ---------------------------------------------------------------------------
 console.log('\n4. Travel to the rooms and gather what an ordinary eye can see');
 await goTo('pawnshop', 9, 11);
 state = await session();
@@ -1135,27 +1201,6 @@ check('Magician abilities granted', advanced.abilities.includes('paper_mask') &&
 // ---------------------------------------------------------------------------
 console.log('\n19b. The rest of the book: volumes II to VII, to the last page');
 
-/** Play a scene at a hotspot and take every choice named, in order. */
-const scene = async (mapId, hotspotId, choices) => {
-  await withGame(
-    (game, arg) => {
-      const world = game.scene.getScene('World');
-      const hotspot = world.map.hotspots.find((h) => h.id === arg);
-      if (hotspot) world.runHotspotAction(hotspot);
-    },
-    hotspotId,
-  );
-  if (choices.length > 0) check(`${hotspotId} opens a scene`, await waitForScene('Dialogue'));
-  await page.waitForTimeout(250);
-  for (const needle of choices) await pickChoice(needle);
-  await withGame((game) => {
-    if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
-    const world = game.scene.getScene('World');
-    if (world.scene.isPaused()) world.scene.resume();
-  });
-  await page.waitForTimeout(300);
-};
-
 /** Buy the next rung's kit and take the rite, the way a funded player would. */
 const climb = async (formula, potion, toSequence) => {
   const result = await withGame(
@@ -1192,114 +1237,110 @@ const storyAt = () =>
     };
   });
 
-// --- Volume II: Faceless ----------------------------------------------------
-await goTo('backlund', 8, 7);
-await page.waitForTimeout(400);
-for (const needle of ['Look out of the window', 'So who are you', 'Get to work']) await pickChoice(needle);
-await withGame((game) => {
-  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
-  const world = game.scene.getScene('World');
-  if (world.scene.isPaused()) world.scene.resume();
-});
-await page.waitForTimeout(300);
+// --- Volume I closes: the Tarot Club, the chapel, and Ince Zangwill ---------
+await goTo('grey_fog', 9, 8);
+await scene('grey_fog', 'fog_seat', ['Say nothing', 'Now open the meeting', 'Trade the Hanged Man', 'Close the meeting']);
 let where = await storyAt();
+check('the Club is in business above the fog', where.volume === 1, JSON.stringify(where));
+await shot('20b-grey-fog');
+
+await goTo('tingen_church', 9, 10);
+await scene('tingen_church', 'tc_reliquary', ['Read the seal properly', 'Go and tell the Captain']);
+await scene('tingen_church', 'tc_crypt', ['Fight it with the unit']);
+await scene('tingen_church', 'tc_vestry', ['Aurora Order', 'Keep him talking', '\u2026', 'And then', 'Volume I ends here']);
+const afterTingen = await session();
+check('Klein Moretti dies in the chapel', afterTingen.flags.includes('v1_death'), afterTingen.flags.slice(-4).join(','));
+check('and does not stop', afterTingen.flags.includes('v1_survived_above_fog'), afterTingen.flags.slice(-4).join(','));
+await shot('20c-chapel');
+
+// --- Volume II: Faceless ----------------------------------------------------
+await goTo('moriarty_office', 7, 9);
+await scene('moriarty_office', 'mo_desk', ['Solve something small', 'Now the tray fills']);
+await scene('moriarty_office', 'mo_case', ['Read him', 'Take the commission']);
+where = await storyAt();
 check('Volume II opens in Backlund', where.volume === 2, JSON.stringify(where));
 await shot('21-backlund');
 
-await scene('backlund', 'bk_office', ['Be the detective they want', 'Take the work']);
-await scene('backlund', 'bk_alley', ['Go in as somebody else', 'And then the newspapers']);
-await scene('backlund', 'bk_chapel', ['An Angel', 'Break the ritual and run', 'Mr. Azik', 'Go home and be nobody']);
+await goTo('east_borough', 9, 10);
+await scene('east_borough', 'eb_kohler', ['Ask what he has written down lately']);
+await scene('east_borough', 'eb_capim', ['Ask what the Intis money is buying', 'And then deal with him', 'Take the ledger and go']);
+await scene('east_borough', 'eb_graves', ['Ask the fog what it is']);
+await goTo('backlund', 9, 8);
+await scene('backlund', 'bk_library', ['Ask what he is calling', 'Break the circle', 'And the potion']);
 where = await storyAt();
 check('the Faceless chapters are behind him', where.chapter === 'ch_faceless', JSON.stringify(where));
 await climb('formula_faceless', 'potion_faceless', 6);
 
 // --- Volume III: Traveler ---------------------------------------------------
-await goTo('bayam', 8, 7);
-await page.waitForTimeout(400);
-for (const needle of ['And who came ashore', 'Get to work']) await pickChoice(needle);
-await withGame((game) => {
-  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
-  const world = game.scene.getScene('World');
-  if (world.scene.isPaused()) world.scene.resume();
-});
-await page.waitForTimeout(300);
+await goTo('bayam', 9, 8);
 await scene('bayam', 'by_tavern', ['Be the madman', 'Take the bounty']);
-await scene('bayam', 'by_dagger', ['Fight it', 'Give it to the Church of Storms', 'And on the altar']);
+await scene('bayam', 'by_die', ['Ask what it does', 'Sit with it all the way to Oravi']);
+await goTo('oravi', 9, 10);
+await scene('oravi', 'or_grove', ['Ask it what it thinks you want']);
+await scene('oravi', 'or_governor', ['Ask who is really asking', 'Wear him anyway']);
+await goTo('sea_of_ruins', 9, 9);
+await scene('sea_of_ruins', 'sr_cattleya', ['Tell her what is down there']);
+await scene('sea_of_ruins', 'sr_rail', ['Go down and in', 'Take what you came for']);
 where = await storyAt();
 check('Volume III ends with the scepter', where.volume === 3 && where.chapter === 'ch_marionettist', JSON.stringify(where));
-await shot('22-bayam');
+await shot('22-sea-of-ruins');
 await climb('formula_marionettist', 'potion_marionettist', 5);
 
 // --- Volume IV: Undying -----------------------------------------------------
-await goTo('cathedral', 8, 8);
-await page.waitForTimeout(400);
-for (const needle of ['Why come back at all', 'Go and look at it']) await pickChoice(needle);
-await withGame((game) => {
-  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
-  const world = game.scene.getScene('World');
-  if (world.scene.isPaused()) world.scene.resume();
-});
-await page.waitForTimeout(300);
-await scene('cathedral', 'cd_gate', [
-  'Just look, and think', 'Take it anyway', 'Get out', 'Say the name',
-  'And the other thing', 'Take the next rung anyway',
-]);
-const amon = await withGame((game) => {
-  const s = game.scene.getScenes(true)[0].registry.get('session');
-  return [...s.state.flags];
-});
-check('the notebook turns out to be a hand of Amon', amon.includes('knows_amon'), amon.slice(-4).join(','));
-await shot('23-cathedral');
+await goTo('cathedral', 9, 9);
+await scene('cathedral', 'cd_gate', ['Check the gate first', 'Go in anyway']);
+await goTo('foggy_town', 9, 9);
+await scene('foggy_town', 'ft_clock', ['Put your hand on it']);
+await scene('foggy_town', 'ft_mister_a', ['Ask what he is doing here', 'Then finish it']);
+await scene('foggy_town', 'ft_zaratul', ['Ask who he is', 'Break the seal', 'And out']);
+await goTo('cathedral', 9, 9);
+await scene('cathedral', 'cd_grave', ['Ask what he found', 'Tell him Klein was resurrected']);
+await goTo('primitive_island', 9, 9);
+await scene('primitive_island', 'pi_altar', ['Read it']);
+const amon = await session();
+check('the notebook turns out to be a hand of Amon', amon.flags.includes('knows_amon'), amon.flags.slice(-4).join(','));
+await scene('primitive_island', 'pi_camp', ['Ince Zangwill', 'Take him', 'And afterwards']);
+const ashes = await session();
+check('Saint Selena\u2019s ashes come back', ashes.flags.includes('v4_ashes_recovered'), ashes.flags.slice(-4).join(','));
+await shot('23-primitive-island');
 await climb('formula_bizarro', 'potion_bizarro', 4);
 
 // --- Volume V: Red Priest ---------------------------------------------------
 await goTo('sefirah', 8, 7);
-await page.waitForTimeout(400);
-await pickChoice('Walk it');
-await withGame((game) => {
-  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
-  const world = game.scene.getScene('World');
-  if (world.scene.isPaused()) world.scene.resume();
-});
-await page.waitForTimeout(300);
-await scene('sefirah', 'sf_ladder', ['Open it', 'So the whole thing was an accident']);
-await scene('sefirah', 'sf_window', ['Go down into the mausoleum', 'Get the living out', 'Then the roof', 'And above the fog']);
+await scene('sefirah', 'sf_surfacing', ['What is happening to the fog', 'Sit down at the table']);
+await goTo('parliament', 9, 10);
+await scene('parliament', 'pl_press', ['Count it again', 'But what was it for']);
+await scene('parliament', 'pl_throne', ['Tell him what the speech is', 'Let him give it']);
 where = await storyAt();
-check('Volume V ends under the mausoleum', where.volume === 5 && where.chapter === 'ch_miracle', JSON.stringify(where));
-await shot('24-sefirah');
-await climb('formula_miracle', 'potion_miracle', 3);
+check('Volume V ends on the wartime speech', where.volume === 5, JSON.stringify(where));
+await shot('24-parliament');
+await climb('formula_scholar', 'potion_scholar', 3);
 
 // --- Volume VI: Lightseeker -------------------------------------------------
-await goTo('forsaken', 8, 7);
-await page.waitForTimeout(400);
-await pickChoice('How did you get here');
-await withGame((game) => {
-  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
-  const world = game.scene.getScene('World');
-  if (world.scene.isPaused()) world.scene.resume();
-});
-await page.waitForTimeout(300);
-await scene('forsaken', 'fk_court', ['Sit in the chair']);
-await scene('forsaken', 'fk_sky', ['Your family is under that', 'Do the unthinkable thing', 'And there it is']);
+await goTo('chernobyl', 7, 10);
+await scene('chernobyl', 'ch_amon', ['Hear the proposal', 'Ask about his father instead']);
+await scene('chernobyl', 'ch_clock', ['Say it']);
+const earth = await session();
+check('this world turns out to be Earth', earth.flags.includes('v6_earth'), earth.flags.slice(-4).join(','));
+await scene('chernobyl', 'ch_park', ['Do the thing you have been putting off', 'Look back']);
+const sourced = await session();
+check('and Klein was sourced, not selected', sourced.flags.includes('v6_truth'), sourced.flags.slice(-4).join(','));
+await goTo('forsaken', 9, 8);
+await goTo('giant_court', 9, 10);
+await scene('giant_court', 'gc_table', ['Count the chairs']);
+await scene('giant_court', 'gc_thrones', ['Follow the marks']);
 where = await storyAt();
-check('Volume VI ends with the look back', where.volume === 7, JSON.stringify(where));
-await shot('25-forsaken');
+check('Volume VI ends at the Giant King\u2019s Court', where.volume === 7, JSON.stringify(where));
+await shot('25-giant-court');
 
 // --- Volume VII: The Hanged Man ---------------------------------------------
-await goTo('corpse_cathedral', 8, 7);
-await page.waitForTimeout(400);
-await pickChoice('Set it out');
-await withGame((game) => {
-  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
-  const world = game.scene.getScene('World');
-  if (world.scene.isPaused()) world.scene.resume();
-});
-await page.waitForTimeout(300);
-await scene('corpse_cathedral', 'cc_altar', ['Word it so that the worst reading', 'And so you die']);
-await climb('formula_attendant', 'potion_attendant', 2);
-await scene('corpse_cathedral', 'cc_zaratul', ['Let him talk', 'Ask him', 'Finish it', 'And afterwards']);
+await goTo('corpse_cathedral', 9, 8);
+await scene('corpse_cathedral', 'cc_alger', ['Hear it']);
+await scene('corpse_cathedral', 'cc_genie', ['Word it carefully', 'And die']);
+await climb('formula_miracle', 'potion_miracle', 2);
+await scene('corpse_cathedral', 'cc_zaratul', ['Ask what he thinks he is owed', 'And who told him', 'Finish it', 'And afterwards', 'Book One ends here']);
 await shot('26-corpse-cathedral');
-await climb('formula_fool', 'potion_fool', 1);
+await climb('formula_attendant', 'potion_attendant', 1);
 
 where = await storyAt();
 check('the book is finished', where.finished === true, JSON.stringify(where));
@@ -1312,9 +1353,12 @@ const ending = await withGame((game) => {
     flags: [...s.state.flags],
   };
 });
-check('and he is Sequence 1, The Fool', ending.sequence === 1 && ending.title === 'The Fool',
-  `${ending.sequence} ${ending.title}`);
-check('with the Fool’s own powers', ending.abilities.includes('above_the_fog'), ending.abilities.join(','));
+check(
+  'and he is Sequence 1, Attendant of Mysteries',
+  ending.sequence === 1 && ending.title === 'Attendant of Mysteries',
+  `${ending.sequence} ${ending.title}`,
+);
+check('with the King of Angels\u2019 own powers', ending.abilities.includes('above_the_fog'), ending.abilities.join(','));
 check('and Amon still keeping', ending.flags.includes('v7_king'), ending.flags.slice(-3).join(','));
 
 // ---------------------------------------------------------------------------

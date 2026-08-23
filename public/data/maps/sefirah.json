@@ -55,40 +55,13 @@
     "#..................#",
     "#.l..............l.#",
     "#..................#",
-    "#########oo#########"
+    "##o######oo######o##"
   ],
   "spawn": {
     "x": 9,
     "y": 8
   },
   "hotspots": [
-    {
-      "id": "sf_ladder",
-      "x": 9,
-      "y": 4,
-      "name": "The Ladder Of Light",
-      "description": "It goes down into the depth of the grey fog, which is a direction the fog did not have until you were high enough to be told about it.",
-      "action": "dialogue",
-      "dialogue": "dlg_door_of_light",
-      "icon": 13
-    },
-    {
-      "id": "sf_table",
-      "x": 6,
-      "y": 3,
-      "name": "The Bronze Table",
-      "description": "Twenty-two seats. Rather more of them are occupied these days, and the ones that are not have begun to feel like an appointment rather than an absence."
-    },
-    {
-      "id": "sf_window",
-      "x": 15,
-      "y": 0,
-      "name": "A Window Onto Backlund",
-      "description": "The smog over the city has stopped behaving like weather. Somewhere under it, a mausoleum is being opened by people who have each decided they are the only one being careful.",
-      "action": "dialogue",
-      "dialogue": "dlg_mausoleum",
-      "icon": 12
-    },
     {
       "id": "rite_sefirah",
       "x": 3,
@@ -97,6 +70,26 @@
       "description": "The castle does not need chalk. It simply understands what you are about to do and makes room.",
       "action": "ritual",
       "icon": 13
+    },
+    {
+      "id": "sf_surfacing",
+      "x": 8,
+      "y": 3,
+      "name": "The Parapet, From The Inside",
+      "description": "For two years this was a place you went. This afternoon it began, without being asked, to be a place that is.",
+      "action": "dialogue",
+      "dialogue": "dlg_sefirah_surfacing",
+      "icon": 12
+    },
+    {
+      "id": "sf_table",
+      "x": 10,
+      "y": 5,
+      "name": "The Bronze Long Table",
+      "description": "Twenty-two seats, two of them filled on Sundays by people who have never asked what you are, and who are now sitting in a building that three gods have located.",
+      "action": "dialogue",
+      "dialogue": "dlg_fog_gathering",
+      "icon": 7
     }
   ],
   "npcs": [],
@@ -119,10 +112,29 @@
       "requires": {
         "flag": "v5_mausoleum"
       }
+    },
+    {
+      "x": 2,
+      "y": 9,
+      "toMap": "parliament",
+      "toX": 9,
+      "toY": 10,
+      "label": "The House"
+    },
+    {
+      "x": 17,
+      "y": 9,
+      "toMap": "chernobyl",
+      "toX": 7,
+      "toY": 10,
+      "label": "Taken",
+      "requires": {
+        "sequenceAtMost": 3
+      }
     }
   ],
   "intro": {
-    "dialogue": "dlg_sefirah",
+    "dialogue": "dlg_v5_arrive",
     "flag": "v5_arrived"
   }
 }

@@ -47,7 +47,7 @@
     }
   },
   "rows": [
-    "####W##D#####W######",
+    "####W##o#####W######",
     "#::::::::::::::::::#",
     "L::k:::::::::::::b:L",
     "::::::::::::::::::::",
@@ -56,43 +56,13 @@
     "::::::::::::::::::::",
     "L:b:::::::::::::k::L",
     "#::::::::::::::::::#",
-    "###D####W#####D#####"
+    "###D####o####DD#####"
   ],
   "spawn": {
     "x": 9,
     "y": 8
   },
   "hotspots": [
-    {
-      "id": "bk_office",
-      "x": 7,
-      "y": 0,
-      "name": "A Brass Plate On A Narrow Door",
-      "description": "Sherlock Moriarty, Private Investigator. You screwed the plate on yourself, and the name is a joke nobody in this country is equipped to get.",
-      "action": "dialogue",
-      "dialogue": "dlg_moriarty",
-      "icon": 11
-    },
-    {
-      "id": "bk_alley",
-      "x": 17,
-      "y": 7,
-      "name": "The Mouth Of An Alley",
-      "description": "Backlund’s East District after dark: fog with soot in it, and a trade in people that the constabulary has agreed with itself is somebody else’s district.",
-      "action": "dialogue",
-      "dialogue": "dlg_black_emperor",
-      "icon": 12
-    },
-    {
-      "id": "bk_chapel",
-      "x": 4,
-      "y": 0,
-      "name": "A Chapel With Its Windows Bricked Up",
-      "description": "The bricks are new and the mortar is wrong, and somebody has been carrying a great deal of water in here for a building with no font.",
-      "action": "dialogue",
-      "dialogue": "dlg_descent",
-      "icon": 13
-    },
     {
       "id": "rite_backlund",
       "x": 2,
@@ -104,12 +74,38 @@
     },
     {
       "id": "bk_requisition",
-      "x": 8,
+      "x": 13,
       "y": 9,
       "name": "The Backlund Requisition Office",
       "description": "A counter in a building with no sign, where the Church sells its own people what the Church has already decided they may have.",
       "action": "shop",
       "icon": 11
+    },
+    {
+      "id": "bk_library",
+      "x": 17,
+      "y": 7,
+      "name": "The Subscription Library, Howard Street",
+      "description": "Members only, four thousand volumes, and a locked room behind the stacks that is not on the floor plan the parish holds.",
+      "action": "dialogue",
+      "dialogue": "dlg_lanevus",
+      "icon": 13,
+      "locked": {
+        "reason": "You have no reason to be behind those stacks yet.",
+        "bypass": {
+          "flag": "v2_ledger"
+        }
+      }
+    },
+    {
+      "id": "bk_press",
+      "x": 2,
+      "y": 2,
+      "name": "The Newsagent On The Corner",
+      "description": "Four papers, all of them running the same column: deaths in the East Borough, by parish, weekly, and all four of them explaining it as a bad winter in August.",
+      "action": "dialogue",
+      "dialogue": "dlg_smog",
+      "icon": 12
     }
   ],
   "npcs": [],
@@ -132,10 +128,26 @@
       "requires": {
         "sequenceAtMost": 6
       }
+    },
+    {
+      "x": 7,
+      "y": 0,
+      "toMap": "moriarty_office",
+      "toX": 7,
+      "toY": 9,
+      "label": "Minsk Street"
+    },
+    {
+      "x": 8,
+      "y": 9,
+      "toMap": "east_borough",
+      "toX": 9,
+      "toY": 10,
+      "label": "The East Borough"
     }
   ],
   "intro": {
-    "dialogue": "dlg_backlund",
+    "dialogue": "dlg_v2_arrive",
     "flag": "v2_arrived"
   }
 }

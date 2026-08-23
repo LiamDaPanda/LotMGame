@@ -1,70 +1,74 @@
 [
   {
-    "id": "dlg_forsaken",
+    "id": "dlg_v6_arrive",
     "speaker": "player",
     "start": "start",
     "nodes": {
       "start": {
-        "text": "The Forsaken Land of the Gods is where the Second Epoch was put when it was over.\n\nNo sky worth the name. Ruins built for people forty feet tall. And nothing living except the things that were left behind on purpose, which have had two epochs to become bitter about it.",
+        "text": "You are taken on a Tuesday, between one sentence and the next, by somebody who does not have to open a door to come into a room.\n\nAmon. Angel of Time, of the Error pathway, Sequence 1, child of the Ancient Sun God, and the thing that has been holding a small black notebook for four hundred years.\n\nHe is delighted to meet you. He has been delighted to meet you for some time.",
         "choices": [
           {
-            "text": "How did you get here?",
-            "goto": "how"
+            "text": "And where he takes you.",
+            "goto": "city"
           }
         ]
       },
-      "how": {
-        "text": "Badly, and on purpose, and with the door shutting behind you.\n\nThere is a way out through the Giant King’s Court, if the court still has a court in it. There is a war on the other side of the wall of the world that has just reached the part where the gods take an interest. And there is, somewhere in this dark, a thing that has been waiting to see what you do when there is nobody watching you act.",
+      "city": {
+        "text": "On the way to the Forsaken Land he takes you through a city.\n\nConcrete. Steel. A fairground with a wheel that was never ridden. Signs in an alphabet you can read, over shops that sell nothing, in a town that was emptied in an afternoon.",
         "effect": {
           "flags": [
-            "v6_arrived"
+            "v6_taken",
+            "v6_chernobyl"
           ],
-          "sanity": -6
+          "sanity": -10,
+          "concealment": -20
         },
         "end": true
       }
     }
   },
   {
-    "id": "dlg_giant_court",
-    "speaker": "player",
+    "id": "dlg_amon",
+    "speaker": "amon",
     "start": "start",
     "nodes": {
       "start": {
-        "text": "The court is a hall the size of a cathedral district, and the throne at the end of it is occupied by four hundred years of dust in the shape of a king.\n\nWhat opens a way out of the Forsaken Land is not a key. It is a claim: somebody has to sit in the chair and be believed.",
+        "text": "‘You have four names,’ says Amon, adjusting a crystal monocle he does not need, over an eye that is pure black from lid to lid. ‘I have rather more than four. We are going to get on.’\n\n‘I would like to offer you something. Not a bargain — bargains are for people who can decline. A proposal.’",
         "choices": [
           {
-            "text": "Sit in the chair.",
-            "goto": "sit"
+            "text": "Hear the proposal.",
+            "goto": "proposal"
           },
           {
-            "text": "Find another way.",
-            "goto": "other"
+            "text": "Ask about his father.",
+            "goto": "father"
           }
         ]
       },
-      "other": {
-        "text": "There is no other way, and you spend eleven days establishing it with the thoroughness of a man who does not want to sit in that chair.\n\nThen you sit in the chair.",
+      "proposal": {
+        "text": "‘Take my destiny.’ He says it the way another man offers a chair. ‘I have carried the Angel of Time for four hundred years and I would like a holiday, and you are the only object in this world that has ever been genuinely unaccounted for.’\n\n‘You will say no. You will say no four times. I have seen all four, and I like the third one best, and I would like you to do the third one.’",
         "effect": {
-          "sanity": -8
+          "flags": [
+            "v6_proposal"
+          ],
+          "sanity": -14
         },
         "choices": [
           {
-            "text": "And be believed.",
-            "goto": "sit"
+            "text": "Ask about his father instead.",
+            "goto": "father"
           }
         ]
       },
-      "sit": {
-        "text": "You have been Sherlock Moriarty, Gehrman Sparrow, Dwayne Dantès and the Black Emperor. You have acted a role in front of an Angel with your life on it and been believed.\n\nSo you sit in a dead king’s chair in a hall built for giants and you *are* the man who is allowed to, entirely and without reservation, for as long as it takes the door at the far end to agree.\n\nIt takes nine seconds. It is the hardest nine seconds of your life.",
+      "father": {
+        "text": "‘My father,’ says Amon, and for one syllable he is not performing, ‘came from where you came from.’\n\n‘The Ancient Sun God was an Earthling. He arrived the way you arrived, by a procedure somebody else wrote down, and he built four hundred years of religion out of homesickness, and then four of his friends let him fall.’\n\nHe puts the monocle back. ‘I mention it because you have been assuming you are the anomaly. You are the second draft.’",
         "effect": {
           "flags": [
-            "v6_court"
+            "v6_earthling"
           ],
-          "digestion": 60,
-          "spirituality": -40,
+          "sanity": -16,
           "skills": {
-            "rhetoric": 2
+            "occultism": 2
           }
         },
         "end": true
@@ -72,51 +76,178 @@
     }
   },
   {
-    "id": "dlg_battle",
+    "id": "dlg_chernobyl",
     "speaker": "player",
     "start": "start",
     "nodes": {
       "start": {
-        "text": "From the Forsaken Land you can see the other side of the world the way a man in a cellar can hear a house being demolished.\n\nThe war has gone from armies to nations to churches, and over Backlund the gods themselves have come down to finish the argument. Four hundred thousand chimneys, and something standing over them with its hand out.",
+        "text": "A clock on a wall, stopped at twenty-three minutes past one, in a script you can read.\n\nYou read it. You read the sign under it, and the name of the town, and the year, and you keep reading long past the point where reading is any help.",
         "choices": [
           {
-            "text": "Your family is under that.",
-            "goto": "family"
+            "text": "Say it.",
+            "goto": "say"
           }
         ]
       },
-      "family": {
-        "text": "Benson is in the shipping office. Melissa is at her school. Neither of them has ever known what you are, which was the entire point, and it is worth precisely nothing to them tonight.\n\nYou are on the wrong side of the wall of the world, at Sequence 3, watching.",
+      "say": {
+        "text": "You did not transmigrate.\n\nThere was no other world. There has never been another world. Loen and Intis and Feysac and the Rorsted Archipelago and the gaslight and the trams and the grey fog are all of them standing on the same ground you were standing on in a flat with a bad radiator, at a distance in time you have not got the courage to calculate and are going to calculate anyway.\n\nThis is Earth. It has always been Earth. You have been homesick for a place you never left.",
+        "effect": {
+          "flags": [
+            "v6_earth"
+          ],
+          "sanity": -25,
+          "spirituality": -20,
+          "skills": {
+            "occultism": 2
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_earth",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The fairground was laid out for children who were moved in an afternoon and never came back. The wheel has not turned. The paint is good.\n\nAmon lets you stand in it for a long time, which is either cruelty or courtesy and is probably both, because he does not distinguish.",
         "choices": [
           {
-            "text": "Do the unthinkable thing.",
+            "text": "Do the thing you have been putting off.",
+            "goto": "die"
+          },
+          {
+            "text": "Walk on.",
+            "goto": "walk"
+          }
+        ]
+      },
+      "walk": {
+        "text": "You walk on, and the fact of it sits behind your sternum for four days, and on the fifth day you stop walking.",
+        "choices": [
+          {
+            "text": "And do the thing you have been putting off.",
             "goto": "die"
           }
         ]
       },
       "die": {
-        "text": "So you kill yourself.\n\nNot as despair — as arithmetic. A Miracle Invoker who dies in the right arrangement does not stop; he arrives somewhere, and the Evernight Goddess has been waiting a very long time for somebody to arrive there on purpose.\n\nShe lets you look back. All the way back: to a reading room in a world with no gods in it, a silver plate, a mutated telephone, and a diagram copied out of a notebook.",
+        "text": "You kill yourself.\n\nNot in despair — in method. A Scholar of Yore is admitted to the past on the condition that he was there, and there is exactly one moment you need to be admitted to, and the price of the ticket is dying properly enough to be outside time while you look at it.\n\nThe Evernight Goddess, who has watched you come out of a place He put people, holds the door for four seconds.",
         "effect": {
-          "sanity": -25,
-          "spirituality": -60
+          "flags": [
+            "v6_suicide"
+          ],
+          "sanity": -20,
+          "spirituality": -40
         },
         "choices": [
           {
-            "text": "And there it is.",
-            "goto": "truth"
+            "text": "Look back.",
+            "goto": "look"
           }
         ]
       },
-      "truth": {
-        "text": "Sefirah Castle chose at random — but only from among those who had done the procedure exactly: the luck-enhancement ritual, the silver plate, the device from a world without magic.\n\nAnd the diagram for that ritual, copied out by three students in Tingen in the summer of 1349, came out of the Antigonus family’s notebook.\n\nAmon did not choose you. Amon simply made sure that whoever was chosen would be somebody he had handled.",
+      "look": {
+        "text": "A flat with a bad radiator. A young man with a fever and a borrowed book, performing a luck enhancement ritual copied out of a diary written by an emperor three hundred years dead, who copied it out of a small black notebook belonging to a family called Antigonus, which was never a notebook at all but a hand — Amon’s hand — left in a thing to do the living for him.\n\nSefirah Castle chose at random.\n\nIt chose at random from among the people who had performed the procedure. And every copy of the procedure in the world traces back to one notebook, and the notebook has been Amon since before Loen had a name.\n\nYou were not selected. You were sourced.",
         "effect": {
           "flags": [
-            "v6_battle",
             "v6_truth"
+          ],
+          "sanity": -20,
+          "skills": {
+            "occultism": 3
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_forsaken_arrive",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The Forsaken Land of the Gods: the place where the things that lost are kept, and the things that won put them, and neither category has been visited in an age.\n\nYou have been left here to find your own way out, which Amon considers a kindness, and which is a kindness, and that is what is wrong with him.",
+        "effect": {
+          "flags": [
+            "v6_arrived"
+          ],
+          "sanity": -8
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_court_arrive",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "A hall with chairs the size of houses, and dust lying the way dust lies when nothing has moved for longer than there have been people to notice.\n\nThe Giant King’s Court. You saw it once through a shoal of sleeping mermaids in the Sea of Ruins and were not meant to have.",
+        "effect": {
+          "flags": [
+            "v6_court_seen"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_court",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Colin Iliad got this far. So did Lovia. Neither of them got out, and both of them left the way marked for whoever came next, in the plainest terms available, which is the only monument either of them has.\n\nThat is the whole of Lightseeker: people who went toward it knowing exactly how close you can get.",
+        "choices": [
+          {
+            "text": "Follow the marks.",
+            "goto": "follow"
+          }
+        ]
+      },
+      "follow": {
+        "text": "You follow them, and they hold, and at the end of them there is a way out of the Forsaken Land that has been open since before either of them died and that neither of them lived to use.\n\nYou go through it. You are aware, going through it, that you are the third person to try and the first to be lucky, and that being lucky is the one attribute in your file that was put there on purpose.",
+        "effect": {
+          "flags": [
+            "v6_path_out"
           ],
           "sanity": -10,
           "skills": {
-            "occultism": 2
+            "occultism": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_court_table",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Bronze, and very long.\n\nIt takes a moment to work out why the shape of it is making the back of your neck cold, and then it does not take a moment at all, because you have been sitting at the head of one exactly like it every Sunday for two years.",
+        "choices": [
+          {
+            "text": "Count the chairs.",
+            "goto": "count"
+          }
+        ]
+      },
+      "count": {
+        "text": "Twenty-two.\n\nNobody built two of these. Somebody built one, and a copy of it is above the grey fog with your name on the head of it, and you have never once asked who put it there or what the original was for.\n\nYou are asking now. The room does not answer. The room has not answered anybody for a very long time and has got extremely good at it.",
+        "effect": {
+          "flags": [
+            "v6_table"
+          ],
+          "sanity": -12,
+          "skills": {
+            "occultism": 1
           }
         },
         "end": true

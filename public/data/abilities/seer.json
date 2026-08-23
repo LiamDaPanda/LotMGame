@@ -450,7 +450,7 @@
     "id": "hour_of_miracles",
     "name": "Hour Of Miracles",
     "pathway": "seer",
-    "sequence": 3,
+    "sequence": 2,
     "tags": [
       "access"
     ],
@@ -471,7 +471,7 @@
     "id": "sign_of_fortune",
     "name": "Sign Of Fortune",
     "pathway": "seer",
-    "sequence": 3,
+    "sequence": 2,
     "tags": [
       "passive"
     ],
@@ -493,7 +493,7 @@
     "id": "borrowed_miracle",
     "name": "Borrowed Miracle",
     "pathway": "seer",
-    "sequence": 3,
+    "sequence": 2,
     "tags": [
       "recovery"
     ],
@@ -514,7 +514,7 @@
     "id": "attendants_answer",
     "name": "The Attendant’s Answer",
     "pathway": "seer",
-    "sequence": 2,
+    "sequence": 1,
     "tags": [
       "investigation"
     ],
@@ -535,7 +535,7 @@
     "id": "ceremonial_door",
     "name": "The Ceremonial Door",
     "pathway": "seer",
-    "sequence": 2,
+    "sequence": 1,
     "tags": [
       "escape"
     ],
@@ -592,6 +592,69 @@
     ],
     "effect": {
       "kind": "reveal_truth"
+    }
+  },
+  {
+    "id": "witness_of_yore",
+    "name": "Witness Of Yore",
+    "pathway": "seer",
+    "sequence": 3,
+    "tags": [
+      "investigation"
+    ],
+    "summary": "Ask a place what it stood through, and be there while it answers.",
+    "flavour": "The Scholar of Yore does not read history. History reads him in, as a witness, and the deposition is not optional.",
+    "spiritCost": 42,
+    "sanityCost": 6,
+    "exposure": 20,
+    "usableIn": [
+      "investigation",
+      "dialogue"
+    ],
+    "effect": {
+      "kind": "reveal_clue"
+    }
+  },
+  {
+    "id": "the_long_record",
+    "name": "The Long Record",
+    "pathway": "seer",
+    "sequence": 3,
+    "tags": [
+      "social"
+    ],
+    "summary": "Name a thing a man did before he had decided to hide it.",
+    "flavour": "Everyone is a document. Most are badly kept, and none are sealed.",
+    "spiritCost": 40,
+    "sanityCost": 5,
+    "exposure": 24,
+    "usableIn": [
+      "dialogue",
+      "encounter"
+    ],
+    "effect": {
+      "kind": "reveal_truth"
+    }
+  },
+  {
+    "id": "borrowed_epoch",
+    "name": "Borrowed Epoch",
+    "pathway": "seer",
+    "sequence": 3,
+    "tags": [
+      "utility"
+    ],
+    "summary": "Stand in a moment that is over, and walk out of it somewhere else.",
+    "flavour": "A door that was bricked up in 1201 is still a door, to somebody standing in 1201.",
+    "spiritCost": 46,
+    "sanityCost": 8,
+    "exposure": 26,
+    "usableIn": [
+      "investigation",
+      "encounter"
+    ],
+    "effect": {
+      "kind": "unlock_access"
     }
   }
 ]

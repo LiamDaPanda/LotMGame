@@ -1,125 +1,510 @@
 [
   {
-    "id": "dlg_dantes",
+    "id": "dlg_v4_arrive",
     "speaker": "player",
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Backlund again, and a third man comes ashore with you: Dwayne Dantès, who has money, no history anybody can check, and a habit of being generous in public.\n\nSherlock Moriarty still has the room above the chandler’s. Gehrman Sparrow is still a name in four ports. Klein Moretti is still dead. You are beginning to keep a list.",
-        "choices": [
-          {
-            "text": "Why come back at all?",
-            "goto": "why"
-          }
-        ]
-      },
-      "why": {
-        "text": "Because the Antigonus family’s notebook is in this city, in the Church of the Evernight Goddess’s own vault behind the Chanis Gate of Saint Samuel Cathedral — and because you have finally worked out what has been bothering you about it for two years.\n\nIt did not corrupt Welch McGovern. It did not corrupt Ray Bieber. It *arranged* them, one after another, each handing it on to the next, all the way to a member of its own family.\n\nBooks do not do that. Somebody does that.",
-        "choices": [
-          {
-            "text": "Go and look at it.",
-            "goto": "close"
-          }
-        ]
-      },
-      "close": {
-        "text": "Dwayne Dantès takes a house in the West End, gives to two charities, and is invited to dine with people who will one day be very surprised.\n\nIn a drawer, under the invitations, is a plan of a cathedral.",
+        "text": "Backlund again, and a fourth name: Dwayne Dantès, gentleman, of independent means, who takes a box at the opera and is seen at the right dinners and has never once been photographed.\n\nSherlock Moriarty still has rooms on Minsk Street. Gehrman Sparrow still has a reputation in the Archipelago. Klein Moretti still has a stone in Tingen with the wrong date on it.\n\nFour men, one coat, and the coat is getting tight.",
         "effect": {
           "flags": [
             "v4_arrived"
           ],
-          "pence": 6000
+          "concealment": 6
         },
         "end": true
       }
     }
   },
   {
-    "id": "dlg_chanis_gate",
+    "id": "dlg_chanis",
     "speaker": "player",
     "start": "start",
     "nodes": {
       "start": {
-        "text": "The Chanis Gate is not locked, which is the first thing that tells you how serious it is. It is sealed — by four Sequence 4 rituals and a goddess’s attention, and by the plain fact that everything behind it was put there because it could not be destroyed.\n\nThe notebook is nine feet away.",
+        "text": "Saint Samuel Cathedral keeps the Antigonus family’s notebook behind the Chanis Gate, which is not a gate and is not in the cathedral, exactly, and which the Church does not discuss.\n\nYou have four names, a Marionettist’s threads, and eleven minutes while the choir is between settings.",
         "choices": [
           {
-            "text": "Take it.",
-            "goto": "attempt"
+            "text": "Go in.",
+            "goto": "in"
           },
           {
-            "text": "Just look, and think.",
-            "goto": "look"
+            "text": "Check the gate first.",
+            "goto": "check",
+            "useAbilityEffect": "reveal_clue"
           }
         ]
       },
-      "look": {
-        "text": "You stand in an empty cathedral at four in the morning and look at a door, and think about a postal receipt written in your own hand.\n\nA thing that moves itself from owner to owner, choosing each one, over four hundred years, is not an artefact with a curse on it. It is a hand. And a hand belongs to somebody.",
+      "check": {
+        "text": "It is not a lock and it is not a ward. It is Sealed Artifact 0-17, and it does not keep people out of the vault.\n\nIt keeps them somewhere else instead. Which is a different profession entirely, and a much older one.",
         "effect": {
+          "flags": [
+            "v4_knows_0_17"
+          ],
+          "skills": {
+            "occultism": 1
+          },
+          "spirituality": -12
+        },
+        "choices": [
+          {
+            "text": "Go in anyway.",
+            "goto": "in"
+          }
+        ]
+      },
+      "in": {
+        "text": "You get as far as the inner arch, and the theft fails.\n\nIt does not fail because you were caught, or slow, or wrong about the choir. It fails because the Chanis Gate is not a door in a wall — and the floor of Saint Samuel Cathedral stops being the floor of Saint Samuel Cathedral while your second foot is still coming down.",
+        "effect": {
+          "flags": [
+            "v4_theft_failed"
+          ],
+          "sanity": -10,
+          "spirituality": -20
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_foggy_arrive",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "A town. Cobbles, shutters, a market cross, a clock.\n\nNo people. No wind. No sound that you did not make, and a four-hundred-year-old fog standing between the houses at the exact height of a man’s shoulders.\n\nSealed Artifact 0-17 does not keep thieves out of the vault. It keeps them here.",
+        "effect": {
+          "flags": [
+            "v4_foggy"
+          ],
+          "sanity": -8
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_foggy",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The town clock is stopped at a time that is not on any dial you have seen — a thirteenth hour, cut into the face by the man who made it, deliberately, as a joke or a warning.\n\nIt is still warm. Four hundred years stopped, and still warm.",
+        "choices": [
+          {
+            "text": "Put your hand on it.",
+            "goto": "hand"
+          }
+        ]
+      },
+      "hand": {
+        "text": "Time here is not passing. It is being held, the way a note is held, by something that has been holding it since before Loen had a name for itself.\n\nAmon. The Angel of Time, of the Error pathway. Not present, not watching — simply the reason the clock is warm, the way a fire is the reason a room is.",
+        "effect": {
+          "flags": [
+            "v4_amon_felt"
+          ],
+          "skills": {
+            "occultism": 1
+          },
+          "sanity": -8
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_mister_a",
+    "speaker": "mister_a",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "‘You are the fourth,’ says the gentleman behind the counter of a shop with no stock. ‘The other three were also very confident about the choir.’\n\nHe has one initial in the Church’s file, three photographs of other men, and a note advising against arrest. The Numinous Episcopate does not put a second name on anybody it expects to keep.",
+        "choices": [
+          {
+            "text": "Ask what he is doing here.",
+            "goto": "why"
+          },
+          {
+            "text": "Do not let him finish.",
+            "goto": "fight"
+          }
+        ]
+      },
+      "why": {
+        "text": "‘Waiting.’ He is entirely pleasant about it. ‘This is the only room in the world where nothing ages, and my Church has a use for a man who does not age. I am the stock. That is the joke, and I have had four hundred years to find it funny, and I have not.’",
+        "effect": {
+          "flags": [
+            "v4_mister_a_talked"
+          ],
+          "skills": {
+            "rhetoric": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Then finish it.",
+            "goto": "fight"
+          }
+        ]
+      },
+      "fight": {
+        "text": "It takes a long time, because nothing here ages and nothing here tires, and in the end it is not strength that ends it but the fact that you are the only one of the two of you who has anywhere else to be.\n\nMr. A stops. The shop stays empty. The fog does not react at all.",
+        "effect": {
+          "flags": [
+            "v4_mister_a"
+          ],
+          "sanity": -14,
+          "spirituality": -30,
+          "digestion": 20
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_zaratul",
+    "speaker": "zaratul",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Not a grave. A seal cut in the shape of a grave, and under it an old man in a black hooded robe with a long white beard and eyes like water that has never had light in it.\n\n‘You are not one of theirs,’ he says. It is not a question. ‘Four hundred years and the first one through the gate who is not one of theirs.’",
+        "choices": [
+          {
+            "text": "Ask who he is.",
+            "goto": "who"
+          },
+          {
+            "text": "Leave the seal alone.",
+            "goto": "leave"
+          }
+        ]
+      },
+      "who": {
+        "text": "‘Zaratul.’ He says it the way a man says a name he has not needed for a while. ‘I opened a door I should not have opened, and something on the other side of it agreed with me, and the Church put me in a town where nothing happens so that the agreement could not be acted on.’\n\nA pause. ‘I am aware of how that sounds. It is the most honest description available.’",
+        "choices": [
+          {
+            "text": "Break the seal.",
+            "goto": "break"
+          },
+          {
+            "text": "Leave the seal alone.",
+            "goto": "leave"
+          }
+        ]
+      },
+      "leave": {
+        "text": "You leave it, and get halfway across the square, and understand that the way out of a place where nothing happens is held open by something that has been trying to make something happen for four hundred years.\n\nYou go back.",
+        "choices": [
+          {
+            "text": "Break the seal.",
+            "goto": "break"
+          }
+        ]
+      },
+      "break": {
+        "text": "You break it, and the fog moves for the first time since the fourteenth century, and the way out opens because he opens it.\n\n‘A favour,’ says Zaratul, from somewhere behind you and already a long way off. ‘I am very good at gratitude. You will find out how good, and you will not enjoy the finding out, and neither of those facts makes this a mistake.’",
+        "effect": {
+          "flags": [
+            "v4_zaratul_freed"
+          ],
+          "sanity": -10,
           "skills": {
             "occultism": 1
           }
         },
         "choices": [
           {
-            "text": "Take it anyway.",
-            "goto": "attempt"
+            "text": "And out.",
+            "goto": "out"
           }
         ]
       },
-      "attempt": {
-        "text": "You are Sequence 5, you have prepared for eleven weeks, and the attempt lasts four seconds.\n\nThe seals do not resist you. They *notice* you — which is a different verb and a much worse one — and then the whole cathedral is awake, and you are running through a side chapel wearing a face that will be in every constabulary office in Backlund by morning.",
-        "choices": [
-          {
-            "text": "Get out.",
-            "goto": "fail"
-          }
-        ]
-      },
-      "fail": {
-        "text": "You get out. You do not get the notebook.\n\nWhat you get instead is thirty seconds, in the dark of the vault doorway, when the thing on the other side of the seals turns its attention on you like a man looking up from a book — and is *amused*.\n\nNot the goddess. Not the Church. Something that has been in that notebook the whole time, that arranged McGovern and Bieber the way a player arranges pieces, and that has just recognised you.",
-        "effect": {
-          "sanity": -14,
-          "concealment": -10
-        },
-        "choices": [
-          {
-            "text": "Say the name.",
-            "goto": "amon"
-          }
-        ]
-      },
-      "amon": {
-        "text": "You do not have the name yet. You have the shape of it, and it will be another year before Mr. Azik gives you the word and does not enjoy giving it.\n\nAmon. Angel of Time, of the Error pathway, child of the Ancient Sun God, who leaves threads of himself in things and lets those threads do the living. The notebook is one of his hands. It has been one of his hands since the Fourth Epoch.\n\nYour name went into his ledger on the twenty-eighth of June, 1349, in a bolted room on Iron Cross Street.",
+      "out": {
+        "text": "Saint Samuel Cathedral, the north transept, between settings.\n\nAnd for one second on the way through, something enormous and entirely patient looks at you — not the Gate, not Amon, but the Evernight Goddess herself, in her own house, watching a dead man from Tingen come back out of a place He put people.\n\nShe lets you go. You will spend a long time being unsure whether that was mercy or filing.",
         "effect": {
           "flags": [
+            "v4_escaped"
+          ],
+          "sanity": -12,
+          "spirituality": -20
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_grave",
+    "speaker": "tower",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Leonard Mitchell has been three months getting here and he arrives at it all at once.\n\n‘Gehrman Sparrow is Sherlock Moriarty. Sherlock Moriarty knows things about Tingen that were never printed. And Klein Moretti is buried in Tingen.’ He looks at his own hands. ‘So I went and dug him up.’",
+        "choices": [
+          {
+            "text": "Ask what he found.",
+            "goto": "found"
+          },
+          {
+            "text": "Say nothing.",
+            "goto": "nothing"
+          }
+        ]
+      },
+      "nothing": {
+        "text": "He waits. He is the fastest man on any team at noticing a thing nobody wanted noticed, and he has just noticed that Dwayne Dantès is not going to help him.",
+        "choices": [
+          {
+            "text": "Ask what he found.",
+            "goto": "found"
+          }
+        ]
+      },
+      "found": {
+        "text": "‘A coffin with a body in it.’ A beat. ‘With a body in it that is not him, and that the Church signed for, and that has been in the ground since September in a parish that does not make that kind of mistake.’\n\nHe is not accusing you. He is asking you to make it stop being his problem.",
+        "choices": [
+          {
+            "text": "Tell him Klein was resurrected, and serves the Fool.",
+            "goto": "fool"
+          },
+          {
+            "text": "Tell him nothing and let him decide.",
+            "goto": "decide"
+          }
+        ]
+      },
+      "fool": {
+        "text": "You give him a version with three true sentences in it: that Klein Moretti died in the chapel, that he did not stay dead, and that what he answers to now sits above a grey fog at a bronze table.\n\nLeonard takes it. Not because it is convincing — because it is the first explanation in three months that lets him stop digging.",
+        "effect": {
+          "flags": [
+            "v4_leonard_knows"
+          ],
+          "trust": {
+            "tower": 12
+          },
+          "concealment": -6
+        },
+        "end": true
+      },
+      "decide": {
+        "text": "He decides, in the end, that a man who was murdered by a deacon of a dead Order is owed the benefit of the doubt, and that he will stop asking.\n\nHe will not stop asking. He will stop saying that he is asking, which is a different service and one you can work with.",
+        "effect": {
+          "flags": [
+            "v4_leonard_knows"
+          ],
+          "trust": {
+            "tower": 6
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_island_arrive",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The Southern Continent, and off it an island with a ruin on it that predates every calendar anyone still uses.\n\nAmon has come to Backlund, which makes Backlund a place not to be. A Red Glove team is here hunting the Numinous Episcopate, and two of the people on it buried you.",
+        "effect": {
+          "flags": [
+            "v4_island"
+          ],
+          "sanity": -4
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_sun_god",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The altar is older than the Church that is not here. Carved into it, a sun with its face scratched out — not weathered, scratched, by somebody who could reach and who took their time.",
+        "choices": [
+          {
+            "text": "Read it.",
+            "goto": "read",
+            "useAbilityEffect": "reveal_clue"
+          }
+        ]
+      },
+      "read": {
+        "text": "The Ancient Sun God did not fall in battle.\n\nHe was let fall. The betrayal is cut into the stone in a hand that was present for it, and the names in it are names that four modern Churches teach as founders.\n\nAnd there is a son. There is a son who was there, and who has been Angel of Time ever since, and who has spent four hundred years putting threads of himself into small black notebooks and letting the threads do the living.",
+        "effect": {
+          "flags": [
+            "v4_sun_god",
             "knows_amon"
           ],
-          "sanity": -8
+          "sanity": -14,
+          "spirituality": -20,
+          "skills": {
+            "occultism": 2
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_betrayal",
+    "speaker": "hanged_man",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Alger Wilson has been on this island four days longer than he told anyone, and has been reading the two markers the whole time.\n\n‘Facing each other,’ he says. ‘Nobody buries anybody facing anybody. These are not graves, Mr. Sparrow. These are two halves of a signature.’",
+        "choices": [
+          {
+            "text": "Ask what it signs.",
+            "goto": "signs"
+          }
+        ]
+      },
+      "signs": {
+        "text": "‘An agreement.’ He does not sit back, even here, even on a rock. ‘Between the ones who did it and the one who let them. Four days apart, because the second party wanted to be seen to have thought about it.’\n\nHe looks at you with a sailor’s flat patience.\n\n‘I have been paying the Fool for information for two years. This is the first thing I have found that I would rather he did not know, and I am going to tell him anyway, and I would like it noted that I noticed myself doing it.’",
+        "effect": {
+          "flags": [
+            "v4_betrayal"
+          ],
+          "trust": {
+            "hanged_man": 10
+          },
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_red_glove",
+    "speaker": "tower",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Four tents and a wireless set that should not work at this latitude, and a Red Glove team out of Backlund hunting the Numinous Episcopate across a continent that does not want any of them.\n\nLeonard Mitchell. Daly Simone. And, arriving on the fifth night with a folded cloth and no appetite for any of it, a deacon of an Order everyone agrees is finished.",
+        "choices": [
+          {
+            "text": "Ince Zangwill.",
+            "goto": "zangwill"
+          }
+        ]
+      },
+      "zangwill": {
+        "text": "He has come to exorcise the Red Angel evil spirit, because that is what he does now: he goes where the ingredients are, and he is patient, and he folds the cloth.\n\nHe does not recognise you. There is no reason he should. The man he shot through the heart in September is dead and the Church signed for the body.",
+        "effect": {
+          "flags": [
+            "v4_zangwill_here"
+          ],
+          "sanity": -6
         },
         "choices": [
           {
-            "text": "And the other thing you learned in Backlund.",
-            "goto": "undying"
+            "text": "Take him.",
+            "goto": "take"
           }
         ]
       },
-      "undying": {
-        "text": "Mr. Azik has been walking around Backlund for four hundred years wearing the manner of a man from the year he stopped. Leonard Mitchell, who was a Nighthawk in Tingen and is a great deal worse off than dead. Anderson, who cannot die and has stopped pretending that this is a gift.\n\nThe volume’s word is undying, and everybody carrying it will tell you, plainly, that it is a sentence and not a reward.",
-        "choices": [
-          {
-            "text": "Take the next rung anyway.",
-            "goto": "close"
-          }
-        ]
-      },
-      "close": {
-        "text": "You do not get the notebook. You get a name for what is holding it, and the beginning of a very long habit of not being where Amon expects.\n\nThat is worth a rung. The Marionettist comes off you in the same week.",
+      "take": {
+        "text": "It takes all three of you and it costs one.\n\nDaly Simone goes into it knowing the arithmetic — she is a Spirit Medium and the whole of her pathway is a negotiation with the dead, and she spends the last of hers holding him still for four seconds.\n\nLeonard puts him down. You put the bullet in. Between the two of you it is not revenge and it is not justice; it is a fortnight’s work finished on a rock in the south, and a woman on the ground who was twenty-six.",
         "effect": {
           "flags": [
-            "v4_theft_failed",
+            "v4_zangwill_dead",
             "v4_undying"
           ],
-          "digestion": 50
+          "sanity": -20,
+          "spirituality": -40,
+          "digestion": 30,
+          "trust": {
+            "tower": 10
+          }
+        },
+        "choices": [
+          {
+            "text": "And afterwards.",
+            "goto": "after"
+          }
+        ]
+      },
+      "after": {
+        "text": "Afterwards you sit with Leonard, who does not speak for two hours, and then says: ‘She knew him from Tingen. She was at the chapel.’\n\nSaint Selena’s ashes are in a bag on a dead man on a rock in the Southern Continent, four hundred and one days after they were taken out of a silver casket in a chapel in Tingen by a man who folded the cloth first.",
+        "effect": {
+          "flags": [
+            "v4_ashes_recovered"
+          ],
+          "items": [
+            "formula_bizarro"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_daly_island",
+    "speaker": "daly",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Daly Simone wears the hood and the blue eyeshadow because she is twenty-six and needs the Nighthawks who report to her to stop counting.\n\n‘You were in Tingen,’ she says. ‘Not you. The way you stand. Somebody I knew stood like that and he is dead, so I have decided to find it restful rather than upsetting.’",
+        "choices": [
+          {
+            "text": "Ask what she remembers of the chapel.",
+            "goto": "chapel"
+          },
+          {
+            "text": "Let her find it restful.",
+            "goto": "rest"
+          }
+        ]
+      },
+      "chapel": {
+        "text": "‘Eleven minutes underground and a clerk dead upstairs.’ She says it flatly. ‘I have been on four teams since and none of them has been told what was taken, and I have stopped asking, because the asking is what got the clerk killed.’",
+        "effect": {
+          "sanity": -6,
+          "flags": [
+            "v4_daly_talked"
+          ]
+        },
+        "end": true
+      },
+      "rest": {
+        "text": "She finds it restful. It costs you nothing and it is, you are aware, the last uncomplicated conversation she is going to have.",
+        "effect": {
+          "flags": [
+            "v4_daly_talked"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_alger_island",
+    "speaker": "hanged_man",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "‘Mr. Sparrow.’ Alger Wilson gives no sign at all that he has ever heard the name Fool. ‘I am here for the Church of Storms and you are here for yourself, and I would like us both to keep saying that out loud until it stops being funny.’",
+        "choices": [
+          {
+            "text": "Agree.",
+            "goto": "agree"
+          }
+        ]
+      },
+      "agree": {
+        "text": "You agree. He accepts the agreement in the manner of a man filing a receipt.\n\nIt occurs to you, watching him not sit back on a rock in the Southern Continent, that Mr. Hanged Man has been paying the Fool for two years, and has never once asked the Fool for anything he could not have got elsewhere at a worse price.\n\nHe is not buying information. He is establishing that he is a customer, against a day when he will need to be more than one.",
+        "effect": {
+          "trust": {
+            "hanged_man": 8
+          },
+          "skills": {
+            "observation": 1
+          }
         },
         "end": true
       }

@@ -1,0 +1,101 @@
+{
+  "id": "giant_court",
+  "name": "The Giant King’s Court",
+  "ambient": "#2a2a4a",
+  "encounterChance": 0,
+  "legend": {
+    " ": {
+      "floor": 0,
+      "collide": true
+    },
+    ".": {
+      "floor": 7
+    },
+    "#": {
+      "floor": 9,
+      "collide": true
+    },
+    "c": {
+      "floor": 7,
+      "object": 17,
+      "collide": true
+    },
+    "T": {
+      "floor": 7,
+      "object": 16,
+      "collide": true
+    },
+    "L": {
+      "floor": 7,
+      "object": 24,
+      "collide": true
+    },
+    "@": {
+      "floor": 32
+    }
+  },
+  "rows": [
+    "                    ",
+    "   ##############   ",
+    "   #............#   ",
+    "   #.c..c..c..c.#   ",
+    "   #............#   ",
+    "   L.....TT.....L   ",
+    "   #............#   ",
+    "   #.c..c..c..c.#   ",
+    "   #.....@......#   ",
+    "   #####....#####   ",
+    "        ....        ",
+    "        ....        "
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 10
+  },
+  "hotspots": [
+    {
+      "id": "gc_thrones",
+      "x": 5,
+      "y": 3,
+      "name": "The Empty Chairs",
+      "description": "Chairs the size of houses, arranged for a court, with the dust on them lying the way dust lies when nothing has moved for longer than there have been people to notice.",
+      "action": "dialogue",
+      "dialogue": "dlg_court",
+      "icon": 12
+    },
+    {
+      "id": "gc_table",
+      "x": 9,
+      "y": 5,
+      "name": "The King’s Table",
+      "description": "Bronze, and very long, and it takes you a moment to work out why the shape of it is making the back of your neck cold.",
+      "action": "dialogue",
+      "dialogue": "dlg_court_table",
+      "icon": 7
+    },
+    {
+      "id": "rite_court",
+      "x": 9,
+      "y": 8,
+      "name": "The Circle Between The Chairs",
+      "description": "You draw it yourself, on a floor that has held one before, and the floor knows what you are doing before you have finished.",
+      "action": "ritual",
+      "icon": 13
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 9,
+      "y": 11,
+      "toMap": "corpse_cathedral",
+      "toX": 9,
+      "toY": 8,
+      "label": "The way out"
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_court_arrive",
+    "flag": "v6_court"
+  }
+}

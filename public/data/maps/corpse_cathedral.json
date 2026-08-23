@@ -58,32 +58,6 @@
   },
   "hotspots": [
     {
-      "id": "cc_altar",
-      "x": 10,
-      "y": 2,
-      "name": "The Altar, And The Arrangement",
-      "description": "The ritual is complete except for the part where you die, which is the part the Genie was so pleased to be asked about.",
-      "action": "dialogue",
-      "dialogue": "dlg_genie",
-      "icon": 8
-    },
-    {
-      "id": "cc_zaratul",
-      "x": 6,
-      "y": 4,
-      "name": "Something Waiting In The Aisle",
-      "description": "The man who wrote the ritual that brought you here is still using it, and he has not once considered that it might have been read by anybody else.",
-      "action": "dialogue",
-      "dialogue": "dlg_zaratul",
-      "icon": 13,
-      "locked": {
-        "reason": "Not until the arrangement at the altar is finished.",
-        "bypass": {
-          "flag": "v7_wish"
-        }
-      }
-    },
-    {
       "id": "rite_corpse_cathedral",
       "x": 13,
       "y": 4,
@@ -91,6 +65,42 @@
       "description": "The Corpse Cathedral was built for exactly this and has been waiting.",
       "action": "ritual",
       "icon": 13
+    },
+    {
+      "id": "cc_genie",
+      "x": 8,
+      "y": 3,
+      "name": "The Genie",
+      "description": "It grants what you ask for and not what you meant, and everybody who has ever dealt with one knew that going in. What you need is to be dead.",
+      "action": "dialogue",
+      "dialogue": "dlg_genie",
+      "icon": 13
+    },
+    {
+      "id": "cc_alger",
+      "x": 4,
+      "y": 6,
+      "name": "A Customer Calling It In",
+      "description": "Three years a customer, never once asking for anything he could not have got elsewhere at a worse price, establishing patiently that he is the sort of man a Fool takes a call from.",
+      "action": "dialogue",
+      "dialogue": "dlg_alger_price",
+      "icon": 12
+    },
+    {
+      "id": "cc_zaratul",
+      "x": 12,
+      "y": 6,
+      "name": "The Man You Let Out",
+      "description": "Four hundred years sealed in a town where nothing happened, eleven months out of it, and a claim on the seat above the grey fog with the argument to go with it.",
+      "action": "dialogue",
+      "dialogue": "dlg_zaratul_claim",
+      "icon": 13,
+      "locked": {
+        "reason": "Not until the wish is paid.",
+        "bypass": {
+          "flag": "v7_died"
+        }
+      }
     }
   ],
   "npcs": [],
@@ -105,7 +115,7 @@
     }
   ],
   "intro": {
-    "dialogue": "dlg_corpse_cathedral",
+    "dialogue": "dlg_v7_arrive",
     "flag": "v7_arrived"
   }
 }

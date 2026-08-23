@@ -1,25 +1,16 @@
 [
   {
-    "id": "dlg_corpse_cathedral",
+    "id": "dlg_v7_arrive",
     "speaker": "player",
     "start": "start",
     "nodes": {
       "start": {
-        "text": "The Corpse Cathedral is built out of what a god was, which is a sentence the Church of the Evernight Goddess would prefer nobody said out loud.\n\nYou are here because the advancement to Sequence 2 requires a death, and because you have spent seven years becoming the sort of man who reads that requirement as an instruction rather than a warning.",
-        "choices": [
-          {
-            "text": "Set it out.",
-            "goto": "set"
-          }
-        ]
-      },
-      "set": {
-        "text": "The ritual is complete except for the dying. Everything else — the place, the hour, the ceremony, the four names that must be said and the one that must not — is chalked and waiting.\n\nAnd in the aisle, patient, is the Genie: a thing that grants wishes exactly as they are worded, and enjoys the exactly.",
+        "text": "The war stops.\n\nFeysac and Loen come off the field in the same month, and it is not peace; it is both sides going away to prepare properly. The world has been given an interval, and the thing coming for it is not another army.\n\nIt is isolation: the slow, total, cosmic kind, where every light goes out one at a time and nothing arrives to explain why.",
         "effect": {
           "flags": [
             "v7_arrived"
           ],
-          "sanity": -6
+          "sanity": -8
         },
         "end": true
       }
@@ -31,95 +22,121 @@
     "start": "start",
     "nodes": {
       "start": {
-        "text": "‘A wish,’ says the Genie, delighted. ‘Anything at all. I am renowned for my generosity and for my sense of humour, and I regret to say that the two are the same faculty.’\n\nEvery wish it has ever granted has been granted in the worst true reading of the words. That is not a risk. That is the mechanism, and mechanisms can be aimed.",
-        "choices": [
-          {
-            "text": "Word it so that the worst reading is the one you want.",
-            "goto": "wish"
-          },
-          {
-            "text": "Refuse, and do it the hard way.",
-            "goto": "refuse"
-          }
-        ]
-      },
-      "refuse": {
-        "text": "There is no hard way. That is what a Sequence 2 advancement means: the requirement is a death, and a death that is merely brave is a death.\n\nYou go back to the Genie. It has not moved, and its delight has not gone off in the slightest.",
-        "effect": {
-          "sanity": -6
-        },
+        "text": "The Corpse Cathedral keeps a Genie, and a Genie grants what you ask for and not what you meant, and everybody who has ever dealt with one knew that going in.\n\nWhat you need is to be dead. Properly, verifiably, in a way the world signs for, so that a Miracle Invoker can complete an advancement ritual as somebody the world has agreed is no longer there.\n\nSo you are going to ask a Genie for exactly the thing it is famous for giving you.",
         "choices": [
           {
             "text": "Word it carefully.",
-            "goto": "wish"
+            "goto": "careful"
+          },
+          {
+            "text": "Word it badly on purpose.",
+            "goto": "badly"
           }
         ]
       },
-      "wish": {
-        "text": "So you make a wish that is a trap for a thing that cannot help springing traps: you ask for something whose cruellest possible fulfilment is you, dead, in this cathedral, at this hour, in the middle of a completed ritual.\n\nThe Genie thinks about it for a long moment and then laughs — genuinely, the way a colleague laughs — and grants it in full.",
+      "careful": {
+        "text": "You word it carefully, and it finds the seam anyway, because that is what it is, and the distortion it chooses is the one you had already decided you could survive.\n\nThat is the trick, and it is not a clever trick. It is simply knowing which of your own deaths you can afford.",
+        "effect": {
+          "flags": [
+            "v7_wish"
+          ],
+          "sanity": -18,
+          "spirituality": -40
+        },
         "choices": [
           {
-            "text": "And so you die.",
+            "text": "And die.",
+            "goto": "die"
+          }
+        ]
+      },
+      "badly": {
+        "text": "You word it badly, deliberately, leaving the gap where you want it, and let the thing take the gap and think it has won.\n\nIt is the single most dangerous sentence you have ever said out loud, and you said it in the voice you borrowed at nineteen from a lecturer who frightened you.",
+        "effect": {
+          "flags": [
+            "v7_wish"
+          ],
+          "sanity": -24,
+          "spirituality": -40,
+          "digestion": 20
+        },
+        "choices": [
+          {
+            "text": "And die.",
             "goto": "die"
           }
         ]
       },
       "die": {
-        "text": "You die on the flagstones of the Corpse Cathedral with the ceremony finished around you, and the potion goes down a throat that has already stopped working, and the advancement takes.\n\nAttendant of Mysteries. Sequence 2. There is no longer any part of the ladder above you that has a name you have not been told.",
+        "text": "You die in the Corpse Cathedral, on schedule, by arrangement, for the second time.\n\nThe first time it was done to you by a man who folded the cloth first. This time it is an appointment you kept.",
         "effect": {
           "flags": [
-            "v7_wish"
-          ],
-          "sanity": -20,
-          "digestion": 70
+            "v7_died"
+          ]
         },
         "end": true
       }
     }
   },
   {
-    "id": "dlg_zaratul",
-    "speaker": "player",
+    "id": "dlg_zaratul_claim",
+    "speaker": "zaratul",
     "start": "start",
     "nodes": {
       "start": {
-        "text": "Zaratul wrote the ritual.\n\nNot the one in the Corpse Cathedral — the one in a notebook in Tingen, copied by a history student on a wet Tuesday, that put a man from another world into a body that had just shot itself. He has been steering this since before your grandfather’s grandfather, and he has never once considered that the material might read back.",
+        "text": "He has been very good at gratitude, exactly as advertised.\n\nFour hundred years sealed in a town where nothing happened, and eleven months out of it, and in those eleven months Zaratul has assembled a claim on the seat above the grey fog and the argument to go with it.\n\n‘You let me out,’ he says. ‘I have never pretended that was not the beginning of this.’",
         "choices": [
           {
-            "text": "Let him talk.",
-            "goto": "talk"
+            "text": "Ask what he thinks he is owed.",
+            "goto": "owed"
+          },
+          {
+            "text": "Ask who told him the seat could be taken.",
+            "goto": "who"
           }
         ]
       },
-      "talk": {
-        "text": "He is generous with it, the way people are when they have decided you are furniture. The plan, the centuries, the use he intends to make of the seat above the fog.\n\nAnd behind him, being used as a tool because Zaratul cannot conceive of it as anything else, is a historical projection of Roselle Gustav — a transmigrator, like you, who wrote a diary and became an emperor and has been waiting a very long time to be asked.",
-        "choices": [
-          {
-            "text": "Ask him.",
-            "goto": "roselle"
-          }
-        ]
-      },
-      "roselle": {
-        "text": "You ask. In a language neither of you has spoken aloud in this world, with a reference no one born here could possibly get, you ask a dead emperor’s projection whose side he is on.\n\nRoselle betrays Zaratul at the precise moment Zaratul is explaining why nothing could betray him.",
+      "owed": {
+        "text": "‘The chair.’ Eyes like water that has never had light in it. ‘You sit in a seat you did not build, at a table you did not make, in a castle you did not raise, and you have never once asked who did.’\n\nHe is right about every clause of that. It is the most uncomfortable sentence anyone has said to you in three years.",
         "effect": {
-          "trust": {
-            "justice": 10,
-            "hanged_man": 10
+          "flags": [
+            "v7_zaratul_claim"
+          ],
+          "sanity": -10
+        },
+        "choices": [
+          {
+            "text": "And who told him it could be taken.",
+            "goto": "who"
+          }
+        ]
+      },
+      "who": {
+        "text": "A historical projection of Knowledge Emperor Roselle Gustav told him. In detail. With citations.\n\nAnd then, at the hour it mattered, the projection changed its account — because Roselle wrote his diary in a code only somebody from a flat with a bad radiator could read, and Roselle had been waiting three hundred years for that somebody, and it was never going to be Zaratul.",
+        "effect": {
+          "flags": [
+            "v7_roselle"
+          ],
+          "skills": {
+            "occultism": 1
           }
         },
         "choices": [
           {
             "text": "Finish it.",
-            "goto": "kill"
+            "goto": "finish"
           }
         ]
       },
-      "kill": {
-        "text": "The Law of Convergence is the Fool pathway’s last honest trick: everything that is going to happen to a man, arriving at once.\n\nZaratul gets all of it. Then you take the Beyonder Characteristic out of what is left, because leaving it would be sentimental and you stopped being sentimental somewhere around the Forsaken Land.",
+      "finish": {
+        "text": "You kill him with the Law of Convergence, which is not a spell but an argument — every thread of a mystery pulled to one point and the point placed where he is standing.\n\nThen you take his Beyonder characteristic, because leaving it would be sentiment, and because Sequence 1 is not a rank you are given.",
         "effect": {
-          "sanity": -18,
-          "spirituality": -80
+          "flags": [
+            "v7_zaratul"
+          ],
+          "sanity": -20,
+          "spirituality": -50,
+          "digestion": 40
         },
         "choices": [
           {
@@ -129,13 +146,57 @@
         ]
       },
       "king": {
-        "text": "Sequence 1.\n\nThe seat at the head of the bronze table was a joke told by a frightened clerk in a rented room in Tingen, to two strangers he had summoned by accident, because he could not think of anything else to say.\n\nIt is not a joke now. Above the fog, the Fool sits where the Fool has always sat, and the Kings of Angels have a new one, and the notebook that arranged all of it is still in a vault in Backlund with somebody else’s patience inside it.\n\nAmon will keep. You have the time now. That is rather the point of the seat.",
+        "text": "King of Angels.\n\nEvery mystery on this pathway attends on you now, which sounds like service and is in fact surveillance: you are the thing they gather around and you cannot put them down.\n\nAbove the fog the bronze table is very cold and there are twenty-two seats and two of them are filled on Sundays by a young woman who writes everything down and a sailor who has never sat back.\n\nNeither of them has ever asked what you are. You have four names and a chair, and underneath all of it a man from Tingen who still counts his change.",
         "effect": {
           "flags": [
-            "v7_zaratul",
             "v7_king"
           ],
-          "digestion": 100
+          "skills": {
+            "occultism": 2
+          }
+        },
+        "choices": [
+          {
+            "text": "Book One ends here.",
+            "goto": "close"
+          }
+        ]
+      },
+      "close": {
+        "text": "Sequence 0 is not a rank. It is a seat, and it is already occupied, and the occupant is a story people tell about a grey fog and a bronze long table.\n\nBook One does not reach it.\n\nAmon is still keeping. He was always going to be still keeping. That is what he is for.",
+        "effect": {
+          "flags": [
+            "v7_complete"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_alger_price",
+    "speaker": "hanged_man",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Mr. Hanged Man has been a customer for three years, has never once asked for anything he could not have got elsewhere at a worse price, and has been establishing, patiently, that he is the sort of man a Fool would take a call from.\n\nHe is calling it in. He does not sit back to do it.",
+        "choices": [
+          {
+            "text": "Hear it.",
+            "goto": "hear"
+          }
+        ]
+      },
+      "hear": {
+        "text": "‘There is a thing at the Corpse Cathedral that has to be held for four minutes,’ says Alger Wilson, ‘by somebody who is not you, because you will be occupied being dead.’\n\nA pause exactly as long as he intends.\n\n‘I have run the arithmetic. I would like it noted that I ran it before I offered, and that I did not run it twice.’",
+        "effect": {
+          "flags": [
+            "v7_alger_price"
+          ],
+          "trust": {
+            "hanged_man": 20
+          },
+          "sanity": -12
         },
         "end": true
       }

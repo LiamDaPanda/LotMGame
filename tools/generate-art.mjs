@@ -98,6 +98,67 @@ const CAST = [
   // than she is, and a white crystal on a silver chain.
   { id: 'daly', skin: '#eec6a8', hair: '#1f1a17', coat: '#33323f', accent: '#9d86c9', trouser: '#26252f', hat: null, scarf: '#4a4560',
     hairStyle: 'straightLong', eyes: '#9d86c9', head: 'soft', eyeShape: 'soft', mouth: 'small', brow: -1, back: '#2e2a3c', extras: ['hood', 'eyeshadow', 'mole'] },
+
+  // ---- Volume I closes on the Aurora Order ---------------------------------
+  // 18 — Ince Zangwill. Dark blonde, pupils so blue they read as black, a face
+  // like a sculpture that has never once frowned, and blind in one eye.
+  { id: 'zangwill', skin: '#e8c39c', hair: '#b09456', coat: '#2b2a38', accent: '#c8b06a', trouser: '#22212c', hat: null, scarf: null,
+    hairStyle: 'slick', eyes: '#1d2a52', head: 'long', eyeShape: 'sharp', mouth: 'small', brow: 1, back: '#2a2836', extras: ['blindEye', 'collar'] },
+
+  // ---- Volume II: Backlund ------------------------------------------------
+  // 19 — Ian Wright, who brings the commission that starts everything.
+  { id: 'wright', skin: '#f1cba8', hair: '#4a3a2c', coat: '#3f4a3a', accent: '#c2b48a', trouser: '#333c2e', hat: 'bowler', scarf: null,
+    hairStyle: 'parted', eyes: '#5f7a4e', head: 'oval', eyeShape: 'weary', mouth: 'frown', back: '#333e30', extras: ['collar', 'moustache'] },
+  // 20 — Old Kohler of the East Borough, who has worked since he was nine.
+  { id: 'kohler', skin: '#d8ab84', hair: '#8e8880', coat: '#4a4038', accent: '#8a7a60', trouser: '#38302a', hat: 'flat', scarf: '#6a5a48',
+    hairStyle: 'balding', eyes: '#6a6258', head: 'square', eyeShape: 'weary', mouth: 'grim', back: '#3c342c', extras: ['stubble', 'age'] },
+  // 21 — Liz, who is eleven and keeping the accounts.
+  { id: 'liz', skin: '#f2cfb2', hair: '#a06a38', coat: '#6a5a72', accent: '#e0b8c8', trouser: '#4a3f52', hat: null, scarf: null,
+    hairStyle: 'halfup', eyes: '#7a5a38', head: 'soft', eyeShape: 'wide', mouth: 'small', back: '#4a4058', extras: ['freckles', 'ribbon'] },
+  // 22 — Capim, who sells people and keeps a ledger of it.
+  { id: 'capim', skin: '#b98a60', hair: '#221c18', coat: '#4a2a2a', accent: '#a86a4a', trouser: '#2e1e1e', hat: null, scarf: null,
+    hairStyle: 'slick', eyes: '#3a2a1e', head: 'round', eyeShape: 'narrow', mouth: 'smirk', brow: -1, browThick: 2, back: '#3a2424', extras: ['goatee', 'earring'] },
+  // 23 — Lanevus, who would like to introduce the world to its Creator.
+  { id: 'lanevus', skin: '#e0c8b4', hair: '#3a3242', coat: '#2c2438', accent: '#8a6ac0', trouser: '#241e30', hat: null, scarf: '#5a4a80',
+    hairStyle: 'straightLong', eyes: '#8a6ac0', head: 'gaunt', eyeShape: 'sunken', mouth: 'set', back: '#2e2640', extras: ['hood'] },
+
+  // ---- Volume III: the sea ------------------------------------------------
+  // 24 — Cattleya, Admiral of Stars, who is owed favours by four flags.
+  { id: 'cattleya', skin: '#eec6a4', hair: '#d8d2c0', coat: '#2f4258', accent: '#9fc4dc', trouser: '#26364a', hat: 'captain', scarf: '#6a8aa8',
+    hairStyle: 'long', eyes: '#4a7a9a', head: 'soft', eyeShape: 'sharp', mouth: 'smirk', back: '#2a3c50', extras: ['earring'] },
+  // 25 — Bernadette Gustav, with her ancestor's chestnut curls.
+  { id: 'bernadette', skin: '#f4d2b6', hair: '#8a5a34', coat: '#5a2a3a', accent: '#e0c078', trouser: '#42202c', hat: null, scarf: null,
+    hairStyle: 'curly', eyes: '#4a6ea8', head: 'soft', eyeShape: 'soft', mouth: 'smile', back: '#4a2634', extras: ['lace', 'ribbon'] },
+  // 26 — Frank Lee, who keeps things in jars and is delighted about all of it.
+  { id: 'franklee', skin: '#eec9a8', hair: '#3a4a3a', coat: '#5a6a4a', accent: '#b8c88a', trouser: '#3f4a36', hat: null, scarf: null,
+    hairStyle: 'messy', eyes: '#6a9a5a', head: 'long', eyeShape: 'wide', mouth: 'smile', back: '#3e4a36', extras: ['glasses'] },
+  // 27 — Anderson Hood, who hunts what other people run from.
+  { id: 'anderson', skin: '#c4915f', hair: '#4a2a18', coat: '#4a3a28', accent: '#a88a5a', trouser: '#382c1e', hat: 'flat', scarf: '#7a5a3a',
+    hairStyle: 'short', eyes: '#8a6a3a', head: 'square', eyeShape: 'narrow', mouth: 'set', browThick: 2, back: '#3c3024', extras: ['beard'] },
+
+  // ---- Volume IV: the Foggy Town and the Southern Continent ----------------
+  // 28 — Zaratul: a black hooded robe, eyes like water with no light in it, and
+  // a long dense white beard.
+  { id: 'zaratul', skin: '#cdb49c', hair: '#e8e4dc', coat: '#1e1c26', accent: '#7a6a9a', trouser: '#171620', hat: null, scarf: null,
+    hairStyle: 'wispy', eyes: '#1a1a24', head: 'gaunt', eyeShape: 'sunken', mouth: 'set', back: '#232030', extras: ['hood', 'fullbeard', 'age'] },
+  // 29 — Mr. A, of the Numinous Episcopate, who has no other name on file.
+  { id: 'mister_a', skin: '#d6bfae', hair: '#1a1a1a', coat: '#3a2c3a', accent: '#c0392b', trouser: '#2a2028', hat: 'top', scarf: null,
+    hairStyle: 'slick', eyes: '#8a2a2a', head: 'long', eyeShape: 'sharp', mouth: 'smirk', brow: -1, back: '#332632', extras: ['monocle'] },
+
+  // ---- Volume V: the Crown ------------------------------------------------
+  // 30 — George III of Loen, giving the speech of his life, for once literally.
+  { id: 'george', skin: '#f0cba6', hair: '#9a8a6a', coat: '#5a2030', accent: '#d4b046', trouser: '#421823', hat: 'crown', scarf: '#c9a227',
+    hairStyle: 'wavy', eyes: '#5a7a9a', head: 'round', eyeShape: 'level', mouth: 'set', browThick: 2, back: '#4a1e2c', extras: ['moustache', 'cravat', 'age'] },
+
+  // ---- Volumes VI and VII -------------------------------------------------
+  // 31 — Amon. Short semi-curly black hair, pure black eyes, a pointed hat, a
+  // classical mage's robe, and a crystal monocle he does not need.
+  { id: 'amon', skin: '#f4e2d0', hair: '#141218', coat: '#2a2440', accent: '#c8a8e0', trouser: '#221e34', hat: 'pointed', scarf: null,
+    hairStyle: 'curly', eyes: '#0d0d12', head: 'long', eyeShape: 'sharp', mouth: 'smile', back: '#2e2748', extras: ['monocle'] },
+  // 32 — Emperor Roselle Gustav: long chestnut curls, blue eyes, a high bridge,
+  // thin lips, and a moustache he plainly had opinions about.
+  { id: 'roselle', skin: '#eec5a2', hair: '#7a4a28', coat: '#5a2018', accent: '#c9a227', trouser: '#3f1810', hat: null, scarf: null,
+    hairStyle: 'curly', eyes: '#3a6ab0', head: 'long', eyeShape: 'level', mouth: 'smirk', back: '#4a2018', extras: ['moustache', 'cravat'] },
 ];
 // ---------------------------------------------------------------------------
 // Chibi character rendering
@@ -810,7 +871,9 @@ function drawPortrait(r, ox, oy, pal) {
     case 'slick': {
       // Combed straight back with something out of a jar; the sheen is the point.
       hairCap(r, ox, oy, shape, HEAD_TOP, 18, 0, hair);
-      for (let x = 18; x <= 46; x += 3) r.rect(ox + x, oy + HEAD_TOP, 1, 9, hairDark);
+      // Comb marks, not railings: at this contrast a dark line every three
+      // pixels reads as a fence rather than as hair.
+      for (let x = 19; x <= 45; x += 4) r.rect(ox + x, oy + HEAD_TOP + 1, 1, 7, shade(hair, -0.16));
       r.rect(ox + 20, oy + 12, 24, 1, hairLit);
       r.rect(ox + 17, oy + 18, 30, 1, hairDark);
       r.rect(ox + 16, oy + 17, 3, 10, hair);
@@ -920,6 +983,16 @@ function drawPortrait(r, ox, oy, pal) {
   }
 
   drawPortraitEyes(r, ox, oy, pal, skin, skinShade, hair, eye);
+
+  if (extras.includes('blindEye')) {
+    // Blind in one eye: clouded over, with the scar that took it.
+    const g = EYE_GEOM[pal.eyeShape ?? 'level'] ?? EYE_GEOM.level;
+    const milk = rgba('#d8d2c6');
+    r.rect(ox + 22, oy + g.top, 7, g.h, milk);
+    r.rect(ox + 23, oy + g.top + g.lash, 5, Math.max(1, g.h - g.lash - 1), shade(milk, -0.12));
+    r.rect(ox + 22, oy + g.top, 7, g.lash, INK);
+    for (let i = 0; i < 7; i++) r.px(ox + 21 + i, oy + g.top - 3 + i, shade(skin, -0.45));
+  }
 
   // Nose. A tall bridge is worth a pixel of its own.
   const noseTop = chin - 8;
@@ -1128,6 +1201,29 @@ function drawPortrait(r, ox, oy, pal) {
     } else if (pal.hat === 'flat') {
       r.rect(ox + 17, oy + 7, 30, 7, dark);
       r.rect(ox + 13, oy + 13, 38, 3, shade(dark, -0.2));
+    } else if (pal.hat === 'pointed') {
+      // A classical mage's hat: a wide brim and a cone that leans.
+      r.rect(ox + 8, oy + 12, 48, 3, dark);
+      for (let y = 0; y <= 11; y++) {
+        // Narrow at the point, widening to the brim, and leaning as it goes.
+        const half = Math.round(1 + y * 1.25);
+        r.rect(ox + 32 - half + Math.round((11 - y) * 0.45), oy + y + 1, half * 2, 1, dark);
+      }
+      r.rect(ox + 18, oy + 9, 28, 3, rgba(pal.accent));
+      r.px(ox + 30, oy + 2, shade(dark, 0.4));
+    } else if (pal.hat === 'crown') {
+      // Points, and a band of stones, and no attempt at modesty.
+      const gold = rgba('#d4b046');
+      r.rect(ox + 18, oy + 10, 28, 4, gold);
+      r.rect(ox + 18, oy + 13, 28, 1, shade(gold, -0.35));
+      for (let i = 0; i < 5; i++) {
+        const x = 19 + i * 6;
+        for (let h = 0; h <= 5; h++) {
+          const w = Math.max(1, 4 - h);
+          r.rect(ox + x + Math.floor((4 - w) / 2), oy + 9 - h, w, 1, gold);
+        }
+        r.px(ox + x + 1, oy + 11, rgba(pal.accent));
+      }
     }
   }
 

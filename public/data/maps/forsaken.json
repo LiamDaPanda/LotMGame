@@ -57,7 +57,7 @@
     "%..................%",
     "%.g..............g.%",
     "%..................%",
-    "%%%%%%%%%oo%%%%%%%%%"
+    "%%o%%%%%%oo%%%%%%%%%"
   ],
   "spawn": {
     "x": 9,
@@ -65,32 +65,32 @@
   },
   "hotspots": [
     {
-      "id": "fk_court",
-      "x": 9,
-      "y": 3,
-      "name": "The Giant King’s Court",
-      "description": "A hall built for people forty feet tall, by people forty feet tall, and abandoned in the middle of an argument that has been over for two epochs.",
-      "action": "dialogue",
-      "dialogue": "dlg_giant_court",
-      "icon": 15
-    },
-    {
-      "id": "fk_sky",
-      "x": 16,
-      "y": 5,
-      "name": "The Sky Over Backlund, Seen From Here",
-      "description": "The war has reached the part where the gods are involved. From this side of the world it looks like weather; from the other side it is the end of the century.",
-      "action": "dialogue",
-      "dialogue": "dlg_battle",
-      "icon": 12
-    },
-    {
       "id": "rite_forsaken",
       "x": 3,
       "y": 5,
       "name": "The Circle",
       "description": "Scratched into stone that was old when the Second Epoch ended.",
       "action": "ritual",
+      "icon": 13
+    },
+    {
+      "id": "fk_marks",
+      "x": 8,
+      "y": 3,
+      "name": "Marks Cut By Somebody Who Did Not Get Out",
+      "description": "Colin Iliad got this far. So did Lovia. Both of them left the way marked for whoever came next, in the plainest terms available.",
+      "action": "dialogue",
+      "dialogue": "dlg_court",
+      "icon": 12
+    },
+    {
+      "id": "fk_amon",
+      "x": 11,
+      "y": 6,
+      "name": "The Man With The Crystal Monocle",
+      "description": "He does not have to open a door to come into a room, and he is delighted to meet you, and he has been delighted to meet you for some time.",
+      "action": "dialogue",
+      "dialogue": "dlg_amon",
       "icon": 13
     }
   ],
@@ -114,10 +114,21 @@
       "requires": {
         "flag": "v6_truth"
       }
+    },
+    {
+      "x": 2,
+      "y": 9,
+      "toMap": "giant_court",
+      "toX": 9,
+      "toY": 10,
+      "label": "The Giant King’s Court",
+      "requires": {
+        "flag": "v6_truth"
+      }
     }
   ],
   "intro": {
-    "dialogue": "dlg_forsaken",
+    "dialogue": "dlg_forsaken_arrive",
     "flag": "v6_arrived"
   }
 }

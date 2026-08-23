@@ -47,7 +47,7 @@
     }
   },
   "rows": [
-    "####W#########W#####",
+    "####W####o####W#####",
     "#........rr........#",
     "#.c......ra......c.#",
     "#........rr........#",
@@ -56,7 +56,7 @@
     "#........rr........#",
     "#.g......rr......g.#",
     "#........rr........#",
-    "###D#####rr#####D###"
+    "###D##D##rr#####D###"
   ],
   "spawn": {
     "x": 9,
@@ -65,20 +65,29 @@
   "hotspots": [
     {
       "id": "cd_gate",
-      "x": 10,
+      "x": 9,
       "y": 2,
       "name": "The Chanis Gate",
-      "description": "Named for a saint nobody outside the Church has heard of, and behind it the cupboard where the Evernight Goddess keeps the things she does not trust anybody else to keep.\n\nThe notebook is in there.",
+      "description": "Not a gate, and not in the cathedral exactly, and not discussed. The Antigonus family’s notebook is behind it, and the Church would rather you took that on faith.",
       "action": "dialogue",
-      "dialogue": "dlg_chanis_gate",
-      "icon": 15
+      "dialogue": "dlg_chanis",
+      "icon": 13
     },
     {
-      "id": "cd_pews",
+      "id": "cd_grave",
       "x": 3,
-      "y": 4,
-      "name": "The Empty Pews",
-      "description": "Six hundred seats and four occupied, all of them by people who came in out of the fog. Backlund prays the way it works: early, joylessly, and with an eye on the clock."
+      "y": 6,
+      "name": "A Man Who Has Been Digging",
+      "description": "Leonard Mitchell, three months out of Tingen, with earth still on his cuffs and a question he has rehearsed on the way here.",
+      "action": "dialogue",
+      "dialogue": "dlg_grave",
+      "icon": 12,
+      "locked": {
+        "reason": "He is not here yet.",
+        "bypass": {
+          "flag": "v4_escaped"
+        }
+      }
     },
     {
       "id": "rite_cathedral",
@@ -110,10 +119,32 @@
       "requires": {
         "flag": "v4_undying"
       }
+    },
+    {
+      "x": 9,
+      "y": 0,
+      "toMap": "foggy_town",
+      "toX": 9,
+      "toY": 9,
+      "label": "Through the Gate",
+      "requires": {
+        "flag": "v4_theft_failed"
+      }
+    },
+    {
+      "x": 6,
+      "y": 9,
+      "toMap": "primitive_island",
+      "toX": 9,
+      "toY": 9,
+      "label": "The Southern Continent",
+      "requires": {
+        "flag": "v4_escaped"
+      }
     }
   ],
   "intro": {
-    "dialogue": "dlg_dantes",
+    "dialogue": "dlg_v4_arrive",
     "flag": "v4_arrived"
   }
 }
