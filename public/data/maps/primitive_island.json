@@ -1,0 +1,141 @@
+{
+  "id": "primitive_island",
+  "name": "A Primitive Island, Southern Continent",
+  "ambient": "#3a4a2c",
+  "encounterChance": 0.35,
+  "legend": {
+    " ": {
+      "floor": 28,
+      "collide": true
+    },
+    ".": {
+      "floor": 30
+    },
+    "m": {
+      "floor": 29
+    },
+    "#": {
+      "floor": 9,
+      "collide": true
+    },
+    "g": {
+      "floor": 30,
+      "object": 27,
+      "collide": true
+    },
+    "k": {
+      "floor": 30,
+      "object": 19,
+      "collide": true
+    },
+    "L": {
+      "floor": 30,
+      "object": 24,
+      "collide": true
+    },
+    "T": {
+      "floor": 9,
+      "object": 16,
+      "collide": true
+    },
+    "@": {
+      "floor": 32
+    }
+  },
+  "rows": [
+    "      ......        ",
+    "    ..........      ",
+    "   ....####.....    ",
+    "  ....##TT##.....   ",
+    "  ...##....##....   ",
+    " ....#..@...#.....  ",
+    " ....##....##.....  ",
+    "  ....##.###......  ",
+    "  ...g....g....k..  ",
+    "   ..............   ",
+    "    L....mm....L    ",
+    "      ...mm...      "
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 9
+  },
+  "hotspots": [
+    {
+      "id": "pi_altar",
+      "x": 9,
+      "y": 3,
+      "name": "The Altar Under The Roofless Roof",
+      "description": "Older than the Church that is not here, older than the kingdom that has not claimed this, and carved with a sun that has had its face scratched out by someone who could reach.",
+      "action": "dialogue",
+      "dialogue": "dlg_sun_god",
+      "icon": 13
+    },
+    {
+      "id": "pi_graves",
+      "x": 5,
+      "y": 8,
+      "name": "The Two Markers",
+      "description": "Set facing each other, which is not how anyone buries anyone, and dated four days apart in a calendar that stopped being used before Loen was a word.",
+      "action": "dialogue",
+      "dialogue": "dlg_betrayal",
+      "icon": 12
+    },
+    {
+      "id": "pi_camp",
+      "x": 15,
+      "y": 8,
+      "name": "The Red Glove Camp",
+      "description": "Four tents, a wireless set that should not work here, and a team from Backlund that includes two people who buried you.",
+      "action": "dialogue",
+      "dialogue": "dlg_red_glove",
+      "icon": 7
+    },
+    {
+      "id": "rite_island",
+      "x": 8,
+      "y": 5,
+      "name": "The Circle In The Ruin",
+      "description": "Cut into the floor by somebody else, a very long time ago, and still true enough to use.",
+      "action": "ritual",
+      "icon": 13
+    }
+  ],
+  "npcs": [
+    {
+      "id": "tower",
+      "x": 14,
+      "y": 9,
+      "dialogue": "dlg_red_glove",
+      "wander": 1
+    },
+    {
+      "id": "daly",
+      "x": 12,
+      "y": 9,
+      "dialogue": "dlg_daly_island",
+      "wander": 0
+    },
+    {
+      "id": "hanged_man",
+      "x": 6,
+      "y": 9,
+      "dialogue": "dlg_alger_island",
+      "wander": 0
+    }
+  ],
+  "exits": [
+    {
+      "x": 9,
+      "y": 11,
+      "toMap": "cathedral",
+      "toX": 9,
+      "toY": 9,
+      "label": "The ship home"
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_island_arrive",
+    "flag": "v4_island"
+  }
+}

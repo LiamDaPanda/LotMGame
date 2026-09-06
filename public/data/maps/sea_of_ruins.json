@@ -1,0 +1,152 @@
+{
+  "id": "sea_of_ruins",
+  "name": "The Sea of Ruins",
+  "ambient": "#1d2c3c",
+  "encounterChance": 0.35,
+  "legend": {
+    " ": {
+      "floor": 28,
+      "collide": true
+    },
+    ".": {
+      "floor": 3
+    },
+    "#": {
+      "floor": 9,
+      "collide": true
+    },
+    "r": {
+      "floor": 3,
+      "object": 15,
+      "collide": true
+    },
+    "b": {
+      "floor": 3,
+      "object": 20,
+      "collide": true
+    },
+    "k": {
+      "floor": 3,
+      "object": 19,
+      "collide": true
+    },
+    "L": {
+      "floor": 3,
+      "object": 24,
+      "collide": true
+    },
+    "T": {
+      "floor": 3,
+      "object": 16,
+      "collide": true
+    },
+    "c": {
+      "floor": 3,
+      "object": 17,
+      "collide": true
+    },
+    "@": {
+      "floor": 32
+    }
+  },
+  "rows": [
+    "   ##      ##       ",
+    "  ####    ####  ##  ",
+    "   ##      ##  #### ",
+    "                ##  ",
+    "    rrrrrrrrrr      ",
+    "    r.b....k.r      ",
+    "    L...TT...L      ",
+    "    r..c..c..r      ",
+    "    r...@....r      ",
+    "    r.k....b.r      ",
+    "    rrrr..rrrr      ",
+    "        ..          "
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 9
+  },
+  "hotspots": [
+    {
+      "id": "sr_cattleya",
+      "x": 8,
+      "y": 6,
+      "name": "The Chart Table",
+      "description": "A chart of a sea that four admiralties agree does not have anything in it, marked in a hand that disagrees.",
+      "action": "dialogue",
+      "dialogue": "dlg_cattleya",
+      "icon": 7
+    },
+    {
+      "id": "sr_rail",
+      "x": 12,
+      "y": 7,
+      "name": "The Weather Rail",
+      "description": "Ruins to the horizon: towers under the water at a depth that says they were built dry.",
+      "action": "dialogue",
+      "dialogue": "dlg_mermaid",
+      "icon": 2
+    },
+    {
+      "id": "sr_company",
+      "x": 5,
+      "y": 5,
+      "name": "The Company Aboard",
+      "description": "A Gustav who should be at court, a naturalist with jars, and a hunter who has not put his back to the rail once.",
+      "action": "dialogue",
+      "dialogue": "dlg_company",
+      "icon": 12
+    },
+    {
+      "id": "rite_ruins",
+      "x": 8,
+      "y": 8,
+      "name": "The Circle On The Deck",
+      "description": "Chalk on holystoned planking, at anchor, with two hands paid to be somewhere else.",
+      "action": "ritual",
+      "icon": 13
+    }
+  ],
+  "npcs": [
+    {
+      "id": "cattleya",
+      "x": 6,
+      "y": 7,
+      "dialogue": "dlg_cattleya",
+      "wander": 0
+    },
+    {
+      "id": "bernadette",
+      "x": 9,
+      "y": 7,
+      "dialogue": "dlg_company",
+      "wander": 1
+    }
+  ],
+  "exits": [
+    {
+      "x": 9,
+      "y": 11,
+      "toMap": "oravi",
+      "toX": 9,
+      "toY": 10,
+      "label": "Weigh anchor"
+    },
+    {
+      "x": 8,
+      "y": 11,
+      "toMap": "cathedral",
+      "toX": 9,
+      "toY": 9,
+      "label": "Backlund",
+      "requires": {
+        "flag": "v3_scepter"
+      }
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_ruins_arrive",
+    "flag": "v3_ruins"
+  }
+}

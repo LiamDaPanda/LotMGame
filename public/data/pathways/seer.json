@@ -24,14 +24,19 @@
         "toTitle": "Clown",
         "requirements": [
           {
+            "type": "flag",
+            "flag": "knows_sequence_8",
+            "label": "Learn the name of the rung above you"
+          },
+          {
             "type": "case_completed",
-            "caseId": "case-01-ninth-bell",
-            "label": "Close a case for the Club"
+            "caseId": "case-01-notebook",
+            "label": "Close a case for the Nighthawks"
           },
           {
             "type": "item",
             "itemId": "formula_clown",
-            "label": "Obtain the Clown formula (the Club’s, or a copy)",
+            "label": "Obtain the Clown formula (requisitioned, or a copy)",
             "itemAnyOf": [
               "formula_clown",
               "grey_formula_clown"
@@ -48,7 +53,7 @@
             "label": "Digest the Seer potion — act the part in public"
           }
         ],
-        "ritualText": "The Club's back room smells of candle fat and old paper. You mark the circle yourself, because the Fool insists that a rite performed by somebody else is somebody else's rite. Then you drink.",
+        "ritualText": "Blackthorn’s cellar room smells of candle fat and old paper. You mark the circle yourself, because the Fool insists that a rite performed by somebody else is somebody else’s rite. Then you drink.",
         "temptation": {
           "label": "Drink it now, and let the role catch up",
           "description": "The potion is in your hand. You are not finished being a Seer, and it will notice.",
@@ -80,7 +85,7 @@
           {
             "type": "flag",
             "flag": "act_clown_public",
-            "label": "Draw a crowd's laughter, and mean none of it"
+            "label": "Draw a crowd’s laughter, and mean none of it"
           },
           {
             "type": "item",
@@ -96,7 +101,7 @@
             "type": "trust",
             "member": "hermit",
             "value": 45,
-            "label": "The Hermit must vouch for you"
+            "label": "Dunn Smith must vouch for you"
           },
           {
             "type": "digestion",
@@ -104,10 +109,10 @@
             "label": "Digest the Clown potion"
           }
         ],
-        "ritualText": "The Hermit reads the formula aloud twice, the second time slower, watching your face for the place where you stop listening. You do not give him one.",
+        "ritualText": "Old Neil reads the formula aloud twice, the second time slower, watching your face for the place where you stop listening. You do not give him one.",
         "temptation": {
           "label": "Skip the vouching. Drink.",
-          "description": "The Club's blessing is a formality, and formalities are for people with time.",
+          "description": "The Club’s blessing is a formality, and formalities are for people with time.",
           "sanityCost": 22,
           "concealmentCost": 15,
           "lossOfControlChance": 0.45
@@ -152,7 +157,7 @@
             "label": "Digest the Magician potion"
           }
         ],
-        "ritualText": "There is no circle for this one. The Fool's instruction is a single line: be no one, thoroughly, for as long as it takes.",
+        "ritualText": "There is no circle for this one. The Fool’s instruction is a single line: be no one, thoroughly, for as long as it takes.",
         "temptation": {
           "label": "Wear it before it fits",
           "description": "A face that is not yours, on a self that has not finished being yours.",
@@ -166,7 +171,7 @@
       "sequence": 6,
       "title": "Faceless",
       "potionName": "Faceless Potion",
-      "description": "You can be someone else entirely — their face, their voice, the particular way they hold a cup. The Club's records note, without comment, that Sequence 6 Seers have the highest rate of forgetting which face was the original.",
+      "description": "You can be someone else entirely — their face, their voice, the particular way they hold a cup. The Club’s records note, without comment, that Sequence 6 Seers have the highest rate of forgetting which face was the original.",
       "spiritualityMax": 115,
       "sanityMax": 130,
       "grantsAbilities": [
@@ -174,7 +179,258 @@
         "hollow_step",
         "read_the_room"
       ],
-      "narrative": "You take off a face and there is a moment — a short one, you tell yourself — where you cannot remember what goes underneath."
+      "narrative": "You take off a face and there is a moment — a short one, you tell yourself — where you cannot remember what goes underneath.",
+      "advancement": {
+        "toSequence": 5,
+        "toTitle": "Marionettist",
+        "requirements": [
+          {
+            "type": "flag",
+            "flag": "v3_scepter",
+            "label": "Take what the sea leaves on the altar"
+          },
+          {
+            "type": "item",
+            "itemId": "formula_marionettist",
+            "label": "Obtain the Marionettist formula"
+          },
+          {
+            "type": "item",
+            "itemId": "potion_marionettist",
+            "label": "Obtain the Marionettist potion"
+          },
+          {
+            "type": "digestion",
+            "value": 100,
+            "label": "Digest the potion you are already carrying"
+          }
+        ],
+        "ritualText": "The faces you have worn are laid out like a hand of cards, and you pick the one that is least you. The potion goes down while you are wearing it, so that whatever it changes, it changes somebody else.",
+        "temptation": {
+          "label": "Wear a face you have not earned",
+          "description": "Take the rite half-digested, in a borrowed face. It will hold. It is holding it afterwards that costs.",
+          "sanityCost": 18,
+          "concealmentCost": 14,
+          "lossOfControlChance": 0.3
+        }
+      }
+    },
+    {
+      "sequence": 5,
+      "title": "Marionettist",
+      "potionName": "Marionettist Potion",
+      "description": "Strings, and the habit of seeing them. A Marionettist can move what has stopped moving, and is expected to have a very clear idea of why he wants to.",
+      "spiritualityMax": 150,
+      "sanityMax": 150,
+      "grantsAbilities": [
+        "spirit_threads",
+        "puppet_double",
+        "hanged_thread"
+      ],
+      "narrative": "You notice, walking through a crowd, that you have started counting the threads. Nobody is holding them. That is not the same as nobody being able to.",
+      "advancement": {
+        "toSequence": 4,
+        "toTitle": "Bizarro Sorcerer",
+        "requirements": [
+          {
+            "type": "flag",
+            "flag": "v4_undying",
+            "label": "Learn what it costs a man not to die"
+          },
+          {
+            "type": "item",
+            "itemId": "formula_bizarro",
+            "label": "Obtain the Bizarro Sorcerer formula"
+          },
+          {
+            "type": "item",
+            "itemId": "potion_bizarro",
+            "label": "Obtain the Bizarro Sorcerer potion"
+          },
+          {
+            "type": "digestion",
+            "value": 100,
+            "label": "Digest the potion you are already carrying"
+          }
+        ],
+        "ritualText": "Threads first, then the potion. A Marionettist who drinks before he has hold of his own strings finds out whose hand is on them, and it is a short discovery.",
+        "temptation": {
+          "label": "Drink before the threads are set",
+          "description": "Faster, and it works, and for a week you will not be certain which of your own movements you decided on.",
+          "sanityCost": 20,
+          "concealmentCost": 12,
+          "lossOfControlChance": 0.34
+        }
+      }
+    },
+    {
+      "sequence": 4,
+      "title": "Bizarro Sorcerer",
+      "potionName": "Bizarro Sorcerer Potion",
+      "description": "A demigod, in the language the Church uses when it is being careful. Places, names and events become things you can exchange for one another, provided you can pay the difference.",
+      "spiritualityMax": 200,
+      "sanityMax": 180,
+      "grantsAbilities": [
+        "mystery_swap",
+        "bizarre_charm",
+        "dream_walk"
+      ],
+      "narrative": "Somewhere between the third exchange and the fourth, you stop asking whether the world minds.",
+      "advancement": {
+        "toSequence": 3,
+        "toTitle": "Scholar of Yore",
+        "requirements": [
+          {
+            "type": "flag",
+            "flag": "v4_ashes_recovered",
+            "label": "Take Saint Selena’s ashes back off the man who took them"
+          },
+          {
+            "type": "item",
+            "itemId": "formula_scholar",
+            "label": "Obtain the Scholar of Yore formula"
+          },
+          {
+            "type": "item",
+            "itemId": "potion_scholar",
+            "label": "Obtain the Scholar of Yore potion"
+          },
+          {
+            "type": "digestion",
+            "value": 100,
+            "label": "Digest the potion you are already carrying"
+          }
+        ],
+        "ritualText": "Two mysteries are laid side by side and told to change places. One of them is you. The rite is over when the swap does not swap back.",
+        "temptation": {
+          "label": "Swap without a second mystery",
+          "description": "Use your own two halves as the pair. It saves a fortnight of hunting and costs something you will not be able to name afterwards.",
+          "sanityCost": 22,
+          "concealmentCost": 16,
+          "lossOfControlChance": 0.38
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "title": "Scholar of Yore",
+      "potionName": "Scholar of Yore Potion",
+      "description": "History stops being a thing that happened and becomes a room you may enter, provided you knock. Ask a wall what it stood through and it will tell you, at the usual price: what you are told, you were also there for.",
+      "spiritualityMax": 260,
+      "sanityMax": 220,
+      "grantsAbilities": [
+        "witness_of_yore",
+        "the_long_record",
+        "borrowed_epoch"
+      ],
+      "narrative": "You woke knowing the name of the mason who cut the step outside your door, and how he died, and that he had been thinking about his daughter at the time. None of it was any use. All of it was true.",
+      "advancement": {
+        "toSequence": 2,
+        "toTitle": "Miracle Invoker",
+        "requirements": [
+          {
+            "type": "flag",
+            "flag": "v6_truth",
+            "label": "Look back at the man who performed the ritual"
+          },
+          {
+            "type": "item",
+            "itemId": "formula_miracle",
+            "label": "Obtain the Miracle Invoker formula"
+          },
+          {
+            "type": "item",
+            "itemId": "potion_miracle",
+            "label": "Obtain the Miracle Invoker potion"
+          },
+          {
+            "type": "digestion",
+            "value": 100,
+            "label": "Digest the Scholar of Yore potion"
+          }
+        ],
+        "ritualText": "The rite is read out of a book that was read out of another book, back and back until the first hand is a rumour. That is the whole of it: the Scholar of Yore does not learn the past. He is admitted to it.",
+        "temptation": {
+          "label": "Read it out of the wrong book",
+          "description": "A copy of a copy, and the errors in it are load-bearing. It will still admit you. It will admit other things at the same time.",
+          "sanityCost": 24,
+          "concealmentCost": 14,
+          "lossOfControlChance": 0.4
+        }
+      }
+    },
+    {
+      "sequence": 2,
+      "title": "Miracle Invoker",
+      "potionName": "Miracle Invoker Potion",
+      "description": "You may ask for a thing to be otherwise, and sometimes it is. Not often, never twice the same way, and never without a bill arriving later made out to somebody — occasionally you.",
+      "spiritualityMax": 340,
+      "sanityMax": 280,
+      "grantsAbilities": [
+        "hour_of_miracles",
+        "sign_of_fortune",
+        "borrowed_miracle"
+      ],
+      "narrative": "You asked, out loud, in an empty room, for one small impossible thing. It happened. You sat down afterwards and did not ask for anything else for a fortnight.",
+      "advancement": {
+        "toSequence": 1,
+        "toTitle": "Attendant of Mysteries",
+        "requirements": [
+          {
+            "type": "flag",
+            "flag": "v7_wish",
+            "label": "Die in the Corpse Cathedral, by arrangement"
+          },
+          {
+            "type": "item",
+            "itemId": "formula_attendant",
+            "label": "Obtain the Attendant of Mysteries formula"
+          },
+          {
+            "type": "item",
+            "itemId": "potion_attendant",
+            "label": "Obtain the Attendant of Mysteries potion"
+          },
+          {
+            "type": "digestion",
+            "value": 100,
+            "label": "Digest the Miracle Invoker potion"
+          }
+        ],
+        "ritualText": "A miracle is a thing asked for and granted, and the asking is the difficult half. You lay out the circle, and for the first time the circle is not a formality: something on the other side of it is listening for the request.",
+        "temptation": {
+          "label": "Ask before the circle is closed",
+          "description": "The request goes out through a gap. Something answers it that was not the thing you addressed.",
+          "sanityCost": 26,
+          "concealmentCost": 18,
+          "lossOfControlChance": 0.44
+        }
+      }
+    },
+    {
+      "sequence": 1,
+      "title": "Attendant of Mysteries",
+      "potionName": "Attendant of Mysteries Potion",
+      "description": "The King of Angels. Every mystery on this pathway attends on you now, which sounds like service and is in fact surveillance: you are the thing they gather around, and you cannot put them down.",
+      "spiritualityMax": 500,
+      "sanityMax": 400,
+      "grantsAbilities": [
+        "attendants_answer",
+        "ceremonial_door",
+        "fools_hand",
+        "above_the_fog"
+      ],
+      "narrative": "Sequence 1. The King of Angels, with a chair above the fog and a name four people say aloud on Sunday nights, and underneath it a man from Tingen who still counts his change."
+    },
+    {
+      "sequence": 0,
+      "title": "The Fool",
+      "potionName": "None. There is no potion for a uniqueness",
+      "description": "Sequence 0 is not a rank but a seat, and it is already occupied, and the occupant is a story people tell about a grey fog and a bronze long table. Book One does not reach it.",
+      "spiritualityMax": 500,
+      "sanityMax": 400,
+      "grantsAbilities": [],
+      "narrative": "Not in this book."
     }
   ]
 }

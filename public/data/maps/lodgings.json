@@ -1,0 +1,211 @@
+{
+  "id": "lodgings",
+  "name": "Your Room, West Borough",
+  "ambient": "#2a2118",
+  "encounterChance": 0,
+  "legend": {
+    "#": {
+      "floor": 8,
+      "collide": true
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
+    ".": {
+      "floor": 3
+    },
+    "B": {
+      "floor": 3,
+      "object": 23,
+      "collide": true
+    },
+    "E": {
+      "floor": 3,
+      "object": 25,
+      "collide": true
+    },
+    "F": {
+      "floor": 3,
+      "object": 22,
+      "collide": true
+    },
+    "A": {
+      "floor": 3,
+      "object": 18,
+      "collide": true
+    },
+    "C": {
+      "floor": 3,
+      "object": 26,
+      "collide": true
+    },
+    "t": {
+      "floor": 3,
+      "object": 16,
+      "collide": true
+    },
+    "L": {
+      "floor": 3,
+      "object": 24,
+      "collide": true
+    },
+    "r": {
+      "floor": 5
+    },
+    "T": {
+      "floor": 5,
+      "object": 16,
+      "collide": true
+    },
+    "c": {
+      "floor": 5,
+      "object": 17,
+      "collide": true
+    },
+    "S": {
+      "floor": 3,
+      "object": 18,
+      "collide": true
+    },
+    "k": {
+      "floor": 3,
+      "object": 26,
+      "collide": true
+    },
+    "l": {
+      "floor": 3,
+      "object": 24,
+      "collide": true
+    }
+  },
+  "rows": [
+    "####W###W#####",
+    "#............#",
+    "#.B.k....S..F#",
+    "#............#",
+    "#.E..rrrr.l.L#",
+    "#....rTTr....#",
+    "#...lrctr....#",
+    "#............#",
+    "#.A.k.....S.C#",
+    "#............#",
+    "######D#######"
+  ],
+  "spawn": {
+    "x": 6,
+    "y": 8
+  },
+  "intro": {
+    "dialogue": "dlg_prologue",
+    "flag": "prologue_played"
+  },
+  "hotspots": [
+    {
+      "id": "home_bed",
+      "x": 2,
+      "y": 2,
+      "name": "Your Bed",
+      "description": "A narrow frame, a mattress that has given up arguing, and sheets Melissa changed while you were still unconscious on them.",
+      "action": "rest",
+      "safeRest": true,
+      "icon": 4
+    },
+    {
+      "id": "home_desk",
+      "x": 2,
+      "y": 4,
+      "name": "Your Desk",
+      "description": "The diagram is still on it, in a hand that is now yours: concentric circles drawn carefully with a compass by somebody who was copying, not composing.\n\nUnderneath it, in the same hand, four words written the night everything happened. *Everyone will die, including me.*",
+      "clues": [],
+      "icon": 11
+    },
+    {
+      "id": "home_window",
+      "x": 4,
+      "y": 0,
+      "name": "The Window",
+      "description": "Iron Cross Street, three floors down, going about its evening under the gas. Tingen is a mill town pretending to be a university town, and at this hour it stops pretending."
+    },
+    {
+      "id": "home_hearth",
+      "x": 12,
+      "y": 2,
+      "name": "The Grate",
+      "description": "Coal is dearer than it was. Benson has been burning it in the evenings only and calling that discipline, which is what you call arithmetic when your sister is in the room."
+    },
+    {
+      "id": "home_shelf",
+      "x": 2,
+      "y": 8,
+      "name": "The Shelf",
+      "description": "Six books, four borrowed from the university and two overdue. A history of the Intis wars, a grammar — and pushed to the back where the light does not reach, a slim thing with no title on the spine at all."
+    },
+    {
+      "id": "home_press",
+      "x": 12,
+      "y": 8,
+      "name": "The Clothes Press",
+      "description": "One good coat, brushed. One working coat, not. Everything in here fits you exactly, which you have decided to stop finding remarkable."
+    },
+    {
+      "id": "home_circle",
+      "x": 3,
+      "y": 4,
+      "name": "The Chalk Circle",
+      "description": "Four points, a copied rite, and a way of asking that is not meant for people down here.",
+      "action": "dialogue",
+      "dialogue": "dlg_grey_fog",
+      "locked": {
+        "reason": "You would need to be something more than a clerk before you tried this.",
+        "bypass": {
+          "flag": "drank_seer"
+        }
+      },
+      "icon": 13
+    }
+  ],
+  "npcs": [
+    {
+      "id": "benson",
+      "x": 9,
+      "y": 6,
+      "dialogue": "dlg_benson",
+      "wander": 1
+    },
+    {
+      "id": "landlady",
+      "x": 5,
+      "y": 9,
+      "dialogue": "dlg_landlady",
+      "requires": {
+        "flag": "rent_missed"
+      }
+    }
+  ],
+  "exits": [
+    {
+      "x": 6,
+      "y": 10,
+      "toMap": "ashfen_row",
+      "toX": 3,
+      "toY": 7,
+      "label": "Iron Cross St"
+    },
+    {
+      "x": 4,
+      "y": 5,
+      "toMap": "grey_fog",
+      "toX": 9,
+      "toY": 8,
+      "label": "Above the fog",
+      "requires": {
+        "flag": "tarot_club_founded"
+      }
+    }
+  ]
+}

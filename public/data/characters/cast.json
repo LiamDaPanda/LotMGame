@@ -1,98 +1,266 @@
 [
   {
     "id": "player",
-    "name": "You",
-    "title": "The Querent",
+    "name": "Klein Moretti",
+    "title": "Tingen, 1349",
     "spriteRow": 0,
-    "clubMember": true,
-    "bio": "Newest of the Club, and the only member with a shingle on a door."
+    "bio": "A history graduate of Tingen University who woke at his own desk on the twenty-eighth of June in a body that had just shot itself, with somebody else’s memories arriving a beat behind his own.",
+    "clubMember": false
   },
   {
     "id": "hermit",
-    "name": "Ambrose Quill",
-    "title": "The Hermit",
+    "name": "Dunn Smith",
+    "title": "Captain, Seventh Unit",
     "spriteRow": 1,
-    "clubMember": true,
-    "bio": "Keeps the Club's records and hands out its work. Speaks slowly on purpose, so you will hear the part he leaves out."
+    "bio": "Runs the Tingen Nighthawks out of the second floor of No. 36 Zouteland Street, under a brass plate that says Blackthorn Security Company and a warrant card that says Seventh Unit, Special Operations Department, Awwa County Police. Forgets things, and knows he does.",
+    "clubMember": true
   },
   {
     "id": "star",
-    "name": "Wren Falkirk",
-    "title": "The Star",
+    "name": "Rozanne",
+    "title": "Blackthorn’s receptionist",
     "spriteRow": 2,
-    "clubMember": true,
-    "bio": "Quartermaster. Everything the Club owns passes through her ledger, and she remembers every line of it."
+    "bio": "Civilian, early twenties, and the only person in the building who knows where anything is filed. Books the appointments and countersigns the requisitions.",
+    "clubMember": true
   },
   {
     "id": "tower",
-    "name": "Bryce Halloran",
-    "title": "The Tower",
+    "name": "Leonard Mitchell",
+    "title": "Nighthawk",
     "spriteRow": 3,
-    "clubMember": true,
-    "bio": "Constabulary, once. Watches the doors and tells you which factions have noticed you this week."
+    "bio": "Handsome, idle, and the fastest man on the team to notice a thing nobody wanted noticed. Owes everyone in the office money.",
+    "clubMember": true
   },
   {
     "id": "moon",
-    "name": "Ilma Voss",
-    "title": "The Moon",
+    "name": "Old Neil",
+    "title": "Nighthawk",
     "spriteRow": 4,
-    "clubMember": true,
-    "bio": "Advanced twice in a year and will not discuss the second time. Knows more about digestion than anyone alive should have needed to learn."
+    "bio": "Was a scholar before he was this, and explains the theory whether or not anybody asked, which is how the rest of the team learned any.",
+    "clubMember": true
   },
   {
     "id": "constable",
-    "name": "Constable Rell",
-    "title": "Ashfen Row beat",
+    "name": "Sergeant Gorman",
+    "title": "Awwa County Police",
     "spriteRow": 5,
     "clubMember": false,
-    "bio": "Twenty years on the same six streets. Not stupid — incurious, which is cheaper."
+    "bio": "Wrote up three deaths in one week as unrelated because he was told to, and has been sleeping badly since."
   },
   {
     "id": "widow",
-    "name": "Ilsabet Crane",
-    "title": "The complainant",
+    "name": "Mr. Franky",
+    "title": "Your landlord",
     "spriteRow": 6,
     "clubMember": false,
-    "bio": "The dead man's sister-in-law. Paid the Club's fee out of a jar she had been saving for a headstone."
+    "bio": "Lets the terraces on Iron Cross Street. Wants the quarter on the day, is sorry about your friends, and would like the room repainted before anyone else has to look at it."
   },
   {
     "id": "apprentice",
-    "name": "Cass Whitlow",
-    "title": "Halloway's apprentice",
+    "name": "Hanass",
+    "title": "Sold him the notebook",
     "spriteRow": 7,
     "clubMember": false,
-    "bio": "Nineteen, quick with figures, and has not slept."
+    "bio": "One of the two men who put the Antigonus family’s notebook in Welch McGovern’s hands, and who has been extremely calm about it ever since."
   },
   {
     "id": "landlady",
-    "name": "Mrs. Peale",
-    "title": "Your landlady",
+    "name": "Melissa Moretti",
+    "title": "Your sister",
     "spriteRow": 8,
     "clubMember": false,
-    "bio": "Collects on the day, not the day after."
+    "bio": "Technical school, top of her year, and doing sums about this household she should not have to be doing."
   },
   {
     "id": "rival",
-    "name": "Mr. Vane",
-    "title": "Collector",
+    "name": "Quill of Alzuhod",
+    "title": "Arranged the sale",
     "spriteRow": 9,
     "clubMember": false,
-    "bio": "Buys sealed things. Nobody has established what he does with them."
+    "bio": "Never handles the goods and never signs anything. Arranged the notebook’s last change of owner and has not stopped wanting it back."
   },
   {
     "id": "pawnbroker",
-    "name": "Ezra Halloway",
+    "name": "Welch McGovern",
     "title": "Deceased",
     "spriteRow": 10,
     "clubMember": false,
-    "bio": "Pawnbroker of Ashfen Row for thirty-one years. Took in one thing he should not have."
+    "bio": "Read history under Associate Professor Cohen alongside you, bought a black hardcover notebook in May from men he should not have dealt with, and asked two friends to help him read it."
   },
   {
     "id": "dockhand",
     "name": "Sil Mowbray",
-    "title": "Ash ferry hand",
+    "title": "Tussock ferry hand",
     "spriteRow": 11,
     "clubMember": false,
-    "bio": "Knows the river's timetable and everyone who has ever missed it. Sells both."
+    "bio": "Works the night crossing, sees who goes over and when, and will tell you for the price of a drink he will not stop at one of."
+  },
+  {
+    "id": "benson",
+    "name": "Benson Moretti",
+    "title": "Your brother",
+    "spriteRow": 12,
+    "clubMember": false,
+    "bio": "Clerk at a shipping office and, since your father died, the reason this family still eats. He is the one who opened the door and found you."
+  },
+  {
+    "id": "bieber",
+    "name": "Ray Bieber",
+    "title": "Whoever has it now",
+    "spriteRow": 13,
+    "bio": "A name and an address on a parcel receipt in your own handwriting, posted on the night you do not remember. Whatever the notebook has been doing to him since, it has had eight days.",
+    "clubMember": false
+  },
+  {
+    "id": "clown",
+    "name": "The Clown",
+    "title": "Secret Order",
+    "spriteRow": 14,
+    "bio": "White paint, a red mouth, and manners. Wants the Antigonus family’s notebook, and is prepared to trade for it in the only currency you are short of: the name of the rung above you.",
+    "clubMember": false
+  },
+  {
+    "id": "justice",
+    "name": "Audrey Hall",
+    "title": "Miss Justice",
+    "spriteRow": 15,
+    "bio": "Answered a summons she had no way of receiving and behaved as though she had expected it. Very young, very well brought up, and taking notes.",
+    "clubMember": false
+  },
+  {
+    "id": "hanged_man",
+    "name": "Alger Wilson",
+    "title": "Mr. Hanged Man",
+    "spriteRow": 16,
+    "bio": "Salt, powder and a captain’s caution. Said less than anyone at the first gathering and worked out more, which is its own kind of tell.",
+    "clubMember": false
+  },
+  {
+    "id": "daly",
+    "name": "Daly Simone",
+    "title": "Nighthawk",
+    "spriteRow": 17,
+    "bio": "Seconded to Tingen for the notebook, and the reason the team walks towards the thing everyone else is running from.",
+    "clubMember": false
+  },
+  {
+    "id": "zangwill",
+    "name": "Ince Zangwill",
+    "title": "Aurora Order",
+    "spriteRow": 18,
+    "clubMember": false,
+    "bio": "A deacon of the Aurora Order with a face like a sculpture and one eye that stopped working a long time ago. Wants Saint Selena’s ashes, and has worked out that the fastest route to them runs through the Nighthawks."
+  },
+  {
+    "id": "wright",
+    "name": "Ian Wright",
+    "title": "Brought the commission",
+    "spriteRow": 19,
+    "clubMember": false,
+    "bio": "Walked into a private detective’s rooms on a Tuesday with a problem he thought was small, and set four intelligence services moving without ever learning that he had."
+  },
+  {
+    "id": "kohler",
+    "name": "Old Kohler",
+    "title": "East Borough",
+    "spriteRow": 20,
+    "clubMember": false,
+    "bio": "Has worked since he was nine and is proud of it the way a man is proud of a scar. Knows every family on his stair and what each of them is owed."
+  },
+  {
+    "id": "liz",
+    "name": "Liz",
+    "title": "East Borough",
+    "spriteRow": 21,
+    "clubMember": false,
+    "bio": "Eleven, and keeping her family’s accounts because nobody else in it can. Would like the smog to stop, and has no expectation that it will."
+  },
+  {
+    "id": "capim",
+    "name": "Capim",
+    "title": "Sells people",
+    "spriteRow": 22,
+    "clubMember": false,
+    "bio": "Keeps a ledger of names, weights and prices, and is unbothered by any of it. The ledger is why he is worth finding and why he will not be missed."
+  },
+  {
+    "id": "lanevus",
+    "name": "Lanevus",
+    "title": "Wants the Creator awake",
+    "spriteRow": 23,
+    "clubMember": false,
+    "bio": "Believes the world is a draft and that the author can be recalled to finish it. Has the funding, the doctrine and, for a fortnight, the means."
+  },
+  {
+    "id": "cattleya",
+    "name": "Cattleya",
+    "title": "Admiral of Stars",
+    "spriteRow": 24,
+    "clubMember": false,
+    "bio": "Commands the Rorsted Archipelago’s most feared fleet and is owed favours by four flags that officially want her hanged. Will take you to the Sea of Ruins if the price is interesting rather than large."
+  },
+  {
+    "id": "bernadette",
+    "name": "Bernadette Gustav",
+    "title": "Of the Gustav line",
+    "spriteRow": 25,
+    "clubMember": false,
+    "bio": "Carries her ancestor’s chestnut curls and rather more of his temperament than the Intis court would like. Curious about you in a way that is not entirely safe."
+  },
+  {
+    "id": "franklee",
+    "name": "Frank Lee",
+    "title": "Keeps things in jars",
+    "spriteRow": 26,
+    "clubMember": false,
+    "bio": "A biologist by inclination and something considerably worse by practice, and delighted about every part of it. His jars are labelled, which is the most reassuring thing about them."
+  },
+  {
+    "id": "anderson",
+    "name": "Anderson Hood",
+    "title": "Hunter",
+    "spriteRow": 27,
+    "clubMember": false,
+    "bio": "Hunts the things other people run from, on the reasoning that they are easier to find that way. Steady, unhurried, and unwilling to explain his scars."
+  },
+  {
+    "id": "zaratul",
+    "name": "Zaratul",
+    "title": "Sealed in the Foggy Town",
+    "spriteRow": 28,
+    "clubMember": false,
+    "bio": "An old man in a black hooded robe with eyes like water that has never had light in it. Has been waiting in a town made of fog for somebody to open the door, and is very good at gratitude."
+  },
+  {
+    "id": "mister_a",
+    "name": "Mr. A",
+    "title": "Numinous Episcopate",
+    "spriteRow": 29,
+    "clubMember": false,
+    "bio": "A gentleman of the Numinous Episcopate whose file holds one initial, three photographs of other men, and a note advising against arrest."
+  },
+  {
+    "id": "george",
+    "name": "George III",
+    "title": "King of Loen",
+    "spriteRow": 30,
+    "clubMember": false,
+    "bio": "Rules a kingdom at war and is about to give the speech of his life, which is a more literal statement than his ministers understand."
+  },
+  {
+    "id": "amon",
+    "name": "Amon",
+    "title": "Angel of Time",
+    "spriteRow": 31,
+    "clubMember": false,
+    "bio": "Sequence 1 of the Error pathway, child of the Ancient Sun God, and the thing that has held the Antigonus family’s notebook for four hundred years. Leaves threads of himself in objects and lets the threads do the living."
+  },
+  {
+    "id": "roselle",
+    "name": "Roselle Gustav",
+    "title": "Emperor, deceased",
+    "spriteRow": 32,
+    "clubMember": false,
+    "bio": "Came from the same place you did, three hundred years earlier, and left a diary in a code only another exile could read. Everything you know about this world that you should not know, you owe to him."
   }
 ]

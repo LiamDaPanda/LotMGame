@@ -1,0 +1,472 @@
+[
+  {
+    "id": "dlg_bayam",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Bayam, in the Rorsted Archipelago: a free port in the sense that nobody has yet worked out who to charge for it.\n\nFour flags on the roadstead and none of them meaning anything, a market that sells Beyonder characteristics beside the salt fish, and a Church of Storms deacon on every third corner pretending to be interested in the weather.",
+        "choices": [
+          {
+            "text": "And who came ashore?",
+            "goto": "name"
+          }
+        ]
+      },
+      "name": {
+        "text": "Gehrman Sparrow. Adventurer, bounty hunter, and — the port has decided on its own — a madman, on the grounds that he asks his questions in the tone of a man who has already been told the answer.\n\nThe madness is deliberate. A Faceless who is thought eccentric is a Faceless nobody looks at twice.",
+        "choices": [
+          {
+            "text": "Get to work.",
+            "goto": "close"
+          }
+        ]
+      },
+      "close": {
+        "text": "Above the fog, Mr. Hanged Man has gone very quiet about the Rorsted Archipelago, which is the most informative thing he has ever done.",
+        "effect": {
+          "flags": [
+            "v3_arrived"
+          ],
+          "skills": {
+            "streetwise": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_sparrow",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The tavern with no name is where a bounty is agreed in this port. Tonight’s is on Mithor King, third mate to the Vice-Admiral of Ailment, who has eleven murders on the sheet and a habit of taking the Church’s mail ships.\n\nFour men at the corner table have priced your coat. One of them has priced you, which is a different calculation and a worse one for him.",
+        "choices": [
+          {
+            "text": "Be the madman.",
+            "goto": "mad"
+          },
+          {
+            "text": "Be the professional.",
+            "goto": "pro"
+          }
+        ]
+      },
+      "mad": {
+        "text": "You do the whole performance: the flat stare, the questions in the wrong order, the pause held four seconds past comfortable. Gehrman Sparrow buys a round for a table that has just decided, quietly and unanimously, not to test him.\n\nBy morning the port has agreed he is dangerous, which is worth more than being dangerous and costs nothing.",
+        "effect": {
+          "skills": {
+            "rhetoric": 1
+          },
+          "digestion": 12
+        },
+        "choices": [
+          {
+            "text": "Take the bounty.",
+            "goto": "take"
+          }
+        ]
+      },
+      "pro": {
+        "text": "You do it plainly: the sheet, the price, the terms, and a receipt. The table decides you are a contractor.\n\nContractors are cheaper to hire and much cheaper to cross, and you will spend the next fortnight correcting the impression.",
+        "effect": {
+          "pence": 1200,
+          "concealment": 4
+        },
+        "choices": [
+          {
+            "text": "Take the bounty.",
+            "goto": "take"
+          }
+        ]
+      },
+      "take": {
+        "text": "Mithor King is found four days later off the northern shoal, and what is found is enough to satisfy the sheet and not enough to satisfy anybody’s curiosity.\n\nThe name Gehrman Sparrow goes round the Archipelago in a week: a madman, a bounty hunter, and — the useful part — a man whose employer nobody can name.",
+        "effect": {
+          "flags": [
+            "v3_sparrow"
+          ],
+          "pence": 3600,
+          "digestion": 14,
+          "sanity": -5
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_die",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Darkwill is a merchant prince with a lead-lined case and a superstition he is paying a captain’s wage to have humoured.\n\nThe case holds the Die of Probability. It is not a superstition. Everyone within forty feet of it has been having the kind of luck that averages out to nothing and feels, in the moment, like being singled out.",
+        "choices": [
+          {
+            "text": "Sit with it all the way to Oravi.",
+            "goto": "sit"
+          },
+          {
+            "text": "Ask what it does to the man carrying it.",
+            "goto": "ask"
+          }
+        ]
+      },
+      "ask": {
+        "text": "It does not curse. It re-weights. Every outcome that could go either way starts going the way that makes the better story, and a life made of better stories is a life that ends early and memorably.\n\nDarkwill has been rolling well for two years. That is the part that frightens him, and he is right to be frightened, and he cannot say so to his own people.",
+        "effect": {
+          "flags": [
+            "v3_die_read"
+          ],
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Sit with it all the way to Oravi.",
+            "goto": "sit"
+          }
+        ]
+      },
+      "sit": {
+        "text": "Nine days at sea beside a sealed case, being paid to be a madman in a chair.\n\nTwice the weather turns exactly wrong. Once a man goes over the side and comes back up. On the eighth night you win four hands of cards you were not playing.\n\nOravi takes delivery. Darkwill pays. Neither of you says anything about the fourth hand.",
+        "effect": {
+          "flags": [
+            "v3_die"
+          ],
+          "pence": 5200,
+          "digestion": 16,
+          "sanity": -6
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_oravi_arrive",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Oravi Island: one town, one governor’s house, and a grove above the town where every tree leans the same way and it is not the way the wind comes from.",
+        "effect": {
+          "flags": [
+            "v3_oravi"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_rieveldt",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The table is set for Admiral Amyrius Rieveldt, who is not coming, by people who have been told he is and who will be hanged when he is not.\n\nThey want you to be him. Three days. A face, a voice, a signature, and a fleet that will do what the face tells it.",
+        "choices": [
+          {
+            "text": "Wear him.",
+            "goto": "wear"
+          },
+          {
+            "text": "Ask who is really asking.",
+            "goto": "who"
+          }
+        ]
+      },
+      "who": {
+        "text": "Nobody in the room is asking. Everybody in the room believes it was their own idea, at the same hour, in the same words, and none of them has noticed that.\n\nThe grove leans. Something in the middle of this island has an appetite, and it has looked at you, and it has found you interesting in a way that nothing safe has ever found you.",
+        "effect": {
+          "flags": [
+            "v3_mother_tree_seen"
+          ],
+          "sanity": -8,
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Wear him anyway.",
+            "goto": "wear"
+          }
+        ]
+      },
+      "wear": {
+        "text": "Three days as an admiral of a navy you have never served in.\n\nA Faceless does not put on a face. He puts down the one he had, which is the part nobody warns you about: for three days there is no Klein Moretti anywhere in the world, and nothing anywhere notices the absence.\n\nOn the third evening you take Rieveldt off and find, for eleven seconds, that you have to think about how.",
+        "effect": {
+          "flags": [
+            "v3_rieveldt"
+          ],
+          "digestion": 26,
+          "sanity": -10,
+          "concealment": 8,
+          "pence": 4800
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_mother_tree",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Every tree in the grove leans inward, toward a stump in the middle that is not a stump.\n\nThe Mother Tree of Desire does not tempt in words. It notices what you already want and moves it nearer, and then nearer, until wanting it is the shortest path from where you are standing.",
+        "choices": [
+          {
+            "text": "Ask it what it thinks you want.",
+            "goto": "want"
+          },
+          {
+            "text": "Walk back down the hill.",
+            "goto": "down"
+          }
+        ]
+      },
+      "want": {
+        "text": "To go home.\n\nNot to Tingen. To the flat with the bad radiator and the takeaway menus and the Monday morning, and the whole of it is suddenly four feet away and entirely reachable, and the only thing between you and it is a decision you would make in a heartbeat if you were one per cent less careful.\n\nYou are exactly that careful. It is not a virtue. It is Old Neil, taking his glasses off, in a back room in Tingen.",
+        "effect": {
+          "flags": [
+            "v3_mother_tree_seen"
+          ],
+          "sanity": -14,
+          "spirituality": -10,
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "end": true
+      },
+      "down": {
+        "text": "You walk back down the hill without looking at the stump, which is the correct decision and feels, the whole way down, like cowardice.",
+        "effect": {
+          "flags": [
+            "v3_mother_tree_seen"
+          ],
+          "sanity": -4
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_ruins_arrive",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The Sea of Ruins: towers under the water at a depth that says they were built dry, and four admiralties agreeing in writing that there is nothing here.\n\nCattleya’s ship is at anchor over the largest of them, and Cattleya is the only reason anything above water is still above water.",
+        "effect": {
+          "flags": [
+            "v3_ruins"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_cattleya",
+    "speaker": "cattleya",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The Admiral of Stars does not look up from the chart. ‘Mermaids,’ she says. ‘You want me to take a ship into the Sea of Ruins so that you can talk to mermaids.’\n\nA pause exactly as long as she wants it.\n\n‘Say the interesting part, Mr. Sparrow, or say nothing and I will have you rowed back.’",
+        "choices": [
+          {
+            "text": "Tell her what is down there.",
+            "goto": "tell"
+          },
+          {
+            "text": "Offer money.",
+            "goto": "money"
+          }
+        ]
+      },
+      "money": {
+        "text": "‘I have money.’ She still has not looked up. ‘Four flags want me hanged and three of them owe me favours. What I do not have is a reason.’",
+        "choices": [
+          {
+            "text": "Tell her what is down there.",
+            "goto": "tell"
+          }
+        ]
+      },
+      "tell": {
+        "text": "You tell her the truth, or as much of it as fits: that the towers were built dry, that somebody has been keeping the sea over them on purpose, and that whatever is asleep under the largest of them has been dreaming outward for two centuries and the dream has a door in it.\n\nShe looks up. ‘That,’ she says, ‘is a reason.’",
+        "effect": {
+          "flags": [
+            "v3_cattleya"
+          ],
+          "skills": {
+            "rhetoric": 1
+          },
+          "pence": -2000
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_company",
+    "speaker": "bernadette",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Three passengers who should not be on the same deck.\n\nA Gustav with her ancestor’s chestnut curls who should be at the Intis court. A naturalist called Frank Lee, delighted, with jars. And Anderson Hood, who has not put his back to the rail once in nine days.",
+        "choices": [
+          {
+            "text": "Ask the Gustav why she is here.",
+            "goto": "gustav"
+          },
+          {
+            "text": "Ask Frank Lee what is in the jars.",
+            "goto": "jars"
+          },
+          {
+            "text": "Ask Hood what he is watching for.",
+            "goto": "hood"
+          }
+        ]
+      },
+      "gustav": {
+        "text": "‘Because my family keeps a diary,’ says Bernadette Gustav, ‘and my ancestor wrote it in a code that only somebody from where he came from could read. And you, Mr. Sparrow, went pale at a phrase in it that no one at court has ever found funny.’\n\nShe smiles very pleasantly. It is the single most dangerous thing that has happened to you this year.",
+        "effect": {
+          "flags": [
+            "v3_roselle_hint"
+          ],
+          "sanity": -6,
+          "concealment": -8,
+          "skills": {
+            "observation": 1
+          }
+        },
+        "end": true
+      },
+      "jars": {
+        "text": "‘Samples!’ Frank Lee is entirely delighted, which is the most alarming quality a man can have in his line. ‘Everything in the Sea of Ruins is a variation on something that used to live somewhere with air. I am collecting the variations.’\n\nThe jars are labelled. That is the most reassuring thing about them, and it is not very.",
+        "effect": {
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "end": true
+      },
+      "hood": {
+        "text": "‘Whatever comes over the rail.’ Anderson Hood does not elaborate, does not turn round, and does not appear to be joking.\n\nOn the fourth night something comes over the rail, and he is exactly where he has been standing for nine days, and that is the whole of his explanation.",
+        "effect": {
+          "flags": [
+            "v3_hood"
+          ],
+          "skills": {
+            "observation": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_mermaid",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The mermaids of the Sea of Ruins do not sing, do not bargain, and do not come up. What they do is dream, in a shoal, in the flooded court of a tower that was built dry — and the dream is large enough to walk into.",
+        "choices": [
+          {
+            "text": "Go down and in.",
+            "goto": "dream"
+          }
+        ]
+      },
+      "dream": {
+        "text": "The dream is a hall of pillars with no roof and a sky that has been used before.\n\nAt the far end of it there is a door, and behind the door there is a court, and in the court there are chairs the size of houses with nothing sitting in them.\n\nThe Giant King’s Court. You are not meant to have seen it yet. You will spend three volumes finding out how badly you were not meant to have seen it yet.",
+        "effect": {
+          "flags": [
+            "v3_dream"
+          ],
+          "sanity": -12,
+          "spirituality": -24,
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Take what you came for.",
+            "goto": "take"
+          }
+        ]
+      },
+      "take": {
+        "text": "You come out of the water with a thing in your hands that the Church of Storms would sink a fleet for, and the last main ingredient the Marionettist formula has been waiting on.\n\nFrank Lee would like a sample. Frank Lee is not getting one.",
+        "effect": {
+          "flags": [
+            "v3_scepter"
+          ],
+          "items": [
+            "formula_marionettist"
+          ],
+          "sanity": -6
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_bone_dagger",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Yellowed, carved all over, and warm. Everything in this port has been handled by half the port. Nothing has handled this.",
+        "choices": [
+          {
+            "text": "Buy it.",
+            "goto": "buy",
+            "costPence": 1800
+          },
+          {
+            "text": "Read it first.",
+            "goto": "read",
+            "useAbilityEffect": "reveal_clue"
+          }
+        ]
+      },
+      "read": {
+        "text": "Carved from something that walked upright and objected to the process. It is a component, not a weapon, and the recipe it belongs to is not one the Church of Storms has ever admitted exists.\n\nThe sailmaker is asking eleven pounds because he thinks it is scrimshaw.",
+        "effect": {
+          "skills": {
+            "occultism": 1
+          },
+          "spirituality": -8
+        },
+        "choices": [
+          {
+            "text": "Buy it.",
+            "goto": "buy",
+            "costPence": 1800
+          }
+        ]
+      },
+      "buy": {
+        "text": "You pay eleven pounds for it and walk out with it wrapped in sailcloth, and the sailmaker tells the next man in that a madman bought his scrimshaw, which is precisely the account of the transaction you want circulating.",
+        "effect": {
+          "flags": [
+            "v3_dagger"
+          ],
+          "digestion": 8
+        },
+        "end": true
+      }
+    }
+  }
+]

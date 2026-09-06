@@ -1,0 +1,508 @@
+[
+  {
+    "id": "dlg_v2_arrive",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Backlund. The Capital of Steam, and the steam is coal: a yellow fog that stands in the streets like a tenant, that you can taste, that the East Borough breathes twelve hours a day and the West Borough discusses at dinner.\n\nRooms on Minsk Street. A brass plate. And a name on the plate that is not yours, because yours is on a stone in Tingen.",
+        "choices": [
+          {
+            "text": "Read the plate.",
+            "goto": "plate"
+          }
+        ]
+      },
+      "plate": {
+        "text": "SHERLOCK MORIARTY — CONSULTING DETECTIVE.\n\nYou chose it in an afternoon and you are already aware that you chose it badly, in the specific way a man chooses badly when he is enjoying himself. It is two names welded together and it sounds like a joke told by somebody who has read the same books you have.\n\nNobody in this city has read those books. That is the entire safety margin, and it will hold.",
+        "effect": {
+          "flags": [
+            "v2_arrived",
+            "v2_detective"
+          ],
+          "skills": {
+            "rhetoric": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Open for business.",
+            "goto": "open"
+          }
+        ]
+      },
+      "open": {
+        "text": "Above the fog, the Club has been told that Mr. Fool was silent for a fortnight because he was attending to a matter, which is true in the way that a headstone is true.\n\nMiss Justice accepted it. Mr. Hanged Man accepted it out loud and did not accept it at all.",
+        "effect": {
+          "trust": {
+            "hanged_man": -4
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_moriarty",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The card tray has been empty nine days. A consulting detective with no clients is a man paying rent on a theatre, and the performance is the point: Sherlock Moriarty has to be seen being Sherlock Moriarty or the name is worth nothing.",
+        "choices": [
+          {
+            "text": "Solve something small and be loud about it.",
+            "goto": "loud"
+          },
+          {
+            "text": "Wait. Let the first client be a good one.",
+            "goto": "wait"
+          }
+        ]
+      },
+      "loud": {
+        "text": "A stolen dog, a missing clerk, and a landlord’s ledger that did not add up, all in one week and all in the papers, and all solved by a man who announced the answer before he had any business knowing it.\n\nIt is not detection. It is a Seer with a pipe and a sense of timing. The Backlund press cannot tell the difference and would not print it if they could.",
+        "effect": {
+          "flags": [
+            "v2_reputation",
+            "act_magician_public"
+          ],
+          "pence": 2400,
+          "digestion": 14,
+          "skills": {
+            "rhetoric": 1
+          },
+          "concealment": -6
+        },
+        "choices": [
+          {
+            "text": "Now the tray fills.",
+            "goto": "tray"
+          }
+        ]
+      },
+      "wait": {
+        "text": "You wait. The rent does not.\n\nOn the ninth day a man comes up the stair who has clearly rehearsed on the landing, and you decide, listening to him rehearse, that waiting was correct.",
+        "effect": {
+          "pence": -900,
+          "digestion": 6
+        },
+        "choices": [
+          {
+            "text": "Let him in.",
+            "goto": "tray"
+          }
+        ]
+      },
+      "tray": {
+        "text": "His name is Ian Wright. His problem is small. He has been very careful to bring you a small problem, and the care is the first interesting thing about him.",
+        "effect": {
+          "flags": [
+            "v2_client"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_wright",
+    "speaker": "wright",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "‘My employer sends a courier to the same address in the East Borough every Friday,’ says Mr. Wright, turning his bowler by the brim. ‘Nothing is delivered. Nothing is collected. I checked. I would like to know what I checked, because I have not slept since I did.’",
+        "choices": [
+          {
+            "text": "Ask who the employer is.",
+            "goto": "employer"
+          },
+          {
+            "text": "Read him.",
+            "goto": "read",
+            "useAbilityEffect": "reveal_truth"
+          }
+        ]
+      },
+      "employer": {
+        "text": "‘A trading house. Loen registered, Intis money.’ He says the second half quieter than the first. ‘I am aware of how that sounds. It sounded like nothing at all until Friday.’",
+        "choices": [
+          {
+            "text": "Take the commission.",
+            "goto": "take"
+          }
+        ]
+      },
+      "read": {
+        "text": "He is not lying, and he is not telling you the shape of it either, because he does not know the shape of it. What he knows is this: three men at his trading house speak Intis in a room they think is empty, one of them has a Loen government hand and an Intis accent, and none of them handles the goods.\n\nMI9 on one side of the corridor and Intis intelligence on the other, and Mr. Wright walking between them with a bowler hat and no idea.",
+        "effect": {
+          "flags": [
+            "v2_intis"
+          ],
+          "skills": {
+            "observation": 1
+          },
+          "spirituality": -8
+        },
+        "choices": [
+          {
+            "text": "Take the commission.",
+            "goto": "take"
+          }
+        ]
+      },
+      "take": {
+        "text": "You take it for a fee he can afford and a retainer he cannot, and he pays both, which tells you more than the commission does.\n\nThe address in the East Borough is behind a cooperage. The cart goes in loaded and comes out empty.",
+        "effect": {
+          "flags": [
+            "v2_commission"
+          ],
+          "pence": 1800,
+          "trust": {},
+          "skills": {
+            "streetwise": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_faces",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Three faces on hooks. A Tingen clerk who died in September. A consulting detective who did not exist in August. And a sea officer’s coat with salt in the seams, which is not a face yet and is going to have to be one.\n\nA Magician is a man who can wear a thing convincingly. A Faceless is a man for whom that sentence has stopped being a metaphor.",
+        "choices": [
+          {
+            "text": "Practise the detective until it stops being a decision.",
+            "goto": "practise"
+          },
+          {
+            "text": "Close the cabinet.",
+            "goto": "close"
+          }
+        ]
+      },
+      "practise": {
+        "text": "You do a full day as Sherlock Moriarty with nobody watching: the walk, the pipe he never lights, the four-second pauses, the deductions announced to an empty room in a voice that expects to be correct.\n\nIt is absurd. It is also, according to a man in Tingen who took his glasses off to say so, the only method that has ever worked.",
+        "effect": {
+          "digestion": 20,
+          "skills": {
+            "rhetoric": 1
+          },
+          "flags": [
+            "act_magician_public"
+          ]
+        },
+        "end": true
+      },
+      "close": {
+        "text": "You close it and lock it and put the key where the charwoman will find it if she is the sort of charwoman who is also something else, which is a test you have been running for three weeks and which she keeps passing.",
+        "effect": {
+          "concealment": 4
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_east_arrive",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The East Borough is where the Capital of Steam keeps the steam.\n\nSix families to a stair. One tap to a street. A fog the colour of strong tea that does not lift between November and March and has not lifted since August this year, which nobody official has yet agreed is unusual.",
+        "effect": {
+          "flags": [
+            "v2_east"
+          ],
+          "sanity": -3
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_kohler",
+    "speaker": "kohler",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "‘You’re the detective.’ Old Kohler does not get up. ‘Don’t take that as respect. I’ve seen four of you and none of you came back twice.’\n\nHe has kept the accounts of six families for thirty years, in a hand that got smaller as the light in this stair got worse.",
+        "choices": [
+          {
+            "text": "Ask what he has written down lately.",
+            "goto": "book"
+          },
+          {
+            "text": "Ask about the cooperage.",
+            "goto": "cooperage"
+          }
+        ]
+      },
+      "book": {
+        "text": "He turns the book round. Rent, coal, burial club — and a fourth column, added in August, headed only with a dash.\n\n‘Deaths,’ he says. ‘Sixty-one on this stair and the two either side. I started counting because the parish stopped.’",
+        "effect": {
+          "flags": [
+            "v2_kohler_count"
+          ],
+          "clues": [],
+          "skills": {
+            "observation": 1
+          }
+        },
+        "end": true
+      },
+      "cooperage": {
+        "text": "‘Cart goes in Tuesdays and Fridays. Comes out lighter.’ He looks at you steadily. ‘Girls from the north mostly. Boys sometimes. Nobody on this stair has said that out loud to a man in a good coat before, and I’d like it noted that I’ve just done it.’",
+        "effect": {
+          "flags": [
+            "v2_capim_named"
+          ],
+          "skills": {
+            "streetwise": 1
+          },
+          "trust": {}
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_liz",
+    "speaker": "liz",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The girl at the head of the water queue has the whole street’s order on the back of a handbill and is not going to lose her place for anybody.\n\n‘Eleven buckets,’ she says. ‘You’re not on it.’",
+        "choices": [
+          {
+            "text": "Ask what she would put on it, if she could.",
+            "goto": "wish"
+          },
+          {
+            "text": "Buy the whole queue’s water.",
+            "goto": "buy",
+            "costPence": 600
+          }
+        ]
+      },
+      "wish": {
+        "text": "She thinks about it properly, which most adults would not. ‘A tap that runs Sundays. My brother’s chest to stop making that noise. And the fog off, but I know that one’s daft.’\n\nShe goes back to her list. She is eleven and she is running a street, and you can feel the exact shape of what this city is for.",
+        "effect": {
+          "sanity": -4,
+          "flags": [
+            "v2_liz_met"
+          ]
+        },
+        "end": true
+      },
+      "buy": {
+        "text": "You pay the water-seller for eleven buckets and one more, and she writes you onto the bottom of the handbill in a very careful hand, because a list is a list.\n\nIt changes nothing. You do it anyway, and note, with the detachment of a man who has been dead once, that you did not do it for them.",
+        "effect": {
+          "flags": [
+            "v2_liz_met"
+          ],
+          "sanity": 3,
+          "skills": {
+            "streetwise": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_capim",
+    "speaker": "capim",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The yard behind the cooperage has a ledger in it, and a man keeping the ledger, and the ledger has columns for names, weights and prices.\n\nCapim looks up without hurrying. He has a gentleman in his yard and he has had gentlemen in his yard before.",
+        "choices": [
+          {
+            "text": "Ask what the Intis money is buying.",
+            "goto": "ask"
+          },
+          {
+            "text": "Take the ledger.",
+            "goto": "take"
+          }
+        ]
+      },
+      "ask": {
+        "text": "‘Bodies,’ he says, pleasantly. ‘Living ones, going out. That’s trade. The other lot want them delivered somewhere and don’t want them back, and I’ve never asked, because a man who asks gets a smaller cut.’\n\nHe taps the page. ‘Lanevus. That’s the name on the receipts. Do what you like with it, I’ve been paid.’",
+        "effect": {
+          "flags": [
+            "v2_lanevus_named"
+          ],
+          "skills": {
+            "streetwise": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "And then deal with him.",
+            "goto": "kill"
+          }
+        ]
+      },
+      "take": {
+        "text": "You take it out of his hands. He objects, in the way a man objects when he has four men in the yard and no reason to expect the afternoon to go badly.",
+        "effect": {
+          "flags": [
+            "v2_lanevus_named"
+          ]
+        },
+        "choices": [
+          {
+            "text": "The afternoon goes badly.",
+            "goto": "kill"
+          }
+        ]
+      },
+      "kill": {
+        "text": "You kill him.\n\nNot in a temper, and not in a hurry, and not because the ledger required it. You kill him because a man who sells people should stop, and because you are a Beyonder in a yard with four ordinary men in it, and because nobody in this city is going to do it otherwise.\n\nSherlock Moriarty is a performance. This part was not.",
+        "effect": {
+          "flags": [
+            "v2_capim"
+          ],
+          "sanity": -10,
+          "concealment": -10,
+          "digestion": 22,
+          "items": []
+        },
+        "choices": [
+          {
+            "text": "Take the ledger and go.",
+            "goto": "after"
+          }
+        ]
+      },
+      "after": {
+        "text": "The four men in the yard have decided, unanimously and without discussion, that they were never here.\n\nThe ledger is in your coat. Every name in it is somebody’s. The last page is a delivery address in the West Borough and a date eleven days out.",
+        "effect": {
+          "flags": [
+            "v2_ledger"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_smog",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The new ground was opened in the spring for a parish that did not need more ground. It was full by autumn. They are extending it again this week, at night, so the district does not watch them do it.\n\nTwenty-one thousand, in the end, and that is the number the papers will print in the spring, and it will be low.",
+        "choices": [
+          {
+            "text": "Ask the fog what it is.",
+            "goto": "read",
+            "useAbilityEffect": "reveal_clue"
+          },
+          {
+            "text": "Count the fresh ground.",
+            "goto": "count"
+          }
+        ]
+      },
+      "read": {
+        "text": "It is not weather. It has an author.\n\nSomething is standing over this borough with its hands open, and the coal smoke is only the medium, the way ink is the medium of a sentence. The Lady Despair. Plague in a city that has agreed to call it a bad winter.\n\nAnd it will not be stopped by a consulting detective, and you have to stand in a burial ground and know that.",
+        "effect": {
+          "flags": [
+            "v2_smog_read"
+          ],
+          "sanity": -10,
+          "spirituality": -14,
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "end": true
+      },
+      "count": {
+        "text": "You count sixty-one on Kohler’s three stairs and stop, because counting is what the parish stopped doing and you can feel why.",
+        "effect": {
+          "flags": [
+            "v2_smog_read"
+          ],
+          "sanity": -6
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_lanevus",
+    "speaker": "lanevus",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The address on the last page of Capim’s ledger is a subscription library with a locked room behind it, and in the locked room a circle that is not a Beyonder’s circle at all: it is a summoning drawn from a text that predates every Church in this kingdom.\n\n‘You are early,’ says Lanevus, not turning round. ‘Eleven days early, in fact. I would ask how, but I have read enough to know not to.’",
+        "choices": [
+          {
+            "text": "Ask what he is calling.",
+            "goto": "what"
+          },
+          {
+            "text": "Break the circle now.",
+            "goto": "break"
+          }
+        ]
+      },
+      "what": {
+        "text": "‘The Creator.’ He says it the way another man would say the name of a lawyer. ‘This world is a draft. Everything wrong with it is a thing the author did not finish. I propose to recall him to the work.’\n\nHe gestures at the circle, and the bodies it needed, and the Intis money that paid for both.\n\n‘You are a detective. You will want to know why. That is the why. There is no better one and there does not need to be.’",
+        "effect": {
+          "flags": [
+            "v2_true_creator"
+          ],
+          "sanity": -8,
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Break the circle.",
+            "goto": "break"
+          }
+        ]
+      },
+      "break": {
+        "text": "You break it with a Magician’s reach and a Faceless’s footing and a great deal of noise, and the thing that was three-quarters through the door goes back through it, and the room comes apart, and Lanevus is under most of it.\n\nMI9 arrives forty minutes later and finds a consulting detective sitting on the step with a pipe he has not lit, who tells them a version of events with three true sentences in it.",
+        "effect": {
+          "flags": [
+            "v2_lanevus_stopped"
+          ],
+          "sanity": -12,
+          "spirituality": -30,
+          "digestion": 24,
+          "pence": 4000
+        },
+        "choices": [
+          {
+            "text": "And the potion.",
+            "goto": "potion"
+          }
+        ]
+      },
+      "potion": {
+        "text": "The Magician is fully digested. It was digested somewhere between the yard behind the cooperage and the library floor, and you cannot point at the moment, and that is exactly what Old Neil said would happen.\n\nThe Faceless formula is in the Club’s hands. Mr. Hanged Man priced it fairly, which still worries you.",
+        "effect": {
+          "flags": [
+            "v2_ready_faceless"
+          ],
+          "items": [
+            "formula_faceless"
+          ]
+        },
+        "end": true
+      }
+    }
+  }
+]

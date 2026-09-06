@@ -1,0 +1,622 @@
+{
+  "volumes": [
+    {
+      "number": 1,
+      "id": "vol-clown",
+      "title": "Clown",
+      "blurb": "Tingen, 1349. A bolted room, a notebook that arranges its own readers, and the cheapest rung on a ladder nobody will describe to you."
+    },
+    {
+      "number": 2,
+      "id": "vol-faceless",
+      "title": "Faceless",
+      "blurb": "Backlund. A detective who is two names off a book from another world, a hero-bandit the newspapers named, and an Angel finishing a summons in a bricked-up chapel."
+    },
+    {
+      "number": 3,
+      "id": "vol-traveler",
+      "title": "Traveler",
+      "blurb": "The Rorsted Archipelago. Pirates, a madman’s reputation kept deliberately, and a Sea God in a bone dagger who has done this to better men."
+    },
+    {
+      "number": 4,
+      "id": "vol-undying",
+      "title": "Undying",
+      "blurb": "Backlund again, with money this time. A cathedral vault, a theft that fails, and the first true look at what has been holding the notebook all along."
+    },
+    {
+      "number": 5,
+      "id": "vol-red-priest",
+      "title": "Red Priest",
+      "blurb": "A demigod, a ladder of light in the depth of the fog, the truth about transmigrators — and a castle that stops being a secret and becomes a location."
+    },
+    {
+      "number": 6,
+      "id": "vol-lightseeker",
+      "title": "Lightseeker",
+      "blurb": "The Forsaken Land of the Gods, a dead king’s chair, and a war over Backlund that has reached the part where gods come down."
+    },
+    {
+      "number": 7,
+      "id": "vol-hanged-man",
+      "title": "The Hanged Man",
+      "blurb": "The Corpse Cathedral, a wish worded as a trap, and the man who wrote the ritual that started all of it."
+    }
+  ],
+  "chapters": [
+    {
+      "id": "ch_crimson",
+      "volume": 1,
+      "title": "Crimson",
+      "objective": "Come to your senses in a room that is not yours, and work out what it is telling you.",
+      "where": "lodgings",
+      "doneWhen": {
+        "flag": "prologue_found"
+      },
+      "recap": "The small hours of the twenty-eighth of June, 1349. A desk you had never seen, a body that was already sitting up, a revolver by your right hand and four words on the page in front of you in handwriting that would shortly be yours. Everyone will die, including me."
+    },
+    {
+      "id": "ch_situation",
+      "volume": 1,
+      "title": "The Situation",
+      "objective": "Decide what sort of man you are going to be about it, and let your brother in.",
+      "where": "lodgings",
+      "doneWhen": {
+        "anyOf": [
+          {
+            "flag": "disposition_scholar"
+          },
+          {
+            "flag": "disposition_quiet"
+          },
+          {
+            "flag": "disposition_open"
+          }
+        ]
+      },
+      "recap": "Benson took the revolver off the table before the constable came up the stairs, and Melissa stood on the landing doing sums about a funeral that was not going to be needed. Eight days later a tired man from Zouteland Street put two contracts on the table and asked how you meant to carry it."
+    },
+    {
+      "id": "ch_seventh_unit",
+      "volume": 1,
+      "title": "The Seventh Unit",
+      "objective": "Report to No. 36 Zouteland Street and take the notebook file off the board.",
+      "where": "club_hub",
+      "doneWhen": {
+        "caseState": {
+          "caseId": "case-01-notebook",
+          "state": "active"
+        }
+      },
+      "recap": "Blackthorn Security Company on the brass plate, Seventh Unit of the Special Operations Department on the warrant card, and the Church of the Evernight Goddess behind both. Dunn Smith gave the notebook file to the civilian staffer whose own name was already in it."
+    },
+    {
+      "id": "ch_potion",
+      "volume": 1,
+      "title": "Potion",
+      "objective": "Drink what the Church signed for, in the cellar room with the drain in the floor.",
+      "where": "club_hub",
+      "doneWhen": {
+        "flag": "drank_seer"
+      },
+      "recap": "Grey, and thicker than it looked. Seer, Sequence 9: divination, misdirection, and a face nobody remembers. A role, said Smith, not a tool — you act it, or in time it acts you."
+    },
+    {
+      "id": "ch_club",
+      "volume": 1,
+      "title": "The Club",
+      "objective": "Chalk the circle on your own floor and go looking for a way home.",
+      "where": "lodgings",
+      "doneWhen": {
+        "flag": "tarot_club_founded"
+      },
+      "recap": "No way home: grey fog to every horizon, a ruined palace above it, and a bronze table with twenty-two seats. You were at the head of it before you had decided to sit down. Two of the chairs filled, and neither occupant doubted for a moment that they were addressing a god."
+    },
+    {
+      "id": "ch_acting",
+      "volume": 1,
+      "title": "The Acting Method",
+      "objective": "Ask Old Neil how a potion stops being a drink and starts being you.",
+      "where": "club_hub",
+      "doneWhen": {
+        "flag": "learned_acting"
+      },
+      "recap": "A potion is a role. You act it in front of people who do not know they are the audience, and you keep acting it until the acting stops being a decision."
+    },
+    {
+      "id": "ch_rooms",
+      "volume": 1,
+      "title": "The Rooms Above The Shop",
+      "objective": "See Welch McGovern for yourself, and establish that nobody came in or went out.",
+      "where": "pawnshop",
+      "doneWhen": {
+        "deduction": "ded_sealed_room"
+      },
+      "recap": "Bolted, shuttered and nailed from the inside, with eleven pounds untouched a yard from the body. Nobody killed Welch McGovern. He read something aloud that was written to be read aloud, and the book did not care which man was holding it."
+    },
+    {
+      "id": "ch_parcel",
+      "volume": 1,
+      "title": "The Parcel",
+      "objective": "Work out where the notebook went — and who carried it there.",
+      "where": "pawnshop",
+      "doneWhen": {
+        "deduction": "ded_you_posted_it"
+      },
+      "recap": "A postal receipt in his coat pocket, book rate, paid in coin at half past five in the morning, in your own handwriting. Mr. Franky heard your door. You have no memory of any of it."
+    },
+    {
+      "id": "ch_bieber",
+      "volume": 1,
+      "title": "Ray Bieber",
+      "objective": "Find out who has been alone with it for six days.",
+      "where": "crookback_alley",
+      "doneWhen": {
+        "deduction": "ded_bieber_has_it"
+      },
+      "recap": "Number nine, Cobble Yard: a warehouse clerk who signed for a parcel, sent word he was ill, and has not been heard to move about since. His landlady has stopped knocking."
+    },
+    {
+      "id": "ch_warehouse",
+      "volume": 1,
+      "title": "The Warehouse",
+      "objective": "Go into Cobble Yard behind the Nighthawks, and come out with the notebook.",
+      "where": "warehouse",
+      "doneWhen": {
+        "flag": "knows_sequence_8"
+      },
+      "recap": "Ray Bieber had read it all the way to the end, and it had made the book his core. Daly Simone took him apart along seams a body should not have — and then a man in white paint, sitting on the crates with his ankles crossed, offered to sell you the name of the rung above your own."
+    },
+    {
+      "id": "ch_clown",
+      "volume": 1,
+      "title": "Clown",
+      "objective": "Close the file, digest the Seer potion, and take Sequence 8 at the circle.",
+      "where": "club_hub",
+      "doneWhen": {
+        "sequenceAtMost": 8
+      },
+      "recap": "Clown. Sequence 8 of the Seer pathway, bought with a word out of a dead man’s mouth and drunk in the cellar room under Zouteland Street."
+    },
+    {
+      "id": "ch_tarot",
+      "volume": 1,
+      "title": "The Tarot Club",
+      "objective": "Hold a gathering above the fog and put the Club into business.",
+      "where": "grey_fog",
+      "doneWhen": {
+        "flag": "club_trading"
+      },
+      "recap": "Two seats of twenty-two, a bronze table nothing crosses without both parties agreeing, and a cut of everything that does. Neither member has ever asked what the Fool is."
+    },
+    {
+      "id": "ch_selena",
+      "volume": 1,
+      "title": "Saint Selena’s Ashes",
+      "objective": "Go with the unit to the chapel, and find out who called it there.",
+      "where": "tingen_church",
+      "doneWhen": {
+        "flag": "v1_spawn"
+      },
+      "recap": "A spawn of the True Creator, grown from a planted seed and left where the Nighthawks would certainly find it. Eleven minutes with every Beyonder in Tingen underground, facing the same way."
+    },
+    {
+      "id": "ch_zangwill",
+      "volume": 1,
+      "title": "Ince Zangwill",
+      "objective": "Come back up the stairs.",
+      "where": "tingen_church",
+      "doneWhen": {
+        "flag": "v1_complete"
+      },
+      "recap": "A deacon of an Order everyone agrees is finished, an empty reliquary, and a shot through the heart at the correct moment without any appetite for it. Klein Moretti died on the eleventh of September, 1349, and did not stop."
+    },
+    {
+      "id": "ch_backlund",
+      "volume": 2,
+      "title": "The Capital Of Steam",
+      "objective": "Take rooms in Backlund under a name that is not on a stone in Tingen.",
+      "where": "moriarty_office",
+      "doneWhen": {
+        "flag": "v2_arrived"
+      },
+      "recap": "Yellow coal fog standing in the streets like a tenant, and a brass plate reading SHERLOCK MORIARTY, CONSULTING DETECTIVE, chosen in an afternoon by a man who was enjoying himself."
+    },
+    {
+      "id": "ch_moriarty",
+      "volume": 2,
+      "title": "Sherlock Moriarty",
+      "objective": "Be seen being a consulting detective until somebody climbs the stair.",
+      "where": "moriarty_office",
+      "doneWhen": {
+        "flag": "v2_client"
+      },
+      "recap": "Not detection: a Seer with a pipe and a sense of timing. The Backlund press cannot tell the difference and would not print it if they could."
+    },
+    {
+      "id": "ch_wright",
+      "volume": 2,
+      "title": "Mr. Wright’s Commission",
+      "objective": "Hear out the man with the small problem and the careful hands.",
+      "where": "moriarty_office",
+      "doneWhen": {
+        "flag": "v2_commission"
+      },
+      "recap": "A courier to the same East Borough address every Friday, delivering nothing and collecting nothing — with Intis money on one side of the corridor and MI9 on the other, and Ian Wright walking between them in a bowler hat."
+    },
+    {
+      "id": "ch_east",
+      "volume": 2,
+      "title": "The East Borough",
+      "objective": "Go and stand in the district the fog is actually standing in.",
+      "where": "east_borough",
+      "doneWhen": {
+        "flag": "v2_east"
+      },
+      "recap": "Six families to a stair, one tap to a street, and a man on the bottom step keeping a fourth column in his account book because the parish stopped keeping it."
+    },
+    {
+      "id": "ch_capim",
+      "volume": 2,
+      "title": "Capim",
+      "objective": "Find out what goes into the cooperage yard, and what comes out.",
+      "where": "east_borough",
+      "doneWhen": {
+        "flag": "v2_capim"
+      },
+      "recap": "A ledger with columns for names, weights and prices, and a man keeping it who had never been asked to stop. Sherlock Moriarty is a performance. That part was not."
+    },
+    {
+      "id": "ch_smog",
+      "volume": 2,
+      "title": "The Great Smog",
+      "objective": "Ask the fog what it is, in a burial ground being extended at night.",
+      "where": "east_borough",
+      "doneWhen": {
+        "flag": "v2_smog_read"
+      },
+      "recap": "Not weather: an author. The Lady Despair with her hands open over a borough that has agreed to call it a bad winter. Twenty-one thousand, and the printed number will be low."
+    },
+    {
+      "id": "ch_creator",
+      "volume": 2,
+      "title": "The True Creator",
+      "objective": "Follow the ledger to Howard Street before the eleventh day.",
+      "where": "backlund",
+      "doneWhen": {
+        "flag": "v2_lanevus_stopped"
+      },
+      "recap": "A circle drawn from a text older than any Church in the kingdom, three-quarters of something already through the door, and Lanevus explaining that the world is a draft and the author can be recalled."
+    },
+    {
+      "id": "ch_faceless",
+      "volume": 2,
+      "title": "Faceless",
+      "objective": "Take the rung the volume has paid for.",
+      "where": "moriarty_office",
+      "doneWhen": {
+        "sequenceAtMost": 6
+      },
+      "recap": "The Magician digested somewhere between a cooperage yard and a library floor, with no moment to point at — which is exactly what Old Neil said would happen."
+    },
+    {
+      "id": "ch_bayam",
+      "volume": 3,
+      "title": "Bayam",
+      "objective": "Come ashore in the Rorsted Archipelago under a third name.",
+      "where": "bayam",
+      "doneWhen": {
+        "flag": "v3_arrived"
+      },
+      "recap": "A free port nobody has worked out who to charge for, and a madman called Gehrman Sparrow, whose madness is deliberate: a Faceless thought eccentric is a Faceless nobody looks at twice."
+    },
+    {
+      "id": "ch_sparrow",
+      "volume": 3,
+      "title": "The Bounty",
+      "objective": "Take the sheet on Mithor King and make the name mean something.",
+      "where": "bayam",
+      "doneWhen": {
+        "flag": "v3_sparrow"
+      },
+      "recap": "Third mate to the Vice-Admiral of Ailment, eleven murders, and a habit of taking the Church’s mail ships. Found off the northern shoal, and after that the Archipelago knows the name."
+    },
+    {
+      "id": "ch_die",
+      "volume": 3,
+      "title": "The Die Of Probability",
+      "objective": "Sit beside Darkwill’s sealed case as far as Oravi.",
+      "where": "bayam",
+      "doneWhen": {
+        "flag": "v3_die"
+      },
+      "recap": "It does not curse. It re-weights: every outcome that could go either way starts going the way that makes the better story, and a life of better stories ends early and memorably."
+    },
+    {
+      "id": "ch_rieveldt",
+      "volume": 3,
+      "title": "Admiral Amyrius Rieveldt",
+      "objective": "Be a man who is not coming, for three days.",
+      "where": "oravi",
+      "doneWhen": {
+        "flag": "v3_rieveldt"
+      },
+      "recap": "A Faceless does not put on a face, he puts down the one he had. For three days there was no Klein Moretti anywhere in the world, and nothing noticed the absence."
+    },
+    {
+      "id": "ch_mothertree",
+      "volume": 3,
+      "title": "The Grove Above The Town",
+      "objective": "Find out what leans the trees on Oravi.",
+      "where": "oravi",
+      "doneWhen": {
+        "flag": "v3_mother_tree_seen"
+      },
+      "recap": "The Mother Tree of Desire does not tempt in words. It notices what you already want and moves it nearer, and the flat with the bad radiator was four feet away and entirely reachable."
+    },
+    {
+      "id": "ch_ruins",
+      "volume": 3,
+      "title": "The Sea Of Ruins",
+      "objective": "Get Cattleya to take a ship where four admiralties say there is nothing.",
+      "where": "sea_of_ruins",
+      "doneWhen": {
+        "flag": "v3_dream"
+      },
+      "recap": "Towers under the water at a depth that says they were built dry, a shoal of mermaids dreaming in a flooded court, and at the end of the dream a door, and behind the door the Giant King’s Court."
+    },
+    {
+      "id": "ch_marionettist",
+      "volume": 3,
+      "title": "Marionettist",
+      "objective": "Take the rung the dream paid for.",
+      "where": "sea_of_ruins",
+      "doneWhen": {
+        "sequenceAtMost": 5
+      },
+      "recap": "Threads first, then the potion. A Marionettist who drinks before he has hold of his own strings finds out whose hand is on them."
+    },
+    {
+      "id": "ch_dantes",
+      "volume": 4,
+      "title": "Dwayne Dantès",
+      "objective": "Come back to Backlund under a fourth name.",
+      "where": "cathedral",
+      "doneWhen": {
+        "flag": "v4_arrived"
+      },
+      "recap": "A gentleman of independent means with a box at the opera who has never been photographed. Four men in one coat, and the coat is getting tight."
+    },
+    {
+      "id": "ch_chanis",
+      "volume": 4,
+      "title": "The Chanis Gate",
+      "objective": "Try the cathedral vault while the choir is between settings.",
+      "where": "cathedral",
+      "doneWhen": {
+        "flag": "v4_theft_failed"
+      },
+      "recap": "The theft fails, and not for being caught: Sealed Artifact 0-17 does not keep thieves out of the vault, it keeps them somewhere else — which is a different profession, and an older one."
+    },
+    {
+      "id": "ch_foggy",
+      "volume": 4,
+      "title": "The Foggy Town",
+      "objective": "Get out of a town where nothing has happened for four hundred years.",
+      "where": "foggy_town",
+      "doneWhen": {
+        "flag": "v4_escaped"
+      },
+      "recap": "A stopped clock still warm after four centuries, a gentleman of the Numinous Episcopate who was the stock rather than the shopkeeper, and a seal cut in the shape of a grave with Zaratul under it."
+    },
+    {
+      "id": "ch_grave",
+      "volume": 4,
+      "title": "The Grave",
+      "objective": "Answer the man who went and dug you up.",
+      "where": "cathedral",
+      "doneWhen": {
+        "flag": "v4_leonard_knows"
+      },
+      "recap": "Leonard Mitchell put Gehrman Sparrow beside Sherlock Moriarty beside a headstone in Tingen, and then went and opened the coffin, and found somebody else in it."
+    },
+    {
+      "id": "ch_island",
+      "volume": 4,
+      "title": "The Primitive Island",
+      "objective": "Leave Backlund before Amon arrives, and read the altar.",
+      "where": "primitive_island",
+      "doneWhen": {
+        "flag": "v4_sun_god"
+      },
+      "recap": "The Ancient Sun God did not fall. He was let fall, and the betrayal is cut into the stone in a hand that was present, and the names in it are names four modern Churches teach as founders. And there is a son."
+    },
+    {
+      "id": "ch_zangwill4",
+      "volume": 4,
+      "title": "The Red Angel",
+      "objective": "Finish the fortnight’s work on a rock in the south.",
+      "where": "primitive_island",
+      "doneWhen": {
+        "flag": "v4_zangwill_dead"
+      },
+      "recap": "It took all three and it cost one. Daly Simone held him still for four seconds knowing the arithmetic, and Saint Selena’s ashes came out of a dead man’s bag four hundred and one days after they went into it."
+    },
+    {
+      "id": "ch_bizarro",
+      "volume": 4,
+      "title": "Bizarro Sorcerer",
+      "objective": "Take the rung the island paid for.",
+      "where": "primitive_island",
+      "doneWhen": {
+        "sequenceAtMost": 4
+      },
+      "recap": "Two mysteries laid side by side and told to change places, and one of them is you. The rite is over when the swap does not swap back."
+    },
+    {
+      "id": "ch_return",
+      "volume": 5,
+      "title": "Dwayne Dantès Returns",
+      "objective": "Come back to a Backlund that is at war.",
+      "where": "sefirah",
+      "doneWhen": {
+        "flag": "v5_arrived"
+      },
+      "recap": "Feysac in the field, Loen mobilising, and a city that has decided the fog was always going to lift once there was something more important to look at."
+    },
+    {
+      "id": "ch_smog_truth",
+      "volume": 5,
+      "title": "What The Smog Was For",
+      "objective": "Take Kohler’s figures to the House and find out what they bought.",
+      "where": "parliament",
+      "doneWhen": {
+        "flag": "v5_smog_truth"
+      },
+      "recap": "A borough breathing the same poison for seven months despairs on a schedule, and despair on a schedule is a component. Twenty-one thousand people were an ingredient list."
+    },
+    {
+      "id": "ch_scholar",
+      "volume": 5,
+      "title": "Scholar Of Yore",
+      "objective": "Take the rung, and find out what taking it does to the castle.",
+      "where": "sefirah",
+      "doneWhen": {
+        "sequenceAtMost": 3
+      },
+      "recap": "The rite worked, and then kept working, which is not in the notes: Sefirah Castle began to be a real object in a real sky, and Amon looked up, and Pallez looked up, and every tree in a grove on Oravi leaned further in."
+    },
+    {
+      "id": "ch_george",
+      "volume": 5,
+      "title": "The Wartime Speech",
+      "objective": "Be in the House on Thursday.",
+      "where": "parliament",
+      "doneWhen": {
+        "flag": "v5_apotheosis"
+      },
+      "recap": "Nineteen minutes, four hundred people weeping on cue in a gallery seated as a diagram, and on the last sentence something arriving in the chamber that the shorthand writers recorded as applause."
+    },
+    {
+      "id": "ch_taken",
+      "volume": 6,
+      "title": "Taken",
+      "objective": "Be collected between one sentence and the next.",
+      "where": "chernobyl",
+      "doneWhen": {
+        "flag": "v6_taken"
+      },
+      "recap": "Amon does not open doors. He offered a proposal rather than a bargain, on the grounds that bargains are for people who can decline."
+    },
+    {
+      "id": "ch_earthling",
+      "volume": 6,
+      "title": "The Ancient Sun God",
+      "objective": "Ask Amon about his father.",
+      "where": "chernobyl",
+      "doneWhen": {
+        "flag": "v6_earthling"
+      },
+      "recap": "The Ancient Sun God arrived the way you arrived, by a procedure somebody else wrote down, and built four hundred years of religion out of homesickness, and then four of his friends let him fall."
+    },
+    {
+      "id": "ch_chernobyl",
+      "volume": 6,
+      "title": "A City With No Name On Any Map",
+      "objective": "Read the clock, and then the sign under it.",
+      "where": "chernobyl",
+      "doneWhen": {
+        "flag": "v6_earth"
+      },
+      "recap": "There was no other world. This is Earth, and has always been Earth, and you have been homesick for a place you never left."
+    },
+    {
+      "id": "ch_look_back",
+      "volume": 6,
+      "title": "The Look Back",
+      "objective": "Die properly enough to stand outside one particular moment.",
+      "where": "chernobyl",
+      "doneWhen": {
+        "flag": "v6_truth"
+      },
+      "recap": "Sefirah Castle chose at random from among those who performed the procedure, and every copy of the procedure traces back to one notebook, and the notebook has been Amon since before Loen had a name. You were not selected. You were sourced."
+    },
+    {
+      "id": "ch_forsaken",
+      "volume": 6,
+      "title": "The Forsaken Land Of The Gods",
+      "objective": "Find your own way out of where the losers are kept.",
+      "where": "forsaken",
+      "doneWhen": {
+        "flag": "v6_arrived"
+      },
+      "recap": "The place the things that lost are kept, and the things that won put them, and neither category visited in an age."
+    },
+    {
+      "id": "ch_court",
+      "volume": 6,
+      "title": "The Giant King’s Court",
+      "objective": "Follow the marks left by the two who did not get out.",
+      "where": "giant_court",
+      "doneWhen": {
+        "flag": "v6_path_out"
+      },
+      "recap": "Colin Iliad and Lovia went toward it knowing exactly how close you can get, and marked the way for whoever came next. And the table in the court is bronze, and very long, and has twenty-two chairs."
+    },
+    {
+      "id": "ch_war",
+      "volume": 7,
+      "title": "The Interval",
+      "objective": "Understand what the peace actually is.",
+      "where": "corpse_cathedral",
+      "doneWhen": {
+        "flag": "v7_arrived"
+      },
+      "recap": "Not peace: both sides going away to prepare properly. The world has been given an interval, and the thing coming for it is isolation — the slow, total, cosmic kind."
+    },
+    {
+      "id": "ch_genie",
+      "volume": 7,
+      "title": "The Distorted Wish",
+      "objective": "Ask a Genie for exactly the thing it is famous for giving you.",
+      "where": "corpse_cathedral",
+      "doneWhen": {
+        "flag": "v7_wish"
+      },
+      "recap": "The trick is not clever. It is knowing which of your own deaths you can afford. The first time it was done to you by a man who folded the cloth first; this time it was an appointment you kept."
+    },
+    {
+      "id": "ch_miracle",
+      "volume": 7,
+      "title": "Miracle Invoker",
+      "objective": "Complete the rite as a man the world has agreed is no longer there.",
+      "where": "corpse_cathedral",
+      "doneWhen": {
+        "sequenceAtMost": 2
+      },
+      "recap": "A miracle is a thing asked for and granted, and the asking is the difficult half."
+    },
+    {
+      "id": "ch_zaratul",
+      "volume": 7,
+      "title": "Zaratul",
+      "objective": "Answer the claim on the chair.",
+      "where": "corpse_cathedral",
+      "doneWhen": {
+        "flag": "v7_zaratul"
+      },
+      "recap": "Betrayed by his own historical projection of Roselle Gustav, who had been waiting three hundred years for a reader from a flat with a bad radiator, and was never going to be waiting for him."
+    },
+    {
+      "id": "ch_king",
+      "volume": 7,
+      "title": "King Of Angels",
+      "objective": "Take the last rung Book One reaches.",
+      "where": "corpse_cathedral",
+      "doneWhen": {
+        "sequenceAtMost": 1
+      },
+      "recap": "Sequence 1, Attendant of Mysteries. A chair above the fog, a name four people say aloud on Sunday nights, and underneath it a man from Tingen who still counts his change. Sequence 0 is a seat, and it is already occupied, and Book One does not reach it."
+    }
+  ]
+}

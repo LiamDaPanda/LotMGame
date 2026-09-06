@@ -1,9 +1,17 @@
 import Phaser from 'phaser';
+import { pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { SaveManager } from '@/systems/SaveManager';
 import { describeTender, format } from '@/systems/Money';
-import { Button, ScrollList, Typewriter, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import { Button, ScrollList, Typewriter, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  CSS,
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  isPortrait,
+  minTapHeight,
+  panelInset,
+} from '@/ui/theme';
 import type { ResolutionGrade } from '@/types/schema';
 
 const GRADE_LABEL: Record<ResolutionGrade, string> = {
@@ -38,7 +46,7 @@ export class ResolveScene extends Phaser.Scene {
 
   create(): void {
     this.session = Session.get(this);
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.88).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.88);
 
     const caseData = this.session.cases.activeCase();
     if (!caseData) {
@@ -46,12 +54,13 @@ export class ResolveScene extends Phaser.Scene {
       return;
     }
 
-    const x = 90;
-    const y = 40;
-    const w = GAME_WIDTH - 180;
-    const h = GAME_HEIGHT - 80;
+    const x = panelInset();
+    const y = isPortrait() ? 96 : 40;
+    const w = GAME_WIDTH - panelInset() * 2;
+    const h = GAME_HEIGHT - y - (isPortrait() ? 90 : 40);
     drawPanel(this, x, y, w, h);
-    sectionHeader(this, x + 24, y + 18, w - 48, caseData.title, `Present your findings · ${caseData.client}`);
+    const header = sectionHeader(this, x + 24, y + 18, w - 48, caseData.title, `Present your findings · ${caseData.client}`);
+    const bodyY = header.y + header.height;
 
     const options = this.session.cases.resolutionOptions();
     const rows = options.map(({ resolution, unlocked, reason }) => {
@@ -80,11 +89,19 @@ export class ResolveScene extends Phaser.Scene {
       return container;
     });
 
-    this.list = new ScrollList(this, x + 24, y + 76, { width: w - 48, height: h - 150, gap: 8 });
+    this.list = new ScrollList(this, x + 24, bodyY, {
+      width: w - 48,
+      height: y + h - minTapHeight() - 24 - bodyY,
+      gap: 8,
+    });
     this.list.setRows(rows);
     this.list.refreshMask();
 
-    new Button(this, x + 24, y + h - 54, 'Not yet', () => this.close(), { width: 160, height: 38, fontSize: 13 });
+    new Button(this, x + 24, y + h - minTapHeight() - 12, 'Not yet', () => this.close(), {
+      width: 160,
+      height: minTapHeight(),
+      fontSize: 13,
+    });
     this.input.keyboard?.on('keydown-ESC', () => this.close());
   }
 
@@ -102,33 +119,28 @@ export class ResolveScene extends Phaser.Scene {
   private showEpilogue(text: string, grade: ResolutionGrade, pence: number): void {
     this.children.removeAll(true);
     this.list = undefined;
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.94).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.94);
 
-    const x = 140;
-    const y = 70;
-    const w = GAME_WIDTH - 280;
-    const h = GAME_HEIGHT - 150;
+    const x = panelInset();
+    const y = isPortrait() ? 96 : 70;
+    const w = GAME_WIDTH - panelInset() * 2;
+    const h = GAME_HEIGHT - y - (isPortrait() ? 90 : 80);
     drawPanel(this, x, y, w, h);
 
-    this.add
-      .text(x + w / 2, y + 34, GRADE_LABEL[grade], {
-        fontFamily: FONT_BODY,
+    pixelText(this, x + w / 2, y + 34, GRADE_LABEL[grade], {
         fontSize: '26px',
         color: GRADE_COLOR[grade],
       })
       .setOrigin(0.5);
 
-    const body = this.add.text(x + 32, y + 78, '', {
-      fontFamily: FONT_BODY,
+    const body = pixelText(this, x + 32, y + 78, '', {
       fontSize: '15px',
       color: CSS.parchment,
-      lineSpacing: 7,
       wordWrap: { width: w - 64 },
     });
     const typewriter = new Typewriter(this, body, 2, 12);
 
-    const payLine = this.add
-      .text(x + w / 2, y + h - 96, '', { fontFamily: FONT_UI, fontSize: '14px', color: CSS.brass })
+    const payLine = pixelText(this, x + w / 2, y + h - 96, '', { fontSize: '14px', color: CSS.brass })
       .setOrigin(0.5)
       .setAlpha(0);
 
@@ -144,9 +156,9 @@ export class ResolveScene extends Phaser.Scene {
 
     this.input.once('pointerdown', () => typewriter.finish());
 
-    new Button(this, x + w / 2 - 90, y + h - 58, 'Back to the Club', () => this.finish(), {
+    new Button(this, x + w / 2 - 90, y + h - minTapHeight() - 14, 'Back to the Club', () => this.finish(), {
       width: 180,
-      height: 40,
+      height: minTapHeight(),
       tone: 'good',
     });
   }

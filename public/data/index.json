@@ -6,21 +6,51 @@
     "seer"
   ],
   "cases": [
-    "case-01-ninth-bell"
+    "case-01-notebook"
   ],
   "maps": [
+    "lodgings",
     "club_hub",
     "ashfen_row",
     "pawnshop",
     "cellar",
-    "crookback_alley"
+    "crookback_alley",
+    "warehouse",
+    "backlund",
+    "bayam",
+    "cathedral",
+    "sefirah",
+    "forsaken",
+    "corpse_cathedral",
+    "grey_fog",
+    "tingen_church",
+    "moriarty_office",
+    "east_borough",
+    "oravi",
+    "sea_of_ruins",
+    "foggy_town",
+    "primitive_island",
+    "parliament",
+    "chernobyl",
+    "giant_court"
   ],
   "dialogue": [
     "club",
-    "case-01"
+    "case-01",
+    "prologue",
+    "fog",
+    "warehouse",
+    "vol2",
+    "vol3",
+    "vol4",
+    "vol5",
+    "vol6",
+    "vol7",
+    "vol1-end"
   ],
   "items": "items",
   "characters": "cast",
+  "story": "chapters",
   "encounters": [
     "street"
   ]

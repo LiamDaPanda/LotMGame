@@ -1,10 +1,16 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
 import { METHOD_LABEL } from '@/systems/InquirySystem';
 import { SKILLS } from '@/systems/Skills';
-import { Button, ScrollList, Typewriter, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS } from '@/ui/theme';
+import { Button, ScrollList, Typewriter, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  CSS,
+  ICONS,
+  menuRect,
+  minTapHeight,
+} from '@/ui/theme';
 
 const METHOD_ICON = {
   ask_around: ICONS.trust,
@@ -23,25 +29,34 @@ const METHOD_ICON = {
 export class InquiryScene extends Phaser.Scene {
   private session!: Session;
   private list?: ScrollList;
-  private resultText!: Phaser.GameObjects.Text;
+  /** Where the body may start, once the header has measured itself. */
+  private headerBottom = 0;
+  private resultText!: PixelText;
   private typewriter!: Typewriter;
 
-  private readonly x = 110;
-  private readonly y = 46;
-  private readonly w = GAME_WIDTH - 220;
-  private readonly h = GAME_HEIGHT - 92;
+
+  private x = 0;
+  private y = 0;
+  private w = 0;
+  private h = 0;
 
   constructor() {
     super('Inquiry');
   }
 
   create(): void {
+    // Read the layout here, not in a field: scene instances outlive a rotation.
+    const pane = menuRect();
+    this.x = pane.x + 10;
+    this.y = pane.y + 10;
+    this.w = pane.width - 20;
+    this.h = pane.height - 20;
     this.session = Session.get(this);
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.88).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.88);
     drawPanel(this, this.x, this.y, this.w, this.h);
 
     const caseData = this.session.cases.activeCase();
-    sectionHeader(
+    const header = sectionHeader(
       this,
       this.x + 24,
       this.y + 16,
@@ -51,12 +66,11 @@ export class InquiryScene extends Phaser.Scene {
         ? `${caseData.title}  ·  legwork costs money and days, not spirituality`
         : 'No case is open.',
     );
+    this.headerBottom = header.y + header.height;
 
-    this.resultText = this.add.text(this.x + 24, this.y + this.h - 96, '', {
-      fontFamily: FONT_BODY,
+    this.resultText = pixelText(this, this.x + 24, this.y + this.h - 96, '', {
       fontSize: '13px',
       color: CSS.parchment,
-      lineSpacing: 4,
       wordWrap: { width: this.w - 200 },
     });
     this.typewriter = new Typewriter(this, this.resultText, 3, 12);
@@ -108,20 +122,20 @@ export class InquiryScene extends Phaser.Scene {
 
     if (rows.length === 0) {
       const container = this.add.container(0, 0);
-      container.setSize(width, 40);
-      container.add(
-        this.add.text(0, 8, 'Nothing to chase up. Take a case first.', {
-          fontFamily: FONT_BODY,
-          fontSize: '13px',
-          color: CSS.muted,
-        }),
-      );
+      const label = pixelText(this, 0, 8, 'Nothing to chase up. Take a case first.', {
+        size: 'md',
+        color: CSS.muted,
+        wrap: width,
+      });
+      container.setSize(width, label.height + 16);
+      container.add(label);
       rows.push(container);
     }
 
-    this.list = new ScrollList(this, this.x + 24, this.y + 76, {
+    const bodyY = this.headerBottom;
+    this.list = new ScrollList(this, this.x + 24, bodyY, {
       width,
-      height: this.h - 190,
+      height: this.y + this.h - minTapHeight() - 24 - bodyY,
       gap: 8,
     });
     this.list.setRows(rows);

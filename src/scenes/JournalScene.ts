@@ -1,19 +1,33 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
 import { MAX_SKILL, SKILLS } from '@/systems/Skills';
-import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS } from '@/ui/theme';
+import { Button, ScrollList, drawPanel, panelStage, sectionHeader, setContainerHitArea } from '@/ui/widgets';
+import {
+  COLORS,
+  CSS,
+  ICONS,
+  isPortrait,
+  menuRect,
+} from '@/ui/theme';
 import { SKILL_IDS, type ClueData } from '@/types/schema';
 
-type Tab = 'case' | 'board' | 'powers' | 'effects' | 'club';
+type Tab = 'story' | 'case' | 'board' | 'powers' | 'effects' | 'club';
 
-const TABS: { id: Tab; label: string; icon: number }[] = [
-  { id: 'case', label: 'Case', icon: ICONS.document },
-  { id: 'board', label: 'Deductions', icon: ICONS.clue },
-  { id: 'powers', label: 'Powers', icon: ICONS.spirituality },
-  { id: 'effects', label: 'Effects', icon: ICONS.key },
-  { id: 'club', label: 'The Club', icon: ICONS.card },
+/** Gap between the portrait tab grid's buttons. */
+const TAB_GAP = 5;
+/** Tabs per row in portrait. Six across a phone is six truncated words. */
+const TAB_COLUMNS = 3;
+const TAB_HEIGHT = 34;
+
+const TABS: { id: Tab; label: string; short: string; icon: number }[] = [
+  { id: 'story', label: 'Story', short: 'Story', icon: ICONS.candle },
+  { id: 'case', label: 'Case', short: 'Case', icon: ICONS.document },
+  { id: 'board', label: 'Deductions', short: 'Board', icon: ICONS.clue },
+  { id: 'powers', label: 'Powers', short: 'Power', icon: ICONS.spirituality },
+  { id: 'effects', label: 'Effects', short: 'Kit', icon: ICONS.key },
+  { id: 'club', label: 'The Company', short: 'Team', icon: ICONS.card },
 ];
 
 /**
@@ -27,75 +41,113 @@ const TABS: { id: Tab; label: string; icon: number }[] = [
  */
 export class JournalScene extends Phaser.Scene {
   private session!: Session;
-  private tab: Tab = 'case';
+  private tab: Tab = 'story';
   private content!: Phaser.GameObjects.Container;
   private list?: ScrollList;
   private selected = new Set<string>();
   private tabButtons = new Map<Tab, Button>();
   private connectButton?: Button;
-  private statusText!: Phaser.GameObjects.Text;
+  private statusText!: PixelText;
 
-  private readonly panelX = 40;
-  private readonly panelY = 30;
-  private readonly panelW = GAME_WIDTH - 80;
-  private readonly panelH = GAME_HEIGHT - 60;
-  private readonly bodyX = 210;
+  private panelX = 0;
+  private panelY = 0;
+  private panelW = 0;
+  private panelH = 0;
+  private bodyX = 0;
+  private tabW = 0;
 
   constructor() {
     super('Journal');
   }
 
   create(): void {
+    // The scene instance is reused every time the journal is opened, so the
+    // tab map still holds the last visit's buttons until they are overwritten.
+    this.tabButtons.clear();
+    // Layout is read here, not in a field: instances outlive a rotation.
+    const tall = isPortrait();
+    const pane = menuRect();
+    this.panelX = pane.x + 6;
+    this.panelY = pane.y + 6;
+    this.panelW = pane.width - 12;
+    this.panelH = pane.height - 12;
+    // A phone is too narrow for a column of tabs beside the text, so portrait
+    // runs them along the top and gives the body the panel's whole width.
+    this.tabW = tall
+      ? (this.panelW - 24 - (TAB_COLUMNS - 1) * TAB_GAP) / TAB_COLUMNS
+      : 152;
+    this.bodyX = tall ? 12 : this.tabW + 58;
     this.session = Session.get(this);
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.85).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.85);
     drawPanel(this, this.panelX, this.panelY, this.panelW, this.panelH);
 
+    // The header is one line in portrait: there is no room for a title and a
+    // subtitle when the pane is 400px tall and most of it belongs to the body.
     const state = this.session.state;
-    sectionHeader(
-      this,
-      this.panelX + 24,
-      this.panelY + 16,
-      this.panelW - 48,
-      'Case Notes',
-      `Sequence ${state.sequence} — ${state.sequenceTitle}  ·  Day ${state.day}  ·  ${format(state.pence)}`,
-    );
+    if (tall) {
+      pixelText(this, this.panelX + 12, this.panelY + 8, `NOTES · Day ${state.day} · ${format(state.pence)}`, {
+        size: 'md',
+        color: CSS.brass,
+        wrap: this.panelW - 24,
+      });
+    } else {
+      sectionHeader(
+        this,
+        this.panelX + 24,
+        this.panelY + 16,
+        this.panelW - 48,
+        'Case Notes',
+        `${state.rankLabel}  ·  Day ${state.day}  ·  ${format(state.pence)}`,
+      );
+    }
 
     TABS.forEach((tab, index) => {
       const button = new Button(
         this,
-        this.panelX + 24,
-        this.panelY + 84 + index * 44,
-        tab.label,
+        tall
+          ? this.panelX + 12 + (index % TAB_COLUMNS) * (this.tabW + TAB_GAP)
+          : this.panelX + 24,
+        tall
+          ? this.panelY + 30 + Math.floor(index / TAB_COLUMNS) * (TAB_HEIGHT + TAB_GAP)
+          : this.panelY + 84 + index * 44,
+        tall ? tab.short : tab.label,
         () => this.setTab(tab.id),
-        { width: 152, height: 38, align: 'left', fontSize: 14, iconFrame: tab.icon },
+        {
+          width: this.tabW,
+          height: tall ? TAB_HEIGHT : 38,
+          align: tall ? 'center' : 'left',
+          fontSize: 14,
+          iconFrame: tall ? undefined : tab.icon,
+        },
       );
       this.tabButtons.set(tab.id, button);
     });
 
-    new Button(
-      this,
-      this.panelX + 24,
-      this.panelY + this.panelH - 56,
-      'Close  (Esc)',
-      () => this.close(),
-      { width: 152, height: 38, fontSize: 13 },
-    );
+    // Portrait has the tab bar's own CASE/NOTES/POWER buttons to close with, so
+    // the panel does not spend a row on a Close button of its own.
+    if (!tall) {
+      new Button(this, this.panelX + 24, this.panelY + this.panelH - 56, 'Close  (Esc)', () => this.close(), {
+        width: 150,
+        height: 38,
+        fontSize: 13,
+      });
+    }
 
-    this.statusText = this.add
-      .text(this.panelX + this.bodyX, this.panelY + this.panelH - 40, '', {
-        fontFamily: FONT_UI,
-        fontSize: '12px',
-        color: CSS.muted,
-        wordWrap: { width: this.panelW - this.bodyX - 40 },
-      })
-      .setOrigin(0, 0);
+    this.statusText = pixelText(
+      this,
+      this.panelX + this.bodyX,
+      this.panelY + this.panelH - (tall ? 22 : 40),
+      '',
+      { size: 'md', color: CSS.muted, wrap: this.panelW - this.bodyX - 24 },
+    ).setOrigin(0, 0);
 
     this.content = this.add.container(0, 0);
     this.input.keyboard?.on('keydown-ESC', () => this.close());
     this.input.keyboard?.on('keydown-J', () => this.close());
 
-    this.setTab(this.session.cases.activeCase() ? 'case' : 'powers');
+    // With no case open, the story tab is the one that answers "what now?".
+    this.setTab(this.session.cases.activeCase() ? 'case' : 'story');
   }
 
   private setTab(tab: Tab): void {
@@ -113,18 +165,51 @@ export class JournalScene extends Phaser.Scene {
     this.statusText.setText('');
   }
 
+
+  /**
+   * Draw a tab's heading and subheading, and report where the body may start.
+   *
+   * Returned rather than assumed: at portrait width a subtitle wraps onto two
+   * or three lines, and a body placed at a fixed offset lands on top of it.
+   */
+  private header(bounds: { x: number; y: number; width: number }, title: string, subtitle?: string): number {
+    const heading = pixelText(this, bounds.x, bounds.y, title, {
+      size: 'lg',
+      color: CSS.brass,
+      wrap: bounds.width,
+    });
+    this.content.add(heading);
+    let y = bounds.y + heading.height + 4;
+    if (subtitle) {
+      const line = pixelText(this, bounds.x, y, subtitle, {
+        size: 'md',
+        color: CSS.muted,
+        wrap: bounds.width,
+      });
+      this.content.add(line);
+      y += line.height + 6;
+    }
+    return y;
+  }
+
   private bodyBounds() {
+    const tall = isPortrait();
     return {
       x: this.panelX + this.bodyX,
-      y: this.panelY + 84,
-      width: this.panelW - this.bodyX - 40,
-      height: this.panelH - 150,
+      // Leave the scrollbar its own lane on the right, so a full line of text
+      // never runs underneath it.
+      y: this.panelY + (tall ? 30 + 2 * (TAB_HEIGHT + TAB_GAP) + 8 : 84),
+      width: (tall ? this.panelW - 24 : this.panelW - this.bodyX - 40) - 10,
+      height: this.panelH - (tall ? 138 : 150),
     };
   }
 
   private render(): void {
     this.clearBody();
     switch (this.tab) {
+      case 'story':
+        this.renderStory();
+        break;
       case 'case':
         this.renderCase();
         break;
@@ -144,6 +229,70 @@ export class JournalScene extends Phaser.Scene {
   }
 
   // -------------------------------------------------------------------------
+  // Story tab
+  // -------------------------------------------------------------------------
+
+  /**
+   * What has happened, and what is waiting. Chapters already behind you keep
+   * their recap; the current one keeps its instruction; the ones after it are
+   * not listed at all, because a spine you can read ahead in is a spoiler.
+   */
+  private renderStory(): void {
+    const bounds = this.bodyBounds();
+    const story = this.session.story;
+    const current = story.current();
+    const { volume, index, total } = story.progress();
+
+    const bodyY = this.header(
+      bounds,
+      'The Story So Far',
+      volume
+        ? `Volume ${volume.number}: ${volume.title}  ·  ${index} of ${total}`
+        : 'Every chapter behind you',
+    );
+
+    const rows: Phaser.GameObjects.Container[] = [];
+    const done = new Set(story.completed().map((chapter) => chapter.id));
+
+    // Shelved by volume, and the volumes you have not reached are not listed —
+    // a spine you can read ahead in is a table of spoilers.
+    for (const shelf of story.volumesSeen()) {
+      rows.push(this.headingRow(`Volume ${shelf.number} — ${shelf.title}`, bounds.width));
+      rows.push(this.bulletRow(shelf.blurb, bounds.width, CSS.muted));
+      for (const chapter of this.session.content.chaptersIn(shelf.number)) {
+        if (done.has(chapter.id)) {
+          rows.push(
+            this.conclusionRow(chapter.title, chapter.recap ?? chapter.objective, bounds.width),
+          );
+        } else if (chapter.id === current?.id) {
+          rows.push(this.bulletRow(`Now: ${chapter.title}`, bounds.width, CSS.brass));
+          rows.push(this.paragraphRow(chapter.objective, bounds.width));
+          const destination = story.destinationName();
+          if (destination) {
+            const here = this.session.state.currentMap === chapter.where;
+            rows.push(
+              this.bulletRow(
+                here ? `You are at ${destination}.` : `Go to: ${destination}`,
+                bounds.width,
+                CSS.muted,
+              ),
+            );
+          }
+          break;
+        }
+      }
+    }
+
+    this.list = new ScrollList(this, bounds.x, bodyY, {
+      width: bounds.width,
+      height: bounds.height - (bodyY - bounds.y),
+      gap: 6,
+    });
+    this.list.setRows(rows);
+    this.list.refreshMask();
+  }
+
+  // -------------------------------------------------------------------------
   // Case tab
   // -------------------------------------------------------------------------
 
@@ -153,29 +302,19 @@ export class JournalScene extends Phaser.Scene {
 
     if (!caseData) {
       this.content.add(
-        this.add.text(bounds.x, bounds.y, 'No case is open.\n\nThe Club keeps a board of work in the parlour.', {
-          fontFamily: FONT_BODY,
+        pixelText(this, bounds.x, bounds.y, 'No case is open.\n\nThe board at No. 36 Zouteland Street keeps the work.', {
           fontSize: '15px',
           color: CSS.muted,
-          lineSpacing: 6,
-        }),
+        wrap: bounds.width,
+      }),
       );
       return;
     }
 
-    this.content.add(
-      this.add.text(bounds.x, bounds.y, caseData.title, {
-        fontFamily: FONT_BODY,
-        fontSize: '20px',
-        color: CSS.brass,
-      }),
-    );
-    this.content.add(
-      this.add.text(bounds.x, bounds.y + 28, `Client: ${caseData.client}   ·   Fee: ${format(caseData.rewardPence)}`, {
-        fontFamily: FONT_UI,
-        fontSize: '12px',
-        color: CSS.muted,
-      }),
+    const bodyY = this.header(
+      bounds,
+      caseData.title,
+      `Client: ${caseData.client}   ·   Fee: ${format(caseData.rewardPence)}`,
     );
 
     const rows: Phaser.GameObjects.Container[] = [];
@@ -222,9 +361,9 @@ export class JournalScene extends Phaser.Scene {
       rows.push(wrapper);
     }
 
-    this.list = new ScrollList(this, bounds.x, bounds.y + 54, {
+    this.list = new ScrollList(this, bounds.x, bodyY, {
       width: bounds.width,
-      height: bounds.height - 54,
+      height: bounds.height - (bodyY - bounds.y),
       gap: 6,
     });
     this.list.setRows(rows);
@@ -245,19 +384,10 @@ export class JournalScene extends Phaser.Scene {
     const clues = this.session.cases.discoveredClues();
     const deductions = this.session.cases.formedDeductions();
 
-    this.content.add(
-      this.add.text(bounds.x, bounds.y, 'Deduction Board', {
-        fontFamily: FONT_BODY,
-        fontSize: '20px',
-        color: CSS.brass,
-      }),
-    );
-    this.content.add(
-      this.add.text(bounds.x, bounds.y + 28, 'Select the facts that belong together, then connect them.', {
-        fontFamily: FONT_UI,
-        fontSize: '12px',
-        color: CSS.muted,
-      }),
+    const bodyY = this.header(
+      bounds,
+      'Deduction Board',
+      'Select the facts that belong together, then connect them.',
     );
 
     const rows: Phaser.GameObjects.Container[] = [];
@@ -275,9 +405,10 @@ export class JournalScene extends Phaser.Scene {
     }
     for (const clue of clues) rows.push(this.clueCard(clue, bounds.width));
 
-    this.list = new ScrollList(this, bounds.x, bounds.y + 54, {
+    this.list = new ScrollList(this, bounds.x, bodyY, {
       width: bounds.width,
-      height: bounds.height - 104,
+      // Leave a row's worth of space beneath for the Connect button.
+      height: bounds.height - (bodyY - bounds.y) - 50,
       gap: 6,
     });
     this.list.setRows(rows);
@@ -349,21 +480,17 @@ export class JournalScene extends Phaser.Scene {
     container.add(this.add.image(20, height / 2, 'icons', categoryIcon).setScale(1.2));
 
     container.add(
-      this.add.text(40, 10, clue.title, { fontFamily: FONT_UI, fontSize: '13px', color: CSS.parchment }),
+      pixelText(this, 40, 10, clue.title, { fontSize: '13px', color: CSS.parchment }),
     );
     container.add(
-      this.add.text(40, 30, clue.text, {
-        fontFamily: FONT_BODY,
+      pixelText(this, 40, 30, clue.text, {
         fontSize: '12px',
         color: CSS.muted,
         wordWrap: { width: width - 60 },
       }),
     );
 
-    container.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, width, height),
-      Phaser.Geom.Rectangle.Contains,
-    );
+    setContainerHitArea(container, width, height);
     let downAt = { x: 0, y: 0 };
     container.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       downAt = { x: pointer.x, y: pointer.y };
@@ -382,23 +509,31 @@ export class JournalScene extends Phaser.Scene {
 
   private conclusionRow(title: string, text: string, width: number): Phaser.GameObjects.Container {
     const container = this.add.container(0, 0);
-    const height = 56;
-    container.setSize(width, height);
     const bg = this.add.graphics();
+    container.add(bg);
+
+    const titleText = pixelText(this, 12, 8, title, {
+      fontSize: '13px',
+      color: CSS.good,
+      wordWrap: { width: width - 24 },
+    });
+    const bodyText = pixelText(this, 12, 8 + titleText.height + 4, text, {
+      fontSize: '12px',
+      color: CSS.muted,
+      wordWrap: { width: width - 24 },
+    });
+    container.add(titleText);
+    container.add(bodyText);
+
+    // Measured, not assumed: a narrow portrait panel wraps these descriptions
+    // onto three lines where a wide one takes two, and a fixed row height
+    // silently overlaps the row below it.
+    const height = Math.max(56, bodyText.y + bodyText.height + 10);
+    container.setSize(width, height);
     bg.fillStyle(COLORS.panelLight, 0.5);
     bg.fillRoundedRect(0, 0, width, height, 4);
     bg.lineStyle(1, COLORS.good, 0.5);
     bg.strokeRoundedRect(0, 0, width, height, 4);
-    container.add(bg);
-    container.add(this.add.text(12, 8, title, { fontFamily: FONT_UI, fontSize: '13px', color: CSS.good }));
-    container.add(
-      this.add.text(12, 26, text, {
-        fontFamily: FONT_BODY,
-        fontSize: '12px',
-        color: CSS.muted,
-        wordWrap: { width: width - 24 },
-      }),
-    );
     return container;
   }
 
@@ -411,20 +546,7 @@ export class JournalScene extends Phaser.Scene {
     const state = this.session.state;
     const pathway = this.session.content.pathway(state.pathwayId);
 
-    this.content.add(
-      this.add.text(bounds.x, bounds.y, `${pathway.name} Pathway`, {
-        fontFamily: FONT_BODY,
-        fontSize: '20px',
-        color: CSS.brass,
-      }),
-    );
-    this.content.add(
-      this.add.text(bounds.x, bounds.y + 28, pathway.epithet, {
-        fontFamily: FONT_UI,
-        fontSize: '12px',
-        color: CSS.occult,
-      }),
-    );
+    const bodyY = this.header(bounds, `${pathway.name} Pathway`, pathway.epithet);
 
     const rows: Phaser.GameObjects.Container[] = [];
     rows.push(this.paragraphRow(state.sequenceData?.description ?? '', bounds.width));
@@ -473,9 +595,9 @@ export class JournalScene extends Phaser.Scene {
       }
     }
 
-    this.list = new ScrollList(this, bounds.x, bounds.y + 54, {
+    this.list = new ScrollList(this, bounds.x, bodyY, {
       width: bounds.width,
-      height: bounds.height - 54,
+      height: bounds.height - (bodyY - bounds.y),
       gap: 6,
     });
     this.list.setRows(rows);
@@ -490,20 +612,7 @@ export class JournalScene extends Phaser.Scene {
     const bounds = this.bodyBounds();
     const state = this.session.state;
 
-    this.content.add(
-      this.add.text(bounds.x, bounds.y, 'Effects', {
-        fontFamily: FONT_BODY,
-        fontSize: '20px',
-        color: CSS.brass,
-      }),
-    );
-    this.content.add(
-      this.add.text(bounds.x, bounds.y + 28, `Purse: ${format(state.pence)}`, {
-        fontFamily: FONT_UI,
-        fontSize: '12px',
-        color: CSS.muted,
-      }),
-    );
+    const bodyY = this.header(bounds, 'Effects', `Purse: ${format(state.pence)}`);
 
     const rows: Phaser.GameObjects.Container[] = [];
     if (state.inventory.size === 0) {
@@ -513,7 +622,7 @@ export class JournalScene extends Phaser.Scene {
       const item = this.session.content.item(itemId);
       if (!item) continue;
       const label = `${item.name}${count > 1 ? ` ×${count}` : ''}`;
-      const detail = `${item.description}${item.sellPence ? `\nThe Club would pay ${format(item.sellPence)}.` : ''}`;
+      const detail = `${item.description}${item.sellPence ? `\nThe Company would pay ${format(item.sellPence)}.` : ''}`;
 
       if (!item.use) {
         rows.push(this.conclusionRow(label, detail, bounds.width));
@@ -540,9 +649,9 @@ export class JournalScene extends Phaser.Scene {
       rows.push(container);
     }
 
-    this.list = new ScrollList(this, bounds.x, bounds.y + 54, {
+    this.list = new ScrollList(this, bounds.x, bodyY, {
       width: bounds.width,
-      height: bounds.height - 54,
+      height: bounds.height - (bodyY - bounds.y),
       gap: 6,
     });
     this.list.setRows(rows);
@@ -557,19 +666,10 @@ export class JournalScene extends Phaser.Scene {
 
   private renderClub(): void {
     const bounds = this.bodyBounds();
-    this.content.add(
-      this.add.text(bounds.x, bounds.y, 'The Tarot Club', {
-        fontFamily: FONT_BODY,
-        fontSize: '20px',
-        color: CSS.brass,
-      }),
-    );
-    this.content.add(
-      this.add.text(bounds.x, bounds.y + 28, 'Names are not used. Cards are.', {
-        fontFamily: FONT_UI,
-        fontSize: '12px',
-        color: CSS.muted,
-      }),
+    const bodyY = this.header(
+      bounds,
+      'The Seventh Unit',
+      'Blackthorn Security Company, No. 36 Zouteland Street.',
     );
 
     const rows: Phaser.GameObjects.Container[] = [];
@@ -582,9 +682,9 @@ export class JournalScene extends Phaser.Scene {
       );
     }
 
-    this.list = new ScrollList(this, bounds.x, bounds.y + 54, {
+    this.list = new ScrollList(this, bounds.x, bodyY, {
       width: bounds.width,
-      height: bounds.height - 54,
+      height: bounds.height - (bodyY - bounds.y),
       gap: 6,
     });
     this.list.setRows(rows);
@@ -599,8 +699,7 @@ export class JournalScene extends Phaser.Scene {
     const container = this.add.container(0, 0);
     container.setSize(width, 26);
     container.add(
-      this.add.text(0, 6, text.toUpperCase(), {
-        fontFamily: FONT_UI,
+      pixelText(this, 0, 6, text.toUpperCase(), {
         fontSize: '11px',
         color: CSS.brass,
       }),
@@ -613,8 +712,7 @@ export class JournalScene extends Phaser.Scene {
   }
 
   private bulletRow(text: string, width: number, color: string): Phaser.GameObjects.Container {
-    const label = this.add.text(0, 0, text, {
-      fontFamily: FONT_BODY,
+    const label = pixelText(this, 0, 0, text, {
       fontSize: '13px',
       color,
       wordWrap: { width },
@@ -626,11 +724,9 @@ export class JournalScene extends Phaser.Scene {
   }
 
   private paragraphRow(text: string, width: number): Phaser.GameObjects.Container {
-    const label = this.add.text(0, 0, text, {
-      fontFamily: FONT_BODY,
+    const label = pixelText(this, 0, 0, text, {
       fontSize: '13px',
       color: CSS.parchment,
-      lineSpacing: 5,
       wordWrap: { width },
     });
     const container = this.add.container(0, 0);

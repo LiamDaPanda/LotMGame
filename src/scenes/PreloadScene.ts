@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
+import { pixelText } from '@/ui/pixelFont';
 import { Content } from '@/systems/Content';
 import { Session } from '@/systems/Session';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import { COLORS, CSS, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
 import type { ContentIndex } from '@/types/schema';
 
 /** Frame geometry — must match tools/generate-art.mjs. */
@@ -41,6 +42,7 @@ export class PreloadScene extends Phaser.Scene {
     }
     this.load.json(`items/${this.index.items}`, `items/${this.index.items}.json`);
     this.load.json(`characters/${this.index.characters}`, `characters/${this.index.characters}.json`);
+    if (this.index.story) this.load.json(`story/${this.index.story}`, `story/${this.index.story}.json`);
   }
 
   create(): void {
@@ -51,9 +53,33 @@ export class PreloadScene extends Phaser.Scene {
       return data;
     });
 
+    this.buildGlowTexture();
     this.registry.set(Session.KEY, new Session(content));
     this.buildAnimations(content.characters.size);
     this.scene.start('MainMenu');
+  }
+
+  /**
+   * A soft radial falloff, painted once and tinted per lamp.
+   *
+   * Phaser's Graphics has no radial gradient, and a gaslit room is mostly the
+   * business of light falling off — so the falloff is a texture and every lamp
+   * in the world is one additive image of it.
+   */
+  private buildGlowTexture(): void {
+    if (this.textures.exists('glow')) return;
+    const size = 128;
+    const canvas = this.textures.createCanvas('glow', size, size);
+    const ctx = canvas?.getContext();
+    if (!canvas || !ctx) return;
+    const gradient = ctx.createRadialGradient(size / 2, size / 2, 2, size / 2, size / 2, size / 2);
+    gradient.addColorStop(0, 'rgba(255,255,255,0.95)');
+    gradient.addColorStop(0.35, 'rgba(255,255,255,0.4)');
+    gradient.addColorStop(0.7, 'rgba(255,255,255,0.12)');
+    gradient.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+    canvas.refresh();
   }
 
   /**
@@ -92,17 +118,13 @@ export class PreloadScene extends Phaser.Scene {
     const cx = GAME_WIDTH / 2;
     const cy = GAME_HEIGHT / 2;
 
-    this.add
-      .text(cx, cy - 60, 'THE TAROT CLUB', {
-        fontFamily: FONT_BODY,
+    pixelText(this, cx, cy - 60, 'THE TAROT CLUB', {
         fontSize: '32px',
         color: CSS.brass,
       })
       .setOrigin(0.5);
 
-    const status = this.add
-      .text(cx, cy + 34, 'Lighting the lamps…', {
-        fontFamily: FONT_UI,
+    const status = pixelText(this, cx, cy + 34, 'Lighting the lamps…', {
         fontSize: '12px',
         color: CSS.muted,
       })

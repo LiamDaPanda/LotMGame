@@ -10,14 +10,17 @@ import type { Point } from '@/world/TileGrid';
 
 export type Facing = 'down' | 'left' | 'right' | 'up';
 
-/** Tiles per second. */
+/** Tiles per second at a walk. */
 const WALK_SPEED = 4.2;
 
 export class Actor {
   readonly sprite: Phaser.GameObjects.Sprite;
+  private readonly shadow: Phaser.GameObjects.Ellipse;
   tileX: number;
   tileY: number;
   facing: Facing = 'down';
+  /** Multiplier on the walk: a stick pushed to its rim holds this above 1. */
+  speedScale = 1;
 
   private path: Point[] = [];
   private stepFrom?: Point;
@@ -33,6 +36,14 @@ export class Actor {
   ) {
     this.tileX = tileX;
     this.tileY = tileY;
+    this.shadow = scene.add.ellipse(
+      tileX * TILE_SIZE + TILE_SIZE / 2,
+      tileY * TILE_SIZE + TILE_SIZE / 2 + 6,
+      20,
+      8,
+      0x14100d,
+      0.38,
+    );
     this.sprite = scene.add.sprite(
       tileX * TILE_SIZE + TILE_SIZE / 2,
       tileY * TILE_SIZE + TILE_SIZE / 2,
@@ -41,6 +52,7 @@ export class Actor {
     );
     // Feet sit on the tile centre; the tall chibi head overhangs upward.
     this.sprite.setOrigin(0.5, 0.78);
+    this.followShadow();
     this.playIdle();
   }
 
@@ -147,11 +159,19 @@ export class Actor {
   private snapToTile(): void {
     this.sprite.x = this.tileX * TILE_SIZE + TILE_SIZE / 2;
     this.sprite.y = this.tileY * TILE_SIZE + TILE_SIZE / 2;
+    this.followShadow();
+  }
+
+  /** The shadow sits at the feet and sinks a little as the step lands. */
+  private followShadow(): void {
+    this.shadow.x = this.sprite.x;
+    this.shadow.y = this.sprite.y + 6;
+    this.shadow.setDepth(this.sprite.y - 1);
   }
 
   update(deltaMs: number): void {
     if (!this.stepTo || !this.stepFrom) return;
-    this.stepProgress += (deltaMs / 1000) * WALK_SPEED;
+    this.stepProgress += (deltaMs / 1000) * WALK_SPEED * this.speedScale;
 
     if (this.stepProgress >= 1) {
       this.tileX = this.stepTo.x;
@@ -166,6 +186,7 @@ export class Actor {
       Phaser.Math.Linear(this.stepFrom.x, this.stepTo.x, t) * TILE_SIZE + TILE_SIZE / 2;
     this.sprite.y =
       Phaser.Math.Linear(this.stepFrom.y, this.stepTo.y, t) * TILE_SIZE + TILE_SIZE / 2;
+    this.followShadow();
   }
 
   /** Sort key so actors and props overlap correctly by depth. */
@@ -174,6 +195,7 @@ export class Actor {
   }
 
   destroy(): void {
+    this.shadow.destroy();
     this.sprite.destroy();
   }
 }

@@ -1,17 +1,36 @@
 import Phaser from 'phaser';
+import { pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { SaveManager } from '@/systems/SaveManager';
 import { Button, drawPanel } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import { COLORS, CSS, GAME_HEIGHT, GAME_WIDTH, isPortrait, minTapHeight, panelInset } from '@/ui/theme';
 
+/** Where a new run begins: Klein's own room, the night he chooses. */
+const OPENING_MAP = 'lodgings';
+
+/**
+ * Title screen.
+ *
+ * Deliberately thin. The one decision that shapes a run — which pathway Klein
+ * walks — is not made here any more; it is made in the prologue, in his own
+ * handwriting at half past two in the morning, because a choice that matters
+ * that much should be a scene rather than a row of buttons.
+ */
 export class MainMenuScene extends Phaser.Scene {
+  /** Set when the menu is re-entered to explain why Continue did nothing. */
+  private warning?: string;
+
   constructor() {
     super('MainMenu');
   }
 
+  init(data: { warning?: string }): void {
+    this.warning = data.warning;
+  }
+
   create(): void {
-    const session = Session.get(this);
     this.cameras.main.setBackgroundColor(COLORS.ink);
+    const tall = isPortrait();
 
     // A slow drift of lamplit motes behind the title.
     for (let i = 0; i < 40; i++) {
@@ -32,94 +51,118 @@ export class MainMenuScene extends Phaser.Scene {
       });
     }
 
-    this.add
-      .text(GAME_WIDTH / 2, 118, 'THE TAROT CLUB', {
-        fontFamily: FONT_BODY,
-        fontSize: '46px',
-        color: CSS.brass,
-      })
-      .setOrigin(0.5)
-      .setShadow(0, 3, '#000000', 8);
+    pixelText(this, GAME_WIDTH / 2, tall ? 110 : 74, 'THE TAROT CLUB', {
+      size: 'xl',
+      color: CSS.brass,
+      align: 'center',
+      wrap: GAME_WIDTH - 40,
+    }).setOrigin(0.5, 0);
 
-    this.add
-      .text(GAME_WIDTH / 2, 162, 'a gaslamp investigation', {
-        fontFamily: FONT_UI,
-        fontSize: '13px',
-        color: CSS.muted,
-      })
-      .setOrigin(0.5);
+    pixelText(this, GAME_WIDTH / 2, tall ? 160 : 120, 'a gaslamp investigation', {
+      size: 'md',
+      color: CSS.muted,
+      align: 'center',
+    }).setOrigin(0.5, 0);
 
-    const hasSave = SaveManager.hasSave();
+    const buttonH = minTapHeight();
 
-    new Button(
+    // Laid out upwards from the footnote, whose height depends on how many
+    // lines it wraps to at this width.
+    const disclaimer = pixelText(
       this,
-      GAME_WIDTH / 2 - 130,
-      220,
-      hasSave ? 'Continue' : 'Continue',
-      () => this.continueGame(),
-      { width: 260, height: 46, enabled: hasSave, tone: 'good', fontSize: 17 },
+      GAME_WIDTH / 2,
+      GAME_HEIGHT - 10,
+      'A non-commercial fan project, inspired by Lord of the Mysteries. Not affiliated with the author or its publishers.',
+      { size: 'md', color: CSS.muted, align: 'center', wrap: GAME_WIDTH - 40 },
+    ).setOrigin(0.5, 1);
+
+    const actionsY =
+      GAME_HEIGHT - 10 - disclaimer.height - 20 - (tall ? buttonH * 2 + 10 : buttonH);
+
+    const inset = tall ? 16 : panelInset();
+    const panelX = inset;
+    const panelW = GAME_WIDTH - inset * 2;
+    const panelY = tall ? 210 : 150;
+    const panelH = actionsY - panelY - 20;
+    drawPanel(this, panelX, panelY, panelW, panelH, { fillAlpha: 0.72 });
+
+    pixelText(
+      this,
+      panelX + 20,
+      panelY + 16,
+      [
+        'Tingen City, the twenty-eighth of June, 1349. You are Klein Moretti, and you have just woken at a desk that is not yours in a body that is, with the door bolted from the inside, a revolver by your right hand and a crimson moon over Iron Cross Street.',
+        'Three people read the Antigonus family’s notebook and all three died in the same hour. The notebook is not where it was. The men from No. 36 Zouteland Street want it back, and your own name is in the file twice.',
+      ].join('\n\n'),
+      {
+        size: 'md',
+        color: CSS.parchment,
+        wrap: panelW - 40,
+        maxHeight: panelH - 32,
+      },
     );
 
-    new Button(this, GAME_WIDTH / 2 - 130, 278, 'New Investigation', () => this.newGame(hasSave), {
-      width: 260,
-      height: 46,
-      fontSize: 17,
-    });
+    const hasSave = SaveManager.hasSave();
+    if (tall) {
+      new Button(this, panelX, actionsY, 'Continue', () => this.continueGame(), {
+        width: panelW,
+        height: buttonH,
+        enabled: hasSave,
+        tone: 'good',
+        fontSize: 17,
+      });
+      new Button(this, panelX, actionsY + buttonH + 10, 'Begin', () => this.newGame(hasSave), {
+        width: panelW,
+        height: buttonH,
+        fontSize: 17,
+      });
+    } else {
+      new Button(this, GAME_WIDTH / 2 - 272, actionsY, 'Continue', () => this.continueGame(), {
+        width: 260,
+        height: buttonH,
+        enabled: hasSave,
+        tone: 'good',
+        fontSize: 17,
+      });
+      new Button(this, GAME_WIDTH / 2 + 12, actionsY, 'Begin', () => this.newGame(hasSave), {
+        width: 260,
+        height: buttonH,
+        fontSize: 17,
+      });
+    }
 
-    // Pathway blurb — one pathway is implemented, so it is stated plainly
-    // rather than offered as a choice that does not exist yet.
-    const pathway = session.content.pathway('seer');
-    drawPanel(this, GAME_WIDTH / 2 - 230, 344, 460, 104, { fillAlpha: 0.7 });
-    this.add
-      .text(GAME_WIDTH / 2, 362, `Pathway: ${pathway.name}`, {
-        fontFamily: FONT_BODY,
-        fontSize: '17px',
-        color: CSS.occult,
-      })
-      .setOrigin(0.5, 0);
-    this.add
-      .text(GAME_WIDTH / 2, 388, pathway.description, {
-        fontFamily: FONT_BODY,
-        fontSize: '12px',
-        color: CSS.muted,
+    const alert = this.warning ?? (SaveManager.available() ? undefined : 'Storage is unavailable - progress will not be saved.');
+    if (alert) {
+      pixelText(this, GAME_WIDTH / 2, disclaimer.y - disclaimer.height - 6, alert, {
+        size: 'md',
+        color: CSS.bad,
         align: 'center',
-        wordWrap: { width: 420 },
-      })
-      .setOrigin(0.5, 0);
-
-    this.add
-      .text(
-        GAME_WIDTH / 2,
-        GAME_HEIGHT - 30,
-        'A non-commercial fan project, inspired by Lord of the Mysteries. Not affiliated with the author or its publishers.',
-        { fontFamily: FONT_UI, fontSize: '10px', color: CSS.muted, align: 'center' },
-      )
-      .setOrigin(0.5);
-
-    if (!SaveManager.available()) {
-      this.add
-        .text(GAME_WIDTH / 2, GAME_HEIGHT - 52, 'Storage is unavailable — progress will not be saved.', {
-          fontFamily: FONT_UI,
-          fontSize: '10px',
-          color: CSS.bad,
-        })
-        .setOrigin(0.5);
+        wrap: GAME_WIDTH - 40,
+      }).setOrigin(0.5, 1);
     }
   }
 
   private continueGame(): void {
     const session = Session.get(this);
-    SaveManager.load(session.state);
+    if (!SaveManager.load(session.state)) {
+      // The save was unreadable and has now been discarded. Starting this
+      // session's map anyway would drop the player into a half-built run, and
+      // silently beginning a new one looks like the button is broken — so come
+      // back to the menu and say what happened.
+      this.scene.restart({ warning: 'That save could not be read, and has been discarded.' });
+      return;
+    }
     this.startWorld(session.state.currentMap);
   }
 
   private newGame(hadSave: boolean): void {
     if (hadSave) SaveManager.clear();
-    // Rebuild the session so a new run never inherits the old one's state.
+    // Rebuild the session so a new run never inherits the old one's state. No
+    // pathway is set here: the prologue in the opening room sets it.
     const fresh = Session.get(this).reset();
     this.registry.set(Session.KEY, fresh);
     fresh.cases.refreshAvailability();
-    this.startWorld('club_hub');
+    this.startWorld(OPENING_MAP);
   }
 
   private startWorld(mapId: string): void {

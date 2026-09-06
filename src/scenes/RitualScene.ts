@@ -1,8 +1,16 @@
 import Phaser from 'phaser';
+import { pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { SaveManager } from '@/systems/SaveManager';
-import { Button, ScrollList, Typewriter, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import { Button, ScrollList, Typewriter, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  COLORS,
+  CSS,
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  menuRect,
+  minTapHeight,
+} from '@/ui/theme';
 
 /**
  * Advancement.
@@ -17,18 +25,25 @@ export class RitualScene extends Phaser.Scene {
   private session!: Session;
   private list?: ScrollList;
 
-  private readonly x = 130;
-  private readonly y = 44;
-  private readonly w = GAME_WIDTH - 260;
-  private readonly h = GAME_HEIGHT - 88;
+
+  private x = 0;
+  private y = 0;
+  private w = 0;
+  private h = 0;
 
   constructor() {
     super('Ritual');
   }
 
   create(): void {
+    // Read the layout here, not in a field: scene instances outlive a rotation.
+    const pane = menuRect();
+    this.x = pane.x + 10;
+    this.y = pane.y + 10;
+    this.w = pane.width - 20;
+    this.h = pane.height - 20;
     this.session = Session.get(this);
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.9).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.9);
     this.render();
     this.input.keyboard?.on('keydown-ESC', () => this.close());
   }
@@ -37,39 +52,43 @@ export class RitualScene extends Phaser.Scene {
     this.children.removeAll(true);
     this.list = undefined;
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.9).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.9);
     drawPanel(this, this.x, this.y, this.w, this.h);
 
     const state = this.session.state;
     const advancement = this.session.progression.next();
 
-    sectionHeader(
+    const header = sectionHeader(
       this,
       this.x + 24,
       this.y + 16,
-      this.w - 48,
+      this.w - 158,
       'The Rite',
-      `You are Sequence ${state.sequence} — ${state.sequenceTitle}.`,
+      `You are ${state.rankLabel}.`,
     );
+    // The header stops short of the Leave button on its line.
+    header.setSize(this.w - 158, header.height);
 
     if (!advancement) {
-      this.add.text(this.x + 24, this.y + 90, 'There is no further rung written on this ladder.', {
-        fontFamily: FONT_BODY,
-        fontSize: '15px',
+      pixelText(this, this.x + 24, header.y + header.height, 'There is no further rung written on this ladder.', {
+        size: 'md',
         color: CSS.muted,
+        wrap: this.w - 48,
       });
-      new Button(this, this.x + 24, this.y + this.h - 54, 'Leave', () => this.close(), {
+      new Button(this, this.x + 24, this.y + this.h - minTapHeight() - 12, 'Leave', () => this.close(), {
         width: 150,
-        height: 38,
+        height: minTapHeight(),
       });
       return;
     }
 
-    this.add.text(this.x + 24, this.y + 76, `Toward Sequence ${advancement.toSequence} — ${advancement.toTitle}`, {
-      fontFamily: FONT_BODY,
-      fontSize: '18px',
-      color: CSS.brass,
-    });
+    const toward = pixelText(
+      this,
+      this.x + 24,
+      header.y + header.height,
+      `Toward Sequence ${advancement.toSequence} - ${advancement.toTitle}`,
+      { size: 'md', color: CSS.brass, wrap: this.w - 48 },
+    );
 
     const rows: Phaser.GameObjects.Container[] = [];
     for (const status of this.session.progression.requirements()) {
@@ -82,27 +101,34 @@ export class RitualScene extends Phaser.Scene {
       );
     }
 
-    this.list = new ScrollList(this, this.x + 24, this.y + 108, {
+    // Two rites at the bottom, requirements in whatever is left above them.
+    const canAdvance = this.session.progression.canAdvance();
+    const canForce = this.session.progression.canForceAdvance();
+    const temptation = advancement.temptation;
+
+    const forceH = minTapHeight() + 32;
+    const takeH = minTapHeight() + 20;
+    const forceY = this.y + this.h - forceH - 12;
+    const takeY = forceY - takeH - 8;
+
+    const listY = toward.y + toward.height + 10;
+    this.list = new ScrollList(this, this.x + 24, listY, {
       width: this.w - 48,
-      height: this.h - 240,
+      height: Math.max(minTapHeight(), takeY - 10 - listY),
       gap: 6,
     });
     this.list.setRows(rows);
     this.list.refreshMask();
 
-    const canAdvance = this.session.progression.canAdvance();
-    const canForce = this.session.progression.canForceAdvance();
-    const temptation = advancement.temptation;
-
     new Button(
       this,
       this.x + 24,
-      this.y + this.h - 128,
+      takeY,
       'Drink, and take the role',
       () => this.perform(false),
       {
         width: this.w - 48,
-        height: 48,
+        height: takeH,
         tone: 'good',
         enabled: canAdvance,
         fontSize: 15,
@@ -117,12 +143,12 @@ export class RitualScene extends Phaser.Scene {
     new Button(
       this,
       this.x + 24,
-      this.y + this.h - 72,
+      forceY,
       temptation.label,
       () => this.perform(true),
       {
         width: this.w - 48,
-        height: 62,
+        height: forceH,
         tone: 'bad',
         enabled: canForce,
         fontSize: 15,
@@ -132,9 +158,10 @@ export class RitualScene extends Phaser.Scene {
       },
     );
 
-    new Button(this, this.x + this.w - 174, this.y + 74, 'Leave', () => this.close(), {
-      width: 150,
-      height: 32,
+    // Leave rides on the header's line — everything below it is spoken for.
+    new Button(this, this.x + this.w - 110, this.y + 12, 'Leave', () => this.close(), {
+      width: 86,
+      height: 30,
       fontSize: 12,
     });
   }
@@ -142,25 +169,32 @@ export class RitualScene extends Phaser.Scene {
   private requirementRow(text: string, detail: string | undefined, met: boolean): Phaser.GameObjects.Container {
     const width = this.w - 48;
     const container = this.add.container(0, 0);
-    container.setSize(width, 34);
     const bg = this.add.graphics();
-    bg.fillStyle(COLORS.panelLight, met ? 0.5 : 0.25);
-    bg.fillRoundedRect(0, 0, width, 34, 4);
     container.add(bg);
-    container.add(
-      this.add.text(12, 9, text, {
-        fontFamily: FONT_UI,
-        fontSize: '13px',
-        color: met ? CSS.good : CSS.muted,
-      }),
-    );
+
+    // Requirement labels are a sentence long, so the row grows to hold them
+    // rather than letting them run out past the panel's edge.
+    const label = pixelText(this, 12, 8, text, {
+      size: 'md',
+      color: met ? CSS.good : CSS.muted,
+      wrap: width - 24,
+    });
+    container.add(label);
+    let height = label.height + 16;
+
     if (detail) {
-      container.add(
-        this.add
-          .text(width - 12, 9, detail, { fontFamily: FONT_UI, fontSize: '12px', color: CSS.muted })
-          .setOrigin(1, 0),
-      );
+      const note = pixelText(this, 12, 8 + label.height + 2, detail, {
+        size: 'md',
+        color: CSS.muted,
+        wrap: width - 24,
+      });
+      container.add(note);
+      height = note.y + note.height + 8;
     }
+
+    container.setSize(width, height);
+    bg.fillStyle(COLORS.panelLight, met ? 0.5 : 0.25);
+    bg.fillRoundedRect(0, 0, width, height, 4);
     return container;
   }
 
@@ -184,12 +218,10 @@ export class RitualScene extends Phaser.Scene {
     this.children.removeAll(true);
     this.list = undefined;
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 1).setOrigin(0, 0).setInteractive();
+    panelStage(this, 1);
     this.cameras.main.flash(600, 40, 30, 60);
 
-    const title = this.add
-      .text(GAME_WIDTH / 2, 74, `Sequence ${result.toSequence} — ${result.toTitle}`, {
-        fontFamily: FONT_BODY,
+    const title = pixelText(this, GAME_WIDTH / 2, 74, `Sequence ${result.toSequence} — ${result.toTitle}`, {
         fontSize: '30px',
         color: forced ? CSS.bad : CSS.brass,
       })
@@ -197,11 +229,9 @@ export class RitualScene extends Phaser.Scene {
       .setAlpha(0);
     this.tweens.add({ targets: title, alpha: 1, duration: 900 });
 
-    const body = this.add.text(140, 130, '', {
-      fontFamily: FONT_BODY,
+    const body = pixelText(this, 140, 130, '', {
       fontSize: '15px',
       color: CSS.parchment,
-      lineSpacing: 8,
       wordWrap: { width: GAME_WIDTH - 280 },
     });
 

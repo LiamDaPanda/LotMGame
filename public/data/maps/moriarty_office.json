@@ -1,0 +1,148 @@
+{
+  "id": "moriarty_office",
+  "name": "Moriarty’s Rooms, Minsk Street",
+  "ambient": "#3a3448",
+  "encounterChance": 0,
+  "legend": {
+    "#": {
+      "floor": 11,
+      "collide": true
+    },
+    ".": {
+      "floor": 3
+    },
+    "=": {
+      "floor": 5
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    },
+    "B": {
+      "floor": 3,
+      "object": 18,
+      "collide": true
+    },
+    "d": {
+      "floor": 3,
+      "object": 25,
+      "collide": true
+    },
+    "c": {
+      "floor": 3,
+      "object": 17,
+      "collide": true
+    },
+    "F": {
+      "floor": 11,
+      "object": 22,
+      "collide": true
+    },
+    "L": {
+      "floor": 3,
+      "object": 24,
+      "collide": true
+    },
+    "A": {
+      "floor": 11,
+      "object": 26,
+      "collide": true
+    },
+    "K": {
+      "floor": 3,
+      "object": 31,
+      "collide": true
+    }
+  },
+  "rows": [
+    "####W######W####",
+    "#..............#",
+    "#.BB........AA.#",
+    "#..............#",
+    "#.L..====....K.#",
+    "#....=dd=......#",
+    "#....=c.=....F.#",
+    "#....====......#",
+    "#..............#",
+    "#.c..........c.#",
+    "#..............#",
+    "#######oo#######"
+  ],
+  "spawn": {
+    "x": 7,
+    "y": 9
+  },
+  "hotspots": [
+    {
+      "id": "mo_desk",
+      "x": 6,
+      "y": 5,
+      "name": "The Consulting Desk",
+      "description": "A pipe that is never lit, a magnifying glass that is never used, and a card tray that has been empty for nine days.",
+      "action": "dialogue",
+      "dialogue": "dlg_moriarty",
+      "icon": 7
+    },
+    {
+      "id": "mo_case",
+      "x": 2,
+      "y": 2,
+      "name": "The Case Shelf",
+      "description": "Directories, a Backlund street atlas, and four newspapers folded to the same column: deaths in the East Borough, by parish, weekly.",
+      "action": "dialogue",
+      "dialogue": "dlg_wright",
+      "icon": 12
+    },
+    {
+      "id": "mo_cabinet",
+      "x": 12,
+      "y": 2,
+      "name": "The Locked Cabinet",
+      "description": "Three faces on hooks and a sea officer’s coat that does not belong to anyone in this city.",
+      "action": "dialogue",
+      "dialogue": "dlg_faces",
+      "icon": 13
+    },
+    {
+      "id": "mo_hearth",
+      "x": 13,
+      "y": 6,
+      "name": "The Hearth",
+      "description": "Coal, because everything here is coal. The smoke goes up the chimney and joins the rest of it and comes back down on the East Borough.",
+      "action": "rest",
+      "safeRest": true,
+      "icon": 2
+    },
+    {
+      "id": "rite_backlund_2",
+      "x": 6,
+      "y": 4,
+      "name": "The Circle, Chalked On Boards",
+      "description": "Under the rug, where a charwoman will not find it, and re-drawn every time she moves the furniture.",
+      "action": "ritual",
+      "icon": 13
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 7,
+      "y": 11,
+      "toMap": "backlund",
+      "toX": 8,
+      "toY": 7,
+      "label": "Minsk Street"
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_v2_arrive",
+    "flag": "v2_arrived"
+  }
+}

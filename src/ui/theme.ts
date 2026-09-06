@@ -1,8 +1,194 @@
 /** Shared look-and-feel. Gaslamp: soot, brass, lamplight, and a bruise of violet for the occult. */
 
-export const GAME_WIDTH = 960;
-export const GAME_HEIGHT = 540;
+/**
+ * The logical canvas size. Not a constant: it is chosen at boot from the
+ * viewport's aspect and re-chosen when the device rotates, so a phone held
+ * upright gets a tall board rather than a 219px letterboxed strip.
+ *
+ * These are live ES module bindings — importers see updates. Anything that
+ * reads them must do so inside `create()`, never in a class field initializer,
+ * because scene instances outlive a rotation.
+ */
+export let GAME_WIDTH = 960;
+export let GAME_HEIGHT = 540;
 export const TILE_SIZE = 32;
+
+/**
+ * Logical sizes per orientation.
+ *
+ * The portrait board is 1:2 rather than a rotated 16:9 because phones are
+ * narrow: a 2:3 board on an iPhone 13 (390x844) fits by width and letterboxes
+ * away a third of the screen, and everything it does draw is scaled down to
+ * 0.68 — which turns a 44px button into a 30pt one, under Apple's 44pt
+ * minimum. 1:2 lands within a few percent of every iPhone's aspect, so the
+ * board very nearly fills the screen and a logical pixel is very nearly a
+ * point.
+ */
+export const LANDSCAPE = { width: 960, height: 540 } as const;
+export const PORTRAIT = { width: 480, height: 960 } as const;
+
+/** Pick the logical size that matches a viewport, and publish it. */
+export function setLayoutFor(viewportWidth: number, viewportHeight: number): {
+  width: number;
+  height: number;
+} {
+  const size = viewportHeight > viewportWidth ? PORTRAIT : LANDSCAPE;
+  GAME_WIDTH = size.width;
+  GAME_HEIGHT = size.height;
+  return size;
+}
+
+export function isPortrait(): boolean {
+  return GAME_HEIGHT > GAME_WIDTH;
+}
+
+/**
+ * Panel inset from the screen edge. Portrait has far less width to spare, so
+ * modal panels hug the edges rather than floating in the middle.
+ */
+export function panelInset(): number {
+  return isPortrait() ? 10 : 110;
+}
+
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * The portrait screen is split like a handheld's two screens: the world on
+ * top, everything you touch underneath.
+ *
+ * A phone is held at the bottom, so the half a thumb reaches should be the
+ * half full of buttons — and a map that never has panels thrown over it stays
+ * readable while you are reading a panel. Landscape keeps the older
+ * full-screen-with-overlays arrangement, where there is width to spare.
+ *
+ *   0    status: rank, day, purse
+ *   56   map: the world camera's viewport
+ *   440  meters: sanity, spirit, concealment, digestion
+ *   480  menu: panels and overlays draw in here
+ *   896  tabs: the always-on buttons
+ *   960
+ */
+const PANES = {
+  status: 56,
+  map: 384,
+  meters: 40,
+  tabs: 64,
+} as const;
+
+/**
+ * The status strip along the top.
+ *
+ * Two rows in both orientations. One row cannot hold an identity line, four
+ * meters and two buttons at pixel-font size: "SEQ 9 CORPSE COLLECTOR" alone is
+ * 276px, and squeezing the meters in beside it drew them over the title.
+ */
+export function statusRect(): Rect {
+  return { x: 0, y: 0, width: GAME_WIDTH, height: isPortrait() ? PANES.status : 76 };
+}
+
+/** Where the world camera draws. In landscape that is the whole board. */
+export function mapRect(): Rect {
+  if (!isPortrait()) return { x: 0, y: 0, width: GAME_WIDTH, height: GAME_HEIGHT };
+  return { x: 0, y: PANES.status, width: GAME_WIDTH, height: PANES.map };
+}
+
+/**
+ * Width the landscape status strip's first row reserves on its right: the two
+ * buttons, and room for the purse beside them.
+ */
+export function landscapeRightStrip(): number {
+  const buttons = 2 * (7 * 12 + 16) + 22;
+  const purse = 9 * 12 + 24;
+  return buttons + purse;
+}
+
+/**
+ * The meter row. Portrait gives it a band of its own under the map; landscape
+ * squeezes it into the status strip between the rank block on the left and the
+ * two buttons on the right, so it has to stop short of them.
+ */
+export function metersRect(): Rect {
+  if (!isPortrait()) return { x: 8, y: 44, width: GAME_WIDTH - 16, height: 30 };
+  return { x: 0, y: PANES.status + PANES.map, width: GAME_WIDTH, height: PANES.meters };
+}
+
+/**
+ * Where panels live. Overlays draw inside this rather than over the whole
+ * board, which is what makes the split read as two screens rather than as a
+ * modal thrown over a map.
+ */
+export function menuRect(): Rect {
+  if (!isPortrait()) {
+    const inset = panelInset();
+    const top = statusRect().height + 8;
+    return { x: inset, y: top, width: GAME_WIDTH - inset * 2, height: GAME_HEIGHT - top - 12 };
+  }
+  const top = PANES.status + PANES.map + PANES.meters;
+  return { x: 0, y: top, width: GAME_WIDTH, height: GAME_HEIGHT - top - PANES.tabs };
+}
+
+/**
+ * The quest card: what the story wants next, pinned above the controls.
+ *
+ * A handheld tells you where to go and then lets you ignore it. Keeping that
+ * line permanently on the bottom screen is what makes wandering off feel like a
+ * choice rather than like being lost.
+ */
+export function objectiveRect(): Rect {
+  // Tall enough for a heading, four wrapped lines of instruction and a
+  // destination — measured against the longest objective, so the card never has
+  // to truncate the one line the player most needs to read.
+  const height = 124;
+  if (!isPortrait()) return { x: 10, y: statusRect().height + 8, width: 380, height };
+  const menu = menuRect();
+  return { x: 8, y: menu.y + 6, width: menu.width - 16, height };
+}
+
+/**
+ * The control band: the stick and the action button, centred in it.
+ *
+ * Portrait gives them the rest of the bottom screen. Landscape has no bottom
+ * screen to give, so they float over the foot of the map, which is the one
+ * band of a top-down room that is never the part you are looking at.
+ */
+export function controlsRect(): Rect {
+  if (!isPortrait()) {
+    return { x: 0, y: GAME_HEIGHT - 196, width: GAME_WIDTH, height: 196 };
+  }
+  const menu = menuRect();
+  const top = objectiveRect().y + objectiveRect().height + 6;
+  return { x: 0, y: top, width: menu.width, height: menu.y + menu.height - top };
+}
+
+/** The always-on tab bar along the bottom. Portrait only. */
+export function tabBarRect(): Rect {
+  if (!isPortrait()) return { x: 0, y: GAME_HEIGHT, width: GAME_WIDTH, height: 0 };
+  return { x: 0, y: GAME_HEIGHT - PANES.tabs, width: GAME_WIDTH, height: PANES.tabs };
+}
+
+/** Height of the status strip. */
+export function hudHeight(): number {
+  return isPortrait() ? PANES.status + PANES.map + PANES.meters : statusRect().height;
+}
+
+/** Height of the bottom tab bar. */
+export function hudFooterHeight(): number {
+  return tabBarRect().height;
+}
+
+/**
+ * Minimum comfortable tap target. Apple's guideline is 44pt, and the portrait
+ * board is sized so a logical pixel is close to a point — but it still scales
+ * down a little on shorter phones, so leave headroom above 44.
+ */
+export function minTapHeight(): number {
+  return isPortrait() ? 48 : 38;
+}
 
 export const COLORS = {
   ink: 0x14100d,

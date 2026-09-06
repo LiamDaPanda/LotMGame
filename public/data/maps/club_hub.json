@@ -1,48 +1,124 @@
 {
   "id": "club_hub",
-  "name": "The Tarot Club — Parlour",
+  "name": "Blackthorn Security Company",
   "ambient": "#4a3a6a",
   "legend": {
-    "#": { "floor": 11, "collide": true },
-    ".": { "floor": 4 },
-    "*": { "floor": 6 },
-    "=": { "floor": 5 },
-    "B": { "floor": 4, "object": 18, "collide": true },
-    "A": { "floor": 11, "object": 26, "collide": true },
-    "O": { "floor": 11, "object": 31, "collide": true },
-    "T": { "floor": 5, "object": 16, "collide": true },
-    "C": { "floor": 4, "object": 21, "collide": true },
-    "F": { "floor": 11, "object": 22, "collide": true },
-    "E": { "floor": 4, "object": 23, "collide": true },
-    "d": { "floor": 4, "object": 25, "collide": true },
-    "o": { "floor": 14 },
-    "@": { "floor": 32 }
+    "#": {
+      "floor": 11,
+      "collide": true
+    },
+    ".": {
+      "floor": 4
+    },
+    "*": {
+      "floor": 6
+    },
+    "=": {
+      "floor": 5
+    },
+    "B": {
+      "floor": 4,
+      "object": 18,
+      "collide": true
+    },
+    "A": {
+      "floor": 11,
+      "object": 26,
+      "collide": true
+    },
+    "O": {
+      "floor": 11,
+      "object": 31,
+      "collide": true
+    },
+    "T": {
+      "floor": 5,
+      "object": 16,
+      "collide": true
+    },
+    "C": {
+      "floor": 4,
+      "object": 21,
+      "collide": true
+    },
+    "F": {
+      "floor": 11,
+      "object": 22,
+      "collide": true
+    },
+    "E": {
+      "floor": 4,
+      "object": 23,
+      "collide": true
+    },
+    "d": {
+      "floor": 4,
+      "object": 25,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    },
+    "@": {
+      "floor": 32
+    },
+    "s": {
+      "floor": 4,
+      "object": 18,
+      "collide": true
+    },
+    "h": {
+      "floor": 4,
+      "object": 17,
+      "collide": true
+    },
+    "k": {
+      "floor": 4,
+      "object": 26,
+      "collide": true
+    },
+    "l": {
+      "floor": 4,
+      "object": 24,
+      "collide": true
+    },
+    "x": {
+      "floor": 5
+    },
+    "D": {
+      "floor": 4,
+      "object": 25,
+      "collide": true
+    }
   },
   "rows": [
     "########################",
     "#......................#",
     "#..ABB.....A......O.BA.#",
     "#......................#",
-    "#...*****.....=====....#",
-    "#...**@**.....=T=T=....#",
-    "#...*****.....=====....#",
+    "#.s.*****.....=====..s.#",
+    "#.s.**@**.....=T=T=..s.#",
+    "#.s.*****.....=====..s.#",
     "#......................#",
     "#.C..................F.#",
     "#......................#",
-    "#.E..........d.........#",
+    "#.E..Dh....Dhd..Dh.k...#",
     "#......................#",
+    "#..kl....xxxxxx....l...#",
     "#......................#",
-    "#......................#",
-    "#########oo#############"
+    "########ooo#############"
   ],
-  "spawn": { "x": 11, "y": 8 },
+  "spawn": {
+    "x": 11,
+    "y": 8
+  },
   "hotspots": [
     {
       "id": "club_board",
       "x": 11,
       "y": 2,
-      "name": "The Board",
-      "description": "A green baize board, and on it the work the Club has taken in.",
+      "name": "The Assignment Board",
+      "description": "Tingen’s open files, pinned in Dunn’s handwriting and re-pinned in Rozanne’s when his becomes unreadable. Sealed Artifact recoveries, a missing persons that is not a missing persons, and one card with your own address on it.",
       "action": "case_board",
       "icon": 11
     },
@@ -50,8 +126,8 @@
       "id": "club_requisition",
       "x": 2,
       "y": 8,
-      "name": "Requisition Table",
-      "description": "The Star's counter. Everything the Club owns passes across it, and is written down.",
+      "name": "The Requisition Cabinet",
+      "description": "What the Church will sign out to a Nighthawk, at cost, against a docket. Charms, chalk, and the potions themselves — which are not sold so much as issued, with a form and a countersignature.",
       "action": "shop",
       "icon": 2
     },
@@ -59,8 +135,8 @@
       "id": "club_circle",
       "x": 6,
       "y": 5,
-      "name": "The Circle",
-      "description": "A rug worked with a design nobody will explain. The rite is performed here, or it is performed badly.",
+      "name": "The Ritual Room",
+      "description": "A cellar room with a drain in the floor and the marks of a hundred circles scrubbed off the flagstones. Where a Nighthawk takes a potion, because a Nighthawk who takes one alone in a rented room is how the team learns he had one.",
       "action": "ritual",
       "icon": 13
     },
@@ -68,8 +144,8 @@
       "id": "club_desk",
       "x": 13,
       "y": 10,
-      "name": "The Reporting Desk",
-      "description": "Where an investigator writes up what they found, and decides how much of it to write.",
+      "name": "Dunn’s Desk",
+      "description": "Where a case is reported and closed. He listens without writing anything down, and remembers all of it, which is the only thing about him that is never absent-minded.",
       "action": "resolve",
       "icon": 11
     },
@@ -78,7 +154,7 @@
       "x": 2,
       "y": 10,
       "name": "The Back Room Cot",
-      "description": "A narrow bed behind a curtain. Members sleep here when going home would be unwise.",
+      "description": "For nights a Nighthawk should not be going home. Nothing has ever come through that door, and everyone here can tell you the number of the artifact that makes that true.",
       "action": "rest",
       "icon": 10
     },
@@ -86,8 +162,8 @@
       "id": "club_lectern",
       "x": 20,
       "y": 2,
-      "name": "The Lectern",
-      "description": "Where members are taught things. The Club charges for tuition and makes no apology for it.",
+      "name": "Old Neil’s Lectern",
+      "description": "Theory, ritual grammar, and the parts of the Church’s index a probationary member is cleared to read. He will teach anyone who sits down, at length, for a fee that goes into the tea fund.",
       "action": "training",
       "icon": 11
     },
@@ -96,7 +172,7 @@
       "x": 3,
       "y": 2,
       "name": "The Correspondence Desk",
-      "description": "Letters, timetables, a city directory, and the addresses of people who will tell you things for money.",
+      "description": "Where the legwork is bought: a note to a records clerk, a coin to a ferryman, an afternoon of somebody else’s time. Slower than a power, and it does not cost you anything you cannot get back.",
       "action": "inquiry",
       "icon": 6
     },
@@ -105,16 +181,94 @@
       "x": 18,
       "y": 2,
       "name": "Longcase Clock",
-      "description": "It runs four minutes fast and has done for as long as anyone remembers. The Club has voted twice not to correct it."
+      "description": "Stopped at 11:47, and nobody winds it. Dunn says it stopped on its own the night the last captain died and that he would rather it stayed stopped, and nobody in Tingen argues with Dunn about clocks."
+    },
+    {
+      "id": "club_potion",
+      "x": 3,
+      "y": 12,
+      "name": "The Cellar Room",
+      "description": "A drain in the floor and a chair bolted beside it. This is where the Church’s phials are drunk.",
+      "action": "dialogue",
+      "dialogue": "dlg_potion",
+      "locked": {
+        "reason": "Nothing has been signed for you yet.",
+        "bypass": {
+          "caseState": {
+            "caseId": "case-01-notebook",
+            "state": "active"
+          }
+        }
+      },
+      "icon": 8
+    },
+    {
+      "id": "club_rehearsal",
+      "x": 12,
+      "y": 12,
+      "name": "The Back Room",
+      "description": "A cleared floor, a cheval glass with a crack across the corner, and Old Neil in the one chair, waiting to be performed at.",
+      "action": "dialogue",
+      "dialogue": "dlg_acting",
+      "icon": 7
     }
   ],
   "npcs": [
-    { "id": "hermit", "x": 11, "y": 4, "dialogue": "dlg_hermit" },
-    { "id": "star", "x": 3, "y": 8, "dialogue": "dlg_star" },
-    { "id": "tower", "x": 19, "y": 8, "dialogue": "dlg_tower" },
-    { "id": "moon", "x": 6, "y": 7, "dialogue": "dlg_moon" }
+    {
+      "id": "hermit",
+      "x": 11,
+      "y": 4,
+      "dialogue": "dlg_hermit"
+    },
+    {
+      "id": "star",
+      "x": 3,
+      "y": 8,
+      "dialogue": "dlg_star"
+    },
+    {
+      "id": "tower",
+      "x": 19,
+      "y": 8,
+      "dialogue": "dlg_tower"
+    },
+    {
+      "id": "moon",
+      "x": 6,
+      "y": 7,
+      "dialogue": "dlg_moon"
+    }
   ],
   "exits": [
-    { "x": 9, "y": 14, "toMap": "ashfen_row", "toX": 9, "toY": 2, "label": "Ashfen Row" }
+    {
+      "x": 9,
+      "y": 14,
+      "toMap": "ashfen_row",
+      "toX": 9,
+      "toY": 2,
+      "label": "Iron Cross St"
+    },
+    {
+      "x": 10,
+      "y": 14,
+      "toMap": "backlund",
+      "toX": 3,
+      "toY": 7,
+      "label": "Backlund",
+      "requires": {
+        "sequenceAtMost": 8
+      }
+    },
+    {
+      "x": 8,
+      "y": 14,
+      "toMap": "tingen_church",
+      "toX": 9,
+      "toY": 10,
+      "label": "The Chapel",
+      "requires": {
+        "sequenceAtMost": 8
+      }
+    }
   ]
 }

@@ -14,6 +14,7 @@ import { EncounterSystem } from '@/systems/EncounterSystem';
 import { InquirySystem } from '@/systems/InquirySystem';
 import { GameState } from '@/systems/GameState';
 import { Progression } from '@/systems/Progression';
+import { StorySystem } from '@/systems/StorySystem';
 
 export class Session {
   static readonly KEY = 'session';
@@ -25,6 +26,7 @@ export class Session {
   readonly dialogue: DialogueSystem;
   readonly encounters: EncounterSystem;
   readonly inquiries: InquirySystem;
+  readonly story: StorySystem;
 
   constructor(readonly content: Content) {
     this.state = new GameState(content);
@@ -34,6 +36,7 @@ export class Session {
     this.dialogue = new DialogueSystem(this.state, this.abilities);
     this.encounters = new EncounterSystem(this.state, this.abilities);
     this.inquiries = new InquirySystem(this.state, this.cases);
+    this.story = new StorySystem(this.state, content);
   }
 
   static get(scene: Phaser.Scene): Session {

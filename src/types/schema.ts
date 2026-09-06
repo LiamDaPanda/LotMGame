@@ -42,6 +42,12 @@ export interface Condition {
   anyOf?: Condition[];
   /** Player must know this ability (and be able to pay for it). */
   ability?: string;
+  /**
+   * Player holds a formula their next rank will accept — whichever pathway
+   * they walk, and counting grey-market copies. Lets one black-market listing
+   * serve every pathway instead of one listing per pathway per rung.
+   */
+  holdsNextFormula?: boolean;
   /** Player must have discovered this clue. */
   clue?: string;
   /** Player must have formed this deduction. */
@@ -85,6 +91,18 @@ export interface Effect {
   items?: string[];
   /** Item ids to remove. */
   removeItems?: string[];
+  /**
+   * Grants the potion the player's next rank calls for, whatever it is. The
+   * counterpart to `Condition.holdsNextFormula`: brewing is the same act on
+   * every pathway, and only the label on the bottle changes.
+   */
+  brewNextPotion?: boolean;
+  /**
+   * Sets the pathway this run walks. Only the prologue uses it: which potion
+   * Klein brews is a thing he decides in a conversation with himself, not a
+   * menu, so the choice has to be expressible as a dialogue outcome.
+   */
+  pathway?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -260,6 +278,14 @@ export interface DialogueChoice {
   hideIfLocked?: boolean;
   /** Ability spent when this choice is taken (pays spirit/sanity/exposure). */
   useAbility?: string;
+  /**
+   * Ability spent, named by what it does rather than which one it is. Resolves
+   * against whatever the player's own pathway offers for that effect, so a
+   * scene can offer "lean on them" without knowing whether the player leans
+   * with a Magician's stage presence or a Telepathist's borrowed certainty.
+   * Prefer this over `useAbility` for anything a second pathway might reach.
+   */
+  useAbilityEffect?: AbilityEffectKind;
   /** Money spent when this choice is taken, in pence. */
   costPence?: number;
   /** Applied when the choice is taken. */
@@ -407,6 +433,8 @@ export interface EncounterOption {
   hideIfLocked?: boolean;
   /** Ability spent to take this option; pays its own spirit/sanity/exposure. */
   useAbility?: string;
+  /** As `DialogueChoice.useAbilityEffect`: pathway-agnostic ability gating. */
+  useAbilityEffect?: AbilityEffectKind;
   costPence?: number;
   /** Without a check, the option always succeeds. */
   check?: SkillCheck;
@@ -450,7 +478,9 @@ export type HotspotAction =
   | 'rest'
   | 'resolve'
   | 'training'
-  | 'inquiry';
+  | 'inquiry'
+  /** Plays a dialogue tree — a scene that happens at a place. */
+  | 'dialogue';
 
 export interface HotspotData {
   id: string;
@@ -462,6 +492,8 @@ export interface HotspotData {
   description: string;
   /** Opens a UI instead of the examine panel. */
   action?: HotspotAction;
+  /** For `action: 'dialogue'`: the tree to play. */
+  dialogue?: string;
   /** Clues granted by a plain examine. */
   clues?: string[];
   /**
@@ -471,6 +503,11 @@ export interface HotspotData {
   abilityClues?: Partial<Record<AbilityEffectKind, string[]>>;
   /** Blocked until the condition passes or an unlock_access ability is used. */
   locked?: { reason: string; bypass?: Condition };
+  /**
+   * For `action: 'rest'`: somewhere nothing will find you. Your own bed and the
+   * Club's back room qualify; a bench does not.
+   */
+  safeRest?: boolean;
   effect?: Effect;
   /** Icon index for the world marker. */
   icon?: number;
@@ -520,6 +557,47 @@ export interface MapData {
   hotspots?: HotspotData[];
   npcs?: MapNpcData[];
   exits?: MapExitData[];
+  /**
+   * Plays the moment the player first arrives, then never again — the flag is
+   * set as it starts. This is how the prologue runs: Klein wakes up in his own
+   * room and the game begins mid-thought rather than at a menu.
+   */
+  intro?: { dialogue: string; flag: string };
+}
+
+// ---------------------------------------------------------------------------
+// Story
+// ---------------------------------------------------------------------------
+
+/**
+ * One beat of the spine. The world is open — every door that is not locked for
+ * a reason stays unlocked — but at any moment exactly one chapter is current,
+ * and it says in one line what the story is waiting for.
+ */
+export interface VolumeData {
+  /** 1-based, and the order they are played in. */
+  number: number;
+  id: string;
+  /** The book's own volume title: Clown, Faceless, Traveler… */
+  title: string;
+  /** One line for the journal's contents page. */
+  blurb: string;
+}
+
+export interface ChapterData {
+  id: string;
+  /** Which volume of the book this beat belongs to. */
+  volume: number;
+  /** Act heading, e.g. "III. The Rooms Above the Shop". */
+  title: string;
+  /** What to do next, in the second person. */
+  objective: string;
+  /** Map the objective is at; the world signposts the way there. */
+  where?: string;
+  /** Chapter is behind you once this holds. Omitted means never — an ending. */
+  doneWhen?: Condition;
+  /** Shown in the journal once the chapter is behind you. */
+  recap?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -535,4 +613,6 @@ export interface ContentIndex {
   encounters: string[];
   items: string;
   characters: string;
+  /** Volumes and their chapters. Optional: a content set may have no story. */
+  story?: string;
 }

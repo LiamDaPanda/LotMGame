@@ -1,9 +1,15 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
 import { SKILLS } from '@/systems/Skills';
-import { Button, Typewriter, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import { Button, Typewriter, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  COLORS,
+  CSS,
+  menuRect,
+  minTapHeight,
+} from '@/ui/theme';
 import type { EncounterData } from '@/types/schema';
 
 interface EncounterSceneData {
@@ -28,20 +34,27 @@ export class EncounterScene extends Phaser.Scene {
   private session!: Session;
   private encounter!: EncounterData;
   private buttons: Button[] = [];
-  private bodyText!: Phaser.GameObjects.Text;
+  private bodyText!: PixelText;
   private typewriter!: Typewriter;
   private resolved = false;
 
-  private readonly x = 100;
-  private readonly y = 50;
-  private readonly w = GAME_WIDTH - 200;
-  private readonly h = GAME_HEIGHT - 100;
+
+  private x = 0;
+  private y = 0;
+  private w = 0;
+  private h = 0;
 
   constructor() {
     super('Encounter');
   }
 
   create(data: EncounterSceneData): void {
+    // Read the layout here, not in a field: scene instances outlive a rotation.
+    const pane = menuRect();
+    this.x = pane.x + 10;
+    this.y = pane.y + 10;
+    this.w = pane.width - 20;
+    this.h = pane.height - 20;
     this.session = Session.get(this);
     const encounter = this.session.content.encounter(data.encounterId);
     if (!encounter) {
@@ -50,26 +63,25 @@ export class EncounterScene extends Phaser.Scene {
     }
     this.encounter = encounter;
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.9).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.9);
     drawPanel(this, this.x, this.y, this.w, this.h, {
       border: encounter.kind === 'threat' ? COLORS.bad : COLORS.brassDim,
     });
 
-    sectionHeader(this, this.x + 24, this.y + 16, this.w - 48, encounter.title);
-    this.add
-      .text(this.x + this.w - 24, this.y + 26, encounter.kind.toUpperCase(), {
-        fontFamily: FONT_UI,
-        fontSize: '11px',
-        color: KIND_TONE[encounter.kind],
-      })
-      .setOrigin(1, 0);
+    // The kind tag shares the header's first line, and the title is wrapped to
+    // stop short of it rather than running underneath.
+    const tag = pixelText(this, this.x + this.w - 24, this.y + 20, encounter.kind.toUpperCase(), {
+      size: 'md',
+      color: KIND_TONE[encounter.kind],
+    }).setOrigin(1, 0);
+    const header = sectionHeader(this, this.x + 24, this.y + 16, this.w - 72 - tag.width, encounter.title);
 
-    this.bodyText = this.add.text(this.x + 24, this.y + 68, '', {
-      fontFamily: FONT_BODY,
-      fontSize: '15px',
+    this.bodyText = pixelText(this, this.x + 24, header.y + header.height, '', {
+      size: 'md',
       color: CSS.parchment,
-      lineSpacing: 6,
-      wordWrap: { width: this.w - 48 },
+      wrap: this.w - 48,
+      // The options stack up from the bottom; the prose gets what is left.
+      maxHeight: this.h - (header.height + 24) - minTapHeight() * 3,
     });
     this.typewriter = new Typewriter(this, this.bodyText, 2, 12);
 

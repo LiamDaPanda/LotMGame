@@ -3,14 +3,11 @@
     "id": "formula_clown",
     "name": "Clown Formula",
     "kind": "ritual",
-    "description": "Four ingredients and a method, copied in the Hermit's hand. The Club sells these at cost and still makes a profit on what you must buy to fill them.",
+    "description": "Four ingredients and a method, in the Church clerk’s hand — and, at the head of it, a word the Church did not have last week. Rozanne signs it out without meeting your eye.",
     "pricePence": 1440,
     "icon": 11,
     "requires": {
-      "caseState": {
-        "caseId": "case-01-ninth-bell",
-        "state": "resolved"
-      }
+      "flag": "knows_sequence_8"
     },
     "vendors": [
       "club"
@@ -20,7 +17,7 @@
     "id": "potion_clown",
     "name": "Clown Potion",
     "kind": "potion",
-    "description": "Brewed to the formula by the Club's own hand. Drinking it is the easy part.",
+    "description": "Brewed to the formula by the Church’s own dispensary. Drinking it is the easy part.",
     "pricePence": 2880,
     "icon": 8,
     "requires": {
@@ -34,7 +31,7 @@
     "id": "formula_magician",
     "name": "Magician Formula",
     "kind": "ritual",
-    "description": "The next rung, written out. The Star will not sell it to a Sequence 9.",
+    "description": "The next rung, written out. Rozanne will not sign it out to a Sequence 9.",
     "pricePence": 4320,
     "icon": 11,
     "requires": {
@@ -76,7 +73,7 @@
     "id": "potion_faceless",
     "name": "Faceless Potion",
     "kind": "potion",
-    "description": "The Star hands it over without looking at you, which is not like her.",
+    "description": "Rozanne hands it over without looking at you, which is not like her.",
     "pricePence": 21600,
     "icon": 8,
     "requires": {
@@ -108,17 +105,17 @@
   },
   {
     "id": "sealed_watch",
-    "name": "Stopped Pocket-Watch",
+    "name": "Copper Plumb and Thread",
     "kind": "evidence",
-    "description": "A gentleman's watch, stopped at four minutes past nine. It is warm, and it has been in an evidence bag for two days.",
+    "description": "A diviner’s weight on waxed thread, taken off Welch McGovern’s floor. It is warm, it has not stopped pointing, and the Church has a number for it.",
     "sellPence": 960,
     "icon": 9
   },
   {
     "id": "forged_ledger",
-    "name": "Halloway's Ledger",
+    "name": "McGovern’s Notebook",
     "kind": "document",
-    "description": "Thirty-one years of a man's careful hand, and eleven days in somebody else's.",
+    "description": "His own stitching and his own hand, with one leaf cut out close to the thread and two words surviving at the gutter.",
     "sellPence": 120,
     "icon": 11
   },
@@ -126,35 +123,35 @@
     "id": "mourning_ring",
     "name": "Mourning Ring",
     "kind": "mundane",
-    "description": "Jet and braided hair, unclaimed since the spring. The Club will take it off your hands and ask nothing.",
+    "description": "Jet and braided hair, out of the estate and unclaimed. Blackthorn will take it off your hands and not ask which estate.",
     "sellPence": 144,
     "icon": 0
   },
   {
     "id": "shop_keys",
-    "name": "Shop Keys",
+    "name": "Sergeant’s Key",
     "kind": "mundane",
-    "description": "Constable Rell's ring of keys for the Halloway premises, lent for the afternoon and not one minute past it.",
+    "description": "Gorman’s key to the sealed rooms off Iron Cross Street, lent for the afternoon on the understanding that you were never given it.",
     "icon": 9
   },
   {
     "id": "grey_formula_clown",
     "name": "Clown Formula (copied)",
     "kind": "ritual",
-    "description": "The same four ingredients in a stranger's hand, on paper that has been folded too many times. Cheaper. Counts for the rite, and the Hermit will know.",
+    "description": "The same four ingredients in a stranger’s hand, on paper that has been folded too many times. Cheaper. Counts for the rite, and the captain will know.",
     "pricePence": 900,
     "icon": 11,
     "vendors": [
       "market"
     ],
     "heat": 4,
-    "patter": "'Same words,' he says. 'Different penmanship. You're paying for the words.'"
+    "patter": "‘Same words,’ he says. ‘Different penmanship. You’re paying for the words.’"
   },
   {
     "id": "cheap_reagents",
     "name": "Doubtful Reagents",
     "kind": "ritual",
-    "description": "Enough to brew one potion, at about the purity the label does not claim. The Club would not sign for these.",
+    "description": "Enough to brew one potion, at about the purity the label does not claim. Whatever formula you are working from, these will fill it. Blackthorn would not sign for them.",
     "pricePence": 1200,
     "sellPence": 300,
     "icon": 8,
@@ -167,19 +164,10 @@
       "label": "Brew it yourself",
       "description": "You spend a night over a borrowed burner with the formula propped against the sugar tin. What comes out is the right colour and very slightly wrong, and it will do.",
       "requires": {
-        "anyOf": [
-          {
-            "item": "formula_clown"
-          },
-          {
-            "item": "grey_formula_clown"
-          }
-        ]
+        "holdsNextFormula": true
       },
       "effect": {
-        "items": [
-          "potion_clown"
-        ],
+        "brewNextPotion": true,
         "days": 1,
         "sanity": -4
       }
@@ -196,13 +184,13 @@
       "market"
     ],
     "heat": 8,
-    "patter": "'The seal's genuine,' he says, which is not the same as the warrant being genuine, and he knows you noticed.",
+    "patter": "‘The seal’s genuine,’ he says, which is not the same as the warrant being genuine, and he knows you noticed.",
     "use": {
       "label": "Present it to the constable",
-      "description": "Rell reads as far as the seal, which is the only part that is real, and hands over the ring of keys without finishing the sentence he had started.",
+      "description": "Gorman reads as far as the seal, which is the only part that is real, and hands over the key without finishing the sentence he had started.",
       "requires": {
         "caseState": {
-          "caseId": "case-01-ninth-bell",
+          "caseId": "case-01-notebook",
           "state": "active"
         },
         "notFlag": "warrant_burned"
@@ -252,5 +240,153 @@
         "concealment": -1
       }
     }
+  },
+  {
+    "id": "antigonus_notebook",
+    "name": "The Antigonus Family’s Notebook",
+    "kind": "evidence",
+    "description": "Black boards, no title, water-stained along the bottom edge. Exactly as heavy as a book. Everyone who has read it to the end has died in the same hour, and it does not look like anything at all.",
+    "sellPence": 0,
+    "icon": 11
+  },
+  {
+    "id": "formula_marionettist",
+    "name": "Marionettist Formula",
+    "kind": "ritual",
+    "description": "The Marionettist rung, written out. Above Sequence 5 the Church stops calling these formulas and starts calling them arrangements.",
+    "pricePence": 25920,
+    "icon": 11,
+    "requires": {
+      "flag": "v3_scepter"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_marionettist",
+    "name": "Marionettist Potion",
+    "kind": "potion",
+    "description": "Made up to the Marionettist formula. Nobody signs for these.",
+    "pricePence": 38880,
+    "icon": 8,
+    "requires": {
+      "flag": "v3_scepter"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_bizarro",
+    "name": "Bizarro Sorcerer Formula",
+    "kind": "ritual",
+    "description": "The Bizarro Sorcerer rung, written out. Above Sequence 5 the Church stops calling these formulas and starts calling them arrangements.",
+    "pricePence": 51840,
+    "icon": 11,
+    "requires": {
+      "flag": "v4_undying"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_bizarro",
+    "name": "Bizarro Sorcerer Potion",
+    "kind": "potion",
+    "description": "Made up to the Bizarro Sorcerer formula. Nobody signs for these.",
+    "pricePence": 77760,
+    "icon": 8,
+    "requires": {
+      "flag": "v4_undying"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_scholar",
+    "name": "Scholar of Yore Formula",
+    "kind": "ritual",
+    "description": "Four main ingredients and a procedure that reads like a citation: every step names the step it was copied from, back past the point where anybody was signing their work.",
+    "pricePence": 103680,
+    "icon": 11,
+    "requires": {
+      "flag": "v5_mausoleum"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_scholar",
+    "name": "Scholar of Yore Potion",
+    "kind": "potion",
+    "description": "Colourless, and older than it can possibly be. Held up to a lamp it shows the lamp, and behind the lamp a room that has not existed for two hundred years.",
+    "pricePence": 155520,
+    "icon": 8,
+    "requires": {
+      "flag": "v5_mausoleum"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_miracle",
+    "name": "Miracle Invoker Formula",
+    "kind": "ritual",
+    "description": "The Miracle Invoker rung, written out. Above Sequence 5 the Church stops calling these formulas and starts calling them arrangements.",
+    "pricePence": 103680,
+    "icon": 11,
+    "requires": {
+      "flag": "v5_mausoleum"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_miracle",
+    "name": "Miracle Invoker Potion",
+    "kind": "potion",
+    "description": "Made up to the Miracle Invoker formula. Nobody signs for these.",
+    "pricePence": 155520,
+    "icon": 8,
+    "requires": {
+      "flag": "v5_mausoleum"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "formula_attendant",
+    "name": "Attendant of Mysteries Formula",
+    "kind": "ritual",
+    "description": "The Attendant of Mysteries rung, written out. Above Sequence 5 the Church stops calling these formulas and starts calling them arrangements.",
+    "pricePence": 207360,
+    "icon": 11,
+    "requires": {
+      "flag": "v7_wish"
+    },
+    "vendors": [
+      "club"
+    ]
+  },
+  {
+    "id": "potion_attendant",
+    "name": "Attendant of Mysteries Potion",
+    "kind": "potion",
+    "description": "Made up to the Attendant of Mysteries formula. Nobody signs for these.",
+    "pricePence": 311040,
+    "icon": 8,
+    "requires": {
+      "flag": "v7_wish"
+    },
+    "vendors": [
+      "club"
+    ]
   }
 ]

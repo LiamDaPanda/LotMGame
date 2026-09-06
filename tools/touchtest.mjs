@@ -1,0 +1,599 @@
+#!/usr/bin/env node
+// Touch regression test: portrait first, then landscape and back.
+//
+// The bug this exists to catch: Phaser hit-tests a Container as though it were
+// a centre-origin sprite (it adds `displayOriginX/Y` to the local point), while
+// a Container draws its children from its own top-left. Get that wrong and
+// every button's live area sits half a button up and to the left of the plate
+// you can see — which reads on a phone as "nothing is pressable", and on a
+// desktop as "sometimes it works", because a mouse aimed at a corner still
+// lands inside by a pixel.
+//
+// So this drives real touch events at the visible centre of real widgets, and
+// separately asserts that every interactive container's hit area agrees with
+// its rendered bounds.
+//
+// It also checks that no text leaves the box it belongs to — the board, a
+// scrolling list's viewport, or a button's own plate. That last one is the case
+// that bites: a label wrapping onto a second line inside a 38px button is not
+// off the screen, it is printed across the button's border, and nothing about
+// the board's bounds notices.
+//
+//   npm run build && npm run preview &
+//   node tools/touchtest.mjs [baseUrl]
+import fs from 'node:fs';
+import { chromium } from 'playwright';
+import {
+  collectCollisions,
+  collectOverflows,
+  openPanel,
+  panelFixtures,
+  panelList,
+} from './lib/text-fit.mjs';
+
+const BASE = process.argv[2] ?? 'http://127.0.0.1:4173/LotMGame/';
+
+const failures = [];
+const check = (label, condition, detail) => {
+  if (condition) {
+    console.log(`  pass   ${label}`);
+  } else {
+    console.log(`  FAIL   ${label}${detail ? ` — ${detail}` : ''}`);
+    failures.push(label);
+  }
+};
+
+const preinstalled = fs
+  .readdirSync('/opt/pw-browsers')
+  .filter((name) => name.startsWith('chromium-'))
+  .map((name) => `/opt/pw-browsers/${name}/chrome-linux/chrome`)
+  .find((candidate) => fs.existsSync(candidate));
+
+const browser = await chromium.launch(preinstalled ? { executablePath: preinstalled } : {});
+// An iPhone 13's CSS viewport, with a real touchscreen and no mouse.
+const context = await browser.newContext({
+  viewport: { width: 390, height: 844 },
+  deviceScaleFactor: 3,
+  isMobile: true,
+  hasTouch: true,
+});
+const page = await context.newPage();
+
+const consoleErrors = [];
+page.on('console', (message) => {
+  if (message.type() === 'error') consoleErrors.push(message.text());
+});
+page.on('pageerror', (error) => consoleErrors.push(`pageerror: ${error.message}`));
+
+// `domcontentloaded`, not `networkidle`: the real readiness signal is the game
+// booting, which is waited on below, and networkidle can hang behind a proxy.
+await page.goto(BASE, { waitUntil: 'domcontentloaded' });
+await page.waitForFunction(
+  () => window.__game?.scene.getScenes(true).some((scene) => scene.scene.key === 'MainMenu'),
+  null,
+  { timeout: 20000 },
+);
+await page.waitForTimeout(500);
+
+const scenes = () =>
+  page.evaluate(() => window.__game.scene.getScenes(true).map((scene) => scene.scene.key));
+
+const geometry = await page.evaluate(() => {
+  const game = window.__game;
+  const rect = game.canvas.getBoundingClientRect();
+  return {
+    rx: rect.x,
+    ry: rect.y,
+    rw: rect.width,
+    rh: rect.height,
+    gw: game.scale.gameSize.width,
+    gh: game.scale.gameSize.height,
+  };
+});
+
+/** Every interactive container in a scene: label, rendered bounds, hit bounds. */
+const widgets = (key) =>
+  page.evaluate((sceneKey) => {
+    const scene = window.__game.scene.getScene(sceneKey);
+    if (!scene || !scene.scene.isActive()) return [];
+    return scene.input._list
+      .filter((object) => object.type === 'Container' && object.input?.hitArea)
+      .map((object) => {
+        const matrix = object.getWorldTransformMatrix();
+        const hit = object.input.hitArea;
+        return {
+          label: object.list.filter((child) => child.type === 'BitmapText').map((child) => child.text)[0] ?? '',
+          // Where the plate is drawn: children start at the container's origin.
+          drawX: matrix.tx,
+          drawY: matrix.ty,
+          width: object.width,
+          height: object.height,
+          // Where taps actually land, once Phaser's displayOrigin shift is undone.
+          hitX: matrix.tx + hit.x - object.displayOriginX,
+          hitY: matrix.ty + hit.y - object.displayOriginY,
+          hitW: hit.width,
+          hitH: hit.height,
+        };
+      });
+  }, key);
+
+const tapWidget = async (sceneKey, match) => {
+  const list = await widgets(sceneKey);
+  const widget = list.find((item) => item.label.includes(match));
+  if (!widget) return { found: false, have: list.map((item) => item.label.split('\n')[0]) };
+  const pageX = geometry.rx + ((widget.drawX + widget.width / 2) / geometry.gw) * geometry.rw;
+  const pageY = geometry.ry + ((widget.drawY + widget.height / 2) / geometry.gh) * geometry.rh;
+  await page.touchscreen.tap(pageX, pageY);
+  await page.waitForTimeout(450);
+  return { found: true };
+};
+
+const tapStep = async (label, sceneKey, match, expect) => {
+  const result = await tapWidget(sceneKey, match);
+  if (!result.found) {
+    check(label, false, `no widget "${match}" in ${sceneKey}; have: ${result.have.join(' | ')}`);
+    return;
+  }
+  const after = await scenes();
+  check(label, expect(after), `scenes: ${after.join(',')}`);
+};
+
+/** Hit area and plate must describe the same box, or thumbs miss. */
+const checkAlignment = async (sceneKey) => {
+  for (const widget of await widgets(sceneKey)) {
+    const aligned =
+      Math.abs(widget.hitX - widget.drawX) < 1 &&
+      Math.abs(widget.hitY - widget.drawY) < 1 &&
+      Math.abs(widget.hitW - widget.width) < 1 &&
+      Math.abs(widget.hitH - widget.height) < 1;
+    check(
+      `${sceneKey}: "${widget.label.split('\n')[0]}" hit area covers its plate`,
+      aligned,
+      `plate ${widget.drawX},${widget.drawY} ${widget.width}x${widget.height} vs hit ${widget.hitX},${widget.hitY} ${widget.hitW}x${widget.hitH}`,
+    );
+  }
+};
+
+/**
+ * Nothing may draw text outside the box it belongs to — see tools/lib/text-fit.
+ */
+const checkTextFits = async (sceneKey, label) => {
+  const overflows = await page.evaluate(collectOverflows, sceneKey);
+  check(
+    `${label}: all text inside its box`,
+    overflows !== null && overflows.length === 0,
+    overflows === null ? `${sceneKey} was not active` : overflows.join(' | '),
+  );
+  // Fitting each label in its own box does not stop two boxes being placed on
+  // top of each other, which is what "the text overlaps" looks like in the hand.
+  const collisions = await page.evaluate(collectCollisions, sceneKey);
+  check(
+    `${label}: no text drawn over other text`,
+    collisions !== null && collisions.length === 0,
+    collisions === null ? `${sceneKey} was not active` : collisions.join(' | '),
+  );
+};
+
+console.log(`iPhone-sized viewport 390x844 — board ${geometry.gw}x${geometry.gh}, canvas ${geometry.rw}x${geometry.rh} at y=${geometry.ry}`);
+
+console.log('\n1. The board turns upright');
+check('portrait viewport gets a portrait board', geometry.gh > geometry.gw, `${geometry.gw}x${geometry.gh}`);
+check(
+  'canvas covers most of the screen',
+  (geometry.rw * geometry.rh) / (390 * 844) > 0.6,
+  `${Math.round(((geometry.rw * geometry.rh) / (390 * 844)) * 100)}% of the screen`,
+);
+
+console.log('\n2. Hit areas agree with what is drawn');
+await checkAlignment('MainMenu');
+await checkTextFits('MainMenu', 'Main menu');
+
+console.log('\n3. Touch reaches the menu, and the prologue plays');
+await tapStep('Begin wakes you in your room', 'MainMenu', 'Begin', (list) => list.includes('World'));
+// The room fades in before the prologue takes the screen, so wait for it
+// rather than assuming it is up the instant the tap lands.
+await page.waitForFunction(
+  () => window.__game.scene.getScenes(true).some((scene) => scene.scene.key === 'Dialogue'),
+  null,
+  { timeout: 8000 },
+);
+check('the prologue plays itself', true);
+
+/** Tap the speech panel to finish the line, the way a player does. */
+const finishTyping = async () => {
+  const point = await page.evaluate(() => {
+    const game = window.__game;
+    const dialogue = game.scene.getScene('Dialogue');
+    if (!dialogue || !dialogue.scene.isActive()) return null;
+    return { x: game.scale.gameSize.width / 2, y: game.scale.gameSize.height * 0.88 };
+  });
+  if (!point) return;
+  await page.touchscreen.tap(
+    geometry.rx + (point.x / geometry.gw) * geometry.rw,
+    geometry.ry + (point.y / geometry.gh) * geometry.rh,
+  );
+  await page.waitForTimeout(350);
+};
+
+const dialogueText = () =>
+  page.evaluate(() => {
+    const scene = window.__game.scene.getScene('Dialogue');
+    return scene && scene.scene.isActive() ? (scene.node?.text ?? null) : null;
+  });
+
+const say = async (label, match) => {
+  // A long line is read a page at a time, and the choices under it stay dim
+  // until the last page has landed. So tap the panel, try the choice, and keep
+  // going until the node actually changes — finding the widget is not the same
+  // as having pressed it.
+  const before = await dialogueText();
+  let result = { found: false, have: [] };
+  for (let taps = 0; taps < 8; taps++) {
+    await finishTyping();
+    result = await tapWidget('Dialogue', match);
+    const now = await dialogueText();
+    if (now !== before) return check(label, true);
+  }
+  check(
+    label,
+    false,
+    result.found ? 'the choice was there but the tap did nothing' : `have: ${(result.have ?? []).join(' | ')}`,
+  );
+};
+
+await checkTextFits('Dialogue', 'Prologue');
+await say('you can look at the desk you woke at', 'Look at what is on the desk');
+await say('and at the hands that are not yours', 'Look at your hands');
+await say('and go to the window', 'Go to the window');
+await say('the prologue takes a considered opening', 'Think it through');
+await say('somebody comes through the door', 'Somebody is knocking');
+await say('and eight days pass', 'Eight days pass');
+await say('and it reaches the contracts', 'Read what you are signing');
+await checkTextFits('Dialogue', 'The contracts');
+await say('which can be signed', 'Sign both');
+const signedOn = await page.evaluate(() =>
+  [...window.__game.registry.get('session').state.flags].includes('signed_on'),
+);
+check('signing on takes him into the Seventh Unit', signedOn === true);
+const stillMortal = await page.evaluate(
+  () => window.__game.registry.get('session').state.awakened,
+);
+check('and leaves him a mortal for now', stillMortal === false, String(stillMortal));
+await say('the disposition option is takeable', 'Quietly');
+// The last node has no choices: tap through its pages and out.
+for (let taps = 0; taps < 8; taps++) {
+  const open = await page.evaluate(() =>
+    window.__game.scene.getScenes(true).some((scene) => scene.scene.key === 'Dialogue'),
+  );
+  if (!open) break;
+  await finishTyping();
+}
+await page.waitForTimeout(600);
+const afterPrologue = await scenes();
+check(
+  'the prologue hands the room back and closes itself',
+  afterPrologue.includes('World') && !afterPrologue.includes('Dialogue'),
+  afterPrologue.join(','),
+);
+await page.waitForTimeout(400);
+
+console.log('\n4. Touch reaches the HUD, and its targets are thumb-sized');
+const hud = await widgets('Hud');
+check('HUD has its buttons', hud.length >= 2, hud.map((w) => w.label).join(' | '));
+// 44pt is Apple's minimum; the board is scaled down to fit, so measure in real
+// device pixels rather than board units.
+const scale = geometry.rh / geometry.gh;
+for (const button of hud) {
+  check(
+    `HUD "${button.label}" is at least 40pt tall (${Math.round(button.height * scale)}pt)`,
+    button.height * scale >= 40,
+  );
+}
+await checkAlignment('Hud');
+
+console.log('\n5. The stick walks him, and doorways work by walking into them');
+// Real finger-holds: Playwright's tap is a press and a release in the same
+// frame, which pushes the stick and lets go before the world has looked.
+const cdp = await context.newCDPSession(page);
+const padGeom = await page.evaluate(() => {
+  const controls = window.__game.scene.getScene('Hud').controls;
+  if (!controls) return null;
+  const band = controls.zone;
+  return {
+    cx: controls.stickHome.x,
+    cy: controls.stickHome.y,
+    radius: controls.stickRadius,
+    visible: controls.visible,
+    band,
+    act: {
+      x: controls.actionButton.x,
+      y: controls.actionButton.y,
+      r: controls.actionButton.getData('radius'),
+    },
+  };
+});
+check('the controls are on the bottom screen', padGeom?.visible === true, JSON.stringify(padGeom));
+check(
+  `the stick is thumb-sized (${padGeom ? Math.round(padGeom.radius * 2 * scale) : 0}pt across)`,
+  padGeom !== null && padGeom.radius * 2 * scale >= 88,
+);
+// "Mobile centred": the cluster sits in the middle of the band, not shoved
+// into the corners the way a console pad would be.
+const cluster = padGeom
+  ? (padGeom.cx - padGeom.radius + padGeom.act.x + padGeom.act.r) / 2
+  : 0;
+check(
+  'and the cluster is centred in the band',
+  padGeom !== null && Math.abs(cluster - (padGeom.band.x + padGeom.band.width / 2)) <= 12,
+  `cluster centre ${Math.round(cluster)} vs band centre ${padGeom ? Math.round(padGeom.band.x + padGeom.band.width / 2) : 0}`,
+);
+
+const toPage = (gx, gy) => ({
+  x: geometry.rx + (gx / geometry.gw) * geometry.rw,
+  y: geometry.ry + (gy / geometry.gh) * geometry.rh,
+});
+
+/**
+ * Push the stick: press at its centre, drag out by `reach` of its travel, hold,
+ * then let go — which is the gesture, not four taps on four arrows.
+ */
+const pushStick = async (dx, dy, ms, reach = 0.45, from = null) => {
+  const origin = from ?? { x: padGeom.cx, y: padGeom.cy };
+  const start = toPage(origin.x, origin.y);
+  const end = toPage(origin.x + dx * padGeom.radius * reach, origin.y + dy * padGeom.radius * reach);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [start] });
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [end] });
+  await page.waitForTimeout(ms);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await page.waitForTimeout(200);
+};
+const pressAction = async () => {
+  const point = toPage(padGeom.act.x, padGeom.act.y);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [point] });
+  await page.waitForTimeout(80);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await page.waitForTimeout(450);
+};
+const player = () =>
+  page.evaluate(() => {
+    const world = window.__game.scene.getScene('World');
+    return {
+      x: world.player.tileX,
+      y: world.player.tileY,
+      facing: world.player.facing,
+      map: window.__game.registry.get('session').state.currentMap,
+    };
+  });
+
+const startTile = await player();
+await pushStick(-1, 0, 320);
+const afterLeft = await player();
+check(
+  'pushing the stick left walks him left',
+  afterLeft.x < startTile.x,
+  `${JSON.stringify(startTile)} -> ${JSON.stringify(afterLeft)}`,
+);
+
+// The stick comes to the thumb: a push that starts nowhere near its resting
+// place still steers, which is the whole point of not having a fixed D-pad.
+const corner = { x: padGeom.band.x + padGeom.radius + 6, y: padGeom.band.y + padGeom.radius + 6 };
+const beforeCorner = await player();
+await pushStick(1, 0, 320, 0.45, corner);
+const afterCorner = await player();
+check(
+  'and it works from anywhere in the band, not just where it is drawn',
+  afterCorner.x > beforeCorner.x,
+  `${JSON.stringify(beforeCorner)} -> ${JSON.stringify(afterCorner)} from ${JSON.stringify(corner)}`,
+);
+
+// How far you push is how fast you go: no second finger, no run button.
+const walkPoint = toPage(padGeom.cx, padGeom.cy);
+const farPoint = toPage(padGeom.cx - padGeom.radius * 0.95, padGeom.cy);
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [walkPoint] });
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [farPoint] });
+await page.waitForTimeout(220);
+const running = await page.evaluate(() => window.__game.scene.getScene('World').player.speedScale);
+const nearPoint = toPage(padGeom.cx - padGeom.radius * 0.35, padGeom.cy);
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [nearPoint] });
+await page.waitForTimeout(220);
+const walking = await page.evaluate(() => window.__game.scene.getScene('World').player.speedScale);
+await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+await page.waitForTimeout(250);
+check('pushed to the rim is a run', running > 1.2, String(running));
+check('and eased back is a walk again', walking === 1, String(walking));
+check(
+  'and letting go stops him',
+  (await page.evaluate(() => window.__game.scene.getScene('World').player.speedScale)) === 1,
+);
+
+// One press, one tile: releasing after the step has begun still finishes it,
+// which is what makes a D-pad feel precise rather than skiddy.
+const stepPad = async (dx, dy) => {
+  // Short enough that a second step cannot begin, long enough that the first
+  // one always does: letting go mid-step still finishes it.
+  await pushStick(dx, dy, 120);
+};
+const walkToTile = async (tx, ty) => {
+  const trail = [];
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const at = await player();
+    trail.push(`${at.x},${at.y}`);
+    if (at.x === tx && at.y === ty) return { ok: true, trail: trail.join(' -> ') };
+    if (at.x !== tx) await stepPad(Math.sign(tx - at.x), 0);
+    else await stepPad(0, Math.sign(ty - at.y));
+  }
+  return { ok: false, trail: trail.join(' -> ') };
+};
+
+// Benson is at (9,6) and stays there; stand on the tile above him.
+const trail = await walkToTile(9, 7);
+const beside = await player();
+check('he can be walked to a particular tile, a step at a time', trail.ok, `${trail.trail} | ${JSON.stringify(beside)}`);
+
+await stepPad(0, -1);
+const facing = await player();
+check(
+  'pressing into somebody turns him to face them without walking through them',
+  facing.facing === 'up' && facing.y === 7,
+  JSON.stringify(facing),
+);
+
+await pressAction();
+const talking = await scenes();
+check('ACT talks to whoever he is facing', talking.includes('Dialogue'), talking.join(','));
+const padDuringPanel = await page.evaluate(
+  () => window.__game.scene.getScene('Hud').controls.visible,
+);
+check('and the panel takes the controls with the screen', padDuringPanel === false);
+
+await page.evaluate(() => {
+  const game = window.__game;
+  if (game.scene.isActive('Dialogue')) game.scene.stop('Dialogue');
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+await page.waitForTimeout(500);
+check(
+  'and gives them back when it closes',
+  (await page.evaluate(() => window.__game.scene.getScene('Hud').controls.visible)) === true,
+);
+
+// Out of the door at the bottom of the room, on foot, without pressing a thing.
+await walkToTile(6, 9);
+await stepPad(0, 1);
+await page.waitForTimeout(800);
+const outside = await player();
+check('walking into the doorway takes him outside', outside.map === 'ashfen_row', JSON.stringify(outside));
+
+// The card on the bottom screen names the next thing, and the street lights the
+// door that leads to it.
+const quest = await page.evaluate(() => {
+  const game = window.__game;
+  const session = game.registry.get('session');
+  const hud = game.scene.getScene('Hud');
+  const world = game.scene.getScene('World');
+  const chapter = session.story.current();
+  return {
+    chapter: chapter?.id,
+    title: hud.questTitle.text,
+    line: hud.questLine.text,
+    where: hud.questWhere.text,
+    route: session.story.routeFrom(session.state.currentMap),
+    litExits: [...world.exitMarkers.entries()]
+      .filter(([, marker]) => marker.getData('onRoute') === true)
+      .map(([tile]) => tile),
+  };
+});
+check(
+  'the quest card names the chapter',
+  quest.title.includes('THE SEVENTH UNIT'),
+  JSON.stringify(quest),
+);
+check('and says where to go', quest.where.startsWith('Go to:'), quest.where);
+check(
+  'and exactly one doorway on the street is lit for it',
+  quest.litExits.length === 1,
+  JSON.stringify(quest.litExits),
+);
+
+console.log('\n6. Overlays open and close by touch');
+await tapStep('Notes opens', 'Hud', 'NOTES', (list) => list.includes('Journal'));
+await checkAlignment('Journal');
+await tapStep('Notes closes again', 'Hud', 'NOTES', (list) => !list.includes('Journal'));
+await tapStep('Powers opens', 'Hud', 'POWER', (list) => list.includes('AbilityMenu'));
+await checkAlignment('AbilityMenu');
+await tapStep('Powers closes again', 'Hud', 'POWER', (list) => !list.includes('AbilityMenu'));
+
+console.log('\n7. Text stays inside its box');
+await checkTextFits('Hud', 'HUD');
+await tapWidget('Hud', 'NOTES');
+await page.waitForTimeout(400);
+await checkTextFits('Journal', 'Journal');
+await tapWidget('Hud', 'NOTES');
+await page.waitForTimeout(300);
+await tapWidget('Hud', 'CASE');
+await page.waitForTimeout(400);
+await checkTextFits('CaseBoard', 'Case board');
+await tapWidget('Hud', 'CASE');
+await page.waitForTimeout(300);
+await tapWidget('Hud', 'POWER');
+await page.waitForTimeout(400);
+await checkTextFits('AbilityMenu', 'Powers');
+await tapWidget('Hud', 'POWER');
+await page.waitForTimeout(300);
+
+console.log('\n8. Every panel keeps its text inside the pane');
+const fixtures = await page.evaluate(panelFixtures);
+for (const [key, data] of panelList(fixtures)) {
+  await page.evaluate(openPanel, { key, data });
+  // Dialogue types its line out; give every panel time to settle.
+  await page.waitForTimeout(1200);
+  await checkTextFits(key, key);
+  await checkAlignment(key);
+}
+await page.evaluate(() => {
+  const game = window.__game;
+  for (const scene of game.scene.getScenes(true)) {
+    if (!['World', 'Hud'].includes(scene.scene.key)) scene.scene.stop();
+  }
+});
+
+console.log('\n9. Turning the phone sideways, and back');
+const boardSize = () =>
+  page.evaluate(() => [window.__game.scale.gameSize.width, window.__game.scale.gameSize.height]);
+const runState = () =>
+  page.evaluate(() => {
+    const state = window.__game.registry.get('session').state;
+    return { map: state.currentMap, day: state.day, pence: state.pence };
+  });
+
+const before = await runState();
+await page.setViewportSize({ width: 844, height: 390 });
+await page.waitForTimeout(900);
+const landscape = await boardSize();
+check('rotating gives a landscape board', landscape[0] > landscape[1], landscape.join('x'));
+
+// Landscape re-lays-out from the same code, and has its own boxes to fit.
+await checkTextFits('Hud', 'Landscape HUD');
+for (const [key, data] of panelList(fixtures)) {
+  await page.evaluate(openPanel, { key, data });
+  await page.waitForTimeout(900);
+  await checkTextFits(key, `Landscape ${key}`);
+}
+await page.evaluate(() => {
+  const game = window.__game;
+  for (const scene of game.scene.getScenes(true)) {
+    if (!['World', 'Hud'].includes(scene.scene.key)) scene.scene.stop();
+  }
+  const world = game.scene.getScene('World');
+  if (world.scene.isPaused()) world.scene.resume();
+});
+
+await page.setViewportSize({ width: 390, height: 844 });
+await page.waitForTimeout(900);
+const returned = await boardSize();
+check('rotating back gives a portrait board', returned[1] > returned[0], returned.join('x'));
+
+// Every scene is rebuilt on rotation; the run itself lives on the registry and
+// must come through untouched.
+const after = await runState();
+check(
+  'the run survives two rotations',
+  after.map === before.map && after.day === before.day && after.pence === before.pence,
+  `${JSON.stringify(before)} -> ${JSON.stringify(after)}`,
+);
+await tapStep('a tab still works after rotating', 'Hud', 'NOTES', (list) => list.includes('Journal'));
+await tapWidget('Hud', 'NOTES');
+await page.waitForTimeout(300);
+
+console.log('\n10. No runtime errors');
+check('console clean', consoleErrors.length === 0, consoleErrors.join(' | '));
+
+await browser.close();
+
+if (failures.length) {
+  console.log(`\n${failures.length} check(s) failed:`);
+  for (const failure of failures) console.log(`  - ${failure}`);
+  process.exit(1);
+}
+console.log('\nAll touch and layout checks passed.');

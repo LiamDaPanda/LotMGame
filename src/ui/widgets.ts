@@ -8,10 +8,54 @@
  */
 
 import Phaser from 'phaser';
-import { COLORS, CSS, FONT_UI, TEXT } from '@/ui/theme';
+import { PixelText, SCALES, lineHeight, pixelText, textHeight } from '@/ui/pixelFont';
+import { COLORS, CSS, type Rect, menuRect } from '@/ui/theme';
 
 /** Movement in pixels beyond which a pointer gesture counts as a drag, not a tap. */
 const DRAG_SLOP = 8;
+
+/**
+ * Give a Container a hit area that matches the box its children are drawn in.
+ *
+ * Containers draw their children from their own origin — child (0,0) sits at
+ * the container's position — but Phaser hit-tests them as if they were
+ * centre-origin sprites: `InputManager.pointWithinHitArea` adds
+ * `displayOriginX/Y` to the local point before testing, and a Container's
+ * displayOrigin is hard-wired to half its size. So a hit area declared at
+ * (0,0,w,h) actually responds to a box shifted half a button up and to the
+ * left of the visible plate — which leaves only its top-left quadrant live and
+ * makes a thumb aimed at the label miss entirely. Offsetting the rectangle by
+ * the same displayOrigin cancels that out.
+ */
+export function setContainerHitArea(
+  container: Phaser.GameObjects.Container,
+  width: number,
+  height: number,
+): void {
+  container.setSize(width, height);
+  container.setInteractive(
+    new Phaser.Geom.Rectangle(width / 2, height / 2, width, height),
+    Phaser.Geom.Rectangle.Contains,
+  );
+}
+
+/**
+ * Set an overlay scene up inside the menu pane and hand back the box it may
+ * draw in.
+ *
+ * Portrait runs like a handheld's two screens — world above, panels below — so
+ * an overlay covers the bottom pane rather than the whole board. The backdrop
+ * is interactive because it also has to swallow taps meant for the panel's own
+ * edges; without it a miss would fall through to whatever is underneath.
+ */
+export function panelStage(scene: Phaser.Scene, alpha = 0.92): Rect {
+  const rect = menuRect();
+  scene.add
+    .rectangle(rect.x, rect.y, rect.width, rect.height, COLORS.ink, alpha)
+    .setOrigin(0, 0)
+    .setInteractive();
+  return rect;
+}
 
 export interface PanelOptions {
   fill?: number;
@@ -65,8 +109,8 @@ export interface ButtonOptions {
  */
 export class Button extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.Graphics;
-  private label: Phaser.GameObjects.Text;
-  private subtitle?: Phaser.GameObjects.Text;
+  private label: PixelText;
+  private subtitle?: PixelText;
   private icon?: Phaser.GameObjects.Image;
   private isEnabled: boolean;
   private buttonWidth: number;
@@ -103,43 +147,51 @@ export class Button extends Phaser.GameObjects.Container {
     this.bg = scene.add.graphics();
     this.add(this.bg);
 
-    const padLeft = iconFrame === undefined ? 14 : 38;
+    const padLeft = iconFrame === undefined ? 6 : 30;
     if (iconFrame !== undefined) {
-      this.icon = scene.add.image(18, height / 2, 'icons', iconFrame).setScale(1.4);
+      this.icon = scene.add.image(15, height / 2, 'icons', iconFrame).setScale(1.2);
       this.add(this.icon);
     }
 
-    const labelX = align === 'center' ? width / 2 : padLeft;
-    const labelY = subtitle ? height / 2 - 8 : height / 2;
-    this.label = scene.add
-      .text(labelX, labelY, text, {
-        fontFamily: FONT_UI,
-        fontSize: `${fontSize}px`,
-        color: CSS.parchment,
-        wordWrap: { width: width - padLeft - 14 },
-      })
-      .setOrigin(align === 'center' ? 0.5 : 0, 0.5);
+    // The plate is a fixed box, so the label is laid out to fit it rather than
+    // trusted to. Fixed-width glyphs make that arithmetic: measure the wrapped
+    // block, stack it with the subtitle, and centre the pair vertically.
+    const textWidth = width - padLeft - 6;
+    const labelX = align === 'center' ? padLeft + textWidth / 2 : padLeft;
+    const originX = align === 'center' ? 0.5 : 0;
+
+    // Both lines are given a hard height budget adding up to the plate, so a
+    // label that wraps further than expected is cut rather than printed across
+    // the button's own border.
+    const budget = height - 8;
+    const oneLine = lineHeight(SCALES.md);
+    const wantedSubtitle = subtitle ? textHeight(subtitle, textWidth, SCALES.md) : 0;
+    const subtitleBudget = subtitle ? Math.min(wantedSubtitle, Math.max(oneLine, budget - oneLine)) : 0;
+
+    this.label = pixelText(scene, labelX, 0, text, {
+      size: fontSize >= 22 ? 'lg' : 'md',
+      color: CSS.parchment,
+      align,
+      wrap: textWidth,
+      maxHeight: Math.max(oneLine, budget - (subtitle ? subtitleBudget + 4 : 0)),
+    }).setOrigin(originX, 0);
     this.add(this.label);
 
+    const block = this.label.height + (subtitle ? subtitleBudget + 4 : 0);
+    this.label.y = Math.max(4, (height - block) / 2);
+
     if (subtitle) {
-      this.subtitle = scene.add
-        .text(labelX, height / 2 + 11, subtitle, {
-          fontFamily: FONT_UI,
-          fontSize: '11px',
-          color: CSS.muted,
-          wordWrap: { width: width - padLeft - 14 },
-        })
-        .setOrigin(align === 'center' ? 0.5 : 0, 0.5);
+      this.subtitle = pixelText(scene, labelX, this.label.y + this.label.height + 4, subtitle, {
+        size: 'md',
+        color: CSS.muted,
+        align,
+        wrap: textWidth,
+        maxHeight: subtitleBudget,
+      }).setOrigin(originX, 0);
       this.add(this.subtitle);
     }
 
-    this.setSize(width, height);
-    // A container's local space puts its children at (0,0)-(w,h), so the hit
-    // area must too — not the centre-origin rectangle a sprite would use.
-    this.setInteractive(
-      new Phaser.Geom.Rectangle(0, 0, width, height),
-      Phaser.Geom.Rectangle.Contains,
-    );
+    setContainerHitArea(this, width, height);
 
     this.on('pointerover', () => this.redraw(true));
     this.on('pointerout', () => {
@@ -196,6 +248,20 @@ export class Button extends Phaser.GameObjects.Container {
     this.icon?.setAlpha(this.isEnabled ? 1 : 0.4);
   }
 
+  /**
+   * Stop taking touches without looking disabled — used while a choice is on
+   * screen but the line it answers is still being typed.
+   *
+   * Toggles the input flag rather than calling setInteractive() again: a bare
+   * setInteractive() throws away the hit rectangle this widget was built with
+   * and falls back to Phaser's container default, which is offset by half the
+   * plate — the original "nothing is pressable" bug, reintroduced.
+   */
+  disableTouch(off: boolean): this {
+    if (this.input) this.input.enabled = !off && this.isEnabled;
+    return this;
+  }
+
   setEnabled(enabled: boolean): this {
     this.isEnabled = enabled;
     this.redraw(false);
@@ -213,12 +279,16 @@ export class Button extends Phaser.GameObjects.Container {
   }
 }
 
+/** Width reserved for a Meter's value, at 2x — three digits and a space. */
+const METER_VALUE_WIDTH = 4 * 6 * 2;
+
 /** A labelled horizontal bar with an icon — sanity, spirituality, concealment. */
 export class Meter extends Phaser.GameObjects.Container {
   private bar: Phaser.GameObjects.Graphics;
-  private valueText: Phaser.GameObjects.Text;
+  private valueText: PixelText;
   private current = 1;
   private target = 1;
+  private barX = 0;
 
   constructor(
     scene: Phaser.Scene,
@@ -231,19 +301,25 @@ export class Meter extends Phaser.GameObjects.Container {
   ) {
     super(scene, x, y);
 
-    this.add(scene.add.image(8, 8, 'icons', iconFrame).setScale(1.1));
-    this.add(
-      scene.add
-        .text(20, 0, label, { fontFamily: FONT_UI, fontSize: '10px', color: CSS.muted })
-        .setOrigin(0, 0),
-    );
+    // Laid out as one row: icon, optional tag, bar, value. Every piece has a
+    // measured width, so four of these fit a phone's width without the last
+    // sliding off the edge. On a phone the tag is dropped — the icon and the
+    // colour already say which meter this is, and the width is better spent on
+    // the bar.
+    this.add(scene.add.image(7, 9, 'icons', iconFrame).setScale(1));
+    const tagWidth = label ? label.length * 6 * 2 + 6 : 0;
+    if (label) {
+      this.add(pixelText(scene, 16, 2, label, { size: 'md', color: CSS.muted }).setOrigin(0, 0));
+    }
+    this.barX = 16 + tagWidth;
 
     this.bar = scene.add.graphics();
     this.add(this.bar);
 
-    this.valueText = scene.add
-      .text(barWidth + 22, 9, '', { fontFamily: FONT_UI, fontSize: '10px', color: CSS.parchment })
-      .setOrigin(0, 0.5);
+    this.valueText = pixelText(scene, this.barX + barWidth + METER_VALUE_WIDTH, 9, '', {
+      size: 'md',
+      color: CSS.parchment,
+    }).setOrigin(1, 0.5);
     this.add(this.valueText);
 
     this.redraw();
@@ -279,16 +355,22 @@ export class Meter extends Phaser.GameObjects.Container {
 
   private redraw(): void {
     const w = this.barWidth;
+    const barX = this.barX;
     this.bar.clear();
     this.bar.fillStyle(COLORS.ink, 0.85);
-    this.bar.fillRoundedRect(20, 12, w, 7, 3);
+    this.bar.fillRect(barX, 6, w, 8);
     // Warn in red once a meter drops into the danger band.
     const low = this.current < 0.25;
     this.bar.fillStyle(low ? COLORS.bad : this.color, 1);
-    this.bar.fillRoundedRect(20, 12, Math.max(2, w * this.current), 7, 3);
-    this.bar.lineStyle(1, COLORS.brassDim, 0.5);
-    this.bar.strokeRoundedRect(20, 12, w, 7, 3);
+    this.bar.fillRect(barX, 6, Math.max(2, w * this.current), 8);
+    this.bar.lineStyle(2, COLORS.brassDim, 0.6);
+    this.bar.strokeRect(barX, 6, w, 8);
     this.valueText.setColor(low ? CSS.bad : CSS.parchment);
+  }
+
+  /** Total width this meter occupies, for laying several out in a row. */
+  get footprint(): number {
+    return this.barX + this.barWidth + METER_VALUE_WIDTH;
   }
 
   get name_(): string {
@@ -403,6 +485,17 @@ export class ScrollList extends Phaser.GameObjects.Container {
     this.maskShape.clear();
     this.maskShape.fillStyle(0xffffff);
     this.maskShape.fillRect(matrix.tx, matrix.ty, this.listWidth, this.listHeight);
+    // Published so a layout check can tell "scrolled out of view" apart from
+    // "spilling off the panel" — a geometry mask is a Graphics, not a rect, so
+    // there is no other way to ask where the clip is. `scrolls` marks the
+    // vertical clip as intentional: content below the fold is the point.
+    this.viewport.setData('clipRect', {
+      x: matrix.tx,
+      y: matrix.ty,
+      width: this.listWidth,
+      height: this.listHeight,
+      scrolls: true,
+    });
   }
 
   /**
@@ -474,7 +567,7 @@ export class Typewriter {
 
   constructor(
     private scene: Phaser.Scene,
-    private target: Phaser.GameObjects.Text,
+    private target: PixelText,
     private charsPerTick = 2,
     private tickMs = 16,
   ) {}
@@ -525,13 +618,22 @@ export function sectionHeader(
   subtitle?: string,
 ): Phaser.GameObjects.Container {
   const container = scene.add.container(x, y);
-  container.add(scene.add.text(0, 0, title, TEXT.title).setFontSize(26));
+  const heading = pixelText(scene, 0, 0, title, { size: 'lg', color: CSS.brass, wrap: width });
+  container.add(heading);
+  let bottom = heading.height + 8;
   if (subtitle) {
-    container.add(scene.add.text(0, 32, subtitle, TEXT.small).setWordWrapWidth(width));
+    const line = pixelText(scene, 0, bottom, subtitle, { size: 'md', color: CSS.muted, wrap: width });
+    container.add(line);
+    bottom += line.height + 8;
   }
   const rule = scene.add.graphics();
   rule.lineStyle(1, COLORS.brassDim, 0.8);
-  rule.lineBetween(0, subtitle ? 52 : 32, width, subtitle ? 52 : 32);
+  rule.lineBetween(0, bottom, width, bottom);
   container.add(rule);
+  // Sized, so callers can put the body below `header.y + header.height` rather
+  // than at a guessed offset. A subtitle wraps to two or three lines at phone
+  // width where it took one on a desktop, and a guessed offset puts the body
+  // straight through it.
+  container.setSize(width, bottom + 10);
   return container;
 }

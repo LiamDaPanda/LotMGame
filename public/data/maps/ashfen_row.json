@@ -1,51 +1,93 @@
 {
   "id": "ashfen_row",
-  "name": "Ashfen Row",
+  "name": "Iron Cross Street, West Borough",
   "ambient": "#2c3a52",
   "encounterChance": 0.45,
   "legend": {
-    "#": { "floor": 8, "collide": true },
-    ":": { "floor": 1 },
-    "~": { "floor": 2 },
-    "D": { "floor": 13, "collide": true },
-    "W": { "floor": 12, "collide": true },
-    "L": { "floor": 1, "object": 24, "collide": true }
+    "#": {
+      "floor": 8,
+      "collide": true
+    },
+    ":": {
+      "floor": 1
+    },
+    "~": {
+      "floor": 2
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "L": {
+      "floor": 1,
+      "object": 24,
+      "collide": true
+    },
+    "r": {
+      "floor": 1,
+      "object": 15,
+      "collide": true
+    },
+    "k": {
+      "floor": 1,
+      "object": 19,
+      "collide": true
+    },
+    "b": {
+      "floor": 1,
+      "object": 20,
+      "collide": true
+    },
+    "c": {
+      "floor": 1,
+      "object": 21,
+      "collide": true
+    }
   },
   "rows": [
     "##########################",
-    "#########D################",
-    "::::::::::::::::::::::::::",
+    "######W##D####W###W#######",
+    "::L::k::::::b::c:::k:::L::",
     "::::::::::::::::::::::::::",
     "~~~~~~~~~~~~~~~~~~~~~~~~~~",
     "::::::::::::::::::::::::::",
-    "::::L::::::::::::L::::::::",
+    "::b:L:k:c::::b:::L:::k::b:",
     "::::::::::::::::::::::::::",
-    "##########D#W#############",
+    "###D######D#W#########W###",
     "##########################"
   ],
-  "spawn": { "x": 9, "y": 2 },
+  "spawn": {
+    "x": 9,
+    "y": 2
+  },
   "hotspots": [
     {
       "id": "row_gutter",
       "x": 13,
       "y": 4,
       "name": "The Gutter",
-      "description": "Ashfen Row runs downhill to the river and everything the Row is finished with goes with it. Tonight: a broken pipe stem, a playbill, and rain that has been falling since the twelfth."
+      "description": "Tingen washes downhill into this and the Tussock does the rest. Somebody has been here before you: the muck is turned over in a straight line, the way a man searches when he knows what he is looking for."
     },
     {
       "id": "shop_window",
       "x": 12,
       "y": 8,
-      "name": "Halloway's Window",
-      "description": "The pawnshop's front window, shuttered from within. From the street you can see the nail heads through the gap in the boards.",
-      "clues": ["clue_nailed_shutters"]
+      "name": "A Shuttered Window",
+      "description": "McGovern’s stair door, and above it his rooms, shuttered at four in the afternoon. There has been a light behind those shutters every night this week.",
+      "clues": [
+        "clue_nailed_shutters"
+      ]
     },
     {
       "id": "row_notice",
       "x": 22,
       "y": 8,
-      "name": "Parish Notice",
-      "description": "A constabulary bill, pasted crooked: EZRA HALLOWAY, of this parish, died the fifteenth instant. Any person with information &c. Somebody has written a rude word across it and somebody else has half scrubbed it off."
+      "name": "The Parish Notice",
+      "description": "Gas rates, a lost dog, and a printed card from the Church of the Evernight Goddess advising residents that unlicensed divination is an offence and that the mercy of the Goddess extends to those who report it early."
     }
   ],
   "npcs": [
@@ -57,15 +99,32 @@
     }
   ],
   "exits": [
-    { "x": 9, "y": 1, "toMap": "club_hub", "toX": 9, "toY": 13, "label": "The Club" },
+    {
+      "x": 3,
+      "y": 8,
+      "toMap": "lodgings",
+      "toX": 6,
+      "toY": 9,
+      "label": "Home"
+    },
+    {
+      "x": 9,
+      "y": 1,
+      "toMap": "club_hub",
+      "toX": 9,
+      "toY": 13,
+      "label": "Blackthorn"
+    },
     {
       "x": 20,
       "y": 8,
       "toMap": "crookback_alley",
       "toX": 3,
       "toY": 7,
-      "label": "Crookback Alley",
-      "requires": { "flag": "knows_crookback" }
+      "label": "Lower Market",
+      "requires": {
+        "flag": "knows_crookback"
+      }
     },
     {
       "x": 10,
@@ -73,8 +132,13 @@
       "toMap": "pawnshop",
       "toX": 9,
       "toY": 11,
-      "label": "Halloway's",
-      "requires": { "caseState": { "caseId": "case-01-ninth-bell", "state": "active" } }
+      "label": "McGovern’s",
+      "requires": {
+        "caseState": {
+          "caseId": "case-01-notebook",
+          "state": "active"
+        }
+      }
     }
   ]
 }

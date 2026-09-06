@@ -111,7 +111,7 @@ export class DialogueSystem {
         enabled: gate.enabled,
         reason: gate.reason,
         costPence: choice.costPence,
-        abilityId: choice.useAbility,
+        abilityId: this.abilityFor(choice),
       });
     });
 
@@ -137,11 +137,25 @@ export class DialogueSystem {
     if (choice.costPence !== undefined && !this.state.canAfford(choice.costPence)) {
       return { enabled: false, reason: 'You cannot afford it' };
     }
-    if (choice.useAbility) {
-      const check = this.abilities.canUse(choice.useAbility, { context: 'dialogue' });
+    const abilityId = this.abilityFor(choice);
+    if (abilityId) {
+      const check = this.abilities.canUse(abilityId, { context: 'dialogue' });
       if (!check.ok) return { enabled: false, reason: check.reason };
+    } else if (choice.useAbilityEffect) {
+      return { enabled: false, reason: 'Your pathway offers nothing that would do this' };
     }
     return { enabled: true };
+  }
+
+  /**
+   * Which ability this choice actually spends. `useAbility` names one outright;
+   * `useAbilityEffect` asks for a capability and takes whatever the player's
+   * pathway supplies, so a scene need not know which pathway is reading it.
+   */
+  private abilityFor(choice: DialogueChoice): string | undefined {
+    if (choice.useAbility) return choice.useAbility;
+    if (!choice.useAbilityEffect) return undefined;
+    return this.abilities.withEffect(choice.useAbilityEffect, 'dialogue')?.id;
   }
 
   /** Take a choice by its index within the current node's choice list. */
@@ -154,9 +168,10 @@ export class DialogueSystem {
     if (!gate.enabled) return this.present(node);
 
     // Pay in this order: ability first (it can still fail), then money.
-    if (choice.useAbility) {
+    const abilityId = this.abilityFor(choice);
+    if (abilityId) {
       // Talking to somebody means being seen using it.
-      const result = this.abilities.use(choice.useAbility, { context: 'dialogue', witnessed: true });
+      const result = this.abilities.use(abilityId, { context: 'dialogue', witnessed: true });
       if (!result.ok) return this.present(node);
     }
     if (choice.costPence) {

@@ -1,10 +1,16 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
 import { describeTender, format } from '@/systems/Money';
 import { marketDiscount } from '@/systems/Skills';
-import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import { Button, ScrollList, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  COLORS,
+  CSS,
+  menuRect,
+  minTapHeight,
+} from '@/ui/theme';
 import type { ItemData, VendorId } from '@/types/schema';
 
 type Mode = 'buy' | 'sell';
@@ -44,31 +50,40 @@ const VENDOR = {
 export class ShopScene extends Phaser.Scene {
   private session!: Session;
   private list?: ScrollList;
+  /** Where the body may start, once the header has measured itself. */
+  private headerBottom = 0;
   private mode: Mode = 'buy';
   private vendor: VendorId = 'club';
-  private purseText!: Phaser.GameObjects.Text;
-  private flavourText!: Phaser.GameObjects.Text;
+  private purseText!: PixelText;
+  private flavourText!: PixelText;
   private modeButtons: Button[] = [];
 
-  private readonly x = 110;
-  private readonly y = 50;
-  private readonly w = GAME_WIDTH - 220;
-  private readonly h = GAME_HEIGHT - 100;
+
+  private x = 0;
+  private y = 0;
+  private w = 0;
+  private h = 0;
 
   constructor() {
     super('Shop');
   }
 
   create(data: ShopSceneData): void {
+    // Read the layout here, not in a field: scene instances outlive a rotation.
+    const pane = menuRect();
+    this.x = pane.x + 10;
+    this.y = pane.y + 10;
+    this.w = pane.width - 20;
+    this.h = pane.height - 20;
     this.session = Session.get(this);
     this.vendor = data?.vendor ?? 'club';
     const vendor = VENDOR[this.vendor];
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.86).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.86);
     drawPanel(this, this.x, this.y, this.w, this.h, {
       border: this.vendor === 'market' ? COLORS.blood : COLORS.brassDim,
     });
-    sectionHeader(
+    const header = sectionHeader(
       this,
       this.x + 24,
       this.y + 18,
@@ -78,36 +93,42 @@ export class ShopScene extends Phaser.Scene {
         ? `${vendor.blurb}  ·  Streetwise ${this.session.state.skill('streetwise')} — prices reflect it`
         : vendor.blurb,
     );
+    this.headerBottom = header.y + header.height;
 
-    this.purseText = this.add.text(this.x + this.w - 220, this.y + 24, '', {
-      fontFamily: FONT_UI,
-      fontSize: '14px',
+    // The purse sits on the header's own line, right-aligned, so it cannot land
+    // on a title that wrapped further than expected.
+    this.purseText = pixelText(this, this.x + this.w - 24, this.y + 20, '', {
+      size: 'md',
       color: CSS.brass,
-    });
+    }).setOrigin(1, 0);
 
+    // Buy/Sell go directly under the header, and the list under them.
+    const tabW = (this.w - 60) / 2;
+    const tabH = minTapHeight();
     this.modeButtons = [
-      new Button(this, this.x + 24, this.y + 70, vendor.buyLabel, () => this.setMode('buy'), {
-        width: 130,
-        height: 32,
+      new Button(this, this.x + 24, this.headerBottom, vendor.buyLabel, () => this.setMode('buy'), {
+        width: tabW,
+        height: tabH,
         fontSize: 12,
       }),
-      new Button(this, this.x + 164, this.y + 70, 'Sell', () => this.setMode('sell'), {
-        width: 130,
-        height: 32,
+      new Button(this, this.x + 36 + tabW, this.headerBottom, 'Sell', () => this.setMode('sell'), {
+        width: tabW,
+        height: tabH,
         fontSize: 12,
       }),
     ];
 
-    this.flavourText = this.add.text(this.x + 24, this.y + this.h - 84, '', {
-      fontFamily: FONT_BODY,
-      fontSize: '12px',
+    const footerY = this.y + this.h - minTapHeight() - 12;
+    this.flavourText = pixelText(this, this.x + 24, footerY, '', {
+      size: 'md',
       color: CSS.muted,
-      wordWrap: { width: this.w - 220 },
+      wrap: this.w - 200,
+      maxHeight: minTapHeight(),
     });
 
-    new Button(this, this.x + this.w - 174, this.y + this.h - 54, 'Leave', () => this.close(), {
+    new Button(this, this.x + this.w - 174, footerY, 'Leave', () => this.close(), {
       width: 150,
-      height: 38,
+      height: minTapHeight(),
       fontSize: 13,
     });
     this.input.keyboard?.on('keydown-ESC', () => this.close());
@@ -129,9 +150,10 @@ export class ShopScene extends Phaser.Scene {
     const rows =
       this.mode === 'buy' ? this.buyRows() : this.sellRows();
 
-    this.list = new ScrollList(this, this.x + 24, this.y + 112, {
+    const bodyY = this.headerBottom + minTapHeight() + 12;
+    this.list = new ScrollList(this, this.x + 24, bodyY, {
       width: this.w - 48,
-      height: this.h - 210,
+      height: this.y + this.h - minTapHeight() * 2 - 28 - bodyY,
       gap: 8,
     });
     this.list.setRows(rows);
@@ -240,7 +262,7 @@ export class ShopScene extends Phaser.Scene {
   private emptyRow(text: string): Phaser.GameObjects.Container {
     const container = this.add.container(0, 0);
     container.setSize(this.w - 48, 36);
-    container.add(this.add.text(0, 8, text, { fontFamily: FONT_BODY, fontSize: '13px', color: CSS.muted }));
+    container.add(pixelText(this, 0, 8, text, { fontSize: '13px', color: CSS.muted }));
     return container;
   }
 

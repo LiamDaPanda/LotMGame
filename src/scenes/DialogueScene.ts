@@ -1,16 +1,26 @@
 import Phaser from 'phaser';
+import { PixelText, SCALES, paginate, pixelText, textHeight } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
-import { Button, Typewriter, drawPanel } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
-import type { PresentedNode } from '@/systems/DialogueSystem';
+import { Button, ScrollList, Typewriter, drawPanel } from '@/ui/widgets';
+import { COLORS, CSS, isPortrait, menuRect, minTapHeight } from '@/ui/theme';
+import type { PresentedChoice, PresentedNode } from '@/systems/DialogueSystem';
 
 interface DialogueSceneData {
   treeId: string;
-  speaker: string;
+  speaker?: string;
 }
+
+/** Gap between stacked choice plates. */
+const CHOICE_GAP = 5;
 
 /**
  * The conversation overlay.
+ *
+ * Laid out per node rather than once, because a node's choices decide the
+ * shape of the screen: three long options need three two-line plates, and the
+ * speech panel has to give up the room for them. Sizing the panel first and
+ * squeezing the choices into the remainder is what truncated them to a single
+ * line with an ellipsis.
  *
  * Locked choices are rendered greyed with the reason attached rather than
  * hidden — seeing "Requires Divination" or "You cannot afford it" is how the
@@ -18,13 +28,19 @@ interface DialogueSceneData {
  */
 export class DialogueScene extends Phaser.Scene {
   private session!: Session;
+  private panel!: Phaser.GameObjects.Container;
   private portrait!: Phaser.GameObjects.Image;
-  private nameText!: Phaser.GameObjects.Text;
-  private bodyText!: Phaser.GameObjects.Text;
-  private typewriter!: Typewriter;
+  private nameText!: PixelText;
+  private bodyText!: PixelText;
+  private continueHint!: PixelText;
+  private typewriter?: Typewriter;
   private choiceButtons: Button[] = [];
+  private choiceList?: ScrollList;
+  private choiceArea = { x: 0, y: 0, width: 0, height: 0 };
   private node?: PresentedNode;
-  private continueHint!: Phaser.GameObjects.Text;
+  /** A long line is read a panel at a time rather than cut off. */
+  private pages: string[] = [];
+  private page = 0;
 
   constructor() {
     super('Dialogue');
@@ -32,43 +48,18 @@ export class DialogueScene extends Phaser.Scene {
 
   create(data: DialogueSceneData): void {
     this.session = Session.get(this);
+    this.choiceButtons = [];
 
+    // Tapping anywhere in the panel pane advances the line — the whole bottom
+    // screen is the "next" button, which is what a thumb expects.
+    const pane = menuRect();
     this.add
-      .rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.6)
+      .rectangle(pane.x, pane.y, pane.width, pane.height, COLORS.ink, 0.85)
       .setOrigin(0, 0)
       .setInteractive()
       .on('pointerdown', () => this.onTapBackdrop());
 
-    const panelY = GAME_HEIGHT - 230;
-    drawPanel(this, 20, panelY, GAME_WIDTH - 40, 210);
-
-    this.portrait = this.add.image(84, panelY + 74, 'portraits', 0).setScale(1.6);
-    this.nameText = this.add.text(150, panelY + 18, '', {
-      fontFamily: FONT_BODY,
-      fontSize: '19px',
-      color: CSS.brass,
-    });
-    this.bodyText = this.add.text(150, panelY + 48, '', {
-      fontFamily: FONT_BODY,
-      fontSize: '15px',
-      color: CSS.parchment,
-      lineSpacing: 6,
-      wordWrap: { width: GAME_WIDTH - 210 },
-    });
-    this.typewriter = new Typewriter(this, this.bodyText, 2, 14);
-
-    this.continueHint = this.add
-      .text(GAME_WIDTH - 44, panelY + 182, '▾', { fontFamily: FONT_UI, fontSize: '16px', color: CSS.brass })
-      .setOrigin(0.5)
-      .setAlpha(0);
-    this.tweens.add({
-      targets: this.continueHint,
-      y: panelY + 187,
-      duration: 700,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
-    });
+    this.panel = this.add.container(0, 0);
 
     this.input.keyboard?.on('keydown-SPACE', () => this.onTapBackdrop());
     this.input.keyboard?.on('keydown-ESC', () => this.close());
@@ -81,63 +72,213 @@ export class DialogueScene extends Phaser.Scene {
     this.show(first);
   }
 
+  // ---------------------------------------------------------------------------
+  // Layout
+  // ---------------------------------------------------------------------------
+
+  /** The greyed-out reason, or a price — whatever goes under a choice's label. */
+  private subtitleFor(choice: PresentedChoice): string | undefined {
+    return choice.enabled ? undefined : choice.reason;
+  }
+
+  /** How tall a choice's plate has to be to hold everything written on it. */
+  private choiceHeight(choice: PresentedChoice, width: number): number {
+    // Button pads 6px each side of its label.
+    const textWidth = width - 12;
+    const subtitle = this.subtitleFor(choice);
+    const body =
+      textHeight(choice.text, textWidth, SCALES.md) +
+      (subtitle ? textHeight(subtitle, textWidth, SCALES.md) + 4 : 0);
+    return Math.max(minTapHeight(), body + 10);
+  }
+
   private show(node: PresentedNode): void {
     this.node = node;
     this.clearChoices();
+    // Stop the old typewriter before its target is destroyed: it writes on a
+    // timer, and a BitmapText that has been destroyed has no font data left to
+    // write into — which throws out of the timer and takes the scene's update
+    // loop with it.
+    this.typewriter?.stop();
+    this.panel.removeAll(true);
+
+    const pane = menuRect();
+    const tall = isPortrait();
+    const inset = pane.x + (tall ? 8 : 20);
+    const panelW = pane.width - (tall ? 16 : 40);
+
+    // Measure the choices first; the speech panel takes what is left.
+    const choiceInset = pane.x + (tall ? 8 : 100);
+    const choiceWidth = pane.width - (tall ? 16 : 200);
+    const heights = node.choices.map((choice) => this.choiceHeight(choice, choiceWidth));
+    const wanted =
+      heights.reduce((sum, height) => sum + height, 0) +
+      Math.max(0, heights.length - 1) * CHOICE_GAP;
+
+    // The panel never drops below enough room for a portrait and three lines.
+    const minPanel = 150;
+    const available = pane.height - minPanel - 16;
+    const choicesHeight = Math.min(wanted, Math.max(0, available));
+    const panelH = pane.height - choicesHeight - (choicesHeight > 0 ? 16 : 12);
+    const panelY = pane.y + pane.height - panelH - 6;
+
+    this.choiceArea = {
+      x: choiceInset,
+      y: pane.y + 6,
+      width: choiceWidth,
+      height: choicesHeight,
+    };
+
+    this.panel.add(drawPanel(this, inset, panelY, panelW, panelH));
 
     const character = this.session.content.character(node.speaker);
-    this.portrait.setFrame(character?.spriteRow ?? 0);
-    this.nameText.setText(
-      character ? `${character.name}${character.title ? ` — ${character.title}` : ''}` : node.speakerName,
+    // The portrait sheet is generated in the same order as the character sheet,
+    // so a character's sprite row is also its portrait frame. Without this
+    // every speaker in the game wore Klein's face.
+    this.portrait = this.add
+      .image(inset + 40, panelY + 40, 'portraits', character?.spriteRow ?? 0)
+      .setScale(tall ? 1.1 : 1.6);
+    this.panel.add(this.portrait);
+    this.nameText = pixelText(
+      this,
+      inset + 86,
+      panelY + 30,
+      character
+        ? `${character.name}${character.title ? ` - ${character.title}` : ''}`
+        : node.speakerName,
+      { size: 'md', color: CSS.brass, wrap: panelW - 96, maxHeight: 44 },
     );
-    this.continueHint.setAlpha(0);
+    this.panel.add(this.nameText);
 
-    this.typewriter.play(node.text, () => this.renderChoices());
+    const bodyY = panelY + 84;
+    const bodyWrap = panelW - 28;
+    const bodyHeight = panelY + panelH - bodyY - 24;
+    this.bodyText = pixelText(this, inset + 14, bodyY, '', {
+      size: 'md',
+      color: CSS.parchment,
+      wrap: bodyWrap,
+      maxHeight: bodyHeight,
+    });
+    this.panel.add(this.bodyText);
+
+    this.pages = paginate(node.text, bodyWrap, SCALES.md, bodyHeight);
+    this.page = 0;
+
+    const hintY = panelY + panelH - 18;
+    this.continueHint = pixelText(this, inset + panelW - 20, hintY, '▾', {
+      size: 'md',
+      color: CSS.brass,
+    })
+      .setOrigin(0.5)
+      .setAlpha(0);
+    this.panel.add(this.continueHint);
+    this.tweens.add({
+      targets: this.continueHint,
+      y: hintY + 5,
+      duration: 700,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+
+    this.typewriter = new Typewriter(this, this.bodyText, 2, 14);
+    // Choices are drawn with the node, dimmed, rather than after the line has
+    // finished typing. They reserve their space either way, and an empty band
+    // of black above the speech panel is the ugliest thing on the screen.
+    this.renderChoices();
+    this.setChoicesLit(false);
+    this.playPage();
+  }
+
+  /** Type out the current page; the choices wait until the last one is done. */
+  private playPage(): void {
+    const text = this.pages[this.page] ?? '';
+    this.continueHint.setAlpha(0);
+    this.typewriter?.play(text, () => {
+      if (this.page < this.pages.length - 1) this.continueHint.setAlpha(1);
+      else this.setChoicesLit(true);
+    });
+  }
+
+  /** True if there was another page to turn to. */
+  private nextPage(): boolean {
+    if (this.page >= this.pages.length - 1) return false;
+    this.page += 1;
+    this.playPage();
+    return true;
+  }
+
+  /** Dim while the line is still arriving; live once it has. */
+  private setChoicesLit(lit: boolean): void {
+    for (const button of this.choiceButtons) {
+      button.setAlpha(lit ? 1 : 0.45);
+      button.setActive(lit);
+      button.disableTouch(!lit);
+    }
+    if (lit && this.node && this.node.choices.length === 0) this.continueHint.setAlpha(1);
   }
 
   private renderChoices(): void {
     const node = this.node;
-    if (!node) return;
+    if (!node || this.choiceButtons.length > 0 || this.choiceList) return;
 
-    if (node.choices.length === 0) {
-      this.continueHint.setAlpha(1);
+    if (node.choices.length === 0) return;
+
+    const area = this.choiceArea;
+    const heights = node.choices.map((choice) => this.choiceHeight(choice, area.width));
+    const wanted =
+      heights.reduce((sum, height) => sum + height, 0) +
+      Math.max(0, heights.length - 1) * CHOICE_GAP;
+
+    const buttons = node.choices.map((choice, index) =>
+      new Button(this, 0, 0, choice.text, () => this.choose(choice.index), {
+        width: area.width,
+        height: heights[index] as number,
+        align: 'left',
+        fontSize: 14,
+        enabled: choice.enabled,
+        tone: choice.abilityId ? 'occult' : choice.costPence ? 'good' : 'default',
+        subtitle: this.subtitleFor(choice),
+      }),
+    );
+
+    if (wanted <= area.height) {
+      // They fit: stack them so the last option sits against the speech panel,
+      // nearest the thumb.
+      let y = area.y + area.height - wanted;
+      buttons.forEach((button, index) => {
+        button.setPosition(area.x, y);
+        y += (heights[index] as number) + CHOICE_GAP;
+      });
+      this.choiceButtons = buttons;
       return;
     }
 
-    // Choices sit above the text panel, tallest stack first so the newest
-    // option is always nearest the thumb.
-    const width = GAME_WIDTH - 200;
-    const height = 40;
-    const gap = 6;
-    const total = node.choices.length * (height + gap);
-    let y = GAME_HEIGHT - 240 - total;
-
-    for (const choice of node.choices) {
-      const button = new Button(
-        this,
-        100,
-        y,
-        choice.text,
-        () => this.choose(choice.index),
-        {
-          width,
-          height,
-          align: 'left',
-          fontSize: 14,
-          enabled: choice.enabled,
-          tone: choice.abilityId ? 'occult' : choice.costPence ? 'good' : 'default',
-          subtitle: choice.enabled ? undefined : choice.reason,
-        },
-      );
-      this.choiceButtons.push(button);
-      y += height + gap;
-    }
+    // Too many to show at once — a scrolling column beats shrinking every plate
+    // until its label is an ellipsis.
+    this.choiceList = new ScrollList(this, area.x, area.y, {
+      width: area.width,
+      height: area.height,
+      gap: CHOICE_GAP,
+    });
+    this.choiceList.setRows(buttons);
+    this.choiceList.refreshMask();
+    this.choiceButtons = buttons;
   }
 
   private clearChoices(): void {
-    for (const button of this.choiceButtons) button.destroy();
+    if (this.choiceList) {
+      this.choiceList.destroy();
+      this.choiceList = undefined;
+    } else {
+      for (const button of this.choiceButtons) button.destroy();
+    }
     this.choiceButtons = [];
   }
+
+  // ---------------------------------------------------------------------------
+  // Flow
+  // ---------------------------------------------------------------------------
 
   private choose(index: number): void {
     const next = this.session.dialogue.choose(index);
@@ -148,18 +289,24 @@ export class DialogueScene extends Phaser.Scene {
     this.show(next);
   }
 
-  /** Tap to finish the line; tap again on a terminal node to leave. */
+  /**
+   * Tap to finish the line, again to turn the page, and again on a terminal
+   * node to leave. One target — the whole bottom screen — doing the obvious
+   * thing at every point in the sequence.
+   */
   private onTapBackdrop(): void {
-    if (this.typewriter.running) {
+    if (this.typewriter?.running) {
       this.typewriter.finish();
-      this.renderChoices();
+      if (this.page < this.pages.length - 1) this.continueHint.setAlpha(1);
+      else this.setChoicesLit(true);
       return;
     }
+    if (this.nextPage()) return;
     if (this.node && this.node.choices.length === 0) this.close();
   }
 
   private close(): void {
-    this.typewriter.stop();
+    this.typewriter?.stop();
     this.session.dialogue.stop();
     this.scene.stop();
     if (this.scene.isPaused('World')) this.scene.resume('World');

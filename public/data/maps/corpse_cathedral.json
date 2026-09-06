@@ -1,0 +1,121 @@
+{
+  "id": "corpse_cathedral",
+  "name": "The Corpse Cathedral",
+  "ambient": "#1a1620",
+  "encounterChance": 0,
+  "legend": {
+    "#": {
+      "floor": 9,
+      "collide": true
+    },
+    ".": {
+      "floor": 7
+    },
+    "r": {
+      "floor": 5
+    },
+    "g": {
+      "floor": 7,
+      "object": 27,
+      "collide": true
+    },
+    "a": {
+      "floor": 5,
+      "object": 16,
+      "collide": true
+    },
+    "c": {
+      "floor": 7,
+      "object": 24,
+      "collide": true
+    },
+    "@": {
+      "floor": 32
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    }
+  },
+  "rows": [
+    "####W#########W#####",
+    "#........rr........#",
+    "#.g......ra......g.#",
+    "#........rr........#",
+    "#.c...@..rr..@...c.#",
+    "#........rr........#",
+    "#.g......rr......g.#",
+    "#........rr........#",
+    "#........rr........#",
+    "#########oo#########"
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 8
+  },
+  "hotspots": [
+    {
+      "id": "rite_corpse_cathedral",
+      "x": 13,
+      "y": 4,
+      "name": "The Circle",
+      "description": "The Corpse Cathedral was built for exactly this and has been waiting.",
+      "action": "ritual",
+      "icon": 13
+    },
+    {
+      "id": "cc_genie",
+      "x": 8,
+      "y": 3,
+      "name": "The Genie",
+      "description": "It grants what you ask for and not what you meant, and everybody who has ever dealt with one knew that going in. What you need is to be dead.",
+      "action": "dialogue",
+      "dialogue": "dlg_genie",
+      "icon": 13
+    },
+    {
+      "id": "cc_alger",
+      "x": 4,
+      "y": 6,
+      "name": "A Customer Calling It In",
+      "description": "Three years a customer, never once asking for anything he could not have got elsewhere at a worse price, establishing patiently that he is the sort of man a Fool takes a call from.",
+      "action": "dialogue",
+      "dialogue": "dlg_alger_price",
+      "icon": 12
+    },
+    {
+      "id": "cc_zaratul",
+      "x": 12,
+      "y": 6,
+      "name": "The Man You Let Out",
+      "description": "Four hundred years sealed in a town where nothing happened, eleven months out of it, and a claim on the seat above the grey fog with the argument to go with it.",
+      "action": "dialogue",
+      "dialogue": "dlg_zaratul_claim",
+      "icon": 13,
+      "locked": {
+        "reason": "Not until the wish is paid.",
+        "bypass": {
+          "flag": "v7_died"
+        }
+      }
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 9,
+      "y": 9,
+      "toMap": "forsaken",
+      "toX": 9,
+      "toY": 8,
+      "label": "Forsaken Land"
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_v7_arrive",
+    "flag": "v7_arrived"
+  }
+}

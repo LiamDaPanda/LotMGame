@@ -1,8 +1,18 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
-import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS } from '@/ui/theme';
+import { Button, ScrollList, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  COLORS,
+  CSS,
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  ICONS,
+  isPortrait,
+  minTapHeight,
+  panelInset,
+} from '@/ui/theme';
 import type { AbilityData, AbilityEffectKind, HotspotData } from '@/types/schema';
 
 interface ExamineSceneData {
@@ -25,7 +35,7 @@ export class ExamineScene extends Phaser.Scene {
   private hotspot!: HotspotData;
   private witnessed = false;
   private list!: ScrollList;
-  private body!: Phaser.GameObjects.Text;
+  private body!: PixelText;
 
   constructor() {
     super('Examine');
@@ -36,43 +46,46 @@ export class ExamineScene extends Phaser.Scene {
     this.hotspot = data.hotspot;
     this.witnessed = data.witnessed;
 
-    this.add
-      .rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.72)
-      .setOrigin(0, 0)
-      .setInteractive();
+    panelStage(this, 0.72);
 
-    const panelX = 140;
-    const panelY = 70;
-    const panelW = GAME_WIDTH - 280;
-    const panelH = GAME_HEIGHT - 150;
+    const panelX = panelInset();
+    const panelY = isPortrait() ? 96 : 70;
+    const panelW = GAME_WIDTH - panelInset() * 2;
+    const panelH = GAME_HEIGHT - panelY - (isPortrait() ? 90 : 80);
     drawPanel(this, panelX, panelY, panelW, panelH);
 
-    sectionHeader(this, panelX + 24, panelY + 18, panelW - 48, this.hotspot.name);
+    const header = sectionHeader(this, panelX + 24, panelY + 18, panelW - 48, this.hotspot.name);
 
-    this.body = this.add.text(panelX + 24, panelY + 62, '', {
-      fontFamily: FONT_BODY,
-      fontSize: '15px',
-      color: CSS.parchment,
-      lineSpacing: 5,
-      wordWrap: { width: panelW - 48 },
-    });
+    // First look before layout: the description's own height decides where the
+    // findings list starts, and an empty text object measures zero — which put
+    // the list straight through the prose.
+    this.applyFirstLook();
+    const locked = this.isLocked();
+    this.body = pixelText(
+      this,
+      panelX + 24,
+      header.y + header.height,
+      locked ? `${this.hotspot.description}\n\n${this.hotspot.locked?.reason}` : this.hotspot.description,
+      { size: 'md', color: CSS.parchment, wrap: panelW - 48, maxHeight: panelH * 0.4 },
+    );
 
-    this.list = new ScrollList(this, panelX + 24, panelY + 150, {
+    const listY = this.body.y + this.body.height + 10;
+    this.list = new ScrollList(this, panelX + 24, listY, {
       width: panelW - 48,
-      height: panelH - 220,
+      height: panelY + panelH - minTapHeight() - 24 - listY,
       gap: 8,
     });
 
-    new Button(this, GAME_WIDTH / 2 - 70, panelY + panelH - 52, 'Step back', () => this.close(), {
-      width: 140,
-      height: 38,
-    });
+    new Button(
+      this,
+      GAME_WIDTH / 2 - 90,
+      panelY + panelH - minTapHeight() - 12,
+      'Step back',
+      () => this.close(),
+      { width: 180, height: minTapHeight() },
+    );
 
     this.input.keyboard?.on('keydown-ESC', () => this.close());
-
-    // First look grants the mundane clues automatically — searching a room
-    // should never be a hunt for the right button.
-    this.applyFirstLook();
     this.refresh();
   }
 
@@ -123,7 +136,7 @@ export class ExamineScene extends Phaser.Scene {
     this.body.setText(locked ? `${this.hotspot.description}\n\n${this.hotspot.locked?.reason}` : this.hotspot.description);
 
     const rows: Phaser.GameObjects.Container[] = [];
-    const rowWidth = GAME_WIDTH - 280 - 48;
+    const rowWidth = GAME_WIDTH - panelInset() * 2 - 48;
 
     // What a plain look turned up.
     const known = (this.hotspot.clues ?? []).filter((id) => state.hasClue(id));
@@ -175,15 +188,13 @@ export class ExamineScene extends Phaser.Scene {
 
     container.add(this.add.image(18, height / 2, 'icons', ICONS.clue).setScale(1.2));
     container.add(
-      this.add.text(36, 9, found?.clue.title ?? clueId, {
-        fontFamily: FONT_UI,
+      pixelText(this, 36, 9, found?.clue.title ?? clueId, {
         fontSize: '13px',
         color: CSS.good,
       }),
     );
     container.add(
-      this.add.text(36, 28, found?.clue.text ?? '', {
-        fontFamily: FONT_BODY,
+      pixelText(this, 36, 28, found?.clue.text ?? '', {
         fontSize: '12px',
         color: CSS.muted,
         wordWrap: { width: width - 52 },
@@ -194,10 +205,9 @@ export class ExamineScene extends Phaser.Scene {
 
   private noteRow(text: string, width: number): Phaser.GameObjects.Container {
     const container = this.add.container(0, 0);
-    container.setSize(width, 30);
-    container.add(
-      this.add.text(0, 6, text, { fontFamily: FONT_BODY, fontSize: '13px', color: CSS.muted }),
-    );
+    const label = pixelText(this, 0, 6, text, { size: 'md', color: CSS.muted, wrap: width });
+    container.setSize(width, label.height + 12);
+    container.add(label);
     return container;
   }
 

@@ -1,10 +1,15 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
 import { MAX_SKILL, SKILLS, TRAINING_DAYS, trainingCost } from '@/systems/Skills';
-import { Button, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import { Button, ScrollList, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  CSS,
+  menuRect,
+  minTapHeight,
+} from '@/ui/theme';
 import { SKILL_IDS, type SkillId } from '@/types/schema';
 
 /**
@@ -16,51 +21,66 @@ import { SKILL_IDS, type SkillId } from '@/types/schema';
  */
 export class TrainingScene extends Phaser.Scene {
   private session!: Session;
+  /** Where the body may start, once the header has measured itself. */
+  private headerBottom = 0;
   private rows: Button[] = [];
-  private purseText!: Phaser.GameObjects.Text;
-  private flavour!: Phaser.GameObjects.Text;
+  private list?: ScrollList;
+  private purseText!: PixelText;
+  private flavour!: PixelText;
 
-  private readonly x = 120;
-  private readonly y = 46;
-  private readonly w = GAME_WIDTH - 240;
-  private readonly h = GAME_HEIGHT - 92;
+
+  private x = 0;
+  private y = 0;
+  private w = 0;
+  private h = 0;
 
   constructor() {
     super('Training');
   }
 
   create(): void {
+    // Read the layout here, not in a field: scene instances outlive a rotation.
+    const pane = menuRect();
+    this.x = pane.x + 10;
+    this.y = pane.y + 10;
+    this.w = pane.width - 20;
+    this.h = pane.height - 20;
     this.session = Session.get(this);
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.88).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.88);
     drawPanel(this, this.x, this.y, this.w, this.h);
 
-    sectionHeader(
+    // The purse goes above the header, not beside its title: at phone width the
+    // title wraps and there is no "beside" left.
+    const state = this.session.state;
+    this.purseText = pixelText(
       this,
       this.x + 24,
-      this.y + 16,
+      this.y + 14,
+      `Purse: ${format(state.pence)}   ·   Day ${state.day}`,
+      { size: 'md', color: CSS.brass, wrap: this.w - 48 },
+    );
+
+    const header = sectionHeader(
+      this,
+      this.x + 24,
+      this.purseText.y + this.purseText.height + 8,
       this.w - 48,
       'Tuition',
       'The Club keeps people who know things and are willing to be paid to say so.',
     );
+    this.headerBottom = header.y + header.height;
 
-    this.purseText = this.add
-      .text(this.x + this.w - 24, this.y + 26, '', {
-        fontFamily: FONT_UI,
-        fontSize: '13px',
-        color: CSS.brass,
-      })
-      .setOrigin(1, 0);
-
-    this.flavour = this.add.text(this.x + 24, this.y + this.h - 78, '', {
-      fontFamily: FONT_BODY,
-      fontSize: '13px',
+    const footerY = this.y + this.h - minTapHeight() - 12;
+    this.flavour = pixelText(this, this.x + 24, footerY, '', {
+      size: 'md',
       color: CSS.muted,
-      wordWrap: { width: this.w - 200 },
+      wrap: this.w - 200,
+      maxHeight: minTapHeight(),
     });
 
-    new Button(this, this.x + this.w - 174, this.y + this.h - 54, 'Leave', () => this.close(), {
+    new Button(this, this.x + this.w - 174, footerY, 'Leave', () => this.close(), {
       width: 150,
-      height: 38,
+      height: minTapHeight(),
       fontSize: 13,
     });
     this.input.keyboard?.on('keydown-ESC', () => this.close());
@@ -69,13 +89,22 @@ export class TrainingScene extends Phaser.Scene {
   }
 
   private render(): void {
-    for (const row of this.rows) row.destroy();
     this.rows = [];
 
     const state = this.session.state;
     this.purseText.setText(`Purse: ${format(state.pence)}   ·   Day ${state.day}`);
 
-    SKILL_IDS.forEach((id, index) => {
+    // The four rows go in a scrolling list rather than being squeezed into
+    // whatever the header and footer left. At phone width that remainder is
+    // about 43px a row, and a title plus a two-line subtitle does not fit in
+    // 43px however the arithmetic is arranged.
+    const top = this.headerBottom;
+    const bottom = this.y + this.h - minTapHeight() - 20;
+    const rowGap = 8;
+    const rowHeight = 76;
+    const rows: Phaser.GameObjects.Container[] = [];
+
+    SKILL_IDS.forEach((id) => {
       const info = SKILLS[id];
       const level = state.skill(id);
       const maxed = level >= MAX_SKILL;
@@ -88,16 +117,16 @@ export class TrainingScene extends Phaser.Scene {
             affordable ? '' : ' — you cannot afford it'
           }`;
 
-      this.rows.push(
+      rows.push(
         new Button(
           this,
-          this.x + 24,
-          this.y + 76 + index * 80,
+          0,
+          0,
           `${info.name}   ${'●'.repeat(level)}${'○'.repeat(MAX_SKILL - level)}   ${level}/${MAX_SKILL}`,
           () => this.train(id),
           {
             width: this.w - 48,
-            height: 72,
+            height: rowHeight,
             align: 'left',
             fontSize: 15,
             enabled: !maxed && affordable,
@@ -106,6 +135,16 @@ export class TrainingScene extends Phaser.Scene {
         ),
       );
     });
+
+    this.list?.destroy();
+    this.list = new ScrollList(this, this.x + 24, top, {
+      width: this.w - 48,
+      height: Math.max(rowHeight, bottom - top),
+      gap: rowGap,
+    });
+    this.list.setRows(rows);
+    this.list.refreshMask();
+    this.rows = rows as Button[];
   }
 
   private train(id: SkillId): void {

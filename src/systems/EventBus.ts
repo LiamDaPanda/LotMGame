@@ -25,6 +25,8 @@ export interface GameEvents {
   /** Sanity hit zero, or a botched advancement — the player loses control. */
   'loss-of-control': { reason: string };
   'day:advanced': { day: number };
+  /** The spine moved on: a new chapter is current. */
+  'story:advanced': { chapterId: string; objective: string };
 }
 
 type Handler<K extends keyof GameEvents> = (payload: GameEvents[K]) => void;
@@ -61,7 +63,8 @@ export class EventBus {
     for (const handler of [...set]) (handler as Handler<K>)(payload);
   }
 
-  /** Drop every subscription — used when returning to the main menu. */
+  /** Drop every subscription. Scenes unsubscribe on shutdown; this is the
+   *  blunt instrument for tearing a whole run down at once. */
   clear(): void {
     this.handlers.clear();
   }

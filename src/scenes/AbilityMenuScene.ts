@@ -1,7 +1,13 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { Session } from '@/systems/Session';
-import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH, ICONS } from '@/ui/theme';
+import { Button, ScrollList, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  CSS,
+  ICONS,
+  menuRect,
+  minTapHeight,
+} from '@/ui/theme';
 import type { AbilityContext, AbilityData } from '@/types/schema';
 
 interface AbilityMenuData {
@@ -22,42 +28,50 @@ interface AbilityMenuData {
 export class AbilityMenuScene extends Phaser.Scene {
   private session!: Session;
   private list?: ScrollList;
-  private resultText!: Phaser.GameObjects.Text;
+  /** Where the body may start, once the header has measured itself. */
+  private headerBottom = 0;
+  private resultText!: PixelText;
   private context: AbilityContext = 'hub';
   private witnessed = false;
 
-  private readonly x = 120;
-  private readonly y = 46;
-  private readonly w = GAME_WIDTH - 240;
-  private readonly h = GAME_HEIGHT - 92;
+
+  private x = 0;
+  private y = 0;
+  private w = 0;
+  private h = 0;
 
   constructor() {
     super('AbilityMenu');
   }
 
   create(data: AbilityMenuData): void {
+    // Read the layout here, not in a field: scene instances outlive a rotation.
+    const pane = menuRect();
+    this.x = pane.x + 10;
+    this.y = pane.y + 10;
+    this.w = pane.width - 20;
+    this.h = pane.height - 20;
     this.session = Session.get(this);
     this.context = data?.context ?? 'hub';
     this.witnessed = data?.witnessed ?? false;
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.86).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.86);
     drawPanel(this, this.x, this.y, this.w, this.h);
 
     const state = this.session.state;
-    sectionHeader(
+    const header = sectionHeader(
       this,
       this.x + 24,
       this.y + 16,
       this.w - 48,
       'Powers',
-      `Sequence ${state.sequence} — ${state.sequenceTitle}   ·   ${
+      `${state.rankLabel}   ·   ${
         this.witnessed ? 'You are in company: full exposure' : 'Nobody is watching: reduced exposure'
       }`,
     );
+    this.headerBottom = header.y + header.height;
 
-    this.resultText = this.add
-      .text(this.x + 24, this.y + this.h - 76, '', {
-        fontFamily: FONT_BODY,
+    this.resultText = pixelText(this, this.x + 24, this.y + this.h - 76, '', {
         fontSize: '13px',
         color: CSS.occult,
         wordWrap: { width: this.w - 200 },
@@ -82,9 +96,10 @@ export class AbilityMenuScene extends Phaser.Scene {
     const rows = abilities.map((ability) => this.abilityRow(ability));
     if (rows.length === 0) rows.push(this.emptyRow('You have nothing you could reach for here.'));
 
-    this.list = new ScrollList(this, this.x + 24, this.y + 76, {
+    const bodyY = this.headerBottom;
+    this.list = new ScrollList(this, this.x + 24, bodyY, {
       width: this.w - 48,
-      height: this.h - 160,
+      height: this.y + this.h - minTapHeight() - 24 - bodyY,
       gap: 8,
     });
     this.list.setRows(rows);
@@ -92,9 +107,13 @@ export class AbilityMenuScene extends Phaser.Scene {
   }
 
   private emptyRow(text: string): Phaser.GameObjects.Container {
+    const width = this.w - 48;
     const container = this.add.container(0, 0);
-    container.setSize(this.w - 48, 36);
-    container.add(this.add.text(0, 8, text, { fontFamily: FONT_BODY, fontSize: '13px', color: CSS.muted }));
+    // Wrapped and measured: on a phone this line is wider than the panel, and
+    // a mortal Klein sees it every time he opens the powers menu.
+    const label = pixelText(this, 0, 8, text, { fontSize: '13px', color: CSS.muted, wrap: width });
+    container.setSize(width, label.height + 16);
+    container.add(label);
     return container;
   }
 

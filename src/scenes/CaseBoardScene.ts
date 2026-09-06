@@ -1,9 +1,18 @@
 import Phaser from 'phaser';
+import { pixelText } from '@/ui/pixelFont';
 import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
-import { Button, ScrollList, drawPanel, sectionHeader } from '@/ui/widgets';
-import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/theme';
+import { Button, ScrollList, drawPanel, panelStage, sectionHeader } from '@/ui/widgets';
+import {
+  COLORS,
+  CSS,
+  GAME_HEIGHT,
+  GAME_WIDTH,
+  isPortrait,
+  minTapHeight,
+  panelInset,
+} from '@/ui/theme';
 
 /**
  * The Club's board of work. Cases are offered here and only one may be open at
@@ -12,6 +21,8 @@ import { COLORS, CSS, FONT_BODY, FONT_UI, GAME_HEIGHT, GAME_WIDTH } from '@/ui/t
 export class CaseBoardScene extends Phaser.Scene {
   private session!: Session;
   private list?: ScrollList;
+  /** Where the body may start, once the header has measured itself. */
+  private headerBottom = 0;
 
   constructor() {
     super('CaseBoard');
@@ -21,22 +32,27 @@ export class CaseBoardScene extends Phaser.Scene {
     this.session = Session.get(this);
     this.session.cases.refreshAvailability();
 
-    this.add.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, COLORS.ink, 0.86).setOrigin(0, 0).setInteractive();
+    panelStage(this, 0.86);
 
-    const x = 110;
-    const y = 50;
-    const w = GAME_WIDTH - 220;
-    const h = GAME_HEIGHT - 100;
+    const x = panelInset();
+    const y = isPortrait() ? 96 : 50;
+    const w = GAME_WIDTH - panelInset() * 2;
+    const h = GAME_HEIGHT - y - (isPortrait() ? 90 : 50);
     drawPanel(this, x, y, w, h);
-    sectionHeader(this, x + 24, y + 18, w - 48, 'The Board', 'Work the Club has taken in. One at a time.');
+    const header = sectionHeader(this, x + 24, y + 18, w - 48, 'The Board', 'Work the Club has taken in. One at a time.');
 
-    this.render(x, y, w, h);
+    this.headerBottom = header.y + header.height;
+    this.render(x, y, w, h, this.headerBottom);
 
-    new Button(this, x + 24, y + h - 54, 'Close', () => this.close(), { width: 150, height: 38, fontSize: 13 });
+    new Button(this, x + 24, y + h - minTapHeight() - 12, 'Close', () => this.close(), {
+      width: 150,
+      height: minTapHeight(),
+      fontSize: 13,
+    });
     this.input.keyboard?.on('keydown-ESC', () => this.close());
   }
 
-  private render(x: number, y: number, w: number, h: number): void {
+  private render(x: number, y: number, w: number, h: number, bodyY: number): void {
     this.list?.destroy();
     const rows: Phaser.GameObjects.Container[] = [];
     const active = this.session.cases.activeCase();
@@ -51,15 +67,13 @@ export class CaseBoardScene extends Phaser.Scene {
       bg.strokeRoundedRect(0, 0, w - 48, 70, 5);
       container.add(bg);
       container.add(
-        this.add.text(14, 12, `Open: ${active.title}`, {
-          fontFamily: FONT_UI,
+        pixelText(this, 14, 12, `Open: ${active.title}`, {
           fontSize: '14px',
           color: CSS.good,
         }),
       );
       container.add(
-        this.add.text(14, 34, 'Close it before the Club will hand you another.', {
-          fontFamily: FONT_BODY,
+        pixelText(this, 14, 34, 'Close it before the Club will hand you another.', {
           fontSize: '12px',
           color: CSS.muted,
           wordWrap: { width: w - 76 },
@@ -73,8 +87,7 @@ export class CaseBoardScene extends Phaser.Scene {
       const container = this.add.container(0, 0);
       container.setSize(w - 48, 40);
       container.add(
-        this.add.text(0, 8, 'The board is bare. Come back when the city has misbehaved.', {
-          fontFamily: FONT_BODY,
+        pixelText(this, 0, 8, 'The board is bare. Come back when the city has misbehaved.', {
           fontSize: '13px',
           color: CSS.muted,
         }),
@@ -107,14 +120,19 @@ export class CaseBoardScene extends Phaser.Scene {
       rows.push(container);
     }
 
-    this.list = new ScrollList(this, x + 24, y + 76, { width: w - 48, height: h - 150, gap: 10 });
+    this.list = new ScrollList(this, x + 24, bodyY, {
+      width: w - 48,
+      // Down to the Close button, not a guessed height: the header above grew.
+      height: y + h - minTapHeight() - 24 - bodyY,
+      gap: 10,
+    });
     this.list.setRows(rows);
     this.list.refreshMask();
   }
 
   private accept(caseId: string, x: number, y: number, w: number, h: number): void {
     if (this.session.cases.accept(caseId)) {
-      this.render(x, y, w, h);
+      this.render(x, y, w, h, this.headerBottom);
     } else {
       bus.emit('notice', { text: 'Finish what you have first.', tone: 'bad' });
     }

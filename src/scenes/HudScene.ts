@@ -1,16 +1,58 @@
 import Phaser from 'phaser';
+import { PixelText, pixelText } from '@/ui/pixelFont';
 import { bus } from '@/systems/EventBus';
 import { Session } from '@/systems/Session';
 import { format } from '@/systems/Money';
+import { TouchControls } from '@/ui/touchControls';
 import { Button, Meter, drawPanel } from '@/ui/widgets';
-import { COLORS, CSS, FONT_UI, GAME_WIDTH, ICONS, METER_COLORS } from '@/ui/theme';
+import {
+  COLORS,
+  CSS,
+  GAME_WIDTH,
+  ICONS,
+  METER_COLORS,
+  type Rect,
+  isPortrait,
+  landscapeRightStrip,
+  mapRect,
+  metersRect,
+  objectiveRect,
+  controlsRect,
+  statusRect,
+  tabBarRect,
+} from '@/ui/theme';
+
+/** Volume numbers are set the way the book sets them. */
+function roman(value: number): string {
+  const table: [number, string][] = [
+    [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I'],
+  ];
+  let left = value;
+  let out = '';
+  for (const [size, glyph] of table) {
+    while (left >= size) {
+      out += glyph;
+      left -= size;
+    }
+  }
+  return out;
+}
+
+/** The bottom-screen tabs, in the order a thumb meets them. */
+const TABS = [
+  { key: 'CaseBoard', label: 'CASE' },
+  { key: 'Journal', label: 'NOTES' },
+  { key: 'AbilityMenu', label: 'POWER' },
+] as const;
 
 /**
- * The always-on status strip. Runs as its own scene above the world so it
- * survives room changes and never scrolls with the camera.
+ * The chrome around the two screens: the status strip above the map, the meter
+ * row below it, and the tab bar along the bottom.
  *
- * It is purely a listener: it reads nothing on a timer and writes nothing to
- * state. Every number here arrives as an event from the systems that changed it.
+ * Runs as its own scene above the world so it survives room changes and never
+ * scrolls with the camera. It is purely a listener: it reads nothing on a timer
+ * and writes nothing to state. Every number here arrives as an event from the
+ * system that changed it.
  */
 export class HudScene extends Phaser.Scene {
   private session!: Session;
@@ -20,11 +62,20 @@ export class HudScene extends Phaser.Scene {
     concealment: Meter;
     digestion: Meter;
   };
-  private purse!: Phaser.GameObjects.Text;
-  private rankText!: Phaser.GameObjects.Text;
-  private dayText!: Phaser.GameObjects.Text;
-  private noticeText!: Phaser.GameObjects.Text;
+  private purse!: PixelText;
+  private rankText!: PixelText;
+  private dayText!: PixelText;
+  private noticeText!: PixelText;
+  private noticeBox!: Phaser.GameObjects.Container;
+  private noticePlate!: Phaser.GameObjects.Rectangle;
   private noticeTimer?: Phaser.Time.TimerEvent;
+  private controls!: TouchControls;
+  private questCard!: Phaser.GameObjects.Container;
+  private questTitle!: PixelText;
+  private questLine!: PixelText;
+  private questWhere!: PixelText;
+  private controlsShown = true;
+  private tabButtons: Button[] = [];
   private unsubscribe: Array<() => void> = [];
 
   constructor() {
@@ -33,66 +84,195 @@ export class HudScene extends Phaser.Scene {
 
   create(): void {
     this.session = Session.get(this);
-    const state = this.session.state;
+    this.tabButtons = [];
 
-    drawPanel(this, 0, 0, GAME_WIDTH, 48, { radius: 0, borderWidth: 0, fill: COLORS.soot, fillAlpha: 0.92 });
-    const rule = this.add.graphics();
-    rule.lineStyle(1, COLORS.brassDim, 0.6);
-    rule.lineBetween(0, 48, GAME_WIDTH, 48);
+    const tall = isPortrait();
+    const status = statusRect();
+    const meters = metersRect();
 
-    this.rankText = this.add.text(14, 8, '', {
-      fontFamily: 'Georgia, serif',
-      fontSize: '15px',
+    this.drawStrip(status);
+    const identityWidth = GAME_WIDTH - (tall ? 130 : landscapeRightStrip()) - 20;
+    this.rankText = pixelText(this, 10, 8, '', {
+      size: 'md',
       color: CSS.brass,
+      wrap: identityWidth,
+      maxHeight: 20,
     });
-    this.dayText = this.add.text(14, 28, '', { fontFamily: FONT_UI, fontSize: '10px', color: CSS.muted });
+    this.dayText = pixelText(this, 10, 30, '', {
+      size: 'md',
+      color: CSS.muted,
+      wrap: identityWidth,
+      maxHeight: 20,
+    });
 
-    // The strip is a fixed budget: rank block, four meters, purse, two buttons.
-    // Adding anything here means taking width from something else.
+    // Portrait has the whole right edge; landscape has to stop short of the two
+    // buttons that live there, so both use the same reserved lane.
+    const purseRight = tall ? GAME_WIDTH - 14 : GAME_WIDTH - landscapeRightStrip() + 9 * 12 + 10;
+    this.add.image(purseRight, 20, 'icons', ICONS.pound).setScale(1.2).setOrigin(1, 0.5);
+    this.purse = pixelText(this, purseRight - 16, 20, '', { size: 'md', color: CSS.parchment }).setOrigin(1, 0.5);
+
+    // Both orientations give the meters a row to themselves; in landscape it is
+    // the second row of the same strip, so there is no separate band to draw.
+    if (tall) this.drawStrip(meters);
+    // Four meters share the row. Each is icon + bar + value; the bar takes
+    // whatever is left once those fixed parts are paid for, so the last meter
+    // ends exactly at the right margin instead of past it.
+    const meterX = meters.x + (tall ? 8 : 0);
+    const meterY = meters.y + (tall ? 9 : 6);
+    const meterGap = (meters.width - (tall ? 16 : 0)) / 4;
+    // Icon, bar, value — and no three-letter tag. At either width the row
+    // cannot pay for all four, and the floor under the bar pushed each meter
+    // into its neighbour's label. The icon and the colour already say which
+    // meter this is, and the journal spells them out.
+    const meterBar = Math.max(24, meterGap - 16 - 48 - 8);
     this.meters = {
-      sanity: new Meter(this, 168, 12, 'SANITY', METER_COLORS.sanity, ICONS.sanity, 72),
-      spirituality: new Meter(this, 288, 12, 'SPIRIT', METER_COLORS.spirituality, ICONS.spirituality, 72),
-      concealment: new Meter(this, 408, 12, 'CONCEAL', METER_COLORS.concealment, ICONS.concealment, 72),
-      digestion: new Meter(this, 528, 12, 'DIGEST', METER_COLORS.digestion, ICONS.sequence, 72),
+      sanity: new Meter(this, meterX, meterY, '', METER_COLORS.sanity, ICONS.sanity, meterBar),
+      spirituality: new Meter(this, meterX + meterGap, meterY, '', METER_COLORS.spirituality, ICONS.spirituality, meterBar),
+      concealment: new Meter(this, meterX + meterGap * 2, meterY, '', METER_COLORS.concealment, ICONS.concealment, meterBar),
+      digestion: new Meter(this, meterX + meterGap * 3, meterY, '', METER_COLORS.digestion, ICONS.sequence, meterBar),
     };
 
-    this.add.image(654, 24, 'icons', ICONS.pound).setScale(1.2);
-    this.purse = this.add
-      .text(666, 24, '', { fontFamily: FONT_UI, fontSize: '14px', color: CSS.parchment })
-      .setOrigin(0, 0.5);
+    if (tall) this.buildTabs(tabBarRect());
+    else this.buildLandscapeButtons();
 
-    new Button(this, GAME_WIDTH - 178, 8, 'Powers  (Q)', () => this.openOverlay('AbilityMenu'), {
-      width: 84,
-      height: 32,
-      fontSize: 12,
-    });
-    new Button(this, GAME_WIDTH - 88, 8, 'Journal  (J)', () => this.openOverlay('Journal'), {
-      width: 84,
-      height: 32,
-      fontSize: 12,
-    });
-
-    this.noticeText = this.add
-      .text(GAME_WIDTH / 2, 62, '', {
-        fontFamily: FONT_UI,
-        fontSize: '13px',
-        color: CSS.parchment,
-        align: 'center',
-        wordWrap: { width: 560 },
-      })
-      .setOrigin(0.5, 0)
+    // Notices land at the foot of the map, where a handheld puts its messages —
+    // and, more to the point, where the room's own name banner is not. On its
+    // own plate, because the foot of a room is also where its doorways are, and
+    // a message printed across a signpost is two unreadable things.
+    this.noticePlate = this.add.rectangle(0, 0, 10, 10, COLORS.ink, 0.86).setOrigin(0.5, 1);
+    this.noticeText = pixelText(this, 0, 0, '', {
+      size: 'md',
+      color: CSS.parchment,
+      align: 'center',
+      wrap: GAME_WIDTH - 48,
+    }).setOrigin(0.5, 1);
+    this.noticeBox = this.add
+      .container(GAME_WIDTH / 2, this.noticeRestY(), [this.noticePlate, this.noticeText])
       .setAlpha(0);
-    this.noticeText.setShadow(0, 2, '#000000', 4);
+
+    this.buildQuestCard();
+    this.controls = new TouchControls(this, controlsRect());
 
     this.refreshAll();
+    this.refreshQuest();
     this.subscribe();
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       for (const off of this.unsubscribe) off();
       this.unsubscribe = [];
+      this.tabButtons = [];
+      this.controls.destroy();
+    });
+  }
+
+  /**
+   * The quest card: chapter, the one line the story is waiting for, and where
+   * it is. It sits above the controls and is the first thing a thumb reads.
+   */
+  private buildQuestCard(): void {
+    const rect = objectiveRect();
+    this.questCard = this.add.container(0, 0);
+    const plate = drawPanel(this, rect.x, rect.y, rect.width, rect.height, { fillAlpha: 0.9 });
+
+    this.questTitle = pixelText(this, rect.x + 12, rect.y + 8, '', {
+      size: 'md',
+      color: CSS.brass,
+      wrap: rect.width - 24,
+      maxHeight: 16,
+    });
+    this.questLine = pixelText(this, rect.x + 12, rect.y + 28, '', {
+      size: 'md',
+      color: CSS.parchment,
+      wrap: rect.width - 24,
+      maxHeight: rect.height - 28 - 24,
+    });
+    this.questWhere = pixelText(this, rect.x + 12, rect.y + rect.height - 22, '', {
+      size: 'md',
+      color: CSS.muted,
+      wrap: rect.width - 24,
+      maxHeight: 16,
     });
 
-    void state;
+    // Plate and text hide together, so the card is one container.
+    this.questCard.add([plate, this.questTitle, this.questLine, this.questWhere]);
+  }
+
+  private refreshQuest(): void {
+    this.session.story.refresh();
+    const chapter = this.session.story.current();
+    if (!chapter) {
+      this.questTitle.setText('THE FOOL');
+      this.questLine.setText('The book is finished. The seat above the fog is not.');
+      this.questWhere.setText('');
+      return;
+    }
+    const { volume, index, total } = this.session.story.progress();
+    // "II. FACELESS · 3/5" — the book's own shelf-mark, so a player who knows
+    // the novel knows exactly where the game has got to.
+    const mark = volume ? `${roman(volume.number)}. ${volume.title.toUpperCase()} · ` : '';
+    this.questTitle.setText(`${mark}${index}/${total}  ${chapter.title.toUpperCase()}`);
+    this.questLine.setText(chapter.objective);
+
+    const destination = this.session.story.destinationName();
+    if (!destination || this.session.state.currentMap === chapter.where) {
+      this.questWhere.setText(destination ? 'You are here.' : '');
+    } else {
+      this.questWhere.setText(`Go to: ${destination}`);
+    }
+  }
+
+  /** A flat soot band with a hairline under it — the chrome's only decoration. */
+  private drawStrip(rect: Rect): void {
+    drawPanel(this, rect.x, rect.y, rect.width, rect.height, {
+      radius: 0,
+      borderWidth: 0,
+      fill: COLORS.soot,
+      fillAlpha: 1,
+    });
+    const rule = this.add.graphics();
+    rule.lineStyle(2, COLORS.brassDim, 0.7);
+    rule.lineBetween(rect.x, rect.y + rect.height, rect.x + rect.width, rect.y + rect.height);
+  }
+
+  private buildTabs(tabs: Rect): void {
+    drawPanel(this, tabs.x, tabs.y, tabs.width, tabs.height, {
+      radius: 0,
+      borderWidth: 0,
+      fill: COLORS.soot,
+      fillAlpha: 1,
+    });
+
+    const gap = 6;
+    const width = (tabs.width - gap * (TABS.length + 1)) / TABS.length;
+    const height = tabs.height - 12;
+    TABS.forEach((tab, index) => {
+      this.tabButtons.push(
+        new Button(this, gap + index * (width + gap), tabs.y + 4, tab.label, () => this.openOverlay(tab.key), {
+          width,
+          height,
+          fontSize: 14,
+        }),
+      );
+    });
+  }
+
+  /** Landscape keeps the old two buttons tucked into the status strip. */
+  private buildLandscapeButtons(): void {
+    // Wide enough for "Journal" at 2x plus the plate's own padding; anything
+    // narrower wraps the label onto a second line it has no room for.
+    const width = 7 * 12 + 16;
+    this.tabButtons.push(
+      new Button(this, GAME_WIDTH - width * 2 - 14, 8, 'Powers', () => this.openOverlay('AbilityMenu'), {
+        width,
+        height: 32,
+        fontSize: 12,
+      }),
+      new Button(this, GAME_WIDTH - width - 8, 8, 'Journal', () => this.openOverlay('Journal'), {
+        width,
+        height: 32,
+        fontSize: 12,
+      }),
+    );
   }
 
   private subscribe(): void {
@@ -108,15 +288,24 @@ export class HudScene extends Phaser.Scene {
       bus.on('sequence:changed', () => this.refreshAll()),
       bus.on('day:advanced', () => this.refreshAll()),
       bus.on('notice', ({ text, tone }) => this.showNotice(text, tone)),
+      bus.on('story:advanced', ({ objective }) => {
+        this.refreshQuest();
+        this.showNotice(objective, 'good');
+      }),
+      // Anything that could satisfy a chapter's condition re-reads the card.
+      bus.on('clue:found', () => this.refreshQuest()),
+      bus.on('deduction:formed', () => this.refreshQuest()),
+      bus.on('flag:set', () => this.refreshQuest()),
+      bus.on('case:changed', () => this.refreshQuest()),
     );
   }
 
   private refreshAll(): void {
     const state = this.session.state;
-    this.rankText.setText(`Sequence ${state.sequence} — ${state.sequenceTitle}`);
-    this.dayText.setText(
-      `Day ${state.day} · rent due in ${state.daysUntilRent} day${state.daysUntilRent === 1 ? '' : 's'}`,
+    this.rankText.setText(
+      state.awakened ? `SEQ ${state.sequence}  ${state.sequenceTitle.toUpperCase()}` : 'NO SEQUENCE',
     );
+    this.dayText.setText(`Day ${state.day} · rent in ${state.daysUntilRent}d`);
     this.purse.setText(format(state.pence));
     this.meters.sanity.snap(state.sanity, state.sanityMax);
     this.meters.spirituality.snap(state.spirituality, state.spiritualityMax);
@@ -124,32 +313,55 @@ export class HudScene extends Phaser.Scene {
     this.meters.digestion.snap(state.digestion, 100);
   }
 
-  private flashText(target: Phaser.GameObjects.Text, color: string): void {
+  private flashText(target: PixelText, color: string): void {
     target.setColor(color);
     this.time.delayedCall(700, () => target.setColor(CSS.parchment));
   }
 
   private pulse(color: number): void {
-    const flash = this.add.rectangle(GAME_WIDTH / 2, 24, GAME_WIDTH, 48, color, 0.18);
+    const strip = statusRect();
+    const flash = this.add.rectangle(strip.width / 2, strip.height / 2, strip.width, strip.height, color, 0.18);
     this.tweens.add({ targets: flash, alpha: 0, duration: 450, onComplete: () => flash.destroy() });
   }
 
   private showNotice(text: string, tone: 'info' | 'good' | 'bad' | 'occult' = 'info'): void {
     const colors = { info: CSS.parchment, good: CSS.good, bad: CSS.bad, occult: CSS.occult };
     this.noticeTimer?.remove();
-    this.noticeText.setText(text).setColor(colors[tone]).setAlpha(1);
-    this.tweens.killTweensOf(this.noticeText);
-    this.noticeText.y = 56;
-    this.tweens.add({ targets: this.noticeText, y: 62, duration: 220, ease: 'Quad.easeOut' });
+    this.noticeText.setText(text).setColor(colors[tone]);
+    this.noticePlate.setSize(this.noticeText.width + 24, this.noticeText.height + 14);
+    this.noticeBox.setAlpha(1);
+    this.tweens.killTweensOf(this.noticeBox);
+    const restY = this.noticeRestY();
+    this.noticeBox.y = restY + 6;
+    this.tweens.add({ targets: this.noticeBox, y: restY, duration: 220, ease: 'Quad.easeOut' });
     this.noticeTimer = this.time.delayedCall(2600, () => {
-      this.tweens.add({ targets: this.noticeText, alpha: 0, duration: 500 });
+      this.tweens.add({ targets: this.noticeBox, alpha: 0, duration: 500 });
     });
+  }
+
+  /** Where a notice comes to rest: just inside the bottom of the map pane. */
+  private noticeRestY(): number {
+    const map = mapRect();
+    return map.y + map.height - 10;
   }
 
   private openOverlay(key: string): void {
     // The world scene owns pausing; ask it rather than reaching across scenes.
+    // Note `isActive` is false for a *paused* scene, so it cannot be the test
+    // here — with a panel already open the World is exactly that, and using it
+    // would make every tab press after the first one do nothing.
     const world = this.scene.get('World');
-    if (!world || !this.scene.isActive('World')) return;
+    if (!world || !(this.scene.isActive('World') || this.scene.isPaused('World'))) return;
+
+    // Pressing a tab whose panel is already open closes it again, which is how
+    // a bottom-screen tab is expected to behave.
+    if (this.scene.isActive(key)) {
+      this.scene.stop(key);
+      if (this.scene.isPaused('World')) this.scene.resume('World');
+      return;
+    }
+    for (const tab of TABS) if (this.scene.isActive(tab.key)) this.scene.stop(tab.key);
+
     world.scene.pause();
     if (key === 'AbilityMenu') {
       this.scene.launch(key, { context: 'investigation', witnessed: false });
@@ -159,6 +371,18 @@ export class HudScene extends Phaser.Scene {
   }
 
   override update(): void {
+    // The controls belong to the world. A panel over the bottom screen takes
+    // them away — and takes any held direction with them, or the player would
+    // still be walking when it closed.
+    const worldOwnsScreen = this.scene.isActive('World') && !this.scene.isPaused('World');
+    if (worldOwnsScreen !== this.controlsShown) {
+      this.controlsShown = worldOwnsScreen;
+      this.controls.setShown(worldOwnsScreen);
+      this.questCard.setVisible(worldOwnsScreen);
+      if (worldOwnsScreen) this.refreshQuest();
+    }
+
+    this.controls.tick();
     this.meters.sanity.tick();
     this.meters.spirituality.tick();
     this.meters.concealment.tick();

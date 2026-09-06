@@ -1,0 +1,130 @@
+{
+  "id": "tingen_church",
+  "name": "Chapel of the Evernight Goddess, Tingen",
+  "ambient": "#2a2740",
+  "encounterChance": 0,
+  "legend": {
+    "#": {
+      "floor": 9,
+      "collide": true
+    },
+    ".": {
+      "floor": 7
+    },
+    "=": {
+      "floor": 5
+    },
+    "T": {
+      "floor": 5,
+      "object": 16,
+      "collide": true
+    },
+    "c": {
+      "floor": 7,
+      "object": 17,
+      "collide": true
+    },
+    "L": {
+      "floor": 7,
+      "object": 24,
+      "collide": true
+    },
+    "g": {
+      "floor": 7,
+      "object": 27,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    }
+  },
+  "rows": [
+    "####################",
+    "#..................#",
+    "#..L....====....L..#",
+    "#.......=TT=.......#",
+    "#..................#",
+    "#.cc.cc.=..=.cc.cc.#",
+    "#.cc.cc.=..=.cc.cc.#",
+    "#..................#",
+    "#.cc.cc.=..=.cc.cc.#",
+    "#.cc.cc.=..=.cc.cc.#",
+    "#..g....=..=....g..#",
+    "#########oo#########"
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 10
+  },
+  "hotspots": [
+    {
+      "id": "tc_reliquary",
+      "x": 9,
+      "y": 3,
+      "name": "The Reliquary",
+      "description": "A casket of blackened silver on the altar, under a cloth the sexton changes on Fridays. What is in it is ash, and the ash has a name.",
+      "action": "dialogue",
+      "dialogue": "dlg_selena",
+      "icon": 12
+    },
+    {
+      "id": "tc_pews",
+      "x": 2,
+      "y": 5,
+      "name": "The Pews",
+      "description": "Worn pale where four generations of Tingen have put their hands, and colder than the flagstones, which should not be possible.",
+      "clues": [],
+      "icon": 2
+    },
+    {
+      "id": "tc_crypt",
+      "x": 3,
+      "y": 10,
+      "name": "The Crypt Stair",
+      "description": "A stone with a name worn off it, and behind the stone a stair, and at the bottom of the stair something that has been getting louder since Tuesday.",
+      "action": "dialogue",
+      "dialogue": "dlg_spawn",
+      "icon": 7
+    },
+    {
+      "id": "tc_vestry",
+      "x": 16,
+      "y": 10,
+      "name": "The Vestry Door",
+      "description": "Ajar. The sexton is not in the vestry. The sexton has not been in the vestry since Tuesday either, and nobody has thought to say so.",
+      "action": "dialogue",
+      "dialogue": "dlg_zangwill",
+      "icon": 13
+    }
+  ],
+  "npcs": [
+    {
+      "id": "hermit",
+      "x": 7,
+      "y": 7,
+      "dialogue": "dlg_smith_church",
+      "wander": 0
+    },
+    {
+      "id": "tower",
+      "x": 12,
+      "y": 7,
+      "dialogue": "dlg_leonard_church",
+      "wander": 1
+    }
+  ],
+  "exits": [
+    {
+      "x": 10,
+      "y": 11,
+      "toMap": "club_hub",
+      "toX": 11,
+      "toY": 8,
+      "label": "Zouteland Street"
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_church_arrival",
+    "flag": "v1_church"
+  }
+}

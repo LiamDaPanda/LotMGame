@@ -1,0 +1,119 @@
+{
+  "id": "parliament",
+  "name": "The House, Backlund",
+  "ambient": "#4a2a30",
+  "encounterChance": 0,
+  "legend": {
+    "#": {
+      "floor": 9,
+      "collide": true
+    },
+    ".": {
+      "floor": 7
+    },
+    "=": {
+      "floor": 5
+    },
+    "c": {
+      "floor": 5,
+      "object": 17,
+      "collide": true
+    },
+    "T": {
+      "floor": 5,
+      "object": 16,
+      "collide": true
+    },
+    "L": {
+      "floor": 7,
+      "object": 24,
+      "collide": true
+    },
+    "K": {
+      "floor": 7,
+      "object": 31,
+      "collide": true
+    },
+    "B": {
+      "floor": 7,
+      "object": 18,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    }
+  },
+  "rows": [
+    "####################",
+    "#L....======....K..#",
+    "#.....=TTT=........#",
+    "#.....======.......#",
+    "#..................#",
+    "#.cccc.====.cccc...#",
+    "#.cccc.====.cccc...#",
+    "#..................#",
+    "#.cccc.====.cccc...#",
+    "#.B................#",
+    "#........==........#",
+    "#########oo#########"
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 10
+  },
+  "hotspots": [
+    {
+      "id": "pl_throne",
+      "x": 9,
+      "y": 2,
+      "name": "The Speaker’s Table",
+      "description": "Set for a wartime address, in a House that has been at war for nine weeks and has not yet been told what the address is actually for.",
+      "action": "dialogue",
+      "dialogue": "dlg_george",
+      "icon": 13
+    },
+    {
+      "id": "pl_gallery",
+      "x": 3,
+      "y": 5,
+      "name": "The Public Gallery",
+      "description": "Four hundred people who came to hear a king say that the war will be won, seated in a pattern that is not how anybody seats four hundred people.",
+      "action": "dialogue",
+      "dialogue": "dlg_apotheosis",
+      "icon": 12
+    },
+    {
+      "id": "pl_press",
+      "x": 2,
+      "y": 9,
+      "name": "The Reporters’ Bench",
+      "description": "Every paper in Backlund, and behind them a column of figures nobody has printed: how many died in the East Borough, weekly, since August.",
+      "action": "dialogue",
+      "dialogue": "dlg_smog_truth",
+      "icon": 7
+    }
+  ],
+  "npcs": [
+    {
+      "id": "george",
+      "x": 9,
+      "y": 4,
+      "dialogue": "dlg_george",
+      "wander": 0
+    }
+  ],
+  "exits": [
+    {
+      "x": 10,
+      "y": 11,
+      "toMap": "backlund",
+      "toX": 9,
+      "toY": 8,
+      "label": "Out into the fog"
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_v5_arrive",
+    "flag": "v5_arrived"
+  }
+}

@@ -10,6 +10,7 @@
 import type {
   AbilityData,
   CaseData,
+  ChapterData,
   CharacterData,
   ContentIndex,
   DialogueTree,
@@ -18,6 +19,7 @@ import type {
   MapData,
   PathwayData,
   SequenceData,
+  VolumeData,
 } from '@/types/schema';
 
 export class Content {
@@ -29,6 +31,10 @@ export class Content {
   readonly encounters = new Map<string, EncounterData>();
   readonly items = new Map<string, ItemData>();
   readonly characters = new Map<string, CharacterData>();
+  /** The story spine, in the order the file lists it. */
+  readonly chapters: ChapterData[] = [];
+  /** The book's volumes, in order. */
+  readonly volumes: VolumeData[] = [];
 
   /**
    * Read everything the index points at. `read` is supplied by the caller so
@@ -73,6 +79,19 @@ export class Content {
     for (const character of read('characters', index.characters) as CharacterData[]) {
       content.characters.set(character.id, character);
     }
+    if (index.story) {
+      const story = read('story', index.story) as
+        | ChapterData[]
+        | { volumes?: VolumeData[]; chapters: ChapterData[] };
+      // Accept a bare list of chapters as well as a volumes-and-chapters file,
+      // so a content set can have a spine without having a bookshelf.
+      if (Array.isArray(story)) {
+        content.chapters.push(...story);
+      } else {
+        content.volumes.push(...(story.volumes ?? []));
+        content.chapters.push(...story.chapters);
+      }
+    }
 
     return content;
   }
@@ -81,6 +100,11 @@ export class Content {
     const found = this.pathways.get(id);
     if (!found) throw new Error(`Unknown pathway: ${id}`);
     return found;
+  }
+
+  /** Every pathway, in the order index.json lists them. */
+  pathwayList(): PathwayData[] {
+    return [...this.pathways.values()];
   }
 
   /** The tier data for a given rank on a pathway. */
@@ -106,6 +130,19 @@ export class Content {
 
   item(id: string): ItemData | undefined {
     return this.items.get(id);
+  }
+
+  chapter(id: string): ChapterData | undefined {
+    return this.chapters.find((chapter) => chapter.id === id);
+  }
+
+  volume(number: number): VolumeData | undefined {
+    return this.volumes.find((volume) => volume.number === number);
+  }
+
+  /** The chapters of one volume, in order. */
+  chaptersIn(volume: number): ChapterData[] {
+    return this.chapters.filter((chapter) => chapter.volume === volume);
   }
 
   character(id: string): CharacterData | undefined {

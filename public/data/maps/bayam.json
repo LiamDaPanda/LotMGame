@@ -1,0 +1,146 @@
+{
+  "id": "bayam",
+  "name": "Bayam, the Rorsted Archipelago",
+  "ambient": "#1d2a2c",
+  "encounterChance": 0.25,
+  "legend": {
+    "#": {
+      "floor": 8,
+      "collide": true
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
+    ":": {
+      "floor": 1
+    },
+    "w": {
+      "floor": 28,
+      "collide": true
+    },
+    "r": {
+      "floor": 1,
+      "object": 15,
+      "collide": true
+    },
+    "b": {
+      "floor": 1,
+      "object": 20,
+      "collide": true
+    },
+    "k": {
+      "floor": 1,
+      "object": 19,
+      "collide": true
+    },
+    "L": {
+      "floor": 1,
+      "object": 24,
+      "collide": true
+    },
+    "c": {
+      "floor": 1,
+      "object": 21,
+      "collide": true
+    }
+  },
+  "rows": [
+    "wwwwwwwwwwwwwwwwwwww",
+    "wwwwwwwwwwwwwwwwwwww",
+    "rrrrrrrr::::rrrrrrrr",
+    "::::::::::::::::::::",
+    ":k:b::::::::::::b:k:",
+    "::::::::::::::::::::",
+    "L::::::::::::::::::L",
+    ":::c::::::::::::c:::",
+    "#::::::::::::::::::#",
+    "##D#####D####W###D##"
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 8
+  },
+  "hotspots": [
+    {
+      "id": "by_tavern",
+      "x": 3,
+      "y": 7,
+      "name": "A Tavern With No Name Painted On It",
+      "description": "The whole port is here: privateers, a Church of Storms deacon pretending to drink, and four men who have decided what your coat is worth.",
+      "action": "dialogue",
+      "dialogue": "dlg_sparrow",
+      "icon": 7
+    },
+    {
+      "id": "by_dagger",
+      "x": 16,
+      "y": 7,
+      "name": "A Bone Dagger On A Sailmaker’s Bench",
+      "description": "Yellowed, carved all over, and warm. Everything in this port has been handled by half the port. Nothing has handled this.",
+      "action": "dialogue",
+      "dialogue": "dlg_bone_dagger",
+      "icon": 12
+    },
+    {
+      "id": "rite_bayam",
+      "x": 10,
+      "y": 3,
+      "name": "The Circle",
+      "description": "Drawn on the deck of a hired sloop, at anchor, with two hands paid to be somewhere else.",
+      "action": "ritual",
+      "icon": 13
+    },
+    {
+      "id": "by_die",
+      "x": 6,
+      "y": 4,
+      "name": "Darkwill’s Sealed Case",
+      "description": "Lead-lined, sealed twice, and guarded by a merchant prince’s superstition, which turns out not to be one.",
+      "action": "dialogue",
+      "dialogue": "dlg_die",
+      "icon": 12
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 2,
+      "y": 9,
+      "toMap": "backlund",
+      "toX": 14,
+      "toY": 8,
+      "label": "Backlund"
+    },
+    {
+      "x": 17,
+      "y": 9,
+      "toMap": "cathedral",
+      "toX": 9,
+      "toY": 9,
+      "label": "Saint Samuel",
+      "requires": {
+        "flag": "v3_scepter"
+      }
+    },
+    {
+      "x": 8,
+      "y": 9,
+      "toMap": "oravi",
+      "toX": 9,
+      "toY": 10,
+      "label": "Oravi Island",
+      "requires": {
+        "flag": "v3_sparrow"
+      }
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_bayam",
+    "flag": "v3_arrived"
+  }
+}

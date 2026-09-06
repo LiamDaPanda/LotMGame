@@ -95,7 +95,7 @@ export class EncounterSystem {
         reason: gate.reason,
         chance: option.check ? chanceOf(option.check, this.state.skill(option.check.skill)) : undefined,
         costPence: option.costPence,
-        abilityId: option.useAbility,
+        abilityId: this.abilityFor(option),
       });
     });
     return presented;
@@ -108,11 +108,21 @@ export class EncounterSystem {
     if (option.costPence !== undefined && !this.state.canAfford(option.costPence)) {
       return { enabled: false, reason: 'You cannot afford it' };
     }
-    if (option.useAbility) {
-      const check = this.abilities.canUse(option.useAbility, { context: 'encounter' });
+    const abilityId = this.abilityFor(option);
+    if (abilityId) {
+      const check = this.abilities.canUse(abilityId, { context: 'encounter' });
       if (!check.ok) return { enabled: false, reason: check.reason };
+    } else if (option.useAbilityEffect) {
+      return { enabled: false, reason: 'Your pathway offers nothing that would do this' };
     }
     return { enabled: true };
+  }
+
+  /** See DialogueSystem.abilityFor — same idea, in an encounter's context. */
+  private abilityFor(option: EncounterOption): string | undefined {
+    if (option.useAbility) return option.useAbility;
+    if (!option.useAbilityEffect) return undefined;
+    return this.abilities.withEffect(option.useAbilityEffect, 'encounter')?.id;
   }
 
   /** Take an option: pay for it, roll if it can fail, apply the outcome. */
@@ -121,9 +131,10 @@ export class EncounterSystem {
     if (!option) return undefined;
     if (!this.gate(option).enabled) return undefined;
 
-    if (option.useAbility) {
+    const abilityId = this.abilityFor(option);
+    if (abilityId) {
       // An encounter is by definition somebody looking at you.
-      const used = this.abilities.use(option.useAbility, { context: 'encounter', witnessed: true });
+      const used = this.abilities.use(abilityId, { context: 'encounter', witnessed: true });
       if (!used.ok) return undefined;
     }
     if (option.costPence && !this.state.spend(option.costPence)) return undefined;

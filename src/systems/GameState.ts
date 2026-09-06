@@ -21,6 +21,8 @@ export interface CaseProgress {
 export interface SaveData {
   version: number;
   pathwayId: string;
+  /** Optional: saves written before the prologue existed are all post-potion. */
+  awakened?: boolean;
   sequence: number;
   digestion: number;
   sanity: number;
@@ -58,6 +60,13 @@ export class GameState {
   pathwayId = 'seer';
   sequence = 9;
   /**
+   * Whether Klein has actually drunk the potion. He is a Sequence 9 Seer for
+   * the whole of the run bar its first quarter of an hour, but until Smith's
+   * docket is turned over he is a mortal with a divination habit, and the HUD
+   * must not tell him otherwise.
+   */
+  awakened = false;
+  /**
    * How thoroughly the current potion has been digested, 0-100. Advancing
    * before this reaches 100 is possible but dangerous — see Progression.
    *
@@ -86,7 +95,8 @@ export class GameState {
   /** Abilities granted outside the pathway ladder (artefacts, story beats). */
   extraAbilities = new Set<string>();
 
-  currentMap = 'club_hub';
+  /** A run opens in Klein's own room, the night he chooses a pathway. */
+  currentMap = 'lodgings';
   lossOfControlCount = 0;
 
   /** Trained skills, 0-10. Everyone starts competent at nothing in particular. */
@@ -109,6 +119,24 @@ export class GameState {
     this.spirituality = this.spiritualityMax;
   }
 
+  /**
+   * Choose the pathway this run walks. Only meaningful before play starts —
+   * the ladder, the abilities and the stat ceilings all hang off it — so the
+   * main menu calls it and nothing else does.
+   */
+  setPathway(pathwayId: string): void {
+    const pathway = this.content.pathway(pathwayId);
+    this.pathwayId = pathway.id;
+    this.awakened = true;
+    // Entry rung is the lowest-ranked tier the pathway defines.
+    this.sequence = Math.max(...pathway.sequences.map((tier) => tier.sequence));
+    this.sanity = this.sanityMax;
+    this.spirituality = this.spiritualityMax;
+    // The HUD is a listener; without this it would keep showing whichever
+    // pathway the state was built with until something else changed.
+    bus.emit('sequence:changed', { sequence: this.sequence, title: this.sequenceTitle });
+  }
+
   // -------------------------------------------------------------------------
   // Derived values
   // -------------------------------------------------------------------------
@@ -121,6 +149,11 @@ export class GameState {
     return this.sequenceData?.title ?? `Sequence ${this.sequence}`;
   }
 
+  /** How the chrome names Klein's rank, which before the potion is no rank. */
+  get rankLabel(): string {
+    return this.awakened ? `Sequence ${this.sequence} - ${this.sequenceTitle}` : 'No sequence - mortal';
+  }
+
   get sanityMax(): number {
     return this.sequenceData?.sanityMax ?? 100;
   }
@@ -131,6 +164,8 @@ export class GameState {
 
   /** Every ability unlocked at or below the current rank, plus story grants. */
   knownAbilities(): string[] {
+    // Nothing on the ladder is his until he has drunk for it.
+    if (!this.awakened) return [...this.extraAbilities].filter((id) => this.content.ability(id));
     const pathway = this.content.pathway(this.pathwayId);
     const ids: string[] = [];
     for (const tier of pathway.sequences) {
@@ -395,8 +430,33 @@ export class GameState {
   // -------------------------------------------------------------------------
 
   /** Evaluate a data-defined gate. Every present field must pass. */
+  /**
+   * Item ids the next rung's advancement asks for, split by what they are. A
+   * requirement may list substitutes (`itemAnyOf`), and a grey-market copy of a
+   * formula is still a formula, so every candidate counts.
+   */
+  private nextRankItems(kind: 'ritual' | 'potion'): string[] {
+    const advancement = this.sequenceData?.advancement;
+    if (!advancement) return [];
+    const ids: string[] = [];
+    for (const requirement of advancement.requirements) {
+      if (requirement.type !== 'item') continue;
+      const candidates = requirement.itemAnyOf ?? (requirement.itemId ? [requirement.itemId] : []);
+      for (const id of candidates) {
+        if (this.content.item(id)?.kind === kind) ids.push(id);
+      }
+    }
+    return ids;
+  }
+
+  /** Does the player hold a formula their next rank would accept? */
+  holdsNextFormula(): boolean {
+    return this.nextRankItems('ritual').some((id) => this.hasItem(id));
+  }
+
   check(condition?: Condition): boolean {
     if (!condition) return true;
+    if (condition.holdsNextFormula && !this.holdsNextFormula()) return false;
     // `anyOf` is the one disjunction; everything else on the object still ANDs.
     if (condition.anyOf && !condition.anyOf.some((option) => this.check(option))) return false;
     if (condition.ability && !this.knowsAbility(condition.ability)) return false;
@@ -426,6 +486,9 @@ export class GameState {
       const ability = this.content.ability(condition.ability);
       return `Requires ${ability?.name ?? condition.ability}`;
     }
+    if (condition.holdsNextFormula && !this.holdsNextFormula()) {
+      return 'You have no formula for the next rung';
+    }
     if (condition.clue && !this.hasClue(condition.clue)) return 'You have nothing to put to them';
     if (condition.deduction && !this.hasDeduction(condition.deduction)) return 'You have not worked it out yet';
     if (condition.item && !this.hasItem(condition.item)) {
@@ -452,6 +515,9 @@ export class GameState {
   /** Apply a data-defined mutation bundle. */
   apply(effect?: Effect): void {
     if (!effect) return;
+    // First: the rank ceilings a pathway sets decide what the rest of this
+    // effect's sanity and spirituality numbers are clamped against.
+    if (effect.pathway) this.setPathway(effect.pathway);
     if (effect.sanity) this.addSanity(effect.sanity);
     if (effect.spirituality) this.addSpirituality(effect.spirituality);
     if (effect.concealment) this.addConcealment(effect.concealment);
@@ -462,6 +528,12 @@ export class GameState {
     if (effect.clearFlags) for (const flag of effect.clearFlags) this.clearFlag(flag);
     if (effect.clues) for (const clue of effect.clues) this.addClue(clue);
     if (effect.items) for (const item of effect.items) this.addItem(item);
+    if (effect.brewNextPotion) {
+      // Only the first: a rung asks for one potion, and a batch of doubtful
+      // reagents makes one bottle.
+      const potion = this.nextRankItems('potion')[0];
+      if (potion) this.addItem(potion);
+    }
     if (effect.removeItems) for (const item of effect.removeItems) this.removeItem(item);
     if (effect.skills) {
       for (const [skill, delta] of Object.entries(effect.skills)) {
@@ -481,6 +553,7 @@ export class GameState {
     return {
       version: SAVE_VERSION,
       pathwayId: this.pathwayId,
+      awakened: this.awakened,
       sequence: this.sequence,
       digestion: this.digestion,
       sanity: this.sanity,
@@ -510,6 +583,7 @@ export class GameState {
       throw new Error(`Save is version ${data.version}; this build reads version ${SAVE_VERSION}.`);
     }
     this.pathwayId = data.pathwayId;
+    this.awakened = data.awakened ?? true;
     this.sequence = data.sequence;
     this.digestion = data.digestion;
     this.sanity = data.sanity;

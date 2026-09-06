@@ -53,12 +53,28 @@ const encounterFiles = (index.encounters ?? [])
   .filter(Boolean);
 const items = read(`items/${index.items}.json`) ?? [];
 const characters = read(`characters/${index.characters}.json`) ?? [];
+const story = index.story ? (read(`story/${index.story}.json`) ?? []) : [];
+// The story file is either a bare list of chapters or a shelf of volumes.
+const volumes = Array.isArray(story) ? [] : (story.volumes ?? []);
+const chapters = Array.isArray(story) ? story : (story.chapters ?? []);
 
 const abilities = abilityFiles.flat();
 const dialogues = dialogueFiles.flat();
 const encounters = encounterFiles.flat();
 
 const abilityIds = new Set(abilities.map((a) => a.id));
+/** Mirrors AbilityEffectKind in src/types/schema.ts. */
+const EFFECT_KINDS = new Set([
+  'reveal_clue',
+  'reveal_truth',
+  'unlock_access',
+  'social_pressure',
+  'disguise',
+  'escape',
+  'sense_danger',
+  'restore_sanity',
+  'practice_role',
+]);
 const itemIds = new Set(items.map((i) => i.id));
 const characterIds = new Set(characters.map((c) => c.id));
 const caseIds = new Set(cases.map((c) => c.id));
@@ -205,6 +221,72 @@ for (const pathway of pathways) {
       if (requirement.type === 'trust' && !characterIds.has(requirement.member)) {
         fail(`${where}: unknown character "${requirement.member}"`);
       }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Every pathway must be able to play the content
+// ---------------------------------------------------------------------------
+//
+// Content names capabilities (`abilityClues`, `useAbilityEffect`), never
+// abilities, so that a case works whichever pathway is reading it. That only
+// holds if each pathway actually supplies every capability the content asks
+// for — otherwise picking the wrong pathway at the main menu silently makes a
+// case unsolvable.
+const requiredEffectKinds = new Set();
+(function collectEffectKinds(node) {
+  if (Array.isArray(node)) {
+    for (const child of node) collectEffectKinds(child);
+  } else if (node && typeof node === 'object') {
+    for (const [key, value] of Object.entries(node)) {
+      if (key === 'abilityClues' && value && typeof value === 'object') {
+        for (const kind of Object.keys(value)) requiredEffectKinds.add(kind);
+      } else if (key === 'useAbilityEffect' && typeof value === 'string') {
+        requiredEffectKinds.add(value);
+      } else collectEffectKinds(value);
+    }
+  }
+})([cases, maps, dialogues, encounters]);
+
+// ExamineScene reaches for these directly, whatever the case data says.
+requiredEffectKinds.add('unlock_access');
+// The ladder's digestion requirement can only be met by performing the role.
+requiredEffectKinds.add('practice_role');
+
+for (const pathway of pathways) {
+  const supplied = new Map();
+  for (const tier of pathway.sequences) {
+    for (const abilityId of tier.grantsAbilities) {
+      const ability = abilities.find((a) => a.id === abilityId);
+      if (!ability || ability.passive) continue;
+      const kind = ability.effect?.kind;
+      if (kind && !supplied.has(kind)) supplied.set(kind, tier.sequence);
+    }
+  }
+  for (const kind of requiredEffectKinds) {
+    if (!supplied.has(kind)) {
+      fail(`Pathway ${pathway.id}: no ability with effect "${kind}", which the content requires.`);
+    }
+  }
+}
+
+// The starting rung has to be self-sufficient enough to close the first case:
+// a player who picks a pathway and never advances still needs to find clues,
+// steady themselves, and digest the role they are wearing.
+const STARTING_KINDS = ['reveal_clue', 'restore_sanity', 'practice_role'];
+for (const pathway of pathways) {
+  const entry = Math.max(...pathway.sequences.map((tier) => tier.sequence));
+  const tier = pathway.sequences.find((candidate) => candidate.sequence === entry);
+  const kinds = new Set(
+    (tier?.grantsAbilities ?? [])
+      .map((id) => abilities.find((a) => a.id === id))
+      .filter((ability) => ability && !ability.passive)
+      .map((ability) => ability.effect?.kind),
+  );
+  for (const kind of STARTING_KINDS) {
+    if (!kinds.has(kind)) {
+      fail(`Pathway ${pathway.id}: Sequence ${entry} grants no "${kind}" ability, so a fresh run cannot use it.`);
     }
   }
 }
@@ -390,11 +472,14 @@ for (const encounter of encounters) {
     if (option.useAbility && !abilityIds.has(option.useAbility)) {
       fail(`${where}: unknown ability "${option.useAbility}"`);
     }
+    if (option.useAbilityEffect && !EFFECT_KINDS.has(option.useAbilityEffect)) {
+      fail(`${where}: unknown ability effect "${option.useAbilityEffect}"`);
+    }
     if (!option.success) fail(`${where} option "${option.text}": missing a success outcome`);
     if (option.check && !option.failure) {
       warn(`${where} option "${option.text}": can fail but defines no failure outcome.`);
     }
-    if (!option.requires && !option.useAbility && option.costPence === undefined) {
+    if (!option.requires && !option.useAbility && !option.useAbilityEffect && option.costPence === undefined) {
       hasUnconditional = true;
     }
   }
@@ -501,6 +586,17 @@ for (const map of maps) {
 // Dialogue
 // ---------------------------------------------------------------------------
 
+// Ids are the only handle a map has on a tree, and the loader keeps the last
+// one it read. A duplicate is therefore silent: the map opens a scene, the
+// wrong scene plays, and nothing anywhere says so.
+const treeIds = new Map();
+for (const tree of dialogues) {
+  if (treeIds.has(tree.id)) {
+    fail(`Dialogue "${tree.id}" is defined twice; the second one silently replaces the first.`);
+  }
+  treeIds.set(tree.id, tree);
+}
+
 for (const tree of dialogues) {
   if (!characterIds.has(tree.speaker)) {
     fail(`Dialogue ${tree.id}: unknown speaker "${tree.speaker}"`);
@@ -526,6 +622,9 @@ for (const tree of dialogues) {
       if (choice.useAbility && !abilityIds.has(choice.useAbility)) {
         fail(`Dialogue ${tree.id}#${nodeId}: unknown ability "${choice.useAbility}"`);
       }
+      if (choice.useAbilityEffect && !EFFECT_KINDS.has(choice.useAbilityEffect)) {
+        fail(`Dialogue ${tree.id}#${nodeId}: unknown ability effect "${choice.useAbilityEffect}"`);
+      }
       if (!reached.has(choice.goto)) {
         reached.add(choice.goto);
         queue.push(choice.goto);
@@ -538,6 +637,117 @@ for (const tree of dialogues) {
 }
 
 // ---------------------------------------------------------------------------
+// Every room has to be walkable: a hotspot behind a wall, or a doorway on the
+// far side of a table, is a dead end that only shows up when somebody plays it.
+// ---------------------------------------------------------------------------
+
+for (const map of maps) {
+  const rows = map.rows ?? [];
+  const walkable = (x, y) => {
+    const row = rows[y];
+    if (row === undefined || x < 0 || x >= row.length) return false;
+    const entry = map.legend[row[x]];
+    return Boolean(entry) && entry.collide !== true;
+  };
+  // Exit tiles are unblocked by the world as it builds them, so they count.
+  const exitKeys = new Set((map.exits ?? []).map((exit) => `${exit.x},${exit.y}`));
+  const start = [map.spawn?.x ?? 0, map.spawn?.y ?? 0];
+  if (!walkable(start[0], start[1])) {
+    fail(`Map ${map.id}: spawn ${start.join(',')} is not walkable`);
+  }
+  const seen = new Set([start.join(',')]);
+  const queue = [start];
+  while (queue.length > 0) {
+    const [x, y] = queue.shift();
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const next = [x + dx, y + dy];
+      const key = next.join(',');
+      if (seen.has(key)) continue;
+      if (!walkable(next[0], next[1]) && !exitKeys.has(key)) continue;
+      seen.add(key);
+      queue.push(next);
+    }
+  }
+  for (const hotspot of map.hotspots ?? []) {
+    const beside = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+      .some(([dx, dy]) => seen.has(`${hotspot.x + dx},${hotspot.y + dy}`));
+    if (!beside) {
+      fail(`Map ${map.id}: hotspot "${hotspot.id}" at ${hotspot.x},${hotspot.y} cannot be reached`);
+    }
+  }
+  for (const exit of map.exits ?? []) {
+    if (!seen.has(`${exit.x},${exit.y}`)) {
+      fail(`Map ${map.id}: the exit to ${exit.toMap} at ${exit.x},${exit.y} cannot be reached`);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// The story spine
+// ---------------------------------------------------------------------------
+
+const volumeNumbers = new Set();
+for (const volume of volumes) {
+  const where = `Volume ${volume.number}`;
+  if (typeof volume.number !== 'number') fail(`${where}: missing number`);
+  if (volumeNumbers.has(volume.number)) fail(`${where}: duplicate number`);
+  volumeNumbers.add(volume.number);
+  if (!volume.title) fail(`${where}: missing title`);
+  if (!volume.blurb) fail(`${where}: missing blurb`);
+  if (!chapters.some((c) => c.volume === volume.number)) {
+    fail(`${where} "${volume.title}": has no chapters`);
+  }
+}
+
+const chapterIds = new Set();
+for (const [order, chapter] of chapters.entries()) {
+  const where = `Chapter "${chapter.id}"`;
+  if (!chapter.id) fail(`Chapter ${order}: missing id`);
+  if (chapterIds.has(chapter.id)) fail(`${where}: duplicate id`);
+  chapterIds.add(chapter.id);
+  if (!chapter.title) fail(`${where}: missing title`);
+  if (!chapter.objective) fail(`${where}: missing objective`);
+  if (volumes.length > 0 && !volumeNumbers.has(chapter.volume)) {
+    fail(`${where}: is in volume ${chapter.volume}, which does not exist`);
+  }
+  if (chapter.where && !mapIds.has(chapter.where)) {
+    fail(`${where}: points at unknown map "${chapter.where}"`);
+  }
+  checkCondition(chapter.doneWhen, where);
+  // A chapter with no completion condition is an ending, and nothing can come
+  // after it — the spine would stop there for the rest of the run.
+  if (!chapter.doneWhen && order !== chapters.length - 1) {
+    fail(`${where}: has no doneWhen but is not the last chapter`);
+  }
+  for (const flag of [chapter.doneWhen?.flag, ...(chapter.doneWhen?.anyOf ?? []).map((c) => c.flag)]) {
+    if (flag && !settableFlags.has(flag)) {
+      fail(`${where}: waits on flag "${flag}", which nothing sets`);
+    }
+  }
+}
+
+// Every map named by a chapter must be reachable by walking, or the signpost
+// would point at a door that does not exist.
+if (chapters.length > 0) {
+  const graph = new Map(maps.map((m) => [m.id, (m.exits ?? []).map((e) => e.toMap)]));
+  const start = maps.find((m) => m.id === 'lodgings')?.id ?? maps[0]?.id;
+  const seen = new Set([start]);
+  const queue = [start];
+  while (queue.length > 0) {
+    for (const next of graph.get(queue.shift()) ?? []) {
+      if (seen.has(next)) continue;
+      seen.add(next);
+      queue.push(next);
+    }
+  }
+  for (const chapter of chapters) {
+    if (chapter.where && !seen.has(chapter.where)) {
+      fail(`Chapter "${chapter.id}": map "${chapter.where}" cannot be walked to from ${start}`);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 
 for (const message of warnings) console.warn(`  warn   ${message}`);
 for (const message of problems) console.error(`  ERROR  ${message}`);
@@ -546,7 +756,8 @@ const leadCount = cases.reduce((sum, c) => sum + (c.leads?.length ?? 0), 0);
 console.log(
   `\n${cases.length} case(s), ${maps.length} map(s), ${dialogues.length} dialogue tree(s), ` +
     `${encounters.length} encounter(s), ${leadCount} lead(s), ` +
-    `${abilities.length} abilities, ${items.length} items, ${characters.length} characters`,
+    `${abilities.length} abilities, ${items.length} items, ${characters.length} characters, ` +
+    `${volumes.length} volume(s), ${chapters.length} chapter(s)`,
 );
 
 if (problems.length) {

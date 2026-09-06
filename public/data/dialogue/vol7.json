@@ -1,0 +1,205 @@
+[
+  {
+    "id": "dlg_v7_arrive",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The war stops.\n\nFeysac and Loen come off the field in the same month, and it is not peace; it is both sides going away to prepare properly. The world has been given an interval, and the thing coming for it is not another army.\n\nIt is isolation: the slow, total, cosmic kind, where every light goes out one at a time and nothing arrives to explain why.",
+        "effect": {
+          "flags": [
+            "v7_arrived"
+          ],
+          "sanity": -8
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_genie",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The Corpse Cathedral keeps a Genie, and a Genie grants what you ask for and not what you meant, and everybody who has ever dealt with one knew that going in.\n\nWhat you need is to be dead. Properly, verifiably, in a way the world signs for, so that a Miracle Invoker can complete an advancement ritual as somebody the world has agreed is no longer there.\n\nSo you are going to ask a Genie for exactly the thing it is famous for giving you.",
+        "choices": [
+          {
+            "text": "Word it carefully.",
+            "goto": "careful"
+          },
+          {
+            "text": "Word it badly on purpose.",
+            "goto": "badly"
+          }
+        ]
+      },
+      "careful": {
+        "text": "You word it carefully, and it finds the seam anyway, because that is what it is, and the distortion it chooses is the one you had already decided you could survive.\n\nThat is the trick, and it is not a clever trick. It is simply knowing which of your own deaths you can afford.",
+        "effect": {
+          "flags": [
+            "v7_wish"
+          ],
+          "sanity": -18,
+          "spirituality": -40
+        },
+        "choices": [
+          {
+            "text": "And die.",
+            "goto": "die"
+          }
+        ]
+      },
+      "badly": {
+        "text": "You word it badly, deliberately, leaving the gap where you want it, and let the thing take the gap and think it has won.\n\nIt is the single most dangerous sentence you have ever said out loud, and you said it in the voice you borrowed at nineteen from a lecturer who frightened you.",
+        "effect": {
+          "flags": [
+            "v7_wish"
+          ],
+          "sanity": -24,
+          "spirituality": -40,
+          "digestion": 20
+        },
+        "choices": [
+          {
+            "text": "And die.",
+            "goto": "die"
+          }
+        ]
+      },
+      "die": {
+        "text": "You die in the Corpse Cathedral, on schedule, by arrangement, for the second time.\n\nThe first time it was done to you by a man who folded the cloth first. This time it is an appointment you kept.",
+        "effect": {
+          "flags": [
+            "v7_died"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_zaratul_claim",
+    "speaker": "zaratul",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "He has been very good at gratitude, exactly as advertised.\n\nFour hundred years sealed in a town where nothing happened, and eleven months out of it, and in those eleven months Zaratul has assembled a claim on the seat above the grey fog and the argument to go with it.\n\n‘You let me out,’ he says. ‘I have never pretended that was not the beginning of this.’",
+        "choices": [
+          {
+            "text": "Ask what he thinks he is owed.",
+            "goto": "owed"
+          },
+          {
+            "text": "Ask who told him the seat could be taken.",
+            "goto": "who"
+          }
+        ]
+      },
+      "owed": {
+        "text": "‘The chair.’ Eyes like water that has never had light in it. ‘You sit in a seat you did not build, at a table you did not make, in a castle you did not raise, and you have never once asked who did.’\n\nHe is right about every clause of that. It is the most uncomfortable sentence anyone has said to you in three years.",
+        "effect": {
+          "flags": [
+            "v7_zaratul_claim"
+          ],
+          "sanity": -10
+        },
+        "choices": [
+          {
+            "text": "And who told him it could be taken.",
+            "goto": "who"
+          }
+        ]
+      },
+      "who": {
+        "text": "A historical projection of Knowledge Emperor Roselle Gustav told him. In detail. With citations.\n\nAnd then, at the hour it mattered, the projection changed its account — because Roselle wrote his diary in a code only somebody from a flat with a bad radiator could read, and Roselle had been waiting three hundred years for that somebody, and it was never going to be Zaratul.",
+        "effect": {
+          "flags": [
+            "v7_roselle"
+          ],
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Finish it.",
+            "goto": "finish"
+          }
+        ]
+      },
+      "finish": {
+        "text": "You kill him with the Law of Convergence, which is not a spell but an argument — every thread of a mystery pulled to one point and the point placed where he is standing.\n\nThen you take his Beyonder characteristic, because leaving it would be sentiment, and because Sequence 1 is not a rank you are given.",
+        "effect": {
+          "flags": [
+            "v7_zaratul"
+          ],
+          "sanity": -20,
+          "spirituality": -50,
+          "digestion": 40
+        },
+        "choices": [
+          {
+            "text": "And afterwards.",
+            "goto": "king"
+          }
+        ]
+      },
+      "king": {
+        "text": "King of Angels.\n\nEvery mystery on this pathway attends on you now, which sounds like service and is in fact surveillance: you are the thing they gather around and you cannot put them down.\n\nAbove the fog the bronze table is very cold and there are twenty-two seats and two of them are filled on Sundays by a young woman who writes everything down and a sailor who has never sat back.\n\nNeither of them has ever asked what you are. You have four names and a chair, and underneath all of it a man from Tingen who still counts his change.",
+        "effect": {
+          "flags": [
+            "v7_king"
+          ],
+          "skills": {
+            "occultism": 2
+          }
+        },
+        "choices": [
+          {
+            "text": "Book One ends here.",
+            "goto": "close"
+          }
+        ]
+      },
+      "close": {
+        "text": "Sequence 0 is not a rank. It is a seat, and it is already occupied, and the occupant is a story people tell about a grey fog and a bronze long table.\n\nBook One does not reach it.\n\nAmon is still keeping. He was always going to be still keeping. That is what he is for.",
+        "effect": {
+          "flags": [
+            "v7_complete"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_alger_price",
+    "speaker": "hanged_man",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Mr. Hanged Man has been a customer for three years, has never once asked for anything he could not have got elsewhere at a worse price, and has been establishing, patiently, that he is the sort of man a Fool would take a call from.\n\nHe is calling it in. He does not sit back to do it.",
+        "choices": [
+          {
+            "text": "Hear it.",
+            "goto": "hear"
+          }
+        ]
+      },
+      "hear": {
+        "text": "‘There is a thing at the Corpse Cathedral that has to be held for four minutes,’ says Alger Wilson, ‘by somebody who is not you, because you will be occupied being dead.’\n\nA pause exactly as long as he intends.\n\n‘I have run the arithmetic. I would like it noted that I ran it before I offered, and that I did not run it twice.’",
+        "effect": {
+          "flags": [
+            "v7_alger_price"
+          ],
+          "trust": {
+            "hanged_man": 20
+          },
+          "sanity": -12
+        },
+        "end": true
+      }
+    }
+  }
+]
