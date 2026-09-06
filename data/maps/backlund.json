@@ -1,0 +1,153 @@
+{
+  "id": "backlund",
+  "name": "Backlund, the East District",
+  "ambient": "#232630",
+  "encounterChance": 0.2,
+  "legend": {
+    "#": {
+      "floor": 8,
+      "collide": true
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
+    ":": {
+      "floor": 1
+    },
+    "~": {
+      "floor": 2
+    },
+    "L": {
+      "floor": 1,
+      "object": 24,
+      "collide": true
+    },
+    "r": {
+      "floor": 1,
+      "object": 15,
+      "collide": true
+    },
+    "b": {
+      "floor": 1,
+      "object": 20,
+      "collide": true
+    },
+    "k": {
+      "floor": 1,
+      "object": 19,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    }
+  },
+  "rows": [
+    "####W##o#####W######",
+    "#::::::::::::::::::#",
+    "L::k:::::::::::::b:L",
+    "::::::::::::::::::::",
+    "~~~~~~~~~~~~~~~~~~~~",
+    "~~~~~~~~~~~~~~~~~~~~",
+    "::::::::::::::::::::",
+    "L:b:::::::::::::k::L",
+    "#::::::::::::::::::#",
+    "###D####o####DD#####"
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 8
+  },
+  "hotspots": [
+    {
+      "id": "rite_backlund",
+      "x": 2,
+      "y": 1,
+      "name": "The Circle",
+      "description": "Chalked on the boards of a rented room above a chandler’s shop, and swept up every morning before the landlady comes.",
+      "action": "ritual",
+      "icon": 13
+    },
+    {
+      "id": "bk_requisition",
+      "x": 13,
+      "y": 9,
+      "name": "The Backlund Requisition Office",
+      "description": "A counter in a building with no sign, where the Church sells its own people what the Church has already decided they may have.",
+      "action": "shop",
+      "icon": 11
+    },
+    {
+      "id": "bk_library",
+      "x": 17,
+      "y": 7,
+      "name": "The Subscription Library, Howard Street",
+      "description": "Members only, four thousand volumes, and a locked room behind the stacks that is not on the floor plan the parish holds.",
+      "action": "dialogue",
+      "dialogue": "dlg_lanevus",
+      "icon": 13,
+      "locked": {
+        "reason": "You have no reason to be behind those stacks yet.",
+        "bypass": {
+          "flag": "v2_ledger"
+        }
+      }
+    },
+    {
+      "id": "bk_press",
+      "x": 2,
+      "y": 2,
+      "name": "The Newsagent On The Corner",
+      "description": "Four papers, all of them running the same column: deaths in the East Borough, by parish, weekly, and all four of them explaining it as a bad winter in August.",
+      "action": "dialogue",
+      "dialogue": "dlg_smog",
+      "icon": 12
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 3,
+      "y": 9,
+      "toMap": "club_hub",
+      "toX": 9,
+      "toY": 13,
+      "label": "Tingen"
+    },
+    {
+      "x": 14,
+      "y": 9,
+      "toMap": "bayam",
+      "toX": 9,
+      "toY": 8,
+      "label": "Bayam",
+      "requires": {
+        "sequenceAtMost": 6
+      }
+    },
+    {
+      "x": 7,
+      "y": 0,
+      "toMap": "moriarty_office",
+      "toX": 7,
+      "toY": 9,
+      "label": "Minsk Street"
+    },
+    {
+      "x": 8,
+      "y": 9,
+      "toMap": "east_borough",
+      "toX": 9,
+      "toY": 10,
+      "label": "The East Borough"
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_v2_arrive",
+    "flag": "v2_arrived"
+  }
+}

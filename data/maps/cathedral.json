@@ -1,0 +1,150 @@
+{
+  "id": "cathedral",
+  "name": "Saint Samuel Cathedral, Backlund",
+  "ambient": "#20202e",
+  "encounterChance": 0,
+  "legend": {
+    "#": {
+      "floor": 9,
+      "collide": true
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
+    ".": {
+      "floor": 7
+    },
+    "r": {
+      "floor": 5
+    },
+    "p": {
+      "floor": 7,
+      "object": 17,
+      "collide": true
+    },
+    "a": {
+      "floor": 5,
+      "object": 16,
+      "collide": true
+    },
+    "c": {
+      "floor": 7,
+      "object": 24,
+      "collide": true
+    },
+    "g": {
+      "floor": 7,
+      "object": 27,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    }
+  },
+  "rows": [
+    "####W####o####W#####",
+    "#........rr........#",
+    "#.c......ra......c.#",
+    "#........rr........#",
+    "#.pp.pp..rr..pp.pp.#",
+    "#.pp.pp..rr..pp.pp.#",
+    "#........rr........#",
+    "#.g......rr......g.#",
+    "#........rr........#",
+    "###D##D##rr#####D###"
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 9
+  },
+  "hotspots": [
+    {
+      "id": "cd_gate",
+      "x": 9,
+      "y": 2,
+      "name": "The Chanis Gate",
+      "description": "Not a gate, and not in the cathedral exactly, and not discussed. The Antigonus family’s notebook is behind it, and the Church would rather you took that on faith.",
+      "action": "dialogue",
+      "dialogue": "dlg_chanis",
+      "icon": 13
+    },
+    {
+      "id": "cd_grave",
+      "x": 3,
+      "y": 6,
+      "name": "A Man Who Has Been Digging",
+      "description": "Leonard Mitchell, three months out of Tingen, with earth still on his cuffs and a question he has rehearsed on the way here.",
+      "action": "dialogue",
+      "dialogue": "dlg_grave",
+      "icon": 12,
+      "locked": {
+        "reason": "He is not here yet.",
+        "bypass": {
+          "flag": "v4_escaped"
+        }
+      }
+    },
+    {
+      "id": "rite_cathedral",
+      "x": 16,
+      "y": 7,
+      "name": "The Circle",
+      "description": "A side chapel nobody has used since the fire, and a diagram that would have its author burned.",
+      "action": "ritual",
+      "icon": 13
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 3,
+      "y": 9,
+      "toMap": "backlund",
+      "toX": 9,
+      "toY": 1,
+      "label": "Out"
+    },
+    {
+      "x": 16,
+      "y": 9,
+      "toMap": "sefirah",
+      "toX": 9,
+      "toY": 9,
+      "label": "The Ladder",
+      "requires": {
+        "flag": "v4_undying"
+      }
+    },
+    {
+      "x": 9,
+      "y": 0,
+      "toMap": "foggy_town",
+      "toX": 9,
+      "toY": 9,
+      "label": "Through the Gate",
+      "requires": {
+        "flag": "v4_theft_failed"
+      }
+    },
+    {
+      "x": 6,
+      "y": 9,
+      "toMap": "primitive_island",
+      "toX": 9,
+      "toY": 9,
+      "label": "The Southern Continent",
+      "requires": {
+        "flag": "v4_escaped"
+      }
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_v4_arrive",
+    "flag": "v4_arrived"
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "id": "ashfen_row",
+  "name": "Iron Cross Street, West Borough",
+  "ambient": "#2c3a52",
+  "encounterChance": 0.45,
+  "legend": {
+    "#": {
+      "floor": 8,
+      "collide": true
+    },
+    ":": {
+      "floor": 1
+    },
+    "~": {
+      "floor": 2
+    },
+    "D": {
+      "floor": 13,
+      "collide": true
+    },
+    "W": {
+      "floor": 12,
+      "collide": true
+    },
+    "L": {
+      "floor": 1,
+      "object": 24,
+      "collide": true
+    },
+    "r": {
+      "floor": 1,
+      "object": 15,
+      "collide": true
+    },
+    "k": {
+      "floor": 1,
+      "object": 19,
+      "collide": true
+    },
+    "b": {
+      "floor": 1,
+      "object": 20,
+      "collide": true
+    },
+    "c": {
+      "floor": 1,
+      "object": 21,
+      "collide": true
+    }
+  },
+  "rows": [
+    "##########################",
+    "######W##D####W###W#######",
+    "::L::k::::::b::c:::k:::L::",
+    "::::::::::::::::::::::::::",
+    "~~~~~~~~~~~~~~~~~~~~~~~~~~",
+    "::::::::::::::::::::::::::",
+    "::b:L:k:c::::b:::L:::k::b:",
+    "::::::::::::::::::::::::::",
+    "###D######D#W#########W###",
+    "##########################"
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 2
+  },
+  "hotspots": [
+    {
+      "id": "row_gutter",
+      "x": 13,
+      "y": 4,
+      "name": "The Gutter",
+      "description": "Tingen washes downhill into this and the Tussock does the rest. Somebody has been here before you: the muck is turned over in a straight line, the way a man searches when he knows what he is looking for."
+    },
+    {
+      "id": "shop_window",
+      "x": 12,
+      "y": 8,
+      "name": "A Shuttered Window",
+      "description": "McGovern’s stair door, and above it his rooms, shuttered at four in the afternoon. There has been a light behind those shutters every night this week.",
+      "clues": [
+        "clue_nailed_shutters"
+      ]
+    },
+    {
+      "id": "row_notice",
+      "x": 22,
+      "y": 8,
+      "name": "The Parish Notice",
+      "description": "Gas rates, a lost dog, and a printed card from the Church of the Evernight Goddess advising residents that unlicensed divination is an offence and that the mercy of the Goddess extends to those who report it early."
+    }
+  ],
+  "npcs": [
+    {
+      "id": "dockhand",
+      "x": 16,
+      "y": 3,
+      "dialogue": "dlg_dockhand"
+    }
+  ],
+  "exits": [
+    {
+      "x": 3,
+      "y": 8,
+      "toMap": "lodgings",
+      "toX": 6,
+      "toY": 9,
+      "label": "Home"
+    },
+    {
+      "x": 9,
+      "y": 1,
+      "toMap": "club_hub",
+      "toX": 9,
+      "toY": 13,
+      "label": "Blackthorn"
+    },
+    {
+      "x": 20,
+      "y": 8,
+      "toMap": "crookback_alley",
+      "toX": 3,
+      "toY": 7,
+      "label": "Lower Market",
+      "requires": {
+        "flag": "knows_crookback"
+      }
+    },
+    {
+      "x": 10,
+      "y": 8,
+      "toMap": "pawnshop",
+      "toX": 9,
+      "toY": 11,
+      "label": "McGovern’s",
+      "requires": {
+        "caseState": {
+          "caseId": "case-01-notebook",
+          "state": "active"
+        }
+      }
+    }
+  ]
+}

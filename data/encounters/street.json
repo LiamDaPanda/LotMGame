@@ -1,0 +1,355 @@
+[
+  {
+    "id": "enc_church_watcher",
+    "title": "A Man Who Is Not Reading",
+    "kind": "threat",
+    "weight": 12,
+    "maps": [
+      "ashfen_row",
+      "crookback_alley"
+    ],
+    "suspicionWeighted": true,
+    "text": "There is a man across the way with a folded newspaper who has not turned a page in the eleven minutes you have been aware of him. His coat is plain and very well made. When you look at him he does not look away, which is worse than if he had.\n\nTingen has three orders of the Church in it and all three send men who dress exactly like that.",
+    "options": [
+      {
+        "text": "Walk past him at an ordinary pace and do not look back.",
+        "check": {
+          "skill": "streetwise",
+          "base": 0.4,
+          "perPoint": 0.09
+        },
+        "success": {
+          "text": "You go by close enough to smell the wax on his coat. He turns a page — finally — and lets you go. Whatever list you are on, you are not high up it yet.",
+          "effect": {
+            "concealment": 3
+          }
+        },
+        "failure": {
+          "text": "He falls in twenty yards behind you and stays there for six streets, and only stops when you double back through a public house. He did not need to catch you. He needed to see where you went.",
+          "effect": {
+            "concealment": -10,
+            "sanity": -3
+          }
+        }
+      },
+      {
+        "text": "Become somebody not worth remembering.",
+        "useAbilityEffect": "disguise",
+        "success": {
+          "text": "You shed whatever it is that makes a face worth writing down. He looks straight through you at the pie stall behind, and after a moment goes back to his paper, faintly annoyed at nothing.",
+          "effect": {
+            "concealment": 8
+          }
+        }
+      },
+      {
+        "text": "Ask the street how interested it is in you.",
+        "useAbilityEffect": "sense_danger",
+        "success": {
+          "text": "The answer arrives cold and specific: he is one of three, the other two are behind you, and none of them has been told your name yet. Knowing it does not help. Knowing it is still better.",
+          "effect": {
+            "flags": [
+              "made_church_tail"
+            ],
+            "sanity": -2
+          }
+        }
+      },
+      {
+        "text": "Go into the nearest shop and buy something, slowly.",
+        "costPence": 24,
+        "success": {
+          "text": "You spend eight minutes and two soli choosing a very ordinary pen-knife while the shopkeeper tells you about his knee. When you come out the man with the newspaper has gone, and you have a pen-knife.",
+          "effect": {
+            "concealment": 5
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "enc_alley_toughs",
+    "title": "Three of Them, One of You",
+    "kind": "threat",
+    "weight": 9,
+    "maps": [
+      "ashfen_row",
+      "crookback_alley"
+    ],
+    "text": "They come off the wall in the unhurried way of men who have done this often enough to be bored by it. The one in front has a length of gas pipe held down along his leg, which is a courtesy — he is giving you the chance to be sensible.",
+    "options": [
+      {
+        "text": "Hand over what is in your coat pocket.",
+        "costPence": 96,
+        "success": {
+          "text": "You give up eight soli without being asked twice. The pipe never comes up. He tells you, almost kindly, not to walk this way after dark, and you take the advice in the spirit it is offered.",
+          "effect": {
+            "sanity": -2
+          }
+        }
+      },
+      {
+        "text": "Talk. Loudly, and about something else entirely.",
+        "check": {
+          "skill": "rhetoric",
+          "base": 0.3,
+          "perPoint": 0.09
+        },
+        "success": {
+          "text": "You start telling them about a debt you are collecting for a man on Iron Cross Street, and by the second sentence you are all facing the same direction, complaining about the same absent villain. They let you go with directions.",
+          "effect": {
+            "concealment": 2
+          }
+        },
+        "failure": {
+          "text": "The one with the pipe waits for you to finish. Then he takes your purse anyway, and a good deal of what was in it, and the wall takes a rib.",
+          "effect": {
+            "pence": -180,
+            "sanity": -6
+          }
+        }
+      },
+      {
+        "text": "Send every eye in the alley the wrong way.",
+        "useAbilityEffect": "escape",
+        "success": {
+          "text": "All three of them turn to look at a noise behind them that never happened. You are around the corner before the first one thinks to wonder why he turned.",
+          "effect": {
+            "sanity": -1
+          }
+        }
+      },
+      {
+        "text": "Run, and keep running until the streets are lit.",
+        "check": {
+          "skill": "streetwise",
+          "base": 0.45,
+          "perPoint": 0.08
+        },
+        "success": {
+          "text": "You go left where they expect right, through a yard you had noticed on the way in, and come out on a lit street among people. Nobody follows you into lamplight.",
+          "effect": {
+            "sanity": -2
+          }
+        },
+        "failure": {
+          "text": "You pick the wrong yard. It ends in a wall, and the rest of it happens quickly, and you wake up on the cobbles with your pockets turned out and the sky going pale.",
+          "effect": {
+            "pence": -240,
+            "sanity": -10,
+            "days": 1
+          },
+          "flee": true
+        }
+      }
+    ]
+  },
+  {
+    "id": "enc_fence_invitation",
+    "title": "A Word, If You Have One",
+    "kind": "opportunity",
+    "weight": 14,
+    "maps": [
+      "ashfen_row"
+    ],
+    "once": true,
+    "requires": {
+      "notFlag": "knows_crookback"
+    },
+    "text": "A small man detaches himself from a doorway and falls into step with you, matching your pace exactly, which takes practice.\n\n‘You’ve the look of somebody who buys the sort of thing that isn’t on a shelf,’ he says, to the street rather than to you. ‘There’s a yard off the market road. The Lower Market. Third door, no sign. Ask for nothing in particular and you’ll be shown it.’",
+    "options": [
+      {
+        "text": "Say nothing and remember the name.",
+        "success": {
+          "text": "He peels off at the next corner without waiting for an answer, which is its own kind of professionalism. The Lower Market. Third door. No sign.",
+          "effect": {
+            "flags": [
+              "knows_crookback"
+            ]
+          }
+        }
+      },
+      {
+        "text": "Ask what he gets out of telling you.",
+        "check": {
+          "skill": "streetwise",
+          "base": 0.5,
+          "perPoint": 0.08
+        },
+        "success": {
+          "text": "‘A penny a head, and the man in the third door likes a customer who asks that first.’ He looks at you properly for the first time. ‘Tell him Sil sent you and he’ll not start you at the tourist price.’",
+          "effect": {
+            "flags": [
+              "knows_crookback",
+              "crookback_referral"
+            ]
+          }
+        },
+        "failure": {
+          "text": "‘A penny a head,’ he says, and loses interest in you so completely that you check your pockets afterwards. Everything is still there, which somehow makes it worse.",
+          "effect": {
+            "flags": [
+              "knows_crookback"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "enc_street_fortune",
+    "title": "A Woman Who Wants Her Cards Read",
+    "kind": "street",
+    "weight": 11,
+    "maps": [
+      "ashfen_row"
+    ],
+    "text": "She has been waiting outside the chandler’s for somebody who looks the part, and today that is apparently you. Her husband’s ship is nine days overdue and she will pay a penny to be told something, and you can see in her face exactly which something she wants.",
+    "options": [
+      {
+        "text": "Read them properly, and tell her what is actually there.",
+        "useAbilityEffect": "practice_role",
+        "success": {
+          "text": "You lay them out on an upturned crate and tell her the truth, which is that you cannot see the ship, and that the not-seeing is not the same as a wreck. She takes it better than a lie would have gone. She pays you the penny anyway.\n\nSomething settles in you while you do it. This is the part. You were playing at it before.",
+          "effect": {
+            "pence": 1,
+            "sanity": 2
+          }
+        }
+      },
+      {
+        "text": "Tell her what she came to hear, and take the penny.",
+        "success": {
+          "text": "It costs you nothing and takes ninety seconds and she goes away lighter. You keep the penny. On the walk home you find you are still thinking about it, which is not what you expected.",
+          "effect": {
+            "pence": 1,
+            "sanity": -3,
+            "concealment": 2
+          }
+        }
+      },
+      {
+        "text": "Tell her you are not that sort of fortune-teller.",
+        "success": {
+          "text": "She apologises for troubling you, at length, in the manner of someone used to being a trouble. You are still hearing it two streets later.",
+          "effect": {
+            "sanity": -1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "enc_rumour_monger",
+    "title": "The Man Who Sells Sentences",
+    "kind": "opportunity",
+    "weight": 10,
+    "maps": [
+      "ashfen_row",
+      "crookback_alley"
+    ],
+    "text": "He sells information the way other men sell matches: in small quantities, to anyone, with no interest at all in what you do with it afterwards.",
+    "options": [
+      {
+        "text": "Buy whatever he has on the Row this week. (1s)",
+        "costPence": 12,
+        "check": {
+          "skill": "streetwise",
+          "base": 0.45,
+          "perPoint": 0.09
+        },
+        "success": {
+          "text": "Most of it is worthless — a bigamy, two debts, a horse. But one line is not: there is a gentleman paying over the odds for clockwork that does not tell time, and he pays in the Alley, and he does not haggle.",
+          "effect": {
+            "flags": [
+              "heard_of_vane",
+              "knows_crookback"
+            ]
+          }
+        },
+        "failure": {
+          "text": "A shilling buys you a bigamy, two debts and a horse. You could have had the horse for free from anyone on the street.",
+          "effect": {
+            "sanity": -1
+          }
+        }
+      },
+      {
+        "text": "Ask what he would pay for something worth knowing.",
+        "check": {
+          "skill": "rhetoric",
+          "base": 0.35,
+          "perPoint": 0.1
+        },
+        "success": {
+          "text": "You trade him a piece of nothing dressed up as a piece of something, and he pays four soli for it in the honest belief that he has robbed you.",
+          "effect": {
+            "pence": 48
+          }
+        },
+        "failure": {
+          "text": "He listens to your offer with the patience of a man being sold his own coat, and then quotes you a price to go away.",
+          "effect": {
+            "sanity": -1
+          }
+        }
+      },
+      {
+        "text": "Keep walking.",
+        "success": {
+          "text": "He is already talking to somebody else before you are past him."
+        }
+      }
+    ]
+  },
+  {
+    "id": "enc_thin_place",
+    "title": "The Street Goes Quiet",
+    "kind": "occult",
+    "weight": 7,
+    "suspicionWeighted": true,
+    "text": "Every sound in Iron Cross Street arrives a half-second late, the way it does underwater, and the gas in the nearest lamp leans without any wind to lean from.\n\nSomething here is thin. Old Neil has a word for it and four pages on why the word is wrong.",
+    "options": [
+      {
+        "text": "Look back at it.",
+        "check": {
+          "skill": "occultism",
+          "base": 0.3,
+          "perPoint": 0.1
+        },
+        "success": {
+          "text": "You hold the shape of it in your mind long enough to file it: not a person, not looking for you specifically, and a very long way above your Sequence. You write down what you can. The writing is the useful part.",
+          "effect": {
+            "sanity": -4,
+            "digestion": 6
+          }
+        },
+        "failure": {
+          "text": "You look back, and something in the looking goes the wrong way, and you spend the rest of the afternoon unable to stop checking the angles of rooms.",
+          "effect": {
+            "sanity": -12
+          }
+        }
+      },
+      {
+        "text": "Steady yourself and keep walking.",
+        "useAbilityEffect": "restore_sanity",
+        "success": {
+          "text": "You take hold of the loose end of yourself and wind it in, and keep your eyes on the cobbles, and after a hundred yards it is just a street again.",
+          "effect": {
+            "sanity": 3
+          }
+        }
+      },
+      {
+        "text": "Put your head down and get indoors.",
+        "success": {
+          "text": "You do not look up until there is a door behind you. It is the correct decision and it does not feel like one.",
+          "effect": {
+            "sanity": -6
+          }
+        }
+      }
+    ]
+  }
+]

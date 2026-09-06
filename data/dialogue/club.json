@@ -1,0 +1,347 @@
+[
+  {
+    "id": "dlg_hermit",
+    "speaker": "hermit",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Dunn Smith is asleep, or doing the thing he does that is indistinguishable from it. He answers without opening his eyes.\n\n‘Board’s behind you. Church takes the work in, the team takes it out, and what you did before you got here is your business until it turns up in a file.’",
+        "choices": [
+          {
+            "text": "What are the Nighthawks, exactly?",
+            "goto": "what"
+          },
+          {
+            "text": "Ask about advancement.",
+            "goto": "advance"
+          },
+          {
+            "text": "Ask for an advance against pay.",
+            "goto": "stipend",
+            "effect": {
+              "pence": 240,
+              "trust": {
+                "hermit": -5
+              }
+            }
+          },
+          {
+            "text": "Nothing. Not yet.",
+            "goto": "bye"
+          }
+        ]
+      },
+      "what": {
+        "text": "‘A team of five who work for the Church of the Evernight Goddess and are on the books here as a security company, because Blackthorn Security can rent an office and a Nighthawk squad cannot.’\n\nHe finally opens one eye. ‘We recover Sealed Artifacts and we find people who have been using them. That is the whole of it, and it is more than enough.’",
+        "choices": [
+          {
+            "text": "Find them and do what?",
+            "goto": "taken"
+          },
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "taken": {
+        "text": "‘Bring them in, if they will come. And if they will not.’ He does not finish it, and does not need to.\n\n‘The Church has three orders in this city. There are private collectors who are worse. And there is the plain arithmetic that most people who lose themselves do it alone in a rented room, with the door bolted, and nobody comes.’\n\nHe closes the eye again. ‘You have seen one of those this week. That is why you are standing here.’",
+        "effect": {
+          "trust": {
+            "hermit": 3
+          }
+        },
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "advance": {
+        "text": "‘Sequence 8 on your pathway. You will want the formula, the ingredients, a case closed to justify the requisition, and to have finished being a Seer first.’\n\n‘The last one is not paperwork. The last one is the whole thing.’",
+        "choices": [
+          {
+            "text": "What does ‘finished being a Seer’ mean?",
+            "goto": "digest"
+          },
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "digest": {
+        "text": "‘Act it. Read fortunes. Answer questions nobody asked. Do the thing the role does until doing it stops feeling like a decision — and do it where people can see you, because a role performed alone is a role you are only telling yourself about.’\n\n‘Half the potion is the potion. The other half is you agreeing to be the sort of man who took it.’",
+        "choices": [
+          {
+            "text": "Read his fortune, unasked.",
+            "goto": "act_seer",
+            "useAbilityEffect": "reveal_clue",
+            "effect": {
+              "digestion": 12,
+              "trust": {
+                "hermit": 4
+              }
+            }
+          },
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "act_seer": {
+        "text": "You take his hand and tell him a small true thing about the week he has had, and he lets you, and does not look surprised by any of it.\n\n‘Mm,’ says Dunn Smith. ‘That is the idea. Do it to somebody who will be startled next time.’",
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "stipend": {
+        "text": "He counts out a pound and writes the line without being asked, in handwriting that has clearly defeated Rozanne for years.\n\n‘Against pay. Do not make a habit of it, and do not tell Leonard I did it, because Leonard has made a habit of it.’",
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "bye": {
+        "text": "‘Mm.’ He is asleep again, or doing the thing.",
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_star",
+    "speaker": "star",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Rozanne has a ledger open and a pen behind each ear.\n\n‘Requisitions, dockets, and anything you break. If you sign for it I can defend it, and if you do not I get to explain it to the Church, which I will not enjoy and neither will you.’",
+        "choices": [
+          {
+            "text": "What do you keep back here?",
+            "goto": "stock"
+          },
+          {
+            "text": "Ask about the sealed cupboard.",
+            "goto": "cupboard"
+          },
+          {
+            "text": "Leave her to the ledger.",
+            "goto": "bye"
+          }
+        ]
+      },
+      "stock": {
+        "text": "‘Formulae, ingredients, chalk, charms, and the dull practical things nobody thinks of until it is dark and they want one.’\n\n‘The potions come from the Church, at cost, against a case and a countersignature. They are not sold to you. They are issued to you, and there is a difference, and the difference is the form.’",
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "cupboard": {
+        "text": "‘Sealed Artifacts. Forty-one at last count, in lead and lime, behind a door I do not have the key to.’\n\nShe taps the ledger. ‘I have the numbers, though. Every one of them came in because somebody found it interesting first.’",
+        "effect": {
+          "trust": {
+            "star": 3
+          }
+        },
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "bye": {
+        "text": "She is already writing again.",
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_tower",
+    "speaker": "tower",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Leonard Mitchell has his chair angled so that he can see both doors and is entirely aware that you noticed.\n\n‘The probationer. You have that look people get in their first fortnight, where you have not decided yet whether we are the frightening thing in the room.’",
+        "choices": [
+          {
+            "text": "Who has noticed me?",
+            "goto": "heat"
+          },
+          {
+            "text": "What should I be afraid of out there?",
+            "goto": "factions"
+          },
+          {
+            "text": "Nothing tonight.",
+            "goto": "bye"
+          }
+        ]
+      },
+      "heat": {
+        "text": "He looks at you a beat too long — the way a man looks who is counting something.\n\n‘Nobody yet. You have used nothing in front of anyone who matters, and that is the only reason. Concealment is not a talent. It is a balance, and everything interesting you do is a withdrawal.’",
+        "choices": [
+          {
+            "text": "And when it runs out?",
+            "goto": "runout"
+          },
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "runout": {
+        "text": "‘Then somebody looks at you properly.’ He shrugs. ‘The Church first, most likely, and the Church is us, and I would rather it was us. After that it is whoever is paying the collectors, and they do not send anybody to talk.’",
+        "effect": {
+          "trust": {
+            "tower": 4
+          }
+        },
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "factions": {
+        "text": "‘Three orders of the Church, who want you catalogued. Collectors who want you inventoried. And the ones who have already lost the argument with whatever they took and are still walking about.’\n\n‘That last sort is why the captain sleeps in that chair instead of at home.’",
+        "effect": {
+          "flags": [
+            "heard_of_vane"
+          ]
+        },
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "bye": {
+        "text": "‘Mind the doors.’",
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_moon",
+    "speaker": "moon",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Old Neil is sitting on the edge of the ritual room’s circle with his boots off, which he does not explain.\n\n‘You want to know how fast it can be done. They all want to know how fast it can be done.’",
+        "choices": [
+          {
+            "text": "How fast can it be done?",
+            "goto": "fast"
+          },
+          {
+            "text": "Dunn said you advanced twice in a year.",
+            "goto": "twice"
+          },
+          {
+            "text": "Not now.",
+            "goto": "bye"
+          }
+        ]
+      },
+      "fast": {
+        "text": "‘Very. That is the trouble with it. You can hold the potion in your hand at breakfast and be a Sequence 8 by supper, and there is nothing in the world that will stop you.’\n\n‘What there is instead is a word. Digestion. It means the role has finished arriving. Take the next one before it has, and the two of them argue, and you are the room they argue in.’",
+        "choices": [
+          {
+            "text": "What does that feel like?",
+            "goto": "twice"
+          },
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "twice": {
+        "text": "He thinks about it long enough that you consider withdrawing the question.\n\n‘Like remembering a thing you did that you did not do. And then agreeing with the man who did it, because he is nearer than you are.’\n\nHe puts his boots back on. ‘I do not recommend it. I recommend the four pages of theory, which nobody reads, and which is why I keep saying them out loud at people.’",
+        "effect": {
+          "trust": {
+            "moon": 5
+          },
+          "sanity": -2
+        },
+        "choices": [
+          {
+            "text": "Back.",
+            "goto": "start"
+          }
+        ]
+      },
+      "bye": {
+        "text": "‘Mm. Ask again when you are holding one.’",
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_potion",
+    "speaker": "hermit",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The cellar room at No. 36 has a drain in the middle of the floor and a chair bolted down beside it, and nobody in the building makes a joke about either.\n\nDunn Smith sets a phial on the table. Grey, and thicker than it looks, with something in it that turns over when the phial does not.\n\n‘The Church signed for this before you did. Seer, Sequence 9 of your pathway — divination, misdirection, a face nobody remembers. It answers questions instead of winning fights, which is the work.’\n\n‘Two rules. It is a role, not a tool: you act it or it acts you. And you drink it here, in front of me, because a man who takes one alone in a rented room is how a team finds out he had one.’",
+        "choices": [
+          {
+            "text": "Ask what happens to people who do it badly.",
+            "goto": "warning"
+          },
+          {
+            "text": "Drink it.",
+            "goto": "drink"
+          }
+        ]
+      },
+      "warning": {
+        "text": "‘You lose the thread,’ he says. ‘Not all at once. You start doing the things the potion is for when nobody asked for them, and then you start doing them when somebody asked you not to, and then there is a report with your name on it and Old Neil goes out with a lead case.’\n\nHe does not soften it. ‘Digest it. Act it. Keep something of your own to come back to.’",
+        "effect": {
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Drink it.",
+            "goto": "drink"
+          }
+        ]
+      },
+      "drink": {
+        "text": "It tastes of wet paper and something underneath the wet paper.\n\nThen the room goes very precise. The grain of the table, the drain’s four screws, the exact number of buttons on Smith’s cuff — all of it arriving at once and none of it louder than the rest, and behind all of it a sense that if you asked the room a question it would be rude of the room not to answer.\n\n‘Sequence 9,’ says Smith, writing it down. ‘Congratulations. You are now the cheapest thing the Church owns.’\n\nFor a week afterwards every deck of cards you pass will feel like it is watching you back.",
+        "effect": {
+          "pathway": "seer",
+          "flags": [
+            "drank_seer"
+          ]
+        },
+        "choices": [
+          {
+            "text": "Sit with it.",
+            "goto": "after"
+          }
+        ]
+      },
+      "after": {
+        "text": "Rozanne brings tea nobody asked for. Leonard puts his boots on a desk that is not his and asks whether you have tried the divination yet, and Old Neil tells him to leave the boy alone in the tone of a man who intends to do exactly the same thing in an hour.\n\nYou are on the payroll of a company that does not exist, in a unit that is named after a police department it has never reported to, and you are Sequence 9 of a ladder nobody will describe to you above the next rung.",
+        "end": true
+      }
+    }
+  }
+]

@@ -1,0 +1,190 @@
+[
+  {
+    "id": "dlg_v5_arrive",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "Backlund, and a war.\n\nFeysac in the field, Loen mobilising, and a city that has decided the fog was always going to lift once there was something more important to look at. Dwayne Dantès keeps his box at the opera. Nobody is at the opera.",
+        "effect": {
+          "flags": [
+            "v5_arrived"
+          ]
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_smog_truth",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The reporters’ bench has every paper in Backlund on it and one column none of them has printed: deaths in the East Borough, weekly, since August.\n\nYou have the figures because Old Kohler kept them in an account book when the parish stopped, and because a girl of eleven read them out to you off the back of a handbill.",
+        "choices": [
+          {
+            "text": "Find out what the smog was for.",
+            "goto": "for",
+            "useAbilityEffect": "reveal_truth"
+          },
+          {
+            "text": "Count it again.",
+            "goto": "count"
+          }
+        ]
+      },
+      "count": {
+        "text": "Twenty-one thousand and rising, and the printed figure is eleven hundred, and the difference is not a lie anybody had to tell. It is simply what happens when the counting is left to the people who are being counted.",
+        "effect": {
+          "sanity": -6,
+          "flags": [
+            "v5_counted"
+          ]
+        },
+        "choices": [
+          {
+            "text": "But what was it for.",
+            "goto": "for"
+          }
+        ]
+      },
+      "for": {
+        "text": "It was not weather and it was not the Lady Despair alone.\n\nA borough breathing the same poison for seven months is a borough that despairs on a schedule, and despair on a schedule is a component. Twenty-one thousand people were the ingredient list of a ritual that has not been performed yet, and the man it was gathered for is going to give a speech about it on Thursday and call it courage.",
+        "effect": {
+          "flags": [
+            "v5_smog_truth"
+          ],
+          "sanity": -14,
+          "spirituality": -20,
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_george",
+    "speaker": "george",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "George III of Loen has the bearing of a man who has rehearsed, and the eyes of a man who has read what he is about to say and understood only the first half of it.\n\n‘You are not on the list,’ he says, pleasantly. ‘Which means somebody who is on the list wanted you here. I have stopped finding that unusual.’",
+        "choices": [
+          {
+            "text": "Tell him what the speech is.",
+            "goto": "tell"
+          },
+          {
+            "text": "Let him give it.",
+            "goto": "let"
+          }
+        ]
+      },
+      "tell": {
+        "text": "‘Your address is an apotheosis ritual. The House is the circle. The gallery is seated in a pattern. And the offering was gathered in the East Borough over seven months and buried at night so the district would not watch.’\n\nHe listens to all of it. Then: ‘Yes.’\n\nA pause. ‘Do you imagine I did not know? I am the King of Loen. I have been handed a war I did not want and a method I did not ask for, and I have decided that a kingdom needs a god in the field more than it needs a monarch who can sleep.’",
+        "effect": {
+          "flags": [
+            "v5_george_knows"
+          ],
+          "sanity": -10,
+          "skills": {
+            "rhetoric": 1
+          }
+        },
+        "choices": [
+          {
+            "text": "Let him give it.",
+            "goto": "let"
+          }
+        ]
+      },
+      "let": {
+        "text": "You let him give it, because there is nothing in this House that can stop it and because stopping it is not the correct move on a board you have only just been shown.\n\nHe speaks for nineteen minutes. Four hundred people in the gallery weep on cue without knowing why. And on the last sentence something arrives in the chamber that the shorthand writers will record as applause.",
+        "effect": {
+          "flags": [
+            "v5_apotheosis"
+          ],
+          "sanity": -16,
+          "spirituality": -30
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_apotheosis",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "The gallery is not seated the way four hundred people are seated. It is seated the way a diagram is drawn, and the diagram is one you have seen in an Antigonus notebook and once, from above, on the floor of a subscription library on Howard Street.",
+        "choices": [
+          {
+            "text": "Follow the figure out.",
+            "goto": "figure"
+          }
+        ]
+      },
+      "figure": {
+        "text": "It closes on the Speaker’s table, and the Speaker’s table is where a king will stand on Thursday.\n\nAnd it is being watched. Not by the Church, which has a box and is in it. By three things standing a great distance outside this building with their attention on it, and you can name all three, and that is the worst part of the afternoon.",
+        "effect": {
+          "flags": [
+            "v5_watched"
+          ],
+          "sanity": -12,
+          "skills": {
+            "occultism": 1
+          }
+        },
+        "end": true
+      }
+    }
+  },
+  {
+    "id": "dlg_sefirah_surfacing",
+    "speaker": "player",
+    "start": "start",
+    "nodes": {
+      "start": {
+        "text": "You advance to Scholar of Yore in a room with the curtains drawn, and the rite is a book read out of a book read out of a book, back and back until the first hand is a rumour.\n\nIt works. And then it keeps working, which is not in the notes.",
+        "choices": [
+          {
+            "text": "What is happening to the fog.",
+            "goto": "fog"
+          }
+        ]
+      },
+      "fog": {
+        "text": "Sefirah Castle is surfacing.\n\nFor two years the palace above the grey fog has been a place you go. This afternoon, without being asked, it began to be a place that is — a real object in a real sky, at an altitude, with a position, casting an actual shadow on an actual sea.\n\nAnd Amon looks up. And Pallez Zoroast looks up. And on an island in the Rorsted Archipelago every tree in a grove leans a little further in.",
+        "effect": {
+          "flags": [
+            "v5_sefirah_surfaced"
+          ],
+          "sanity": -18,
+          "spirituality": -30,
+          "skills": {
+            "occultism": 2
+          }
+        },
+        "choices": [
+          {
+            "text": "Sit down at the table and think.",
+            "goto": "sit"
+          }
+        ]
+      },
+      "sit": {
+        "text": "Twenty-two seats. Two of them have been filled every Sunday for two years by people who have never asked what you are, and who are now, whether they know it or not, sitting in a building that three gods have located.\n\nThe Fool was a bluff. It has stopped being one. That is a promotion in exactly the way a hanging is a promotion.",
+        "effect": {
+          "flags": [
+            "v5_complete"
+          ]
+        },
+        "end": true
+      }
+    }
+  }
+]

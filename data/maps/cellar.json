@@ -1,0 +1,87 @@
+{
+  "id": "cellar",
+  "name": "The Cellar Under McGovern’s",
+  "ambient": "#1a1c28",
+  "legend": {
+    "%": {
+      "floor": 9,
+      "collide": true
+    },
+    ",": {
+      "floor": 7
+    },
+    "K": {
+      "floor": 7,
+      "object": 19,
+      "collide": true
+    },
+    "b": {
+      "floor": 7,
+      "object": 20,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    },
+    "s": {
+      "floor": 7,
+      "object": 18,
+      "collide": true
+    }
+  },
+  "rows": [
+    "%%%%%%%%%%%%%%",
+    "%,,,,,,,,,,,,%",
+    "%,KK,,K,,,bb,%",
+    "%s,,,,,,,,,,s%",
+    "%,,,K,,,,,,,,%",
+    "%,b,,,,b,KK,,%",
+    "%,,,,,,,,,,,,%",
+    "%,,,,,o,,,,,,%",
+    "%%%%%%%%%%%%%%"
+  ],
+  "spawn": {
+    "x": 6,
+    "y": 6
+  },
+  "hotspots": [
+    {
+      "id": "coal_chute",
+      "x": 11,
+      "y": 0,
+      "name": "The Yard Hatch",
+      "description": "The only way in that is not the stair. Bolted from this side, and the bolt has not been drawn since the rain. Nothing came in this way, and nothing went out of it either.",
+      "clues": [],
+      "icon": 15
+    },
+    {
+      "id": "hiding_place",
+      "x": 9,
+      "y": 5,
+      "name": "Behind the Crates",
+      "description": "A gap just wide enough to sit in, and nobody has sat in it. The dust is eight days old and undisturbed all the way to the wall.\n\nWhatever happened above this floor happened without help.",
+      "abilityClues": {
+        "reveal_clue": [
+          "clue_terror_echo"
+        ]
+      }
+    },
+    {
+      "id": "coal_heap",
+      "x": 3,
+      "y": 2,
+      "name": "The Coal Heap",
+      "description": "Half a ton of the wet-burning sort. Nothing is buried in it. You check anyway, and your cuffs will not forgive you."
+    }
+  ],
+  "exits": [
+    {
+      "x": 6,
+      "y": 7,
+      "toMap": "pawnshop",
+      "toX": 5,
+      "toY": 9,
+      "label": "Upstairs"
+    }
+  ]
+}

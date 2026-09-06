@@ -1,0 +1,134 @@
+{
+  "id": "forsaken",
+  "name": "The Forsaken Land of the Gods",
+  "ambient": "#241f22",
+  "encounterChance": 0,
+  "legend": {
+    "#": {
+      "floor": 9,
+      "collide": true
+    },
+    "%": {
+      "floor": 10,
+      "collide": true
+    },
+    ".": {
+      "floor": 29
+    },
+    ",": {
+      "floor": 7
+    },
+    "g": {
+      "floor": 29,
+      "object": 27,
+      "collide": true
+    },
+    "k": {
+      "floor": 29,
+      "object": 19,
+      "collide": true
+    },
+    "r": {
+      "floor": 29,
+      "object": 15,
+      "collide": true
+    },
+    "T": {
+      "floor": 7,
+      "object": 16,
+      "collide": true
+    },
+    "c": {
+      "floor": 7,
+      "object": 17,
+      "collide": true
+    },
+    "o": {
+      "floor": 14
+    }
+  },
+  "rows": [
+    "%%%%%%%%%%%%%%%%%%%%",
+    "%..................%",
+    "%.g...,,,,,,,,...g.%",
+    "%.....,cTTTTc,.....%",
+    "%.....,,,,,,,,.....%",
+    "%..k...........k...%",
+    "%..................%",
+    "%.g..............g.%",
+    "%..................%",
+    "%%o%%%%%%oo%%%%%%%%%"
+  ],
+  "spawn": {
+    "x": 9,
+    "y": 8
+  },
+  "hotspots": [
+    {
+      "id": "rite_forsaken",
+      "x": 3,
+      "y": 5,
+      "name": "The Circle",
+      "description": "Scratched into stone that was old when the Second Epoch ended.",
+      "action": "ritual",
+      "icon": 13
+    },
+    {
+      "id": "fk_marks",
+      "x": 8,
+      "y": 3,
+      "name": "Marks Cut By Somebody Who Did Not Get Out",
+      "description": "Colin Iliad got this far. So did Lovia. Both of them left the way marked for whoever came next, in the plainest terms available.",
+      "action": "dialogue",
+      "dialogue": "dlg_court",
+      "icon": 12
+    },
+    {
+      "id": "fk_amon",
+      "x": 11,
+      "y": 6,
+      "name": "The Man With The Crystal Monocle",
+      "description": "He does not have to open a door to come into a room, and he is delighted to meet you, and he has been delighted to meet you for some time.",
+      "action": "dialogue",
+      "dialogue": "dlg_amon",
+      "icon": 13
+    }
+  ],
+  "npcs": [],
+  "exits": [
+    {
+      "x": 9,
+      "y": 9,
+      "toMap": "sefirah",
+      "toX": 9,
+      "toY": 8,
+      "label": "The Ladder"
+    },
+    {
+      "x": 10,
+      "y": 9,
+      "toMap": "corpse_cathedral",
+      "toX": 9,
+      "toY": 8,
+      "label": "Corpse Cathedral",
+      "requires": {
+        "flag": "v6_truth"
+      }
+    },
+    {
+      "x": 2,
+      "y": 9,
+      "toMap": "giant_court",
+      "toX": 9,
+      "toY": 10,
+      "label": "The Giant King’s Court",
+      "requires": {
+        "flag": "v6_truth"
+      }
+    }
+  ],
+  "intro": {
+    "dialogue": "dlg_forsaken_arrive",
+    "flag": "v6_arrived"
+  }
+}
